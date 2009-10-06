@@ -1,0 +1,47 @@
+
+LookAt 18 5.5 2    15.5 .9 10   0 1 0
+Camera "perspective" "float fov" [40]
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [4]
+PixelFilter "box"
+
+Film "image" "integer xresolution" [400] "integer yresolution" [400]
+
+Renderer "metropolis" "integer samplesperpixel" [128] 
+    "bool dodirectseparately" ["true"] "integer directsamples" [8]
+
+WorldBegin
+
+# lights
+AttributeBegin
+#Rotate -90 1 0 0 
+    LightSource "infinite" "integer nsamples" [16] "color L" [1 1 1]
+        "string mapname" ["textures/uffizi_latlong.exr"]
+#        "string mapname" ["textures/skylight-sunset.exr"]
+AttributeEnd
+
+#floor
+Texture "tmap" "color" "imagemap" "string filename" "textures/lines.exr"
+	"float uscale" 60 "float vscale" 60
+Texture "tbump-tex" "float" "imagemap" "string filename" "textures/lines.exr"
+	"float uscale" 60 "float vscale" 60
+Texture "sbump" "float" "scale" "texture tex1" "tbump-tex"
+	"float  tex2" [-.25]
+Material "substrate" "texture Kd" "tmap" 
+	 "color Ks" [.5 .5 .5] "float uroughness" [.05]
+	"float vroughness" [.05]
+	"texture bumpmap" "sbump" 
+Shape "trianglemesh" "integer indices" [0 1 2 0 3 2 ]
+    "point P" [ -100 0 -100  100 0 -100   100 0 100   -100 0 100 ]
+
+AttributeBegin
+Material "metal"  "float roughness" [.001]
+    "spectrum eta" "spds/metals/Au.eta.spd"
+    "spectrum k" "spds/metals/Au.k.spd"
+
+Translate 15 0 10
+Scale 1.25 1.25 1.25
+Include "geometry/room-teapot.pbrt"
+AttributeEnd
+
+WorldEnd

@@ -1,0 +1,57 @@
+
+LookAt 400 20 30   0 63 -110   0 0 1
+Rotate -5 0 0 1
+Camera "perspective" "float fov" [39]
+Film "image"  
+"integer xresolution" [600] "integer yresolution" [600]
+
+Sampler "lowdiscrepancy" "integer pixelsamples" [32]
+
+SurfaceIntegrator "directlighting"
+
+WorldBegin
+
+AttributeBegin
+Material "matte" "color Kd" [0 0 0]
+Translate 150 0  20
+Translate 0 120 0
+AreaLightSource "area"  "color L" [2000 2000 2000] "integer nsamples" [8]
+Shape "sphere" "float radius" [3]
+AttributeEnd
+
+
+AttributeBegin
+  Material "matte" "color Kd" [.5 .5 .8]
+  Translate 0 0 -140
+Shape "trianglemesh" "point P" [ -1000 -1000 0 1000 -1000 0 1000 1000 0 -1000 1000 0 ]
+      "float uv" [ 0 0 5 0 5 5 0 5 ]
+	"integer indices" [ 0 1 2 2 3 0]
+Shape "trianglemesh" "point P" [ -400 -1000 -1000   -400 1000 -1000   -400 1000 1000 -400 -1000 1000 ]
+      "float uv" [ 0 0 5 0 5 5 0 5 ]
+        "integer indices" [ 0 1 2 2 3 0]
+AttributeEnd
+
+AttributeBegin
+Scale .5 .5 .5
+Rotate -60 0 0 1
+    Material "plastic" "color Kd" [.4 .2 .2] "color Ks" [.5 .5 .5]
+        "float roughness" [.025]
+Translate 100 200 -140
+ActiveTransform StartTime
+Translate 35 35 35
+AttributeBegin
+    Include "geometry/killeroo.pbrt"
+AttributeEnd
+
+    Material "plastic" "color Ks" [.3 .3 .3] "color Kd" [.4 .5 .4]
+        "float roughness" [.15] 
+AttributeBegin
+ActiveTransform StartTime
+Translate 30 0 0
+ActiveTransform All
+Translate -200 0 0
+    Include "geometry/killeroo.pbrt"
+AttributeEnd
+
+AttributeEnd
+WorldEnd

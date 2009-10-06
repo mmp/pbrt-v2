@@ -1,0 +1,17 @@
+# data from www.luxpop.com database
+# ;  Optical constants for a-Si:H, amorphous glow-discharge Si onto
+# ;  400 C substrates, ~4 at.% H
+# ; 
+# ;   taken from:
+# ;
+# ;   'Handbook of Optical Constants of Solids', Ed. by Edward D. Palik,
+# ;   Academic Press, Inc., 1985.
+# ;   
+# ;    Lambda (A)            n            k
+# ;-----------------------------------------
+309.950012 3.360000
+354.229004 4.590000
+413.266998 5.430000
+495.920013 5.250000
+619.900024 4.710000
+826.533020 4.130000

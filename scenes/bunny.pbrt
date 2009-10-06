@@ -1,0 +1,30 @@
+Film "image"
+#	"integer xresolution" [128] "integer yresolution" [128] 
+LookAt 0 .2 .2    -.02 .1 0  0 1 0
+Camera "perspective" "float fov" [60]
+
+WorldBegin
+
+AttributeBegin
+CoordSysTransform "camera"
+#LightSource "point" "color I" [ .3 .3 .3 ]
+LightSource "point" "color I" [ .7 .7 .7 ]
+AttributeEnd
+
+AttributeBegin
+#AreaLightSource "area" "color L" [60 60 60 ] "integer nsamples"  [3]
+AreaLightSource "area" "color L" [15 15 15 ] "integer nsamples"  [4]
+Translate 0 2 0
+Rotate 90 1 0 0
+Shape "disk" "float radius" [.25]
+AttributeEnd
+
+Material "matte" "color Kd" [.4 .42 .4]
+Shape "trianglemesh" "point P" [ -1 0 -1 1 0 -1 1 0 1 -1 0 1 ]
+	"integer indices" [ 0 1 2 2 3 0]
+
+Material "measured" "string filename" "brdfs/mystique.brdf"
+
+Include "geometry/bunny.pbrt"
+
+WorldEnd
