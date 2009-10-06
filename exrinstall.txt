@@ -1,0 +1,36 @@
+
+An installation of OpenEXR was not found on your system.
+
+If OpenEXR is in fact installed on this system, you may just need to modify
+the EXRINCLUDE and EXRLIBDIR lines in the Makefile to point to the OpenEXR
+headers and libraries.  By default, pbrt looks for them in
+/usr/local/{include,lib}/, respectively.
+
+If OpenEXR is not installed, you can either build it from source or use
+your system's package manager to install it.
+
+To build from source, download from http://openexr.com, untar it, and
+follow the directions in the distribution to build and install OpenEXR.  By
+default, it is installed in /usr/local, in which case the default
+EXRINCLUDE and EXRLIBDIR lines in the pbrt Makefile will find it.  If you
+install it in a different directory, you will likely need to update those
+variables in the Makefile.
+
+Many Linux distributions have package managers that can be used to install
+prebuilt OpenEXR libraries.  However, many of them install relatively old
+versions of OpenEXR, so you may be safest just installing it from the
+latest source distribution from http://openexr.com.  Here are pointers
+about how to install it with the package managers of various systems:
+
+Ubuntu:
+% sudo apt-get install openexr libopenexr-devel
+
+Gentoo:
+% sudo emerge openexr
+
+Fedora:
+% sudo yum install openexr-devel
+
+(If you can send information about how to install it with the package
+managers on other systems to authors@pbrt.org, we will add them here.)
+

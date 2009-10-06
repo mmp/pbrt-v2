@@ -1,0 +1,103 @@
+
+/*
+    pbrt source code Copyright(c) 1998-2009 Matt Pharr and Greg Humphreys.
+
+    This file is part of pbrt.
+
+    pbrt is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.  Note that the text contents of
+    the book "Physically Based Rendering" are *not* licensed under the
+    GNU GPL.
+
+    pbrt is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
+#ifndef PBRT_TEXTURES_IMAGEMAP_H
+#define PBRT_TEXTURES_IMAGEMAP_H
+
+// textures/imagemap.h*
+#include "pbrt.h"
+#include "texture.h"
+#include "mipmap.h"
+#include "paramset.h"
+#include <map>
+
+// TexInfo Declarations
+struct TexInfo {
+    TexInfo(const string &f, bool dt, float ma, ImageWrap wm)
+        : filename(f), doTrilinear(dt), maxAniso(ma), wrapMode(wm) { }
+    string filename;
+    bool doTrilinear;
+    float maxAniso;
+    ImageWrap wrapMode;
+    bool operator<(const TexInfo &t2) const {
+        if (filename != t2.filename) return filename < t2.filename;
+        if (doTrilinear != t2.doTrilinear) return doTrilinear < t2.doTrilinear;
+        if (maxAniso != t2.maxAniso) return maxAniso < t2.maxAniso;
+        return wrapMode < t2.wrapMode;
+    }
+};
+
+
+
+// ImageTexture Declarations
+template <typename Tmemory, typename Treturn>
+    class ImageTexture : public Texture<Treturn> {
+public:
+    // ImageTexture Public Methods
+    ImageTexture(TextureMapping2D *m,
+                 const string &filename,
+                 bool doTri,
+                 float maxAniso,
+                 ImageWrap wm);
+    Treturn Evaluate(const DifferentialGeometry &) const;
+    ~ImageTexture();
+    static void ClearCache() {
+        std::map<TexInfo, void *>::iterator iter = textures.begin();
+        while (iter != textures.end()) {
+            delete (MIPMap<Tmemory> *)(iter->second);
+            ++iter;
+        }
+        textures.erase(textures.begin(), textures.end());
+    }
+private:
+    // ImageTexture Private Methods
+    static MIPMap<Tmemory> *GetTexture(const string &filename,
+        bool doTrilinear, float maxAniso, ImageWrap wm);
+    static void convertIn(const RGBSpectrum &from, RGBSpectrum *to) {
+        *to = from;
+    }
+    static void convertIn(const RGBSpectrum &from, float *to) {
+        *to = from.y();
+    }
+    static void convertOut(const RGBSpectrum &from, Spectrum *to) {
+        float rgb[3];
+        from.ToRGB(rgb);
+        *to = Spectrum::FromRGB(rgb);
+    }
+    static void convertOut(float from, float *to) {
+        *to = from;
+    }
+
+    // ImageTexture Private Data
+    MIPMap<Tmemory> *mipmap;
+    TextureMapping2D *mapping;
+    static std::map<TexInfo, void *> textures;
+};
+
+
+ImageTexture<float, float> *CreateImageFloatTexture(const Transform &tex2world,
+        const TextureParams &tp);
+ImageTexture<RGBSpectrum, Spectrum> *CreateImageSpectrumTexture(const Transform &tex2world,
+        const TextureParams &tp);
+
+#endif // PBRT_TEXTURES_IMAGEMAP_H

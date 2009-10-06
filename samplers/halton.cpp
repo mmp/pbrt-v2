@@ -1,0 +1,89 @@
+
+/*
+    pbrt source code Copyright(c) 1998-2009 Matt Pharr and Greg Humphreys.
+
+    This file is part of pbrt.
+
+    pbrt is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.  Note that the text contents of
+    the book "Physically Based Rendering" are *not* licensed under the
+    GNU GPL.
+
+    pbrt is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
+
+// samplers/halton.cpp*
+#include "samplers/halton.h"
+#include "paramset.h"
+#include "camera.h"
+#include "montecarlo.h"
+
+// HaltonSampler Method Definitions
+Sampler *HaltonSampler::GetSubSampler(int num, int count) {
+    int x0, x1, y0, y1;
+    ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
+    if (x0 == x1 || y0 == y1) return NULL;
+    return new HaltonSampler(x0, x1, y0, y1, SamplesPerPixel, ShutterOpen,
+        ShutterClose, num * 1024);
+}
+
+
+HaltonSampler::HaltonSampler(int xs, int xe, int ys, int ye, int ps,
+        float sopen, float sclose, u_long rngSeed)
+    : Sampler(xs, xe, ys, ye, ps, sopen, sclose), rng(rngSeed) {
+    int delta = max(xPixelEnd - xPixelStart,
+                    yPixelEnd - yPixelStart);
+
+    wantedSamples = SamplesPerPixel * delta * delta;
+    currentSample = 0;
+}
+
+
+int HaltonSampler::GetMoreSamples(Sample *samples) {
+retry:
+    if (currentSample >= wantedSamples) return 0;
+
+    float u = (float)RadicalInverse(currentSample, 3);
+    float v = (float)RadicalInverse(currentSample, 2);
+    samples->LensU = (float)RadicalInverse(currentSample, 5);
+    samples->LensV = (float)RadicalInverse(currentSample, 7);
+    samples->Time = Lerp((float)RadicalInverse(currentSample, 11),
+        ShutterOpen, ShutterClose);
+
+    float lerpDelta = float(max(xPixelEnd - xPixelStart, yPixelEnd - yPixelStart));
+    samples->ImageX = Lerp(u, xPixelStart, xPixelStart + lerpDelta);
+    samples->ImageY = Lerp(v, yPixelStart, yPixelStart + lerpDelta);
+    ++currentSample;
+    if (samples->ImageX >= xPixelEnd || samples->ImageY >= yPixelEnd)
+        goto retry;
+
+    for (u_int i = 0; i < samples->n1D.size(); ++i)
+        LatinHypercube(samples->oneD[i], samples->n1D[i], 1, rng);
+    for (u_int i = 0; i < samples->n2D.size(); ++i)
+        LatinHypercube(samples->twoD[i], samples->n2D[i], 2, rng);
+    return 1;
+}
+
+
+HaltonSampler *CreateHaltonSampler(const ParamSet &params, const Film *film,
+         const Camera *camera) {
+    // Initialize common sampler parameters
+    int xstart, xend, ystart, yend;
+    film->GetSampleExtent(&xstart, &xend, &ystart, &yend);
+    int nsamp = params.FindOneInt("pixelsamples", 4);
+    if (getenv("PBRT_QUICK_RENDER")) nsamp = 1;
+    return new HaltonSampler(xstart, xend, ystart, yend, nsamp,
+         camera->ShutterOpen, camera->ShutterClose, 0);
+}
+
+

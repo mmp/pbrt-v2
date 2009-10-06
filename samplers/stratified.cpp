@@ -1,0 +1,122 @@
+
+/*
+    pbrt source code Copyright(c) 1998-2009 Matt Pharr and Greg Humphreys.
+
+    This file is part of pbrt.
+
+    pbrt is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.  Note that the text contents of
+    the book "Physically Based Rendering" are *not* licensed under the
+    GNU GPL.
+
+    pbrt is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
+
+// samplers/stratified.cpp*
+#include "samplers/stratified.h"
+#include "paramset.h"
+#include "camera.h"
+#include "montecarlo.h"
+
+// StratifiedSampler Method Definitions
+StratifiedSampler::StratifiedSampler(int xstart, int xend,
+        int ystart, int yend, int xs, int ys, bool jitter,
+        float sopen, float sclose)
+    : Sampler(xstart, xend, ystart, yend, xs * ys, sopen, sclose) {
+    jitterSamples = jitter;
+    xPos = xPixelStart;
+    yPos = yPixelStart;
+    xPixelSamples = xs;
+    yPixelSamples = ys;
+    sampleBuf = NULL;
+}
+
+
+StratifiedSampler::~StratifiedSampler() {
+    delete[] sampleBuf;
+}
+
+
+Sampler *StratifiedSampler::GetSubSampler(int num, int count) {
+    int x0, x1, y0, y1;
+    ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
+    if (x0 == x1 || y0 == y1) return NULL;
+    return new StratifiedSampler(x0, x1, y0, y1, xPixelSamples,
+        yPixelSamples, jitterSamples, ShutterOpen, ShutterClose);
+}
+
+
+int StratifiedSampler::GetMoreSamples(Sample *samples) {
+    if (yPos == yPixelEnd) return 0;
+    int nSamples = xPixelSamples * yPixelSamples;
+    // Generate stratified camera samples for (_xPos_,_yPos_)
+    if (!sampleBuf) sampleBuf = new float[5 * nSamples];
+    float *bufp = sampleBuf;
+    float *imageSamples = bufp; bufp += 2 * nSamples;
+    float *lensSamples = bufp;  bufp += 2 * nSamples;
+    float *timeSamples = bufp;
+    
+    StratifiedSample2D(imageSamples, xPixelSamples, yPixelSamples,
+                       *samples[0].rng, jitterSamples);
+    StratifiedSample2D(lensSamples, xPixelSamples, yPixelSamples,
+                       *samples[0].rng, jitterSamples);
+    StratifiedSample1D(timeSamples, xPixelSamples*yPixelSamples,
+                       *samples[0].rng, jitterSamples);
+
+    // Shift stratified image samples to pixel coordinates
+    for (int o = 0; o < 2 * xPixelSamples * yPixelSamples; o += 2) {
+        imageSamples[o]   += xPos;
+        imageSamples[o+1] += yPos;
+    }
+
+    // Decorrelate sample dimensions
+    Shuffle(lensSamples, xPixelSamples*yPixelSamples, 2, *samples[0].rng);
+    Shuffle(timeSamples, xPixelSamples*yPixelSamples, 1, *samples[0].rng);
+
+    // Initialize stratified _samples_ with sample values
+    for (int i = 0; i < nSamples; ++i) {
+        samples[i].ImageX = imageSamples[2*i];
+        samples[i].ImageY = imageSamples[2*i+1];
+        samples[i].LensU = lensSamples[2*i];
+        samples[i].LensV = lensSamples[2*i+1];
+        samples[i].Time = Lerp(timeSamples[i], ShutterOpen, ShutterClose);
+        // Generate stratified samples for integrators
+        for (u_int j = 0; j < samples[i].n1D.size(); ++j)
+            LatinHypercube(samples[i].oneD[j], samples[i].n1D[j], 1, *samples[i].rng);
+        for (u_int j = 0; j < samples[i].n2D.size(); ++j)
+            LatinHypercube(samples[i].twoD[j], samples[i].n2D[j], 2, *samples[i].rng);
+    }
+
+    // Advance to next pixel for stratified sampling
+    if (++xPos == xPixelEnd) {
+        xPos = xPixelStart;
+        ++yPos;
+    }
+    return nSamples;
+}
+
+
+StratifiedSampler *CreateStratifiedSampler(const ParamSet &params, const Film *film,
+         const Camera *camera) {
+    bool jitter = params.FindOneBool("jitter", true);
+    // Initialize common sampler parameters
+    int xstart, xend, ystart, yend;
+    film->GetSampleExtent(&xstart, &xend, &ystart, &yend);
+    int xsamp = params.FindOneInt("xsamples", 2);
+    int ysamp = params.FindOneInt("ysamples", 2);
+    if (getenv("PBRT_QUICK_RENDER")) xsamp = ysamp = 1;
+    return new StratifiedSampler(xstart, xend, ystart, yend, xsamp, ysamp,
+        jitter, camera->ShutterOpen, camera->ShutterClose);
+}
+
+
