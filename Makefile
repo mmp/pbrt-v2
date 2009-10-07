@@ -1,31 +1,30 @@
+ARCH = $(shell uname)
+
 # user-configuration section
 
-EXRINCLUDE=-I/usr/local/include/OpenEXR
+EXRINCLUDE=-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR
 EXRLIBDIR=-L/usr/local/lib
 
-DEFS=-DPBRT_STATS_NONE -DPBRT_POINTER_SIZE=8 -DPBRT_HAS_PTHREADS -DPBRT_HAS_OPENEXR \
-	-DPBRT_HAS_64_BIT_ATOMICS
-
-# you will also need to remove the -m64 in the OPT line below if you're 
-# not compiling on a 64-bit system
+DEFS=-DPBRT_STATS_NONE -DPBRT_POINTER_SIZE=4 -DPBRT_HAS_PTHREADS -DPBRT_HAS_OPENEXR
 
 #########################################################################
 
-ARCH = $(shell uname)
 LEX=flex
 YACC=bison -d -v -t
 LEXLIB = -lfl
 
-EXRLIBS=$(EXRLIBDIR) -Bstatic -lIex -lIlmImf -lIlmThread -lImath -lIex -lHalf -Bdynamic -lz
+EXRLIBS=$(EXRLIBDIR) -Bstatic -lIex -lIlmImf -lIlmThread -lImath -lIex -lHalf -Bdynamic
 ifeq ($(ARCH),Linux)
   EXRLIBS += -lpthread
+endif
+ifeq ($(ARCH),Darwin)
+  EXRLIBS += -lz
 endif
 
 CC=gcc
 CXX=g++
 LD=$(CXX) $(OPT)
-OPT=-O2 -m64
-# OPT=-O2 -msse -mfpmath=sse
+OPT=-O2 -m32 -msse2 -mfpmath=sse
 INCLUDE=-I. -Icore $(EXRINCLUDE)
 WARN=-Wall
 CWD=$(shell pwd)
@@ -115,7 +114,7 @@ objs/pbrt.o: main/pbrt.cpp
 
 bin/pbrt: objs/libpbrt.a objs/pbrt.o
 	@echo "Linking $@"
-	@$(CXX) -o $@ objs/libpbrt.a objs/pbrt.o $(LIBS)
+	@$(CXX) $(CXXFLAGS) -o $@ objs/pbrt.o objs/libpbrt.a $(LIBS)
 
 core/pbrtlex.cpp: core/pbrtlex.ll core/pbrtparse.cpp
 	@echo "Lex'ing pbrtlex.ll"
