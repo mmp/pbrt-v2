@@ -2,7 +2,7 @@ Scale -1 1 1
 LookAt 18 5.5 2    15.5 .9 10   0 1 0
 Camera "perspective" "float fov" [40]
 
-Sampler "lowdiscrepancy" "integer pixelsamples" [8]
+Sampler "lowdiscrepancy" "integer pixelsamples" [4]
 PixelFilter "box"
 
 Film "image" "integer xresolution" [500] "integer yresolution" [500]
