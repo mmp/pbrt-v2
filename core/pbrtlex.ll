@@ -32,13 +32,14 @@
 
 struct ParamArray;
 
-#include "pbrtparse.hh"
-
 #ifdef WIN32
 #pragma warning(disable:4244)
 #pragma warning(disable:4065)
 #pragma warning(disable:4018)
 #pragma warning(disable:4996)
+#include "pbrtparse.hpp"
+#else
+#include "pbrtparse.hh"
 #endif
 
 struct IncludeInfo {
