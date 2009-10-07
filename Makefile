@@ -44,9 +44,14 @@ HEADERS = $(wildcard */*.h)
 
 default: bin/pbrt #tools
 
+pbrt: bin/pbrt
+
+dirs:
+	/bin/mkdir -p bin objs
+
 $(LIBOBJS): $(HEADERS)
 
-.PHONY: tools exrcheck
+.PHONY: dirs tools exrcheck
 
 objs/libpbrt.a: $(LIBOBJS)
 	@echo "Building the core rendering library (libpbrt.a)"
@@ -112,7 +117,7 @@ objs/pbrt.o: main/pbrt.cpp
 	@echo "Building object $@"
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-bin/pbrt: objs/libpbrt.a objs/pbrt.o
+bin/pbrt: dirs objs/libpbrt.a objs/pbrt.o
 	@echo "Linking $@"
 	@$(CXX) $(CXXFLAGS) -o $@ objs/pbrt.o objs/libpbrt.a $(LIBS)
 
