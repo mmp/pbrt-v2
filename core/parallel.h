@@ -51,10 +51,12 @@ typedef volatile LONG AtomicInt32;
 typedef volatile LONGLONG AtomicInt64;
 #endif // 64-bit
 #endif // WIN32
+#ifndef WIN32
 typedef volatile int32_t AtomicInt32;
 #ifdef PBRT_HAS_64_BIT_ATOMICS
 typedef volatile int64_t AtomicInt64;
 #endif
+#endif // !WIN32
 inline int32_t AtomicAdd(AtomicInt32 *v, int32_t delta) {
     PBRT_ATOMIC_MEMORY_OP();
 #ifdef WIN32
