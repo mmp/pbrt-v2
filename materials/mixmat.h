@@ -21,10 +21,10 @@
 
  */
 
-#ifndef PBRT_MATERIALS_MIX_H
-#define PBRT_MATERIALS_MIX_H
+#ifndef PBRT_MATERIALS_MIXMAT_H
+#define PBRT_MATERIALS_MIXMAT_H
 
-// materials/mix.h*
+// materials/mixmat.h*
 #include "pbrt.h"
 #include "material.h"
 
@@ -52,4 +52,4 @@ MixMaterial *CreateMixMaterial(const Transform &xform,
     const TextureParams &mp, const Reference<Material> &m1,
     const Reference<Material> &m2);
 
-#endif // PBRT_MATERIALS_MIX_H
+#endif // PBRT_MATERIALS_MIXMAT_H

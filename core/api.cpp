@@ -72,7 +72,7 @@
 #include "materials/measured.h"
 #include "materials/metal.h"
 #include "materials/mirror.h"
-#include "materials/mix.h"
+#include "materials/mixmat.h"
 #include "materials/plastic.h"
 #include "materials/substrate.h"
 #include "materials/subsurface.h"

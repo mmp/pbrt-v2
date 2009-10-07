@@ -22,8 +22,8 @@
  */
 
 
-// materials/mix.cpp*
-#include "materials/mix.h"
+// materials/mixmat.cpp*
+#include "materials/mixmat.h"
 #include "materials/matte.h"
 #include "spectrum.h"
 #include "reflection.h"
