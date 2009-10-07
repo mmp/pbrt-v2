@@ -62,7 +62,7 @@ LightSampleOffsets::LightSampleOffsets(int count, Sample *sample) {
 
 
 LightSample::LightSample(const Sample *sample,
-                         const LightSampleOffsets &offsets, u_int num) {
+        const LightSampleOffsets &offsets, u_int num) {
     Assert(num < sample->n2D[offsets.posOffset]);
     Assert(num < sample->n1D[offsets.componentOffset]);
     uPos[0] = sample->twoD[offsets.posOffset][2*num];

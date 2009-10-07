@@ -96,9 +96,8 @@ float SpotLight::Pdf(const Point &, const Vector &) const {
 }
 
 
-Spectrum SpotLight::Sample_L(const Scene *scene,
-                             const LightSample &ls, float u1,
-                             float u2, Ray *ray, Normal *Ns, float *pdf) const {
+Spectrum SpotLight::Sample_L(const Scene *scene, const LightSample &ls,
+        float u1, float u2, Ray *ray, Normal *Ns, float *pdf) const {
     ray->o = lightPos;
     Vector v = UniformSampleCone(ls.uPos[0], ls.uPos[1], cosTotalWidth);
     ray->d = LightToWorld(v);

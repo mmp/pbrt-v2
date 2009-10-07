@@ -452,7 +452,7 @@ Spectrum BxDF::rho(const Vector &w, int nSamples,
 
 
 Spectrum BxDF::rho(int nSamples, const float *samples1,
-    const float *samples2) const {
+        const float *samples2) const {
     Spectrum r = 0.;
     for (int i = 0; i < nSamples; ++i) {
         // Estimate one term of $\rho_\roman{hh}$

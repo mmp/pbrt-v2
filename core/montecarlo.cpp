@@ -447,7 +447,7 @@ float UniformConePdf(float cosThetaMax) {
 
 
 Vector UniformSampleCone(float u1, float u2, float costhetamax) {
-    float costheta = Lerp(u1, costhetamax, 1.f);
+    float costheta = (1.f - u1) + u1 * costhetamax;
     float sintheta = sqrtf(1.f - costheta*costheta);
     float phi = u2 * 2.f * M_PI;
     return Vector(cosf(phi) * sintheta,

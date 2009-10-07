@@ -113,7 +113,7 @@ Spectrum EstimateDirect(const Scene *scene, const Renderer *renderer,
     Vector wi;
     float lightPdf, bsdfPdf;
     VisibilityTester visibility;
-    Spectrum Li = light->Sample_L(p, n, rayEpsilon, lightSample,
+    Spectrum Li = light->Sample_L(p, rayEpsilon, lightSample,
                                   &wi, &lightPdf, &visibility);
     if (lightPdf > 0. && !Li.IsBlack()) {
         Spectrum f = bsdf->f(wo, wi);
@@ -255,8 +255,8 @@ void ComputeLightSamplingCDF(const Scene *scene,
 
 
 int SampleLightFromCDF(const vector<float> &lightPower,
-                       const vector<float> &lightCDF, float totalPower,
-                       float u, float *pdf) {
+        const vector<float> &lightCDF, float totalPower, float u,
+        float *pdf) {
     int nLights = int(lightPower.size());
     int lNum = Floor2Int(SampleStep1d(&lightPower[0], &lightCDF[0],
                                       totalPower, nLights, u, pdf) *

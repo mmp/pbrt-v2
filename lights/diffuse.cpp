@@ -58,8 +58,8 @@ AreaLight *CreateDiffuseAreaLight(const Transform &light2world, const ParamSet &
 }
 
 
-Spectrum DiffuseAreaLight::Sample_L(const Point &p, const Normal &n, float pEpsilon,
-        const LightSample &ls, Vector *wi, float *pdf,
+Spectrum DiffuseAreaLight::Sample_L(const Point &p, const Normal &n,
+        float pEpsilon, const LightSample &ls, Vector *wi, float *pdf,
         VisibilityTester *visibility) const {
     Normal ns;
     Point ps = shapeSet->Sample(p, ls, &ns);

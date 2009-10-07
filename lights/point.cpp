@@ -70,8 +70,7 @@ float PointLight::Pdf(const Point &, const Vector &) const {
 
 
 Spectrum PointLight::Sample_L(const Scene *scene, const LightSample &ls,
-                              float u1, float u2,
-                              Ray *ray, Normal *Ns, float *pdf) const {
+        float u1, float u2, Ray *ray, Normal *Ns, float *pdf) const {
     ray->o = lightPos;
     ray->d = UniformSampleSphere(ls.uPos[0], ls.uPos[1]);
     *Ns = (Normal)ray->d;
