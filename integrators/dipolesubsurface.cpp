@@ -297,7 +297,7 @@ void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
                 Vector wi;
                 float lightPdf;
                 VisibilityTester visibility;
-                Spectrum Li = light->Sample_L(ip.p, ip.n, ip.rayEpsilon,
+                Spectrum Li = light->Sample_L(ip.p, ip.rayEpsilon,
                     ls, &wi, &lightPdf, &visibility);
                 if (Dot(wi, ip.n) <= 0.) continue;
                 if (Li.IsBlack() || lightPdf == 0.f) continue;

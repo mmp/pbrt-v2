@@ -42,10 +42,7 @@ public:
     }
     Spectrum Power(const Scene *) const;
     bool IsDeltaLight() const { return false; }
-    float Pdf(const Point &, const Normal &N, const Vector &) const;
     float Pdf(const Point &, const Vector &) const;
-    Spectrum Sample_L(const Point &P, const Normal &N, float pEpsilon,
-        const LightSample &ls, Vector *wo, float *pdf, VisibilityTester *visibility) const;
     Spectrum Sample_L(const Point &P, float pEpsilon, const LightSample &ls, Vector *wo,
         float *pdf, VisibilityTester *visibility) const;
     Spectrum Sample_L(const Scene *scene, const LightSample &ls, float u1, float u2,

@@ -55,15 +55,6 @@ public:
     virtual bool IsDeltaLight() const = 0;
     virtual Spectrum Le(const RayDifferential &r) const;
     virtual float Pdf(const Point &p, const Vector &wi) const = 0;
-    virtual Spectrum Sample_L(const Point &p, const Normal &n,
-            float pEpsilon, const LightSample &ls, Vector *wi, float *pdf,
-            VisibilityTester *visibility) const {
-        return Sample_L(p, pEpsilon, ls, wi, pdf, visibility);
-    }
-    virtual float Pdf(const Point &p, const Normal &n,
-                      const Vector &wi) const {
-        return Pdf(p, wi);
-    }
     virtual Spectrum Sample_L(const Scene *scene, const LightSample &ls,
         float u1, float u2, Ray *ray, Normal *Ns, float *pdf) const = 0;
     virtual void SHProject(const Point &p, float pEpsilon, int lmax, const Scene *scene,

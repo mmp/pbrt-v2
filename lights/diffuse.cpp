@@ -58,7 +58,7 @@ AreaLight *CreateDiffuseAreaLight(const Transform &light2world, const ParamSet &
 }
 
 
-Spectrum DiffuseAreaLight::Sample_L(const Point &p, const Normal &n,
+Spectrum DiffuseAreaLight::Sample_L(const Point &p,
         float pEpsilon, const LightSample &ls, Vector *wi, float *pdf,
         VisibilityTester *visibility) const {
     Normal ns;
@@ -70,21 +70,9 @@ Spectrum DiffuseAreaLight::Sample_L(const Point &p, const Normal &n,
 }
 
 
-float DiffuseAreaLight::Pdf(const Point &p, const Normal &n,
+float DiffuseAreaLight::Pdf(const Point &p,
                      const Vector &wi) const {
     return shapeSet->Pdf(p, wi);
-}
-
-
-Spectrum DiffuseAreaLight::Sample_L(const Point &P, float pEpsilon,
-        const LightSample &ls, Vector *wo, float *pdf,
-        VisibilityTester *visibility) const {
-    Normal Ns;
-    Point Ps = shapeSet->Sample(P, ls, &Ns);
-    *wo = Normalize(Ps - P);
-    *pdf = shapeSet->Pdf(P, *wo);
-    visibility->SetSegment(P, pEpsilon, Ps, 1e-3f);
-    return L(Ps, Ns, -*wo);
 }
 
 
@@ -97,11 +85,6 @@ Spectrum DiffuseAreaLight::Sample_L(const Scene *scene, const LightSample &ls,
     if (Dot(ray->d, *Ns) < 0.) ray->d *= -1;
     *pdf = shapeSet->Pdf(ray->o) * INV_TWOPI;
     return L(ray->o, *Ns, ray->d);
-}
-
-
-float DiffuseAreaLight::Pdf(const Point &P, const Vector &w) const {
-    return shapeSet->Pdf(P, w);
 }
 
 

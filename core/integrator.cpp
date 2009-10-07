@@ -135,7 +135,7 @@ Spectrum EstimateDirect(const Scene *scene, const Renderer *renderer,
         BxDFType flags = BxDFType(BSDF_ALL & ~BSDF_SPECULAR);
         Spectrum f = bsdf->Sample_f(wo, &wi, bsdfSample, &bsdfPdf, flags);
         if (!f.IsBlack() && bsdfPdf > 0.) {
-            lightPdf = light->Pdf(p, n, wi);
+            lightPdf = light->Pdf(p, wi);
             if (lightPdf > 0.) {
                 // Add light contribution from BSDF sampling
                 float weight = PowerHeuristic(1, bsdfPdf, 1, lightPdf);
