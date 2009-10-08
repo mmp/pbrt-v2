@@ -76,15 +76,15 @@ float DiffuseAreaLight::Pdf(const Point &p,
 }
 
 
-Spectrum DiffuseAreaLight::Sample_L(const Scene *scene, const LightSample &ls,
-                             float u1, float u2,
-                             Ray *ray, Normal *Ns, float *pdf) const {
-    ray->o = shapeSet->Sample(ls, Ns);
-    ray->d = UniformSampleSphere(u1, u2);
-    ray->mint = 1e-3f;
-    if (Dot(ray->d, *Ns) < 0.) ray->d *= -1;
-    *pdf = shapeSet->Pdf(ray->o) * INV_TWOPI;
-    return L(ray->o, *Ns, ray->d);
+Spectrum DiffuseAreaLight::Sample_L(const Scene *scene,
+        const LightSample &ls, float u1, float u2, Ray *ray,
+        Normal *Ns, float *pdf) const {
+    Point org = shapeSet->Sample(ls, Ns);
+    Vector dir = UniformSampleSphere(u1, u2);
+    if (Dot(dir, *Ns) < 0.) dir *= -1.f;
+    *ray = Ray(org, dir, 1e-3f, INFINITY);
+    *pdf = shapeSet->Pdf(org) * INV_TWOPI;
+    return L(org, *Ns, dir);
 }
 
 
