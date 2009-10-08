@@ -117,31 +117,25 @@ ShapeSet::ShapeSet(const Reference<Shape> &s) {
             "may be very inefficient.", (int)shapes.size());
 
     // Compute total area of shapes in _ShapeSet_ and area CDF
-    area = 0;
-    vector<float> areas;
-    for (u_int i = 0; i < shapes.size(); ++i) {
-        float a = shapes[i]->Area();
-        area += a;
-        areas.push_back(a);
-    }
-    float prevCDF = 0;
-    for (u_int i = 0; i < shapes.size(); ++i) {
-        areaCDF.push_back(prevCDF + areas[i] / area);
-        prevCDF = areaCDF[i];
-    }
+    for (u_int i = 0; i < shapes.size(); ++i)
+        areas.push_back(shapes[i]->Area());
+    areaCDF.resize(shapes.size()+1);
+    ComputeStep1dCDF(&areas[0], shapes.size(), &area, &areaCDF[0]);
+    area *= shapes.size();
 }
 
 
-Point ShapeSet::Sample(const Point &p, const LightSample &ls, Normal *Ns) const {
+Point ShapeSet::Sample(const Point &p, const LightSample &ls,
+        Normal *Ns) const {
     int sn = std::lower_bound(areaCDF.begin(), areaCDF.end(),
-                              ls.uComponent) - areaCDF.begin();
+                              ls.uComponent) - areaCDF.begin() - 1;
     return shapes[max(0, sn)]->Sample(p, ls.uPos[0], ls.uPos[1], Ns);
 }
 
 
 Point ShapeSet::Sample(const LightSample &ls, Normal *Ns) const {
     int sn = std::lower_bound(areaCDF.begin(), areaCDF.end(),
-                              ls.uComponent) - areaCDF.begin();
+                              ls.uComponent) - areaCDF.begin() - 1;
     return shapes[max(0, sn)]->Sample(ls.uPos[0], ls.uPos[1], Ns);
 }
 
@@ -149,7 +143,7 @@ Point ShapeSet::Sample(const LightSample &ls, Normal *Ns) const {
 float ShapeSet::Pdf(const Point &p, const Vector &wi) const {
     float pdf = 0.f;
     for (u_int i = 0; i < shapes.size(); ++i)
-        pdf += shapes[i]->Area() * shapes[i]->Pdf(p, wi);
+        pdf += areas[i] * shapes[i]->Pdf(p, wi);
     return pdf / area;
 }
 
@@ -157,7 +151,7 @@ float ShapeSet::Pdf(const Point &p, const Vector &wi) const {
 float ShapeSet::Pdf(const Point &p) const {
     float pdf = 0.f;
     for (u_int i = 0; i < shapes.size(); ++i)
-        pdf += shapes[i]->Area() * shapes[i]->Pdf(p);
+        pdf += areas[i] * shapes[i]->Pdf(p);
     return pdf / area;
 }
 

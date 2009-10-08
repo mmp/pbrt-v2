@@ -136,7 +136,7 @@ private:
     // ShapeSet Private Data
     vector<Reference<Shape> > shapes;
     float area;
-    vector<float> areaCDF;
+    vector<float> areas, areaCDF;
 };
 
 
