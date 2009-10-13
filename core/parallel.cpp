@@ -30,7 +30,10 @@
 #endif // PBRT_USE_GRAND_CENTRAL_DISPATCH
 #ifndef WIN32
 #include <fcntl.h>
+#include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/param.h>
 #include <sys/sysctl.h>
 #endif // WIN32
 #include <list>
@@ -863,7 +866,18 @@ int NumSystemCores() {
     return sysconf(_SC_NPROCESSORS_ONLN);
 #else
     // mac/bsds
-    int mib[2] = { CTL_HW, HW_AVAILCPU };
+#ifdef __OPENBSD__
+    int mib[2] = { CTL_HW, HW_NCPU };
+#else
+    int mib[2];
+    mib[0] = CTL_HW;
+    size_t length = 2;
+    if (sysctlnametomib("hw.logicalcpu", mib, &length) == -1) {
+        Error("sysctlnametomib() filed.  Guessing 2 CPU cores.");
+        return 2;
+    }
+    Assert(length == 2);
+#endif
     int nCores = 0;
     size_t size = sizeof(nCores);
 
