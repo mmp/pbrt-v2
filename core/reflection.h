@@ -446,8 +446,9 @@ public:
     }
     float D(const Vector &wh) const {
         float costhetah = AbsCosTheta(wh);
-        float e = (ex * wh.x * wh.x + ey * wh.y * wh.y) /
-                  (1.f - costhetah * costhetah);
+        float d = 1.f - costhetah * costhetah;
+        if (d == 0.f) return 0.f;
+        float e = (ex * wh.x * wh.x + ey * wh.y * wh.y) / d;
         return sqrtf((ex+1)*(ey+1)) * INV_TWOPI * powf(costhetah, e);
     }
     void Sample_f(const Vector &wo, Vector *wi, float u1, float u2, float *pdf) const;
