@@ -13,10 +13,11 @@ feedback, please either send it to the pbrt mailing list, or to
 authors@pbrt.org.
 
 We will release updated versions of the system frequently; the latest
-version of the code will always be available at the github page XXX.  The
-best way to track changes to the system is to use the git source code
-management system, although tar files and zip files are also available for
-download from the github page.
+version of the code will always be available at the github page
+http://github.com/mmp/pbrt-v2.  The best way to track changes to the system
+is to use the git source code management system, although tar files and zip
+files are also available for download from the github page by clicking the
+"download" button.
 
 The remainder of this document will summarize the major changes to the
 system.  See the file README_BUILDING.txt for information about how to
