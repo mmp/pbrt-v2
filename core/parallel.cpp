@@ -459,11 +459,20 @@ void RWMutexLock::DowngradeToRead() {
 #endif // WIN32
 #ifdef PBRT_HAS_PTHREADS
 Semaphore::Semaphore() {
+#ifdef __OpenBSD__
+    sem = (sem_t *)malloc(sizeof(sem_t));
+    if (!sem)
+        Severe("Error from sem_open");
+    int err = sem_init(sem, 0, 0);
+    if (err == -1)
+        Severe("Error from sem_init: %s", strerror(err));
+#else
     char name[32];
     sprintf(name, "pbrt.%d-%d", (int)getpid(), count++);
     sem = sem_open(name, O_CREAT, S_IRUSR|S_IWUSR, 0);
     if (!sem)
         Severe("Error from sem_open");
+#endif // !__OpenBSD__
 }
 
 
@@ -482,9 +491,17 @@ int Semaphore::count = 0;
 #endif // PBRT_HAS_PTHREADS
 #ifdef PBRT_HAS_PTHREADS
 Semaphore::~Semaphore() {
+#ifdef __OpenBSD__
+    int err = sem_destroy(sem);
+    free((void *)sem);
+    sem = NULL;
+    if (err != 0)
+        Severe("Error from sem_destroy: %s", strerror(err));
+#else
     int err;
     if ((err = sem_close(sem)) != 0)
         Severe("Error from sem_close: %s", strerror(err));
+#endif // !__OpenBSD__
 }
 
 
