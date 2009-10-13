@@ -30,9 +30,59 @@
 #include "rng.h"
 
 // MC Utility Declarations
-void ComputeStep1dCDF(const float *f, int nValues, float *c, float *cdf);
-float SampleStep1d(const float *f, const float *cdf, float c,
-    int nSteps, float u, float *weight);
+struct Distribution1D {
+    // Distribution1D Public Methods
+    Distribution1D(const float *f, int n) {
+        count = n;
+        func = new float[n];
+        memcpy(func, f, n*sizeof(float));
+        cdf = new float[n+1];
+        // Compute integral of step function at $x_i$
+        cdf[0] = 0.;
+        for (int i = 1; i < n+1; ++i)
+            cdf[i] = cdf[i-1] + f[i-1] / n;
+
+        // Transform step function integral into CDF
+        funcInt = cdf[n];
+        for (int i = 1; i < n+1; ++i)
+            cdf[i] /= funcInt;
+    }
+    ~Distribution1D() {
+        delete[] func;
+        delete[] cdf;
+    }
+    float SampleContinuous(float u, float *pdf) const {
+        // Find surrounding CDF segments and _offset_
+        float *ptr = std::lower_bound(cdf, cdf+count+1, u);
+        int offset = max(0, int(ptr-cdf-1));
+
+        // Compute offset along CDF segment
+        float du = (u - cdf[offset]) / (cdf[offset+1] - cdf[offset]);
+
+        // Compute PDF for sampled offset
+        if (pdf) *pdf = func[offset] / funcInt;
+
+        // Return $x \in [0,1]$ corresponding to sample
+        return (offset + du) / count;
+    }
+    int SampleDiscrete(float u, float *pdf) const {
+        // Find surrounding CDF segments and _offset_
+        float *ptr = std::lower_bound(cdf, cdf+count+1, u);
+        int offset = max(0, int(ptr-cdf-1));
+
+        // Compute PDF for sampled offset
+        if (pdf) *pdf = func[offset] / funcInt;
+        return offset;
+    }
+private:
+    friend struct Distribution2D;
+    // Distribution1D Private Data
+    float *func, *cdf;
+    float funcInt;
+    int count;
+};
+
+
 void RejectionSampleDisk(float u1, float u2, float *x, float *y);
 Vector UniformSampleHemisphere(float u1, float u2);
 float  UniformHemispherePdf();
@@ -58,6 +108,33 @@ inline float CosineHemispherePdf(float costheta, float phi) {
 
 
 void UniformSampleTriangle(float ud1, float ud2, float *u, float *v);
+struct Distribution2D {
+    // Distribution2D Public Methods
+    Distribution2D(const float *data, int nu, int nv);
+    ~Distribution2D();
+    void SampleContinuous(float u0, float u1, float uv[2], float *pdf) const {
+        float pdfs[2];
+        uv[1] = pMarginal->SampleContinuous(u1, &pdfs[1]);
+        int v = Clamp(Float2Int(uv[1] * pMarginal->count), 0,
+                      pMarginal->count-1);
+        uv[0] = pConditionalV[v]->SampleContinuous(u0, &pdfs[0]);
+        *pdf = pdfs[0] * pdfs[1];
+    }
+    float Pdf(float u, float v) const {
+        int iu = Clamp(Float2Int(u * pConditionalV[0]->count), 0,
+                       pConditionalV[0]->count-1);
+        int iv = Clamp(Float2Int(v * pMarginal->count), 0,
+                       pMarginal->count-1);
+        return (pConditionalV[iv]->func[iu] * pMarginal->func[iv]) /
+               (pConditionalV[iv]->funcInt * pMarginal->funcInt);
+    }
+private:
+    // Distribution2D Private Data
+    vector<Distribution1D *> pConditionalV;
+    Distribution1D *pMarginal;
+};
+
+
 void StratifiedSample1D(float *samples, int nsamples, RNG &rng,
                         bool jitter = true);
 void StratifiedSample2D(float *samples, int nx, int ny, RNG &rng,
@@ -151,38 +228,6 @@ void LDPixelSample(int xPos, int yPos, float ShutterOpen,
     float ShutterClose, int pixelSamples, Sample *samples, float *buf);
 void SampleBlinn(const Vector &wo, Vector *wi, float u1, float u2, float *pdf, float exponent);
 float BlinnPdf(const Vector &wo, const Vector &wi, float exponent);
-struct Distribution1D {
-    // Distribution1D Methods
-    Distribution1D(float *f, int n) {
-        func = new float[n];
-        cdf = new float[n+1];
-        count = n;
-        memcpy(func, f, n*sizeof(float));
-        ComputeStep1dCDF(func, n, &funcInt, cdf);
-        invFuncInt = 1.f / funcInt;
-        invCount = 1.f / count;
-    }
-    ~Distribution1D() {
-        delete[] func;
-        delete[] cdf;
-    }
-    float Sample(float u, float *pdf) {
-        // Find surrounding cdf segments
-        float *ptr = std::lower_bound(cdf, cdf+count+1, u);
-        int offset = max(0, (int) (ptr-cdf-1));
-        // Return offset along current cdf segment
-        u = (u - cdf[offset]) / (cdf[offset+1] - cdf[offset]);
-        *pdf = func[offset] * invFuncInt;
-        return offset + u;
-    }
-
-    // Distribution1D Data
-    float *func, *cdf;
-    float funcInt, invFuncInt, invCount;
-    int count;
-};
-
-
 Vector SampleHG(const Vector &w, float g, float u1, float u2);
 float HGPdf(const Vector &w, const Vector &wp, float g);
 

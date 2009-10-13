@@ -79,9 +79,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
     LDShuffleScrambled2D(nLightPaths, nLightSets, &lightSampDir[0], rng);
 
     // Precompute information for light sampling densities
-    float totalPower;
-    vector<float> lightPower, lightCDF;
-    ComputeLightSamplingCDF(scene, &lightPower, &lightCDF, &totalPower);
+    Distribution1D *lightDistribution = ComputeLightSamplingCDF(scene);
     for (u_int s = 0; s < nLightSets; ++s) {
         for (u_int i = 0; i < nLightPaths; ++i) {
             // Follow path _i_ from light to create virtual lights
@@ -89,8 +87,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
 
             // Choose light source to trace virtual light path from
             float lightPdf;
-            int ln = SampleLightFromCDF(lightPower, lightCDF, totalPower,
-                                        lightNum[sampOffset], &lightPdf);
+            int ln = lightDistribution->SampleDiscrete(lightNum[sampOffset], &lightPdf);
             Light *light = scene->lights[ln];
 
             // Sample ray leaving light source for virtual light path
@@ -140,6 +137,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
             arena.FreeAll();
         }
     }
+    delete lightDistribution;
 }
 
 

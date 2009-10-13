@@ -27,18 +27,6 @@
 #include "paramset.h"
 
 // VolumeGridDensity Method Definitions
-VolumeGridDensity::VolumeGridDensity(const Spectrum &sa,
-                       const Spectrum &ss, float gg,
-                       const Spectrum &emit, const BBox &e,
-                       const Transform &v2w,
-                       int x, int y, int z, const float *d)
-    : DensityRegion(sa, ss, gg, emit, v2w),
-    nx(x), ny(y), nz(z), extent(e) {
-    density = new float[nx*ny*nz];
-    memcpy(density, d, nx*ny*nz*sizeof(float));
-}
-
-
 float VolumeGridDensity::Density(const Point &Pobj) const {
     if (!extent.Inside(Pobj)) return 0;
     // Compute voxel coordinates and offsets for _Pobj_

@@ -145,8 +145,7 @@ float PhaseHG(const Vector &w, const Vector &wp, float g) {
 }
 
 
-float PhaseSchlick(const Vector &w,
-                           const Vector &wp, float g) {
+float PhaseSchlick(const Vector &w, const Vector &wp, float g) {
     float k = 1.55f * g - .55f * g * g * g;
     float kcostheta = k * Dot(w, wp);
     return 1.f / (4.f * M_PI) *
@@ -181,7 +180,7 @@ AggregateVolume::AggregateVolume(const vector<VolumeRegion *> &r) {
 
 
 Spectrum AggregateVolume::sigma_a(const Point &p, const Vector &w,
-        float time) const {
+                                  float time) const {
     Spectrum s(0.);
     for (u_int i = 0; i < regions.size(); ++i)
         s += regions[i]->sigma_a(p, w, time);
@@ -301,9 +300,7 @@ Spectrum DensityRegion::tau(const Ray &r, float stepSize,
     float t0, t1;
     float length = r.d.Length();
     if (length == 0.f) return 0.f;
-    Ray rn(r.o, r.d / length,
-                r.mint * length,
-                r.maxt * length, r.time);
+    Ray rn(r.o, r.d / length, r.mint * length, r.maxt * length, r.time);
     if (!IntersectP(rn, &t0, &t1)) return 0.;
     Spectrum tau(0.);
     t0 += u * stepSize;

@@ -79,9 +79,6 @@ Spectrum SpecularReflect(const RayDifferential &ray, BSDF *bsdf, RNG &rng,
 Spectrum SpecularTransmit(const RayDifferential &ray, BSDF *bsdf, RNG &rng,
     const Intersection &isect, const Renderer *renderer, const Scene *scene,
     const Sample *sample, MemoryArena &arena);
-void ComputeLightSamplingCDF(const Scene *scene,
-    vector<float> *lightPower, vector<float> *lightCDF, float *totalPower);
-int SampleLightFromCDF(const vector<float> &lightPower,
-    const vector<float> &lightCDF, float totalPower, float u, float *pdf);
+Distribution1D *ComputeLightSamplingCDF(const Scene *scene);
 
 #endif // PBRT_CORE_INTEGRATOR_H

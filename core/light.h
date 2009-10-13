@@ -127,7 +127,8 @@ class ShapeSet {
 public:
     // ShapeSet Public Methods
     ShapeSet(const Reference<Shape> &s);
-    float Area() const { return area; }
+    float Area() const { return sumArea; }
+    ~ShapeSet();
     Point Sample(const Point &p, const LightSample &ls, Normal *Ns) const;
     Point Sample(const LightSample &ls, Normal *Ns) const;
     float Pdf(const Point &p, const Vector &wi) const;
@@ -135,8 +136,9 @@ public:
 private:
     // ShapeSet Private Data
     vector<Reference<Shape> > shapes;
-    float area;
-    vector<float> areas, areaCDF;
+    float sumArea;
+    vector<float> areas;
+    Distribution1D *areaDistribution;
 };
 
 

@@ -505,13 +505,16 @@ private:
 // BSSRDF Declarations
 class BSSRDF {
 public:
+    // BSSRDF Public Methods
     BSSRDF(const Spectrum &sa, const Spectrum &sps, float e)
         : eta(e), sig_a(sa), sigp_s(sps) { }
     Spectrum sigma_a() const { return sig_a; }
     Spectrum sigma_prime_s() const { return sigp_s; }
-
-    const float eta;
 private:
+    // BSSRDF Private Data
+    public:
+    const float eta;
+    private:
     Spectrum sig_a, sigp_s;
 };
 

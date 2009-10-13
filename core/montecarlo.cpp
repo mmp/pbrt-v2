@@ -155,34 +155,6 @@ void LDPixelSample(int xPos, int yPos,
 
 
 // MC Function Definitions
-void ComputeStep1dCDF(const float *f, int nSteps,
-            float *c, float *cdf) {
-    // Compute integral of step function at $x_i$
-    int i;
-    cdf[0] = 0.;
-    for (i = 1; i < nSteps+1; ++i)
-        cdf[i] = cdf[i-1] + f[i-1] / nSteps;
-
-    // Transform step function integral into cdf
-    *c = cdf[nSteps];
-    for (i = 1; i < nSteps+1; ++i)
-        cdf[i] /= *c;
-}
-
-
-float SampleStep1d(const float *f, const float *cdf, float c,
-                   int nSteps, float u, float *pdf) {
-    // Find surrounding cdf segments
-    const float *ptr = std::lower_bound(cdf, cdf+nSteps+1, u);
-    int offset = max(0, (int)(ptr-cdf-1));
-
-    // Return offset along current cdf segment
-    u = (u - cdf[offset]) / (cdf[offset+1] - cdf[offset]);
-    *pdf = f[offset] / c;
-    return (offset + u) / nSteps;
-}
-
-
 void RejectionSampleDisk(float *x, float *y, RNG &rng) {
     float sx, sy;
     do {
@@ -233,7 +205,7 @@ void UniformSampleDisk(float u1, float u2, float *x, float *y) {
 
 
 void ConcentricSampleDisk(float u1, float u2,
-                                  float *dx, float *dy) {
+                          float *dx, float *dy) {
     float r, theta;
     // Map uniform random numbers to $[-1,1]^2$
     float sx = 2 * u1 - 1;
@@ -285,6 +257,28 @@ void UniformSampleTriangle(float u1, float u2,
     float su1 = sqrtf(u1);
     *u = 1.f - su1;
     *v = u2 * su1;
+}
+
+
+Distribution2D::Distribution2D(const float *func, int nu, int nv) {
+    pConditionalV.reserve(nv);
+    for (int v = 0; v < nv; ++v) {
+        // Compute conditional sampling distribution for $\tilde{v}$
+        pConditionalV.push_back(new Distribution1D(&func[v*nu], nu));
+    }
+    // Compute marginal sampling distribution $p[\tilde{v}]$
+    vector<float> marginalFunc;
+    marginalFunc.reserve(nv);
+    for (int v = 0; v < nv; ++v)
+        marginalFunc.push_back(pConditionalV[v]->funcInt);
+    pMarginal = new Distribution1D(&marginalFunc[0], nv);
+}
+
+
+Distribution2D::~Distribution2D() {
+    delete pMarginal;
+    for (u_int i = 0; i < pConditionalV.size(); ++i)
+        delete pConditionalV[i];
 }
 
 
@@ -466,8 +460,7 @@ Vector UniformSampleCone(float u1, float u2, float costhetamax,
 }
 
 
-Vector SampleHG(const Vector &w, float g,
-                        float u1, float u2) {
+Vector SampleHG(const Vector &w, float g, float u1, float u2) {
     float costheta;
     if (fabsf(g) < 1e-3)
         costheta = 1.f - 2.f * u1;

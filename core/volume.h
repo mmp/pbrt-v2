@@ -50,8 +50,8 @@ public:
     virtual float p(const Point &, const Vector &,
                     const Vector &, float time) const = 0;
     virtual Spectrum sigma_t(const Point &p, const Vector &wo, float time) const;
-    virtual Spectrum tau(const Ray &ray,
-                         float step = 1.f, float offset = 0.5) const = 0;
+    virtual Spectrum tau(const Ray &ray, float step = 1.f,
+                         float offset = 0.5) const = 0;
 };
 
 

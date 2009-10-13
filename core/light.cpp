@@ -117,26 +117,31 @@ ShapeSet::ShapeSet(const Reference<Shape> &s) {
             "may be very inefficient.", (int)shapes.size());
 
     // Compute total area of shapes in _ShapeSet_ and area CDF
-    for (u_int i = 0; i < shapes.size(); ++i)
-        areas.push_back(shapes[i]->Area());
-    areaCDF.resize(shapes.size()+1);
-    ComputeStep1dCDF(&areas[0], shapes.size(), &area, &areaCDF[0]);
-    area *= shapes.size();
+    sumArea = 0.f;
+    for (u_int i = 0; i < shapes.size(); ++i) {
+        float a = shapes[i]->Area();
+        areas.push_back(a);
+        sumArea += a;
+    }
+    areaDistribution = new Distribution1D(&areas[0], areas.size());
+}
+
+
+ShapeSet::~ShapeSet() {
+    delete areaDistribution;
 }
 
 
 Point ShapeSet::Sample(const Point &p, const LightSample &ls,
         Normal *Ns) const {
-    int sn = std::lower_bound(areaCDF.begin(), areaCDF.end(),
-                              ls.uComponent) - areaCDF.begin() - 1;
-    return shapes[max(0, sn)]->Sample(p, ls.uPos[0], ls.uPos[1], Ns);
+    int sn = areaDistribution->SampleDiscrete(ls.uComponent, NULL);
+    return shapes[sn]->Sample(p, ls.uPos[0], ls.uPos[1], Ns);
 }
 
 
 Point ShapeSet::Sample(const LightSample &ls, Normal *Ns) const {
-    int sn = std::lower_bound(areaCDF.begin(), areaCDF.end(),
-                              ls.uComponent) - areaCDF.begin() - 1;
-    return shapes[max(0, sn)]->Sample(ls.uPos[0], ls.uPos[1], Ns);
+    int sn = areaDistribution->SampleDiscrete(ls.uComponent, NULL);
+    return shapes[sn]->Sample(ls.uPos[0], ls.uPos[1], Ns);
 }
 
 
@@ -144,7 +149,7 @@ float ShapeSet::Pdf(const Point &p, const Vector &wi) const {
     float pdf = 0.f;
     for (u_int i = 0; i < shapes.size(); ++i)
         pdf += areas[i] * shapes[i]->Pdf(p, wi);
-    return pdf / area;
+    return pdf / sumArea;
 }
 
 
@@ -152,7 +157,7 @@ float ShapeSet::Pdf(const Point &p) const {
     float pdf = 0.f;
     for (u_int i = 0; i < shapes.size(); ++i)
         pdf += areas[i] * shapes[i]->Pdf(p);
-    return pdf / area;
+    return pdf / sumArea;
 }
 
 

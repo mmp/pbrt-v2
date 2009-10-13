@@ -49,15 +49,13 @@ public:
         ProgressReporter &prog, bool &at, int &ndp,
         vector<Photon> &direct, vector<Photon> &indir, vector<Photon> &caustic,
         vector<RadiancePhoton> &rps, vector<Spectrum> &rpR, vector<Spectrum> &rpT,
-        u_int &ns, float totalpow,
-        const vector<float> &lpower, const vector<float> &lcdf, const Scene *sc,
+        u_int &ns, Distribution1D *distrib, const Scene *sc,
         const Renderer *sr)
     : taskNum(tn), mutex(m), integrator(in), progress(prog),
       abortTasks(at), nDirectPaths(ndp),
       directPhotons(direct), indirectPhotons(indir), causticPhotons(caustic),
       radiancePhotons(rps), rpReflectances(rpR), rpTransmittances(rpT),
-      nshot(ns), totalPower(totalpow), lightPower(lpower), lightCDF(lcdf),
-      scene(sc), renderer (sr) { }
+      nshot(ns), lightDistribution(distrib), scene(sc), renderer (sr) { }
     void Run();
 
     int taskNum;
@@ -70,8 +68,7 @@ public:
     vector<RadiancePhoton> &radiancePhotons;
     vector<Spectrum> &rpReflectances, &rpTransmittances;
     u_int &nshot;
-    float totalPower;
-    const vector<float> &lightPower, &lightCDF;
+    const Distribution1D *lightDistribution;
     const Scene *scene;
     const Renderer *renderer;
 };
@@ -334,9 +331,7 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
     vector<Spectrum> rpReflectances, rpTransmittances;
 
     // Compute light power CDF for photon shooting
-    float totalPower;
-    vector<float> lightPower, lightCDF;
-    ComputeLightSamplingCDF(scene, &lightPower, &lightCDF, &totalPower);
+    Distribution1D *lightDistribution = ComputeLightSamplingCDF(scene);
 
     // Run parallel tasks for photon shooting
     ProgressReporter progress(nCausticPhotonsWanted+nIndirectPhotonsWanted, "Shooting photons");
@@ -347,7 +342,7 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
             i, *mutex, this, progress, abortTasks, nDirectPaths,
             directPhotons, indirectPhotons, causticPhotons, radiancePhotons,
             rpReflectances, rpTransmittances,
-            nshot, totalPower, lightPower, lightCDF, scene, renderer));
+            nshot, lightDistribution, scene, renderer));
     EnqueueTasks(photonShootingTasks);
     WaitForAllTasks();
     for (u_int i = 0; i < photonShootingTasks.size(); ++i)
@@ -408,8 +403,7 @@ void PhotonShootingTask::Run() {
             halton.Sample(++totalPaths, u);
             // Choose light to shoot photon from
             float lightPdf;
-            int lightNum = SampleLightFromCDF(lightPower, lightCDF,
-                    totalPower, u[0], &lightPdf);
+            int lightNum = lightDistribution->SampleDiscrete(u[0], &lightPdf);
             const Light *light = scene->lights[lightNum];
 
             // Generate _photonRay_ from light source and initialize _alpha_

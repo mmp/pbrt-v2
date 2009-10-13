@@ -30,7 +30,7 @@ WARN=-Wall
 CWD=$(shell pwd)
 CXXFLAGS=$(OPT) $(INCLUDE) $(WARN) $(DEFS)
 CCFLAGS=$(CXXFLAGS)
-LIBS=$(LEXLIB) $(DLLLIB) $(EXRLIBDIR) $(EXRLIBS) -lm 
+LIBS=$(LEXLIB) $(EXRLIBDIR) $(EXRLIBS) -lm 
 
 LIBSRCS=$(wildcard core/*.cpp) core/pbrtlex.cpp core/pbrtparse.cpp
 LIBSRCS += $(wildcard accelerators/*.cpp cameras/*.cpp film/*.cpp filters/*.cpp )

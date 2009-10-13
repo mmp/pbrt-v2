@@ -240,28 +240,13 @@ Spectrum SpecularTransmit(const RayDifferential &ray, BSDF *bsdf,
 }
 
 
-void ComputeLightSamplingCDF(const Scene *scene,
-        vector<float> *lightPower, vector<float> *lightCDF,
-        float *totalPower) {
+Distribution1D *ComputeLightSamplingCDF(const Scene *scene) {
     u_int nLights = int(scene->lights.size());
     Assert(nLights > 0);
-    *lightPower = vector<float>(nLights, 0.f);
-    *lightCDF = vector<float>(nLights+1, 0.f);
+    vector<float>lightPower(nLights, 0.f);
     for (u_int i = 0; i < nLights; ++i)
-        (*lightPower)[i] = scene->lights[i]->Power(scene).y();
-    ComputeStep1dCDF(&((*lightPower)[0]), nLights, totalPower,
-                     &((*lightCDF)[0]));
-}
-
-
-int SampleLightFromCDF(const vector<float> &lightPower,
-        const vector<float> &lightCDF, float totalPower, float u,
-        float *pdf) {
-    int nLights = int(lightPower.size());
-    int lNum = Floor2Int(SampleStep1d(&lightPower[0], &lightCDF[0],
-                                      totalPower, nLights, u, pdf) *
-                         nLights);
-    return min(lNum, nLights-1);
+        lightPower[i] = scene->lights[i]->Power(scene).y();
+    return new Distribution1D(&lightPower[0], nLights);
 }
 
 

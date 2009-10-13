@@ -53,9 +53,7 @@ struct InfiniteAreaCube {
 
 // InfiniteAreaLight Method Definitions
 InfiniteAreaLight::~InfiniteAreaLight() {
-    delete uDistrib;
-    for (u_int i = 0; i < vDistribs.size(); ++i)
-        delete vDistribs[i];
+    delete distribution;
     delete radianceMap;
 }
 
@@ -64,13 +62,13 @@ InfiniteAreaLight::InfiniteAreaLight(const Transform &light2world,
                                      const Spectrum &L, int ns,
                                      const string &texmap)
     : Light(light2world, ns) {
-    radianceMap = NULL;
     int width = 0, height = 0;
     RGBSpectrum *texels = NULL;
     if (texmap != "") {
         texels = ReadImage(texmap, &width, &height);
-        for (int i = 0; i < width * height; ++i)
-            texels[i] *= L.ToRGBSpectrum();
+        if (texels)
+            for (int i = 0; i < width * height; ++i)
+                texels[i] *= L.ToRGBSpectrum();
     }
     if (!texels) {
         width = height = 1;
@@ -81,33 +79,21 @@ InfiniteAreaLight::InfiniteAreaLight(const Transform &light2world,
     delete[] texels;
     // Initialize sampling PDFs for infinite area light
 
-    // Compute scalar-valued image from environment map
+    // Compute scalar-valued image _img_ from environment map
     float filter = 1.f / max(width, height);
-    int nu = width, nv = height;
     float *img = new float[width*height];
-    for (int u = 0; u < nu; ++u) {
-        float up = (float)u / (float)nu;
-        for (int v = 0; v < nv; ++v) {
-            float vp = (float)v / (float)nv;
-            img[v+u*nv] = radianceMap->Lookup(up, vp, filter).y();
+    for (int v = 0; v < height; ++v) {
+        float vp = (float)v / (float)height;
+        float sinTheta = sinf(M_PI * float(v+.5f)/float(height));
+        for (int u = 0; u < width; ++u) {
+            float up = (float)u / (float)width;
+            img[u+v*width] = radianceMap->Lookup(up, vp, filter).y();
+            img[u+v*width] *= sinTheta;
         }
     }
-    vector<float> func(max(nu, nv), 0.f);
-    vector<float> sinVals(nv, 0.f);
-    for (int i = 0; i < nv; ++i)
-        sinVals[i] = sin(M_PI * float(i+.5)/float(nv));
-    vDistribs.reserve(nu);
-    for (int u = 0; u < nu; ++u) {
-        // Compute sampling distribution for column _u_
-        for (int v = 0; v < nv; ++v)
-            func[v] = img[u*nv+v] * sinVals[v];
-        vDistribs.push_back(new Distribution1D(&func[0], nv));
-    }
 
-    // Compute sampling distribution for columns of image
-    for (int u = 0; u < nu; ++u)
-        func[u] = vDistribs[u]->funcInt;
-    uDistrib = new Distribution1D(&func[0], nu);
+    // Compute sampling distributions for rows and columns of image
+    distribution = new Distribution2D(img, width, height);
     delete[] img;
 }
 
@@ -202,44 +188,34 @@ InfiniteAreaLight *CreateInfiniteLight(const Transform &light2world,
 }
 
 
-Spectrum InfiniteAreaLight::Sample_L(const Point &p,
-        float pEpsilon, const LightSample &ls, Vector *wi, float *pdf,
+Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
+        const LightSample &ls, Vector *wi, float *pdf,
         VisibilityTester *visibility) const {
     // Find $(u,v)$ sample coordinates in infinite light texture
-    float pdfs[2];
-    float fu = uDistrib->Sample(ls.uPos[0], &pdfs[0]);
-    int u = Clamp(Float2Int(fu), 0, uDistrib->count-1);
-    float fv = vDistribs[u]->Sample(ls.uPos[1], &pdfs[1]);
+    float uv[2], mapPdf;
+    distribution->SampleContinuous(ls.uPos[0], ls.uPos[1], uv, &mapPdf);
 
     // Convert infinite light sample point to direction
-    float theta = fv * vDistribs[u]->invCount * M_PI;
-    float phi = fu * uDistrib->invCount * 2.f * M_PI;
+    float theta = uv[1] * M_PI, phi = uv[0] * 2.f * M_PI;
     float costheta = cos(theta), sintheta = sin(theta);
     float sinphi = sin(phi), cosphi = cos(phi);
     *wi = LightToWorld(Vector(sintheta * cosphi, sintheta * sinphi,
                               costheta));
 
     // Compute PDF for sampled infinite light direction
-    *pdf = (pdfs[0] * pdfs[1]) / (2.f * M_PI * M_PI * sintheta);
+    *pdf = mapPdf / (2.f * M_PI * M_PI * sintheta);
 
     // Return radiance value for infinite light direction
     visibility->SetRay(p, pEpsilon, *wi);
-    return radianceMap->Lookup(fu * uDistrib->invCount,
-                               fv * vDistribs[u]->invCount);
+    return radianceMap->Lookup(uv[0], uv[1]);
 }
 
 
-float InfiniteAreaLight::Pdf(const Point &,
-        const Vector &w) const {
+float InfiniteAreaLight::Pdf(const Point &, const Vector &w) const {
     Vector wi = WorldToLight(w);
     float theta = SphericalTheta(wi), phi = SphericalPhi(wi);
-    int u = Clamp(Float2Int(phi * INV_TWOPI * uDistrib->count),
-                  0, uDistrib->count-1);
-    int v = Clamp(Float2Int(theta * INV_PI * vDistribs[u]->count),
-                  0, vDistribs[u]->count-1);
-    return (uDistrib->func[u] * vDistribs[u]->func[v]) /
-           (uDistrib->funcInt * vDistribs[u]->funcInt) *
-           1.f / (2.f * M_PI * M_PI * sinf(theta));
+    return distribution->Pdf(phi * INV_TWOPI, theta * INV_PI) /
+           (2.f * M_PI * M_PI * sinf(theta));
 }
 
 
@@ -249,12 +225,9 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     // Compute direction for infinite light sample ray
 
     // Find $(u,v)$ sample coordinates in infinite light texture
-    float pdfs[2];
-    float fu = uDistrib->Sample(ls.uPos[0], &pdfs[0]);
-    int u = Clamp(Float2Int(fu), 0, uDistrib->count-1);
-    float fv = vDistribs[u]->Sample(ls.uPos[1], &pdfs[1]);
-    float theta = fv * vDistribs[u]->invCount * M_PI;
-    float phi = fu * uDistrib->invCount * 2.f * M_PI;
+    float uv[2], mapPdf;
+    distribution->SampleContinuous(ls.uPos[0], ls.uPos[1], uv, &mapPdf);
+    float theta = uv[1] * M_PI, phi = uv[0] * 2.f * M_PI;
     float costheta = cos(theta), sintheta = sin(theta);
     float sinphi = sin(phi), cosphi = cos(phi);
     ray->d = -LightToWorld(Vector(sintheta * cosphi, sintheta * sinphi,
@@ -273,13 +246,10 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     ray->o = Pdisk + worldRadius * -ray->d;
 
     // Compute _InfiniteAreaLight_ ray PDF
-    float directionPdf = (pdfs[0] * pdfs[1]) / (2.f * M_PI * M_PI * sintheta);
+    float directionPdf = mapPdf / (2.f * M_PI * M_PI * sintheta);
     float areaPdf = 1.f / (M_PI * worldRadius * worldRadius);
     *pdf = directionPdf * areaPdf;
-
-    // Return radiance value for sampled infinite light ray
-    return radianceMap->Lookup(fu * uDistrib->invCount,
-                               fv * vDistribs[u]->invCount);
+    return radianceMap->Lookup(uv[0], uv[1]);
 }
 
 
