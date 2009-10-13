@@ -866,7 +866,7 @@ int NumSystemCores() {
     return sysconf(_SC_NPROCESSORS_ONLN);
 #else
     // mac/bsds
-#ifdef __OPENBSD__
+#ifdef __OpenBSD__
     int mib[2] = { CTL_HW, HW_NCPU };
 #else
     int mib[2];
