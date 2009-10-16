@@ -31,7 +31,7 @@
 #define UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
-void MTRNG::Seed(u_long seed) const {
+void RNG::Seed(u_long seed) const {
     mt[0]= seed & 0xffffffffUL;
     for (mti=1; mti<N; mti++) {
         mt[mti] =
@@ -47,7 +47,7 @@ void MTRNG::Seed(u_long seed) const {
 
 
 /* generates a random number on [0,1)-real-interval */
-float MTRNG::RandomFloat() const
+float RNG::RandomFloat() const
 {
     return RandomUInt()*((float)1.0/(float)4294967296.0);
     /* divided by 2^32 */
@@ -56,7 +56,7 @@ float MTRNG::RandomFloat() const
 
 
 // Random Number Functions
-unsigned long MTRNG::RandomUInt() const
+unsigned long RNG::RandomUInt() const
 {
     unsigned long y;
     static unsigned long mag01[2]={0x0UL, MATRIX_A};
