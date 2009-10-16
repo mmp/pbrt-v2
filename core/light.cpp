@@ -34,18 +34,16 @@ Light::~Light() {
 }
 
 
-bool VisibilityTester::Unoccluded(const Scene *scene, float time) const {
-    Ray rr = r;
-    rr.time = time;
-    return !scene->IntersectP(rr);
+bool VisibilityTester::Unoccluded(const Scene *scene) const {
+    return !scene->IntersectP(r);
 }
 
 
-Spectrum
-VisibilityTester::Transmittance(const Scene *scene, const Renderer *renderer, float time, const Sample *sample, RNG *rng, MemoryArena &arena) const {
-    Ray rr = r;
-    rr.time = time;
-    return renderer->Transmittance(scene, RayDifferential(rr), sample, arena, rng);
+Spectrum VisibilityTester::Transmittance(const Scene *scene,
+        const Renderer *renderer, const Sample *sample,
+        RNG *rng, MemoryArena &arena) const {
+    return renderer->Transmittance(scene, RayDifferential(r), sample,
+                                   arena, rng);
 }
 
 
@@ -87,9 +85,10 @@ void Light::SHProject(const Point &p, float pEpsilon, int lmax,
         LightSample lightSample(u[0], u[1], VanDerCorput(i, scramble1D));
         Vector wi;
         VisibilityTester vis;
-        Spectrum Li = Sample_L(p, pEpsilon, lightSample, &wi, &pdf, &vis);
+        Spectrum Li = Sample_L(p, pEpsilon, lightSample, time,
+                               &wi, &pdf, &vis);
         if (!Li.IsBlack() && pdf > 0.f &&
-            (!computeLightVisibility || vis.Unoccluded(scene, time))) {
+            (!computeLightVisibility || vis.Unoccluded(scene))) {
             // Add light sample contribution to MC estimate of SH coefficients
             SHEvaluate(wi, lmax, Ylm);
             for (int j = 0; j < SHTerms(lmax); ++j)

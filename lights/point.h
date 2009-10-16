@@ -35,11 +35,11 @@ public:
     // PointLight Public Methods
     PointLight(const Transform &light2world, const Spectrum &intensity);
     Spectrum Sample_L(const Point &p, float pEpsilon, const LightSample &ls,
-        Vector *wi, float *pdf, VisibilityTester *vis) const;
+        float time, Vector *wi, float *pdf, VisibilityTester *vis) const;
     Spectrum Power(const Scene *) const;
     bool IsDeltaLight() const { return true; }
     Spectrum Sample_L(const Scene *scene, const LightSample &ls,
-            float u1, float u2, Ray *ray, Normal *Ns, float *pdf) const;
+            float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const;
     float Pdf(const Point &, const Vector &) const;
     void SHProject(const Point &p, float pEpsilon, int lmax, const Scene *scene,
         bool computeLightVisibility, float time, RNG &rng, Spectrum *coeffs) const;

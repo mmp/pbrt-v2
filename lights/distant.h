@@ -37,10 +37,10 @@ public:
     DistantLight(const Transform &light2world, const Spectrum &radiance, const Vector &dir);
     bool IsDeltaLight() const { return true; }
     Spectrum Sample_L(const Point &p, float pEpsilon, const LightSample &ls,
-        Vector *wi, float *pdf, VisibilityTester *) const;
+        float time, Vector *wi, float *pdf, VisibilityTester *) const;
     Spectrum Power(const Scene *) const;
     Spectrum Sample_L(const Scene *scene, const LightSample &ls, float u1, float u2,
-        Ray *ray, Normal *Ns, float *pdf) const;
+        float time, Ray *ray, Normal *Ns, float *pdf) const;
     float Pdf(const Point &, const Vector &) const;
 private:
     // DistantLight Private Data

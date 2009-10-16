@@ -36,17 +36,16 @@ public:
     DiffuseAreaLight(const Transform &light2world,
         const Spectrum &Le, int ns, const Reference<Shape> &shape);
     ~DiffuseAreaLight();
-    Spectrum L(const Point &p, const Normal &n,
-                       const Vector &w) const {
-        return Dot(n, w) > 0 ? Lemit : 0.;
+    Spectrum L(const Point &p, const Normal &n, const Vector &w) const {
+        return Dot(n, w) > 0.f ? Lemit : 0.f;
     }
     Spectrum Power(const Scene *) const;
     bool IsDeltaLight() const { return false; }
     float Pdf(const Point &, const Vector &) const;
-    Spectrum Sample_L(const Point &P, float pEpsilon, const LightSample &ls, Vector *wo,
-        float *pdf, VisibilityTester *visibility) const;
+    Spectrum Sample_L(const Point &P, float pEpsilon, const LightSample &ls, float time,
+        Vector *wo, float *pdf, VisibilityTester *visibility) const;
     Spectrum Sample_L(const Scene *scene, const LightSample &ls, float u1, float u2,
-        Ray *ray, Normal *Ns, float *pdf) const;
+        float time, Ray *ray, Normal *Ns, float *pdf) const;
 protected:
     // DiffuseAreaLight Protected Data
     Spectrum Lemit;

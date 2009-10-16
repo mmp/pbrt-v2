@@ -64,6 +64,7 @@ InfiniteAreaLight::InfiniteAreaLight(const Transform &light2world,
     : Light(light2world, ns) {
     int width = 0, height = 0;
     RGBSpectrum *texels = NULL;
+    // Read texel data from _texmap_ into _texels_
     if (texmap != "") {
         texels = ReadImage(texmap, &width, &height);
         if (texels)
@@ -108,13 +109,10 @@ Spectrum InfiniteAreaLight::Power(const Scene *scene) const {
 
 
 Spectrum InfiniteAreaLight::Le(const RayDifferential &r) const {
-    Vector w = r.d;
-    // Compute infinite light radiance for direction
-    Vector wh = Normalize(WorldToLight(w));
+    Vector wh = Normalize(WorldToLight(r.d));
     float s = SphericalPhi(wh) * INV_TWOPI;
     float t = SphericalTheta(wh) * INV_PI;
-    Spectrum L = radianceMap->Lookup(s, t);
-    return L;
+    return radianceMap->Lookup(s, t);
 }
 
 
@@ -189,7 +187,7 @@ InfiniteAreaLight *CreateInfiniteLight(const Transform &light2world,
 
 
 Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
-        const LightSample &ls, Vector *wi, float *pdf,
+        const LightSample &ls, float time, Vector *wi, float *pdf,
         VisibilityTester *visibility) const {
     // Find $(u,v)$ sample coordinates in infinite light texture
     float uv[2], mapPdf;
@@ -206,7 +204,7 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
     *pdf = mapPdf / (2.f * M_PI * M_PI * sintheta);
 
     // Return radiance value for infinite light direction
-    visibility->SetRay(p, pEpsilon, *wi);
+    visibility->SetRay(p, pEpsilon, *wi, time);
     return radianceMap->Lookup(uv[0], uv[1]);
 }
 
@@ -220,7 +218,7 @@ float InfiniteAreaLight::Pdf(const Point &, const Vector &w) const {
 
 
 Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
-        const LightSample &ls, float u1, float u2,
+        const LightSample &ls, float u1, float u2, float time,
         Ray *ray, Normal *Ns, float *pdf) const {
     // Compute direction for infinite light sample ray
 
@@ -230,20 +228,20 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     float theta = uv[1] * M_PI, phi = uv[0] * 2.f * M_PI;
     float costheta = cos(theta), sintheta = sin(theta);
     float sinphi = sin(phi), cosphi = cos(phi);
-    ray->d = -LightToWorld(Vector(sintheta * cosphi, sintheta * sinphi,
-                                  costheta));
-    *Ns = (Normal)ray->d;
+    Vector d = -LightToWorld(Vector(sintheta * cosphi, sintheta * sinphi,
+                                    costheta));
+    *Ns = (Normal)d;
 
     // Compute origin for infinite light sample ray
     Point worldCenter;
     float worldRadius;
     scene->WorldBound().BoundingSphere(&worldCenter, &worldRadius);
     Vector v1, v2;
-    CoordinateSystem(-ray->d, &v1, &v2);
+    CoordinateSystem(-d, &v1, &v2);
     float d1, d2;
     ConcentricSampleDisk(u1, u2, &d1, &d2);
     Point Pdisk = worldCenter + worldRadius * (d1 * v1 + d2 * v2);
-    ray->o = Pdisk + worldRadius * -ray->d;
+    *ray = Ray(Pdisk + worldRadius * -d, d, 0., INFINITY, time);
 
     // Compute _InfiniteAreaLight_ ray PDF
     float directionPdf = mapPdf / (2.f * M_PI * M_PI * sintheta);

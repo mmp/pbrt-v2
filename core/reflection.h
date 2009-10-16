@@ -507,15 +507,14 @@ private:
 class BSSRDF {
 public:
     // BSSRDF Public Methods
-    BSSRDF(const Spectrum &sa, const Spectrum &sps, float e)
-        : eta(e), sig_a(sa), sigp_s(sps) { }
+    BSSRDF(const Spectrum &sa, const Spectrum &sps, float et)
+        : e(et), sig_a(sa), sigp_s(sps) { }
+    float eta() const { return e; }
     Spectrum sigma_a() const { return sig_a; }
     Spectrum sigma_prime_s() const { return sigp_s; }
 private:
     // BSSRDF Private Data
-    public:
-    const float eta;
-    private:
+    float e;
     Spectrum sig_a, sigp_s;
 };
 

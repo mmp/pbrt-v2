@@ -34,13 +34,13 @@ class SpotLight : public Light {
 public:
     // SpotLight Public Methods
     SpotLight(const Transform &light2world, const Spectrum &, float width, float fall);
-    Spectrum Sample_L(const Point &p, float pEpsilon, const LightSample &ls,
+    Spectrum Sample_L(const Point &p, float pEpsilon, const LightSample &ls, float time,
         Vector *wi, float *pdf, VisibilityTester *vis) const;
     bool IsDeltaLight() const { return true; }
     float Falloff(const Vector &w) const;
     Spectrum Power(const Scene *) const;
     Spectrum Sample_L(const Scene *scene, const LightSample &ls,
-            float u1, float u2, Ray *ray, Normal *Ns, float *pdf) const;
+        float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const;
     float Pdf(const Point &, const Vector &) const;
 private:
     // SpotLight Private Data

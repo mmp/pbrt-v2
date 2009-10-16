@@ -30,6 +30,7 @@
 #include "progressreporter.h"
 #include "intersection.h"
 #include "paramset.h"
+#include "camera.h"
 
 
 // PhotonIntegrator Local Declarations
@@ -45,13 +46,13 @@ struct Photon {
 
 class PhotonShootingTask : public Task {
 public:
-    PhotonShootingTask(int tn, Mutex &m, PhotonIntegrator *in,
+    PhotonShootingTask(int tn, float ti, Mutex &m, PhotonIntegrator *in,
         ProgressReporter &prog, bool &at, int &ndp,
         vector<Photon> &direct, vector<Photon> &indir, vector<Photon> &caustic,
         vector<RadiancePhoton> &rps, vector<Spectrum> &rpR, vector<Spectrum> &rpT,
         u_int &ns, Distribution1D *distrib, const Scene *sc,
         const Renderer *sr)
-    : taskNum(tn), mutex(m), integrator(in), progress(prog),
+    : taskNum(tn), time(ti), mutex(m), integrator(in), progress(prog),
       abortTasks(at), nDirectPaths(ndp),
       directPhotons(direct), indirectPhotons(indir), causticPhotons(caustic),
       radiancePhotons(rps), rpReflectances(rpR), rpTransmittances(rpT),
@@ -59,6 +60,7 @@ public:
     void Run();
 
     int taskNum;
+    float time;
     Mutex &mutex;
     PhotonIntegrator *integrator;
     ProgressReporter &progress;
@@ -339,7 +341,7 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
     int nTasks = NumSystemCores();
     for (int i = 0; i < nTasks; ++i)
         photonShootingTasks.push_back(new PhotonShootingTask(
-            i, *mutex, this, progress, abortTasks, nDirectPaths,
+            i, camera ? camera->ShutterOpen : 0.f, *mutex, this, progress, abortTasks, nDirectPaths,
             directPhotons, indirectPhotons, causticPhotons, radiancePhotons,
             rpReflectances, rpTransmittances,
             nshot, lightDistribution, scene, renderer));
@@ -375,12 +377,11 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
         WaitForAllTasks();
         for (u_int i = 0; i < radianceTasks.size(); ++i)
             delete radianceTasks[i];
-        delete directMap;
         progRadiance.Done();
     }
     if (radiancePhotons.size())
         radianceMap = new KdTree<RadiancePhoton>(radiancePhotons);
-
+    delete directMap;
 }
 
 
@@ -412,7 +413,7 @@ void PhotonShootingTask::Run() {
             LightSample ls(u[1], u[2], u[3]);
             Normal Nl;
             Spectrum Le = light->Sample_L(scene, ls, u[4], u[5],
-                                          &photonRay, &Nl, &pdf);
+                                          time, &photonRay, &Nl, &pdf);
             if (pdf == 0.f || Le.IsBlack()) continue;
             Spectrum alpha = (AbsDot(Nl, photonRay.d) * Le) / (pdf * lightPdf);
             if (!alpha.IsBlack()) {

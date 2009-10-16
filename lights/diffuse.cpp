@@ -34,8 +34,7 @@ DiffuseAreaLight::~DiffuseAreaLight() {
 
 
 DiffuseAreaLight::DiffuseAreaLight(const Transform &light2world,
-                                   const Spectrum &le, int ns,
-                                   const Reference<Shape> &s)
+        const Spectrum &le, int ns, const Reference<Shape> &s)
     : AreaLight(light2world, ns) {
     Lemit = le;
     shapeSet = new ShapeSet(s);
@@ -59,13 +58,13 @@ AreaLight *CreateDiffuseAreaLight(const Transform &light2world, const ParamSet &
 
 
 Spectrum DiffuseAreaLight::Sample_L(const Point &p,
-        float pEpsilon, const LightSample &ls, Vector *wi, float *pdf,
+        float pEpsilon, const LightSample &ls, float time, Vector *wi, float *pdf,
         VisibilityTester *visibility) const {
     Normal ns;
     Point ps = shapeSet->Sample(p, ls, &ns);
     *wi = Normalize(ps - p);
     *pdf = shapeSet->Pdf(p, *wi);
-    visibility->SetSegment(p, pEpsilon, ps, 1e-3f);
+    visibility->SetSegment(p, pEpsilon, ps, 1e-3f, time);
     return L(ps, ns, -*wi);
 }
 
@@ -77,12 +76,12 @@ float DiffuseAreaLight::Pdf(const Point &p,
 
 
 Spectrum DiffuseAreaLight::Sample_L(const Scene *scene,
-        const LightSample &ls, float u1, float u2, Ray *ray,
+        const LightSample &ls, float u1, float u2, float time, Ray *ray,
         Normal *Ns, float *pdf) const {
     Point org = shapeSet->Sample(ls, Ns);
     Vector dir = UniformSampleSphere(u1, u2);
     if (Dot(dir, *Ns) < 0.) dir *= -1.f;
-    *ray = Ray(org, dir, 1e-3f, INFINITY);
+    *ray = Ray(org, dir, 1e-3f, INFINITY, time);
     *pdf = shapeSet->Pdf(org) * INV_TWOPI;
     return L(org, *Ns, dir);
 }

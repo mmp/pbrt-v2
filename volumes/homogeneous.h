@@ -32,8 +32,7 @@ class HomogeneousVolumeDensity : public VolumeRegion {
 public:
     // HomogeneousVolumeDensity Public Methods
     HomogeneousVolumeDensity(const Spectrum &sa, const Spectrum &ss, float gg,
-             const Spectrum &emit, const BBox &e,
-            const Transform &v2w) {
+            const Spectrum &emit, const BBox &e, const Transform &v2w) {
         WorldToVolume = Inverse(v2w);
         sig_a = sa;
         sig_s = ss;

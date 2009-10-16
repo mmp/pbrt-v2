@@ -52,13 +52,13 @@ Spectrum WhittedIntegrator::Li(const Scene *scene,
         VisibilityTester visibility;
         float pdf;
         Spectrum Li = scene->lights[i]->Sample_L(p, isect.RayEpsilon,
-            LightSample(*sample->rng), &wi, &pdf, &visibility);
+            LightSample(*sample->rng), sample->Time, &wi, &pdf, &visibility);
         if (Li.IsBlack() || pdf == 0.f) continue;
         Li /= pdf;
         Spectrum f = bsdf->f(wo, wi);
-        if (!f.IsBlack() && visibility.Unoccluded(scene, ray.time))
+        if (!f.IsBlack() && visibility.Unoccluded(scene))
             L += f * Li * AbsDot(wi, n) *
-                visibility.Transmittance(scene, renderer, ray.time,
+                visibility.Transmittance(scene, renderer,
                                          sample, NULL, arena);
     }
     if (ray.depth + 1 < maxDepth) {

@@ -30,6 +30,7 @@
 #include "sampler.h"
 #include "intersection.h"
 #include "paramset.h"
+#include "camera.h"
 
 inline float SmoothStep(float min, float max, float value) {
     float v = Clamp((value - min) / (max - min), 0.f, 1.f);
@@ -98,7 +99,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
             Normal Nl;
             Spectrum alpha = light->Sample_L(scene, ls, lightSampDir[2*sampOffset],
                                              lightSampDir[2*sampOffset+1],
-                                             &ray, &Nl, &pdf);
+                                             camera->ShutterOpen, &ray, &Nl, &pdf);
             if (pdf == 0.f || alpha.IsBlack()) continue;
             alpha /= pdf * lightPdf;
             Intersection isect;

@@ -40,7 +40,7 @@ public:
     Light(const Transform &l2w, int ns = 1)
         : nSamples(max(1, ns)), LightToWorld(l2w),
           WorldToLight(Inverse(l2w)) {
-        // Warn if light has transformation with non-uniform scale
+        // Warn if light has transformation with scale
         if (WorldToLight.HasScale())
             Warning("Scaling detected in world to light transformation!\n"
                     "The system has numerous assumptions, implicit and explicit,\n"
@@ -49,14 +49,14 @@ public:
                     "the system may crash as a result of this.");
     }
     virtual Spectrum Sample_L(const Point &p, float pEpsilon,
-        const LightSample &ls, Vector *wi, float *pdf,
+        const LightSample &ls, float time, Vector *wi, float *pdf,
         VisibilityTester *vis) const = 0;
     virtual Spectrum Power(const Scene *) const = 0;
     virtual bool IsDeltaLight() const = 0;
     virtual Spectrum Le(const RayDifferential &r) const;
     virtual float Pdf(const Point &p, const Vector &wi) const = 0;
     virtual Spectrum Sample_L(const Scene *scene, const LightSample &ls,
-        float u1, float u2, Ray *ray, Normal *Ns, float *pdf) const = 0;
+        float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const = 0;
     virtual void SHProject(const Point &p, float pEpsilon, int lmax, const Scene *scene,
         bool computeLightVisibility, float time, RNG &rng, Spectrum *coeffs) const;
 
@@ -71,17 +71,17 @@ protected:
 struct VisibilityTester {
     // VisibilityTester Public Methods
     void SetSegment(const Point &p1, float eps1,
-            const Point &p2, float eps2) {
+                          const Point &p2, float eps2, float time) {
         float dist = Distance(p1, p2);
-        r = Ray(p1, (p2-p1) / dist, eps1, dist * (1.f - eps2));
+        r = Ray(p1, (p2-p1) / dist, eps1, dist * (1.f - eps2), time);
         Assert(!r.HasNaNs());
     }
-    void SetRay(const Point &p, float eps, const Vector &w) {
-        r = Ray(p, w, eps);
+    void SetRay(const Point &p, float eps, const Vector &w, float time) {
+        r = Ray(p, w, eps, INFINITY, time);
         Assert(!r.HasNaNs());
     }
-    bool Unoccluded(const Scene *scene, float time) const;
-    Spectrum Transmittance(const Scene *scene, const Renderer *renderer, float time,
+    bool Unoccluded(const Scene *scene) const;
+    Spectrum Transmittance(const Scene *scene, const Renderer *renderer,
         const Sample *sample, RNG *rng, MemoryArena &arena) const;
     Ray r;
 };

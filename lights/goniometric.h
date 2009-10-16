@@ -38,7 +38,7 @@ public:
     GonioPhotometricLight(const Transform &light2world, const Spectrum &, const
     string &texname);
     Spectrum Sample_L(const Point &p, float pEpsilon, const LightSample &ls,
-        Vector *wi, float *pdf, VisibilityTester *vis) const;
+        float time, Vector *wi, float *pdf, VisibilityTester *vis) const;
     ~GonioPhotometricLight() { delete mipmap; }
     bool IsDeltaLight() const { return true; }
     Spectrum Scale(const Vector &w) const {
@@ -51,7 +51,7 @@ public:
     }
     Spectrum Power(const Scene *) const;
     Spectrum Sample_L(const Scene *scene, const LightSample &ls, float u1, float u2,
-            Ray *ray, Normal *Ns, float *pdf) const;
+        float time, Ray *ray, Normal *Ns, float *pdf) const;
     float Pdf(const Point &, const Vector &) const;
 private:
     // GonioPhotometricLight Private Data

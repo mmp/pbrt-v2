@@ -298,11 +298,11 @@ void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
                 float lightPdf;
                 VisibilityTester visibility;
                 Spectrum Li = light->Sample_L(ip.p, ip.rayEpsilon,
-                    ls, &wi, &lightPdf, &visibility);
+                    ls, camera->ShutterOpen, &wi, &lightPdf, &visibility);
                 if (Dot(wi, ip.n) <= 0.) continue;
                 if (Li.IsBlack() || lightPdf == 0.f) continue;
-                Li *= visibility.Transmittance(scene, renderer, camera->ShutterOpen, NULL, &rng, arena);
-                if (visibility.Unoccluded(scene, camera->ShutterOpen))
+                Li *= visibility.Transmittance(scene, renderer, NULL, &rng, arena);
+                if (visibility.Unoccluded(scene))
                     Elight += Li * Dot(wi, ip.n) / lightPdf;
             }
             ip.E += Elight / nSamples;
@@ -454,11 +454,11 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
 
             // Use hierarchical integration to evaluate reflection from dipole model
             PBRT_SUBSURFACE_STARTED_OCTREE_LOOKUP(const_cast<Point *>(&p));
-            DiffusionReflectance Rd(sigma_a, sigmap_s, bssrdf->eta);
+            DiffusionReflectance Rd(sigma_a, sigmap_s, bssrdf->eta());
             Spectrum Mo = octree->Mo(octreeBounds, p, Rd, maxError);
-            FresnelDielectric fresnel(1.f, bssrdf->eta);
+            FresnelDielectric fresnel(1.f, bssrdf->eta());
             Spectrum Ft = Spectrum(1.f) - fresnel.Evaluate(AbsDot(wo, n));
-            float Fdt = 1.f - Fdr(bssrdf->eta);
+            float Fdt = 1.f - Fdr(bssrdf->eta());
             L += (INV_PI * Ft) * (Fdt * Mo);
             PBRT_SUBSURFACE_FINISHED_OCTREE_LOOKUP();
         }

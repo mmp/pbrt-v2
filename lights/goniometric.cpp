@@ -30,10 +30,10 @@
 
 // GonioPhotometricLight Method Definitions
 Spectrum GonioPhotometricLight::Sample_L(const Point &p, float pEpsilon,
-        const LightSample &ls, Vector *wi, float *pdf, VisibilityTester *visibility) const {
+        const LightSample &ls, float time, Vector *wi, float *pdf, VisibilityTester *visibility) const {
     *wi = Normalize(lightPos - p);
     *pdf = 1.f;
-    visibility->SetSegment(p, pEpsilon, lightPos, 0.);
+    visibility->SetSegment(p, pEpsilon, lightPos, 0., time);
     return Intensity * Scale(-*wi) / DistanceSquared(lightPos, p);
 }
 
@@ -69,10 +69,8 @@ GonioPhotometricLight *CreateGoniometricLight(const Transform &light2world,
 
 
 Spectrum GonioPhotometricLight::Sample_L(const Scene *scene, const LightSample &ls,
-        float u1, float u2, Ray *ray, Normal *Ns, float *pdf) const {
-    ray->o = lightPos;
-    ray->d = UniformSampleSphere(ls.uPos[0], ls.uPos[1]);
-    *Ns = (Normal)ray->d;
+        float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const {
+    *ray = Ray(lightPos, UniformSampleSphere(ls.uPos[0], ls.uPos[1]), 0.f, INFINITY, time);
     *pdf = UniformSpherePdf();
     return Intensity * Scale(ray->d);
 }

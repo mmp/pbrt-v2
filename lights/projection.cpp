@@ -67,11 +67,11 @@ ProjectionLight::ProjectionLight(const Transform &light2world,
 
 ProjectionLight::~ProjectionLight() { delete projectionMap; }
 Spectrum ProjectionLight::Sample_L(const Point &p, float pEpsilon,
-         const LightSample &ls, Vector *wi,
+         const LightSample &ls, float time, Vector *wi,
          float *pdf, VisibilityTester *visibility) const {
     *wi = Normalize(lightPos - p);
     *pdf = 1.f;
-    visibility->SetSegment(p, pEpsilon, lightPos, 0.);
+    visibility->SetSegment(p, pEpsilon, lightPos, 0., time);
     return Intensity * Projection(-*wi) /
         DistanceSquared(lightPos, p);
 }
@@ -110,10 +110,9 @@ ProjectionLight *CreateProjectionLight(const Transform &light2world,
 
 
 Spectrum ProjectionLight::Sample_L(const Scene *scene, const LightSample &ls,
-        float u1, float u2, Ray *ray, Normal *Ns, float *pdf) const {
-    ray->o = lightPos;
+        float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const {
     Vector v = UniformSampleCone(ls.uPos[0], ls.uPos[1], cosTotalWidth);
-    ray->d = LightToWorld(v);
+    *ray = Ray(lightPos, LightToWorld(v), 0.f, INFINITY, time);
     *Ns = (Normal)ray->d;
     *pdf = UniformConePdf(cosTotalWidth);
     return Intensity * Projection(ray->d);

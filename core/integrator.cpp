@@ -113,13 +113,13 @@ Spectrum EstimateDirect(const Scene *scene, const Renderer *renderer,
     Vector wi;
     float lightPdf, bsdfPdf;
     VisibilityTester visibility;
-    Spectrum Li = light->Sample_L(p, rayEpsilon, lightSample,
+    Spectrum Li = light->Sample_L(p, rayEpsilon, lightSample, time,
                                   &wi, &lightPdf, &visibility);
     if (lightPdf > 0. && !Li.IsBlack()) {
         Spectrum f = bsdf->f(wo, wi);
-        if (!f.IsBlack() && visibility.Unoccluded(scene, time)) {
+        if (!f.IsBlack() && visibility.Unoccluded(scene)) {
             // Add light's contribution to reflected radiance
-            Li *= visibility.Transmittance(scene, renderer, time, NULL, rng, arena);
+            Li *= visibility.Transmittance(scene, renderer, NULL, rng, arena);
             if (light->IsDeltaLight())
                 Ld += f * Li * AbsDot(wi, n) / lightPdf;
             else {
