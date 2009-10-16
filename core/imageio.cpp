@@ -47,7 +47,7 @@ RGBSpectrum *ReadImage(const string &name, int *width, int *height) {
             !strcmp(name.c_str() + suffixOffset, ".EXR"))
              return ReadImageEXR(name, width, height);
         else
-#endif // !PBRT_NO_OPENEXR
+#endif // PBRT_HAS_OPENEXR
               if (!strcmp(name.c_str() + suffixOffset, ".tga") ||
                  !strcmp(name.c_str() + suffixOffset, ".TGA"))
              return ReadImageTGA(name, width, height);
@@ -75,8 +75,8 @@ void WriteRGBAImage(const string &name, float *pixels,
              return;
         }
         else
-#endif // !PBRT_NO_OPENEXR
-              if (!strcmp(name.c_str() + suffixOffset, ".tga") ||
+#endif // PBRT_HAS_OPENEXR
+             if (!strcmp(name.c_str() + suffixOffset, ".tga") ||
                  !strcmp(name.c_str() + suffixOffset, ".TGA")) {
              WriteImageTGA(name, pixels, alpha, xRes, yRes, totalXRes,
                            totalYRes, xOffset, yOffset);
@@ -162,7 +162,7 @@ static void WriteImageEXR(const string &name, float *pixels,
 }
 
 
-#endif // !PBRT_NO_OPENEXR
+#endif // PBRT_HAS_OPENEXR
 
 // TGA Function Definitions
 /**\file
