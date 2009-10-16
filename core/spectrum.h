@@ -190,6 +190,13 @@ public:
         Assert(!ret.HasNaNs());
         return ret;
     }
+    friend CoefficientSpectrum Pow(const CoefficientSpectrum &s, float e) {
+        CoefficientSpectrum ret;
+        for (int i = 0; i < nSamples; ++i)
+            ret.c[i] = powf(s.c[i], e);
+        Assert(!ret.HasNaNs());
+        return ret;
+    }
     CoefficientSpectrum operator-() const {
         CoefficientSpectrum ret;
         for (int i = 0; i < nSamples; ++i)
