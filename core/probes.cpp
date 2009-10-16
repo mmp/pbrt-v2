@@ -195,10 +195,10 @@ static void ProbesPrintVal(FILE *f, const StatsCounterType &v) {
     fprintf(f, "%d", vv);
 #else
 #ifdef PBRT_HAS_64_BIT_ATOMICS
-    int64_t vv = v.v;
+    int64_t vv = v;
     fprintf(f, "%lld", vv);
 #else
-    int32_t vv = v.v;
+    int32_t vv = v;
     fprintf(f, "%d", vv);
 #endif
 #endif
@@ -212,10 +212,10 @@ static void ProbesPrintVal(FILE *f, const StatsCounterType &v1,
     fprintf(f, "%d:%d", vv1, vv2);
 #else
 #ifdef PBRT_HAS_64_BIT_ATOMICS
-    int64_t vv1 = v1.v, vv2 = v2.v;
+    int64_t vv1 = v1, vv2 = v2;
     fprintf(f, "%lld:%lld", vv1, vv2);
 #else
-    int32_t vv1 = v1.v, vv2 = v2.v;
+    int32_t vv1 = v1, vv2 = v2;
     fprintf(f, "%d:%d", vv1, vv2);
 #endif
 #endif
