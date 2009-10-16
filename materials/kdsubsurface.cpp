@@ -43,10 +43,10 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
         dgs = dgShading;
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
     Spectrum R = Kr->Evaluate(dgs).Clamp();
-    float ior = index->Evaluate(dgs);
+    float e = eta->Evaluate(dgs);
     if (!R.IsBlack())
         bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(R,
-            BSDF_ALLOC(arena, FresnelDielectric)(1., ior)));
+            BSDF_ALLOC(arena, FresnelDielectric)(1., e)));
     return bsdf;
 }
 
@@ -54,12 +54,12 @@ BSDF *KdSubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 BSSRDF *KdSubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
               const DifferentialGeometry &dgShading,
               MemoryArena &arena) const {
-    float ior = index->Evaluate(dgShading);
+    float e = eta->Evaluate(dgShading);
     float mfp = meanfreepath->Evaluate(dgShading);
     Spectrum kd = Kd->Evaluate(dgShading).Clamp();
     Spectrum sigma_a, sigma_prime_s;
-    SubsurfaceFromDiffuse(kd, mfp, ior, &sigma_a, &sigma_prime_s);
-    return BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, ior);
+    SubsurfaceFromDiffuse(kd, mfp, e, &sigma_a, &sigma_prime_s);
+    return BSDF_ALLOC(arena, BSSRDF)(sigma_a, sigma_prime_s, e);
 }
 
 

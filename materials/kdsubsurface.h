@@ -35,12 +35,12 @@ public:
     KdSubsurfaceMaterial(Reference<Texture<Spectrum> > kd,
             Reference<Texture<Spectrum> > kr,
             Reference<Texture<float> > mfp,
-            Reference<Texture<float> > ior,
+            Reference<Texture<float> > e,
             Reference<Texture<float> > bump) {
         Kd = kd;
         Kr = kr;
         meanfreepath = mfp;
-        index = ior;
+        eta = e;
         bumpMap = bump;
     }
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,
@@ -52,7 +52,7 @@ public:
 private:
     // KdSubsurfaceMaterial Private Data
     Reference<Texture<Spectrum> > Kd, Kr;
-    Reference<Texture<float> > meanfreepath, index, bumpMap;
+    Reference<Texture<float> > meanfreepath, eta, bumpMap;
 };
 
 

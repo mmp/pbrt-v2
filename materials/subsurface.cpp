@@ -33,8 +33,7 @@
 
 // SubsurfaceMaterial Method Definitions
 BSDF *SubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
-              const DifferentialGeometry &dgShading,
-              MemoryArena &arena) const {
+        const DifferentialGeometry &dgShading, MemoryArena &arena) const {
     // Allocate _BSDF_, possibly doing bump mapping with _bumpMap_
     DifferentialGeometry dgs;
     if (bumpMap)
@@ -43,20 +42,19 @@ BSDF *SubsurfaceMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
         dgs = dgShading;
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
     Spectrum R = Kr->Evaluate(dgs).Clamp();
-    float ior = index->Evaluate(dgs);
+    float e = eta->Evaluate(dgs);
     if (!R.IsBlack())
         bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(R,
-            BSDF_ALLOC(arena, FresnelDielectric)(1., ior)));
+            BSDF_ALLOC(arena, FresnelDielectric)(1., e)));
     return bsdf;
 }
 
 
 BSSRDF *SubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
-              const DifferentialGeometry &dgShading,
-              MemoryArena &arena) const {
-    float ior = index->Evaluate(dgShading);
+        const DifferentialGeometry &dgShading, MemoryArena &arena) const {
+    float e = eta->Evaluate(dgShading);
     return BSDF_ALLOC(arena, BSSRDF)(scale * sigma_a->Evaluate(dgShading),
-        scale * sigma_prime_s->Evaluate(dgShading), ior);
+        scale * sigma_prime_s->Evaluate(dgShading), e);
 }
 
 
