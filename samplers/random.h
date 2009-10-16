@@ -31,7 +31,7 @@
 class RandomSampler : public Sampler {
 public:
     RandomSampler(int xstart, int xend, int ystart,
-        int yend, int xs, int ys, float sopen, float sclose);
+        int yend, int ns, float sopen, float sclose);
     ~RandomSampler() {
         FreeAligned(imageSamples);
     }
@@ -43,7 +43,7 @@ private:
     // RandomSampler Private Data
     RNG rng;
     bool jitterSamples;
-    int xPos, yPos, xPixelSamples, yPixelSamples;
+    int xPos, yPos, nSamples;
     float *imageSamples, *lensSamples, *timeSamples;
     int samplePos;
 };
