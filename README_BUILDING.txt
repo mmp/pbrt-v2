@@ -1,15 +1,19 @@
 
 On Linux/Mac/other Unix platforms, pbrt can be compiled with the provided
-Makefile.  Under Windows, use the provided MSVC solution file.
+Makefile.  Under Windows, use the provided MSVC solution file. You may also
+need to install Cygwin with the flex and bison packages.
 
 A small number of parameters may need to be set in the Makefile.  If your
 system has OpenEXR installed (this is recommended), PBRT_HAS_OPENEXR should
 be set in the DEFS line and the paths to the OpenEXR headers and libraries
 in the EXRINCLUDE and EXRLIBDIR lines should be updated if needed.
 
-The default build assumes you're compiling on a 64-bit system.  If this is
-not the case, update the assignment of PBRT_POINTER_SIZE in the DEFS line
-to have a value of 4, and remove the definition of PBRT_HAS_64_BIT_ATOMICS.
+The default build assumes you're compiling on a 32-bit system.  If this is
+not the case, comment the 32-bit section in the Makefile and uncomment the
+64-bit section.  For a more optimized build, you may wish to add -DNDEBUG
+to the DEFS in the Makefile; this will disable the assertions.  However,
+it's helpful to have these enabled at this point in the system's
+development.
 
 Under OSX version 10.6, you may want pbrt to use Grand Central Dispatch for
 managing the parallel rendering tasks.  Add a definition of
