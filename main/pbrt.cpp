@@ -27,6 +27,7 @@
 #include "api.h"
 #include "probes.h"
 #include "parser.h"
+#include "parallel.h"
 #ifdef PBRT_HAS_LIBSDL
 #include "SDL_main.h"
 #endif // PBRT_HAS_LIBSDL
@@ -34,13 +35,12 @@
 // main program
 int main(int argc, char *argv[]) {
     // Print welcome banner
-    printf("pbrt version %s of %s at %s\n",
-           PBRT_VERSION, __DATE__, __TIME__);
+    printf("pbrt version %s of %s at %s [%d core(s) detected]\n",
+           PBRT_VERSION, __DATE__, __TIME__, NumSystemCores());
     printf("Copyright (c)1998-2009 Matt Pharr and "
            "Greg Humphreys.\n");
-    printf("The source code to pbrt (but *not* the contents of the book) is\n");
-    printf("covered by the GNU General Public License.  See the file COPYING.txt\n");
-    printf("for the conditions of the license.\n");
+    printf("The source code to pbrt (but *not* the book contents) is covered by the GNU GPL.\n");
+    printf("See the file COPYING.txt for the conditions of the license.\n");
     fflush(stdout);
     pbrtInit();
     // Process scene description
