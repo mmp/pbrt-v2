@@ -202,6 +202,7 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
 
     // Compute PDF for sampled infinite light direction
     *pdf = mapPdf / (2.f * M_PI * M_PI * sintheta);
+    if (sintheta == 0.f) *pdf = 0.f;
 
     // Return radiance value for infinite light direction
     visibility->SetRay(p, pEpsilon, *wi, time);
@@ -212,8 +213,10 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
 float InfiniteAreaLight::Pdf(const Point &, const Vector &w) const {
     Vector wi = WorldToLight(w);
     float theta = SphericalTheta(wi), phi = SphericalPhi(wi);
+    float sintheta = sinf(theta);
+    if (sintheta == 0.f) return 0.f;
     return distribution->Pdf(phi * INV_TWOPI, theta * INV_PI) /
-           (2.f * M_PI * M_PI * sinf(theta));
+           (2.f * M_PI * M_PI * sintheta);
 }
 
 
@@ -226,8 +229,8 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     float uv[2], mapPdf;
     distribution->SampleContinuous(ls.uPos[0], ls.uPos[1], uv, &mapPdf);
     float theta = uv[1] * M_PI, phi = uv[0] * 2.f * M_PI;
-    float costheta = cos(theta), sintheta = sin(theta);
-    float sinphi = sin(phi), cosphi = cos(phi);
+    float costheta = cosf(theta), sintheta = sinf(theta);
+    float sinphi = sinf(phi), cosphi = cosf(phi);
     Vector d = -LightToWorld(Vector(sintheta * cosphi, sintheta * sinphi,
                                     costheta));
     *Ns = (Normal)d;
@@ -247,6 +250,7 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     float directionPdf = mapPdf / (2.f * M_PI * M_PI * sintheta);
     float areaPdf = 1.f / (M_PI * worldRadius * worldRadius);
     *pdf = directionPdf * areaPdf;
+    if (sintheta == 0.f) *pdf = 0.f;
     return radianceMap->Lookup(uv[0], uv[1]);
 }
 
