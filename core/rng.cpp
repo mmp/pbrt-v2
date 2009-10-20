@@ -49,8 +49,7 @@ void RNG::Seed(u_long seed) const {
 /* generates a random number on [0,1)-real-interval */
 float RNG::RandomFloat() const
 {
-    return RandomUInt()*((float)1.0/(float)4294967296.0);
-    /* divided by 2^32 */
+    return (RandomUInt() & 0xffffff) / float(1 << 24);
 }
 
 
