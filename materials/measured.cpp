@@ -30,15 +30,15 @@
 // MeasuredMaterial Method Definitions
 #define BRDF_SAMPLING_RES_THETA_H       90
 #define BRDF_SAMPLING_RES_THETA_D       90
-#define BRDF_SAMPLING_RES_PHI_D         360
+#define BRDF_SAMPLING_RES_PHI_D         180
 
-static map<string, float *> loaded;
-static map<string, KdTree<ThetaPhiSample> *> loadedThetaPhi;
+static map<string, float *> loadedMERL;
+static map<string, KdTree<IrregIsotropicBRDFSample> *> loadedThetaPhi;
 MeasuredMaterial::MeasuredMaterial(const string &filename,
       Reference<Texture<float> > bump) {
     bumpMap = bump;
     const char *suffix = strrchr(filename.c_str(), '.');
-    data = NULL;
+    dataMERL = NULL;
     thetaPhiData = NULL;
     if (!suffix)
         Error("No suffix in measured BRDF filename \"%s\".  "
@@ -64,7 +64,7 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
             wls.push_back(values[pos++]);
         
         BBox bbox;
-        vector<ThetaPhiSample> samples;
+        vector<IrregIsotropicBRDFSample> samples;
         while (pos < values.size()) {
             float thetai = values[pos++];
             float phii = values[pos++];
@@ -75,22 +75,21 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
             Spectrum s = Spectrum::FromSampled(&wls[0], &values[pos], numWls);
             pos += numWls;
             Point p = BRDFRemap(wo, wi);
-            samples.push_back(ThetaPhiSample(p, s));
+            samples.push_back(IrregIsotropicBRDFSample(p, s));
         bbox = Union(bbox, p);
         }
-        //fprintf(stderr, "bbox (%f,%f,%f) - (%f,%f,%f)\n", bbox.pMin.x, bbox.pMin.y, bbox.pMin.z, bbox.pMax.x, bbox.pMax.y, bbox.pMax.z);
-        loadedThetaPhi[filename] = thetaPhiData = new KdTree<ThetaPhiSample>(samples);
+        loadedThetaPhi[filename] = thetaPhiData = new KdTree<IrregIsotropicBRDFSample>(samples);
     }
     else {
         // Load MERL BRDF Data
-        if (loaded.find(filename) != loaded.end()) {
-            data = loaded[filename];
+        if (loadedMERL.find(filename) != loadedMERL.end()) {
+            dataMERL = loadedMERL[filename];
             return;
         }
         
         FILE *f = fopen(filename.c_str(), "rb");
         if (!f)
-            Error("Unable to open material file");
+            Error("Unable to open BRDF data file \"%s\"", filename.c_str());
         
         int dims[3];
         if (fread(dims, sizeof(int), 3, f) != 3)
@@ -99,13 +98,13 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
         u_int n = dims[0] * dims[1] * dims[2];
         if (n != BRDF_SAMPLING_RES_THETA_H *
              BRDF_SAMPLING_RES_THETA_D *
-             BRDF_SAMPLING_RES_PHI_D / 2)  {
+             BRDF_SAMPLING_RES_PHI_D)  {
             Error("Dimensions don't match\n");
             fclose(f);
         }
         
-        data = new float[3*n];
-        const u_int chunkSize = BRDF_SAMPLING_RES_PHI_D;
+        dataMERL = new float[3*n];
+        const u_int chunkSize = 2*BRDF_SAMPLING_RES_PHI_D;
         double tmp[chunkSize];
         u_int nChunks = n / chunkSize;
         Assert((n % chunkSize) == 0);
@@ -117,11 +116,11 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
                     Error("Premature end-of-file in measured BRDF data file \"%s\"",
                           filename.c_str());
                 for (u_int j = 0; j < chunkSize; ++j)
-                    data[3 * offset++ + c] = tmp[j] * scales[c];
+                    dataMERL[3 * offset++ + c] = max(0., tmp[j] * scales[c]);
             }
         }
         
-        loaded[filename] = data;
+        loadedMERL[filename] = dataMERL;
         fclose(f);
     }
 }
@@ -137,10 +136,10 @@ BSDF *MeasuredMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     else
         dgs = dgShading;
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
-    if (data)
-        bsdf->Add(BSDF_ALLOC(arena, MERLMeasuredBRDF)(data));
+    if (dataMERL)
+        bsdf->Add(BSDF_ALLOC(arena, MERLMeasuredBRDF)(dataMERL));
     else
-        bsdf->Add(BSDF_ALLOC(arena, ThetaPhiMeasuredBRDF)(thetaPhiData));
+        bsdf->Add(BSDF_ALLOC(arena, IrregIsotropicBRDF)(thetaPhiData));
     return bsdf;
 }
 

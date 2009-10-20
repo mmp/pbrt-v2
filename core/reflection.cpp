@@ -29,10 +29,30 @@
 #include "montecarlo.h"
 #include <stdarg.h>
 
+// BxDF Local Definitions
+struct IrregIsoProc {
+    // IrregIsoProc Public Methods
+    IrregIsoProc() { sumWeights = 0.f; nFound = 0; }
+    void operator()(const Point &p, const IrregIsotropicBRDFSample &sample,
+                    float d2, float &md2) {
+        float weight = expf(-100.f * d2);
+        v += weight * sample.v;
+        sumWeights += weight;
+        ++nFound;
+    }
+    Spectrum v;
+    float sumWeights;
+    int nFound;
+};
+
+
+#define BRDF_SAMPLING_RES_THETA_H       90
+#define BRDF_SAMPLING_RES_THETA_D       90
+#define BRDF_SAMPLING_RES_PHI_D         180
+
 // BxDF Utility Functions
-Spectrum FrDiel(float cosi, float cost,
-                        const Spectrum &etai,
-                        const Spectrum &etat) {
+Spectrum FrDiel(float cosi, float cost, const Spectrum &etai,
+                const Spectrum &etat) {
     Spectrum Rparl = ((etat * cosi) - (etai * cost)) /
                      ((etat * cosi) + (etai * cost));
     Spectrum Rperp = ((etai * cosi) - (etat * cost)) /
@@ -41,8 +61,7 @@ Spectrum FrDiel(float cosi, float cost,
 }
 
 
-Spectrum FrCond(float cosi, const Spectrum &eta,
-                        const Spectrum &k) {
+Spectrum FrCond(float cosi, const Spectrum &eta, const Spectrum &k) {
     Spectrum tmp = (eta*eta + k*k) * cosi*cosi;
     Spectrum Rparl2 = (tmp - (2.f * eta * cosi) + 1) /
                       (tmp + (2.f * eta * cosi) + 1);
@@ -54,22 +73,6 @@ Spectrum FrCond(float cosi, const Spectrum &eta,
 }
 
 
-Spectrum FresnelApproxEta(const Spectrum &Fr) {
-    Spectrum reflectance = Fr.Clamp(0.f, .999f);
-    return (Spectrum(1.) + Sqrt(reflectance)) /
-           (Spectrum(1.) - Sqrt(reflectance));
-}
-
-
-Spectrum FresnelApproxK(const Spectrum &Fr) {
-    Spectrum reflectance = Fr.Clamp(0.f, .999f);
-    return 2.f * Sqrt(reflectance / (Spectrum(1.) - reflectance));
-}
-
-
-#define BRDF_SAMPLING_RES_THETA_H       90
-#define BRDF_SAMPLING_RES_THETA_D       90
-#define BRDF_SAMPLING_RES_PHI_D         360
 
 // BxDF Method Definitions
 Spectrum BRDFToBTDF::f(const Vector &wo, const Vector &wi) const {
@@ -220,13 +223,12 @@ FresnelBlend::FresnelBlend(const Spectrum &d, const Spectrum &s,
 
 Spectrum FresnelBlend::f(const Vector &wo, const Vector &wi) const {
     Spectrum diffuse = (28.f/(23.f*M_PI)) * Rd *
-        (Spectrum(1.) - Rs) *
-        (1 - powf(1 - .5f * AbsCosTheta(wi), 5)) *
-        (1 - powf(1 - .5f * AbsCosTheta(wo), 5));
+        (Spectrum(1.f) - Rs) *
+        (1.f - powf(1.f - .5f * AbsCosTheta(wi), 5)) *
+        (1.f - powf(1.f - .5f * AbsCosTheta(wo), 5));
     Vector wh = Normalize(wi + wo);
     Spectrum specular = distribution->D(wh) /
-        (4 * AbsDot(wi, wh) *
-        max(AbsCosTheta(wi), AbsCosTheta(wo))) *
+        (4.f * AbsDot(wi, wh) * max(AbsCosTheta(wi), AbsCosTheta(wo))) *
         SchlickFresnel(Dot(wi, wh));
     return diffuse + specular;
 }
@@ -244,32 +246,17 @@ Point BRDFRemap(const Vector &wo, const Vector &wi) {
 }
 
 
-struct TPProc {
-    TPProc() { sumWeights = 0.f; nFound = 0; }
-    void operator()(const Point &p, const ThetaPhiSample &sample, float d2, float &md2) const {
-        float weight = expf(-100.f * d2);
-        v += weight * sample.v;
-        sumWeights += weight;
-        ++nFound;
-    }
-    mutable Spectrum v;
-    mutable float sumWeights;
-    mutable int nFound;
-};
-
-
-
-Spectrum ThetaPhiMeasuredBRDF::f(const Vector &wo, const Vector &wi) const {
+Spectrum IrregIsotropicBRDF::f(const Vector &wo, const Vector &wi) const {
     Point p = BRDFRemap(wo, wi);
-
     float lastmd2 = .001f;
     while (true) {
-        TPProc proc;
+        // Try to find enough BRDF samples around _p_ within search radius
+        IrregIsoProc proc;
         float md2 = lastmd2;
         thetaPhiData->Lookup(p, proc, md2);
         if (proc.nFound > 2 || lastmd2 > 1.5f)
             return proc.v.Clamp() / proc.sumWeights;
-        lastmd2 *= 2.;
+        lastmd2 *= 2.f;
     }
 }
 
@@ -278,13 +265,11 @@ Spectrum MERLMeasuredBRDF::f(const Vector &wo, const Vector &wi) const {
     // Compute $\wh$ and transform $\wi$ to halfangle coordinate system
     Vector wh = Normalize(wi + wo);
     float Htheta = SphericalTheta(wh);
-    float invXYLength = 1.f / sqrtf(wh.x*wh.x + wh.y*wh.y);
-    float cosPhi =  wh.x * invXYLength;
-    float sinPhi = -wh.y * invXYLength;
-    float cosTheta = wh.z;  // cos(-x) = cos(x)
-    float sinTheta = -sqrtf(max(0.f, 1.f - cosTheta*cosTheta)); //sinf(-Htheta);
-    Vector whx(cosPhi * cosTheta, -sinPhi * cosTheta, sinTheta);
-    Vector why(sinPhi, cosPhi, 0);
+    float cosPhi = CosPhi(wh), sinPhi = SinPhi(wh);
+    float cosTheta = CosTheta(wh);
+    float sinTheta = SinTheta(wh);
+    Vector whx(cosPhi * cosTheta, sinPhi * cosTheta, -sinTheta);
+    Vector why(-sinPhi, cosPhi, 0);
     Vector wiH(Dot(wi, whx), Dot(wi, why), Dot(wi, wh));
 
     // Compute index into measured BRDF tables
@@ -293,22 +278,23 @@ Spectrum MERLMeasuredBRDF::f(const Vector &wo, const Vector &wi) const {
     if (wDiffPhi > M_PI) wDiffPhi -= M_PI;
 
     // Compute index for halfangle theta, _thetaHIndex_
-#define REMAP_ANGLE(A, RANGE, MAX) Clamp(int((A) / (RANGE) * (MAX)), 0, (MAX)-1)
-    int thetaHIndex = REMAP_ANGLE(sqrtf(max(0.f, Htheta) / (M_PI / 2.f)), 1.f,
-        BRDF_SAMPLING_RES_THETA_H);
+#define REMAP(V, MAX, COUNT) \
+        Clamp(int((V) / (MAX) * (COUNT)), 0, (COUNT)-1)
+    int thetaHIndex = REMAP(sqrtf(max(0.f, Htheta) / (M_PI / 2.f)),
+                                  1.f, BRDF_SAMPLING_RES_THETA_H);
 
     // Compute index for halfangle difference, _thetaDiffIndex_
-    int thetaDiffIndex = REMAP_ANGLE(wDiffTheta, M_PI / 2.f, BRDF_SAMPLING_RES_THETA_D);
+    int thetaDiffIndex = REMAP(wDiffTheta, M_PI / 2.f,
+                               BRDF_SAMPLING_RES_THETA_D);
 
     // Compute index for phi difference, _phiDiffIndex_
-    int phiDiffIndex = REMAP_ANGLE(wDiffPhi, M_PI, BRDF_SAMPLING_RES_PHI_D / 2);
+    int phiDiffIndex = REMAP(wDiffPhi, M_PI, BRDF_SAMPLING_RES_PHI_D);
     int index = phiDiffIndex +
-        (BRDF_SAMPLING_RES_PHI_D / 2)  *
+        BRDF_SAMPLING_RES_PHI_D  *
             (thetaDiffIndex + thetaHIndex * BRDF_SAMPLING_RES_THETA_D);
 
     // Lookup and return RGB color from BRDF table
-    float rgb[3] = { max(0.f, brdf[3*index]), max(0.f, brdf[3*index+1]), max(0.f, brdf[3*index+2]) };
-    return Spectrum::FromRGB(rgb);
+    return Spectrum::FromRGB(&brdf[3*index]);
 }
 
 
@@ -396,7 +382,7 @@ void Anisotropic::sampleFirstQuadrant(float u1, float u2,
     if (ex == ey)
         *phi = M_PI * u1 * 0.5f;
     else
-        *phi = atanf(sqrtf((ex+1)/(ey+1)) *
+        *phi = atanf(sqrtf((ex+1.f) / (ey+1.f)) *
                      tanf(M_PI * u1 * 0.5f));
     float cosphi = cosf(*phi), sinphi = sinf(*phi);
     *costheta = powf(u2, 1.f/(ex * cosphi * cosphi +
@@ -406,6 +392,7 @@ void Anisotropic::sampleFirstQuadrant(float u1, float u2,
 
 float Anisotropic::Pdf(const Vector &wo, const Vector &wi) const {
     Vector wh = Normalize(wo + wi);
+    if (!SameHemisphere(wo, wh)) wh = -wh;
     // Compute PDF for $\wi$ from anisotropic distribution
     float anisotropic_pdf = D(wh) / (4.f * Dot(wo, wh));
     if (Dot(wo, wh) < 0.f) anisotropic_pdf = 0.f;

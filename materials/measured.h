@@ -35,15 +35,14 @@ class MeasuredMaterial : public Material {
 public:
     // MeasuredMaterial Public Methods
     MeasuredMaterial(const string &filename, Reference<Texture<float> > bump);
-    ~MeasuredMaterial() { /*delete[] data;*/ }
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,
                   MemoryArena &arena) const;
 private:
     // MeasuredMaterial Private Data
-    float *data;
+    float *dataMERL;
+    KdTree<IrregIsotropicBRDFSample> *thetaPhiData;
     Reference<Texture<float> > bumpMap;
-    KdTree<ThetaPhiSample> *thetaPhiData;
 };
 
 
