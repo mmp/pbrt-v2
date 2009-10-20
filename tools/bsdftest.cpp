@@ -34,7 +34,6 @@ void createOrenNayar20(BSDF* bsdf);
 void createFresnelBlend0(BSDF* bsdf);
 void createFresnelBlend30(BSDF* bsdf);
 void createPlastic(BSDF* bsdf);
-void createShinyMetal(BSDF* bsdf);
 void createSubstrate(BSDF* bsdf);
 
 
@@ -55,7 +54,7 @@ int main(int argc, char *argv[])
 
     // number of monte carlo estimates
     //const int estimates = 1;
-    const int estimates = 1000000;
+    const int estimates = 10000000;
 
     // radiance of uniform environment map
     const double environmentRadiance = 1.0;
@@ -69,10 +68,10 @@ int main(int argc, char *argv[])
 
 
     CreateBSDFFunc BSDFFuncArray[] = {
-        createBlinn0,
-        createBlinn05,
-        createBlinn2,
-        createBlinn30and0,
+//CO        createBlinn0,
+//CO        createBlinn05,
+//CO        createBlinn2,
+//CO        createBlinn30and0,
         createAniso0_0,
         createAniso30_30,
         createLambertian,
@@ -81,15 +80,14 @@ int main(int argc, char *argv[])
         createFresnelBlend0,
         createFresnelBlend30,
         createPlastic,
-        createShinyMetal,
         createSubstrate,
     };
 
     const char* BSDFFuncDescripArray[] = {
-        "Blinn (exponent 0)",
-        "Blinn (exponent 0.5)",
-        "Blinn (exponent 2)",
-        "Blinn (exponent 30 and 0)",
+//CO        "Blinn (exponent 0)",
+//CO        "Blinn (exponent 0.5)",
+//CO        "Blinn (exponent 2)",
+//CO        "Blinn (exponent 30 and 0)",
         "Anisotropic (exponent 0, 0)",
         "Anisotropic (exponent 30, 30)",
         "Lambertian",
@@ -98,7 +96,6 @@ int main(int argc, char *argv[])
         "FresnelBlend (Blinn exponent 0)",
         "FresnelBlend (Blinn exponent 30)",
         "Plastic",
-        "Shiny Metal",
         "Substrate",
     };
 
@@ -466,22 +463,6 @@ void createPlastic(BSDF* bsdf)
     bsdf->Add(spec);
 }
 
-
-void createShinyMetal(BSDF* bsdf)
-{
-    // Taken from shinymetal.cpp
-
-    Spectrum spec(0.5);
-    float rough = 0.1;
-    Spectrum R(0.5);
-
-    MicrofacetDistribution *md = BSDF_ALLOC(arena, Blinn)(1.f / rough);
-    Spectrum k = 0.;
-    Fresnel *frMf = BSDF_ALLOC(arena, FresnelConductor)(FresnelApproxEta(spec), k);
-    Fresnel *frSr = BSDF_ALLOC(arena, FresnelConductor)(FresnelApproxEta(R), k);
-    bsdf->Add(BSDF_ALLOC(arena, Microfacet)(1., frMf, md));
-    bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(1., frSr));
-}
 
 
 void createSubstrate(BSDF* bsdf)
