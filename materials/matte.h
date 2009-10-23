@@ -33,11 +33,9 @@ class MatteMaterial : public Material {
 public:
     // MatteMaterial Public Methods
     MatteMaterial(Reference<Texture<Spectrum> > kd,
-          Reference<Texture<float> > sig,
-          Reference<Texture<float> > bump) {
-        Kd = kd;
-        sigma = sig;
-        bumpMap = bump;
+                  Reference<Texture<float> > sig,
+                  Reference<Texture<float> > bump)
+        : Kd(kd), sigma(sig), bumpMap(bump) {
     }
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,
                   const DifferentialGeometry &dgShading,

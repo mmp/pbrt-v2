@@ -34,7 +34,7 @@ struct IrregIsoProc {
     // IrregIsoProc Public Methods
     IrregIsoProc() { sumWeights = 0.f; nFound = 0; }
     void operator()(const Point &p, const IrregIsotropicBRDFSample &sample,
-                    float d2, float &md2) {
+                    float d2, float &maxDist2) {
         float weight = expf(-100.f * d2);
         v += weight * sample.v;
         sumWeights += weight;
@@ -46,9 +46,6 @@ struct IrregIsoProc {
 };
 
 
-#define BRDF_SAMPLING_RES_THETA_H       90
-#define BRDF_SAMPLING_RES_THETA_D       90
-#define BRDF_SAMPLING_RES_PHI_D         180
 
 // BxDF Utility Functions
 Spectrum FrDiel(float cosi, float cost, const Spectrum &etai,
@@ -247,53 +244,43 @@ Point BRDFRemap(const Vector &wo, const Vector &wi) {
 
 
 Spectrum IrregIsotropicBRDF::f(const Vector &wo, const Vector &wi) const {
-    Point p = BRDFRemap(wo, wi);
-    float lastmd2 = .001f;
+    Point m = BRDFRemap(wo, wi);
+    float lastMaxDist2 = .001f;
     while (true) {
-        // Try to find enough BRDF samples around _p_ within search radius
+        // Try to find enough BRDF samples around _m_ within search radius
         IrregIsoProc proc;
-        float md2 = lastmd2;
-        thetaPhiData->Lookup(p, proc, md2);
-        if (proc.nFound > 2 || lastmd2 > 1.5f)
+        float maxDist2 = lastMaxDist2;
+        isoBRDFData->Lookup(m, proc, maxDist2);
+        if (proc.nFound > 2 || lastMaxDist2 > 1.5f)
             return proc.v.Clamp() / proc.sumWeights;
-        lastmd2 *= 2.f;
+        lastMaxDist2 *= 2.f;
     }
 }
 
 
-Spectrum MERLMeasuredBRDF::f(const Vector &wo, const Vector &wi) const {
+Spectrum RegularHalfangleBRDF::f(const Vector &wo, const Vector &wi) const {
     // Compute $\wh$ and transform $\wi$ to halfangle coordinate system
     Vector wh = Normalize(wi + wo);
-    float Htheta = SphericalTheta(wh);
-    float cosPhi = CosPhi(wh), sinPhi = SinPhi(wh);
-    float cosTheta = CosTheta(wh);
-    float sinTheta = SinTheta(wh);
-    Vector whx(cosPhi * cosTheta, sinPhi * cosTheta, -sinTheta);
-    Vector why(-sinPhi, cosPhi, 0);
-    Vector wiH(Dot(wi, whx), Dot(wi, why), Dot(wi, wh));
+    float whTheta = SphericalTheta(wh);
+    float whCosPhi = CosPhi(wh), whSinPhi = SinPhi(wh);
+    float whCosTheta = CosTheta(wh), whSinTheta = SinTheta(wh);
+    Vector whx(whCosPhi * whCosTheta, whSinPhi * whCosTheta, -whSinTheta);
+    Vector why(-whSinPhi, whCosPhi, 0);
+    Vector wd(Dot(wi, whx), Dot(wi, why), Dot(wi, wh));
 
-    // Compute index into measured BRDF tables
-    float wDiffTheta = SphericalTheta(wiH);
-    float wDiffPhi = SphericalPhi(wiH);
-    if (wDiffPhi > M_PI) wDiffPhi -= M_PI;
+    // Compute _index_ into measured BRDF tables
+    float wdTheta = SphericalTheta(wd), wdPhi = SphericalPhi(wd);
+    if (wdPhi > M_PI) wdPhi -= M_PI;
 
-    // Compute index for halfangle theta, _thetaHIndex_
+    // Compute indices _whThetaIndex_, _wdThetaIndex_, _wdPhiIndex_
 #define REMAP(V, MAX, COUNT) \
         Clamp(int((V) / (MAX) * (COUNT)), 0, (COUNT)-1)
-    int thetaHIndex = REMAP(sqrtf(max(0.f, Htheta) / (M_PI / 2.f)),
-                                  1.f, BRDF_SAMPLING_RES_THETA_H);
-
-    // Compute index for halfangle difference, _thetaDiffIndex_
-    int thetaDiffIndex = REMAP(wDiffTheta, M_PI / 2.f,
-                               BRDF_SAMPLING_RES_THETA_D);
-
-    // Compute index for phi difference, _phiDiffIndex_
-    int phiDiffIndex = REMAP(wDiffPhi, M_PI, BRDF_SAMPLING_RES_PHI_D);
-    int index = phiDiffIndex +
-        BRDF_SAMPLING_RES_PHI_D  *
-            (thetaDiffIndex + thetaHIndex * BRDF_SAMPLING_RES_THETA_D);
-
-    // Lookup and return RGB color from BRDF table
+    int whThetaIndex = REMAP(sqrtf(max(0.f, whTheta / (M_PI / 2.f))),
+                             1.f, nThetaH);
+    int wdThetaIndex = REMAP(wdTheta, M_PI / 2.f, nThetaD);
+    int wdPhiIndex = REMAP(wdPhi, M_PI, nPhiD);
+#undef REMAP
+    int index = wdPhiIndex + nPhiD * (wdThetaIndex + whThetaIndex * nThetaD);
     return Spectrum::FromRGB(&brdf[3*index]);
 }
 

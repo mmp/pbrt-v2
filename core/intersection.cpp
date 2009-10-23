@@ -30,7 +30,7 @@
 
 // Intersection Method Definitions
 BSDF *Intersection::GetBSDF(const RayDifferential &ray,
-          MemoryArena &arena) const {
+                            MemoryArena &arena) const {
     PBRT_STARTED_BSDF_SHADING(const_cast<RayDifferential *>(&ray));
     dg.ComputeDifferentials(ray);
     BSDF *bsdf = primitive->GetBSDF(dg, ObjectToWorld, arena);

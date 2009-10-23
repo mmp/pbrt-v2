@@ -150,9 +150,6 @@ public:
     inline void Add(BxDF *bxdf);
     int NumComponents() const { return nBxDFs; }
     int NumComponents(BxDFType flags) const;
-    bool HasShadingGeometry() const {
-        return (nn.x != ng.x || nn.y != ng.y || nn.z != ng.z);
-    }
     Vector WorldToLocal(const Vector &v) const {
         return Vector(Dot(v, sn), Dot(v, tn), Dot(v, nn));
     }
@@ -161,11 +158,11 @@ public:
                       sn.y * v.x + tn.y * v.y + nn.y * v.z,
                       sn.z * v.x + tn.z * v.y + nn.z * v.z);
     }
-    Spectrum f(const Vector &woW, const Vector &wiW,
-        BxDFType flags = BSDF_ALL) const;
+    Spectrum f(const Vector &woW, const Vector &wiW, BxDFType flags = BSDF_ALL) const;
     Spectrum rho(int nSamples, const float *samples1,
-        const float *samples2, BxDFType flags = BSDF_ALL) const;
-    Spectrum rho(const Vector &wo, int nSamples, const float *samples, BxDFType flags = BSDF_ALL) const;
+                 const float *samples2, BxDFType flags = BSDF_ALL) const;
+    Spectrum rho(const Vector &wo, int nSamples, const float *samples,
+                 BxDFType flags = BSDF_ALL) const;
 
     // BSDF Public Data
     const DifferentialGeometry dgShading;
@@ -478,24 +475,26 @@ private:
 class IrregIsotropicBRDF : public BxDF {
 public:
     // IrregIsotropicBRDF Public Methods
-    IrregIsotropicBRDF(const KdTree<IrregIsotropicBRDFSample> *tpd)
-        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), thetaPhiData(tpd) { }
+    IrregIsotropicBRDF(const KdTree<IrregIsotropicBRDFSample> *d)
+        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), isoBRDFData(d) { }
     Spectrum f(const Vector &wo, const Vector &wi) const;
 private:
     // IrregIsotropicBRDF Private Data
-    const KdTree<IrregIsotropicBRDFSample> *thetaPhiData;
+    const KdTree<IrregIsotropicBRDFSample> *isoBRDFData;
 };
 
 
-class MERLMeasuredBRDF : public BxDF {
+class RegularHalfangleBRDF : public BxDF {
 public:
-    // MERLMeasuredBRDF Public Methods
-    MERLMeasuredBRDF(const float *d)
-        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), brdf(d) { }
+    // RegularHalfangleBRDF Public Methods
+    RegularHalfangleBRDF(const float *d, int nth, int ntd, int npd)
+        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), brdf(d),
+          nThetaH(nth), nThetaD(ntd), nPhiD(npd) { }
     Spectrum f(const Vector &wo, const Vector &wi) const;
 private:
-    // MERLMeasuredBRDF Private Data
+    // RegularHalfangleBRDF Private Data
     const float *brdf;
+    int nThetaH, nThetaD, nPhiD;
 };
 
 

@@ -31,8 +31,8 @@
 
 // PlasticMaterial Method Definitions
 BSDF *PlasticMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
-        const DifferentialGeometry &dgShading,
-        MemoryArena &arena) const {
+                               const DifferentialGeometry &dgShading,
+                               MemoryArena &arena) const {
     // Allocate _BSDF_, possibly doing bump mapping with _bumpMap_
     DifferentialGeometry dgs;
     if (bumpMap)
@@ -45,8 +45,8 @@ BSDF *PlasticMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
     Spectrum ks = Ks->Evaluate(dgs).Clamp();
     float rough = roughness->Evaluate(dgs);
-    BxDF *spec = BSDF_ALLOC(arena, Microfacet)(ks, fresnel,
-                                              BSDF_ALLOC(arena, Blinn)(1.f / rough));
+    BxDF *spec = BSDF_ALLOC(arena, Microfacet)
+                       (ks, fresnel, BSDF_ALLOC(arena, Blinn)(1.f / rough));
     bsdf->Add(diff);
     bsdf->Add(spec);
     return bsdf;

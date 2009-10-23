@@ -31,8 +31,8 @@
 
 // MatteMaterial Method Definitions
 BSDF *MatteMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
-                     const DifferentialGeometry &dgShading,
-                     MemoryArena &arena) const {
+                             const DifferentialGeometry &dgShading,
+                             MemoryArena &arena) const {
     // Allocate _BSDF_, possibly doing bump mapping with _bumpMap_
     DifferentialGeometry dgs;
     if (bumpMap)

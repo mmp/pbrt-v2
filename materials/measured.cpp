@@ -32,13 +32,13 @@
 #define BRDF_SAMPLING_RES_THETA_D       90
 #define BRDF_SAMPLING_RES_PHI_D         180
 
-static map<string, float *> loadedMERL;
+static map<string, float *> loadedRegularHalfangle;
 static map<string, KdTree<IrregIsotropicBRDFSample> *> loadedThetaPhi;
 MeasuredMaterial::MeasuredMaterial(const string &filename,
       Reference<Texture<float> > bump) {
     bumpMap = bump;
     const char *suffix = strrchr(filename.c_str(), '.');
-    dataMERL = NULL;
+    regularHalfangleData = NULL;
     thetaPhiData = NULL;
     if (!suffix)
         Error("No suffix in measured BRDF filename \"%s\".  "
@@ -76,14 +76,14 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
             pos += numWls;
             Point p = BRDFRemap(wo, wi);
             samples.push_back(IrregIsotropicBRDFSample(p, s));
-        bbox = Union(bbox, p);
+            bbox = Union(bbox, p);
         }
         loadedThetaPhi[filename] = thetaPhiData = new KdTree<IrregIsotropicBRDFSample>(samples);
     }
     else {
-        // Load MERL BRDF Data
-        if (loadedMERL.find(filename) != loadedMERL.end()) {
-            dataMERL = loadedMERL[filename];
+        // Load RegularHalfangle BRDF Data
+        if (loadedRegularHalfangle.find(filename) != loadedRegularHalfangle.end()) {
+            regularHalfangleData = loadedRegularHalfangle[filename];
             return;
         }
         
@@ -103,7 +103,7 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
             fclose(f);
         }
         
-        dataMERL = new float[3*n];
+        regularHalfangleData = new float[3*n];
         const u_int chunkSize = 2*BRDF_SAMPLING_RES_PHI_D;
         double tmp[chunkSize];
         u_int nChunks = n / chunkSize;
@@ -116,11 +116,11 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
                     Error("Premature end-of-file in measured BRDF data file \"%s\"",
                           filename.c_str());
                 for (u_int j = 0; j < chunkSize; ++j)
-                    dataMERL[3 * offset++ + c] = max(0., tmp[j] * scales[c]);
+                    regularHalfangleData[3 * offset++ + c] = max(0., tmp[j] * scales[c]);
             }
         }
         
-        loadedMERL[filename] = dataMERL;
+        loadedRegularHalfangle[filename] = regularHalfangleData;
         fclose(f);
     }
 }
@@ -136,8 +136,10 @@ BSDF *MeasuredMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     else
         dgs = dgShading;
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
-    if (dataMERL)
-        bsdf->Add(BSDF_ALLOC(arena, MERLMeasuredBRDF)(dataMERL));
+    if (regularHalfangleData)
+        bsdf->Add(BSDF_ALLOC(arena, RegularHalfangleBRDF)
+            (regularHalfangleData, BRDF_SAMPLING_RES_THETA_H, BRDF_SAMPLING_RES_THETA_D,
+             BRDF_SAMPLING_RES_PHI_D));
     else
         bsdf->Add(BSDF_ALLOC(arena, IrregIsotropicBRDF)(thetaPhiData));
     return bsdf;

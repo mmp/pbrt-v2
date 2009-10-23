@@ -36,8 +36,8 @@ public:
                           const DifferentialGeometry &dgShading,
                           MemoryArena &arena) const = 0;
     virtual BSSRDF *GetBSSRDF(const DifferentialGeometry &dgGeom,
-                          const DifferentialGeometry &dgShading,
-                          MemoryArena &arena) const {
+                              const DifferentialGeometry &dgShading,
+                              MemoryArena &arena) const {
         return NULL;
     }
     virtual ~Material();
