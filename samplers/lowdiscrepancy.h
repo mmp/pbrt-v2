@@ -41,8 +41,8 @@ public:
     int RoundSize(int size) const {
         return RoundUpPow2(size);
     }
-    int MaximumSampleCount() { return pixelSamples; }
     int GetMoreSamples(Sample *sample);
+    int MaximumSampleCount() { return pixelSamples; }
 private:
     // LDSampler Private Data
     int xPos, yPos, pixelSamples;

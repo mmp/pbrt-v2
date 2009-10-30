@@ -28,8 +28,7 @@
 #include "montecarlo.h"
 
 // LDSampler Method Definitions
-LDSampler::LDSampler(int xstart, int xend,
-                     int ystart, int yend, int ps,
+LDSampler::LDSampler(int xstart, int xend, int ystart, int yend, int ps,
                      float sopen, float sclose)
     : Sampler(xstart, xend, ystart, yend, RoundUpPow2(ps), sopen, sclose) {
     xPos = xPixelStart;
@@ -53,18 +52,16 @@ Sampler *LDSampler::GetSubSampler(int num, int count) {
     int x0, x1, y0, y1;
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
-    return new LDSampler(x0, x1, y0, y1, pixelSamples,
-        ShutterOpen, ShutterClose);
+    return new LDSampler(x0, x1, y0, y1, pixelSamples, shutterOpen, shutterClose);
 }
 
 
 int LDSampler::GetMoreSamples(Sample *samples) {
     if (yPos == yPixelEnd) return 0;
-    if (!sampleBuf)
+    if (sampleBuf == NULL)
         sampleBuf = new float[LDPixelSampleFloatsNeeded(samples, pixelSamples)];
-    // Generate low-discrepancy samples for pixel
-    LDPixelSample(xPos, yPos, ShutterOpen, ShutterClose, pixelSamples, samples,
-        sampleBuf);
+    LDPixelSample(xPos, yPos, shutterOpen, shutterClose,
+                  pixelSamples, samples, sampleBuf);
     if (++xPos == xPixelEnd) {
         xPos = xPixelStart;
         ++yPos;
@@ -81,7 +78,7 @@ LDSampler *CreateLowDiscrepancySampler(const ParamSet &params, const Film *film,
     int nsamp = params.FindOneInt("pixelsamples", 4);
     if (getenv("PBRT_QUICK_RENDER")) nsamp = 1;
     return new LDSampler(xstart, xend, ystart, yend, nsamp,
-        camera->ShutterOpen, camera->ShutterClose);
+        camera->shutterOpen, camera->shutterClose);
 }
 
 

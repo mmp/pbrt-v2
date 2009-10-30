@@ -397,8 +397,8 @@ RealisticCamera::RealisticCamera(const AnimatedTransform &cam2world,
 float RealisticCamera::GenerateRay(const CameraSample &sample,
         Ray *ray) const {
     // Compute the camera ray point on the film plane
-    float filmx = .5f - sample.ImageX / film->xResolution;
-    float filmy = sample.ImageY / film->yResolution - .5f;
+    float filmx = .5f - sample.imageX / film->xResolution;
+    float filmy = sample.imageY / film->yResolution - .5f;
     float imagePlaneZ = lensSystem->GetImagePlaneZ();
     Point org = Point(filmx * wfilm, filmy * hfilm, imagePlaneZ);
 
@@ -406,7 +406,7 @@ float RealisticCamera::GenerateRay(const CameraSample &sample,
     float exitPupilRadius = lensSystem->GetExitPupilRadius();
     float exitPupilZ = lensSystem->GetExitPupilZ();
     float lensU, lensV;
-    ConcentricSampleDisk(sample.LensU, sample.LensV, &lensU, &lensV);
+    ConcentricSampleDisk(sample.lensU, sample.lensV, &lensU, &lensV);
     lensU *= exitPupilRadius;
     lensV *= exitPupilRadius;
     Point epoint(lensU, lensV, exitPupilZ);
@@ -431,7 +431,7 @@ float RealisticCamera::GenerateRay(const CameraSample &sample,
     }
     oray.mint = 0.f;
     oray.maxt = INFINITY;
-    oray.time = Lerp(sample.Time, ShutterOpen, ShutterClose);
+    oray.time = Lerp(sample.time, shutterOpen, shutterClose);
     CameraToWorld(oray, ray);
     return ff;
 }

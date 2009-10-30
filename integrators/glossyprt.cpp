@@ -58,7 +58,7 @@ void GlossyPRTIntegrator::Preprocess(const Scene *scene,
     RNG rng;
     MemoryArena arena;
     c_in = new Spectrum[SHTerms(lmax)];
-    SHProjectIncidentDirectRadiance(p, 0.f, camera->ShutterOpen, arena,
+    SHProjectIncidentDirectRadiance(p, 0.f, camera->shutterOpen, arena,
         scene, false, lmax, rng, c_in);
 
     // Compute glossy BSDF matrix for PRT
@@ -88,7 +88,7 @@ Spectrum GlossyPRTIntegrator::Li(const Scene *scene, const Renderer *,
     Spectrum *c_t = arena.Alloc<Spectrum>(SHTerms(lmax));
     if (doTransfer) {
         Spectrum *T = arena.Alloc<Spectrum>(SHTerms(lmax)*SHTerms(lmax));
-        SHComputeTransferMatrix(p, isect.RayEpsilon, scene, *sample->rng,
+        SHComputeTransferMatrix(p, isect.rayEpsilon, scene, *sample->rng,
                                 nSamples, lmax, T);
         SHMatrixVectorMultiply(T, c_in, c_t, lmax);
     }

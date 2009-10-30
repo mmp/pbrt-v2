@@ -1199,7 +1199,7 @@ Renderer *RenderOptions::MakeRenderer() const {
     }
     // Create remaining \use{Renderer} types
     else if (RendererName == "createprobes") {
-        Point pCamera = camera->CameraToWorld(camera->ShutterOpen, Point(0, 0, 0));
+        Point pCamera = camera->CameraToWorld(camera->shutterOpen, Point(0, 0, 0));
         renderer = CreateRadianceProbesRenderer(pCamera, RendererParams);
         RendererParams.ReportUnused();
     }

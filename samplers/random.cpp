@@ -29,7 +29,8 @@
 
 RandomSampler::RandomSampler(int xstart, int xend,
         int ystart, int yend, int ns, float sopen, float sclose)
-    : Sampler(xstart, xend, ystart, yend, ns, sopen, sclose) {
+    : Sampler(xstart, xend, ystart, yend, ns, sopen, sclose),
+      rng(xstart + ystart * (xend-xstart)) {
     xPos = xPixelStart;
     yPos = yPixelStart;
     nSamples = ns;
@@ -56,7 +57,7 @@ Sampler *RandomSampler::GetSubSampler(int num, int count) {
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
     return new RandomSampler(x0, x1, y0, y1, nSamples,
-       ShutterOpen, ShutterClose);
+       shutterOpen, shutterClose);
 }
 
 
@@ -83,11 +84,11 @@ int RandomSampler::GetMoreSamples(Sample *sample) {
         samplePos = 0;
     }
     // Return next \mono{RandomSampler} sample point
-    sample->ImageX = imageSamples[2*samplePos];
-    sample->ImageY = imageSamples[2*samplePos+1];
-    sample->LensU = lensSamples[2*samplePos];
-    sample->LensV = lensSamples[2*samplePos+1];
-    sample->Time = Lerp(timeSamples[samplePos], ShutterOpen, ShutterClose);
+    sample->imageX = imageSamples[2*samplePos];
+    sample->imageY = imageSamples[2*samplePos+1];
+    sample->lensU = lensSamples[2*samplePos];
+    sample->lensV = lensSamples[2*samplePos+1];
+    sample->time = Lerp(timeSamples[samplePos], shutterOpen, shutterClose);
     // Generate stratified samples for integrators
     for (u_int i = 0; i < sample->n1D.size(); ++i)
         for (u_int j = 0; j < sample->n1D[i]; ++j)
@@ -107,7 +108,7 @@ Sampler *CreateRandomSampler(const ParamSet &params,
     int xstart, xend, ystart, yend;
     film->GetSampleExtent(&xstart, &xend, &ystart, &yend);
     return new RandomSampler(xstart, xend, ystart, yend, ns,
-                             camera->ShutterOpen, camera->ShutterClose);
+                             camera->shutterOpen, camera->shutterClose);
 }
 
 

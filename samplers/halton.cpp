@@ -33,8 +33,8 @@ Sampler *HaltonSampler::GetSubSampler(int num, int count) {
     int x0, x1, y0, y1;
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
-    return new HaltonSampler(x0, x1, y0, y1, SamplesPerPixel, ShutterOpen,
-        ShutterClose, num * 1024);
+    return new HaltonSampler(x0, x1, y0, y1, samplesPerPixel, shutterOpen,
+        shutterClose, num * 1024);
 }
 
 
@@ -44,7 +44,7 @@ HaltonSampler::HaltonSampler(int xs, int xe, int ys, int ye, int ps,
     int delta = max(xPixelEnd - xPixelStart,
                     yPixelEnd - yPixelStart);
 
-    wantedSamples = SamplesPerPixel * delta * delta;
+    wantedSamples = samplesPerPixel * delta * delta;
     currentSample = 0;
 }
 
@@ -52,21 +52,22 @@ HaltonSampler::HaltonSampler(int xs, int xe, int ys, int ye, int ps,
 int HaltonSampler::GetMoreSamples(Sample *samples) {
 retry:
     if (currentSample >= wantedSamples) return 0;
-
+    // Generate sample with Halton sequence and reject if outside image extent
     float u = (float)RadicalInverse(currentSample, 3);
     float v = (float)RadicalInverse(currentSample, 2);
-    samples->LensU = (float)RadicalInverse(currentSample, 5);
-    samples->LensV = (float)RadicalInverse(currentSample, 7);
-    samples->Time = Lerp((float)RadicalInverse(currentSample, 11),
-        ShutterOpen, ShutterClose);
-
-    float lerpDelta = float(max(xPixelEnd - xPixelStart, yPixelEnd - yPixelStart));
-    samples->ImageX = Lerp(u, xPixelStart, xPixelStart + lerpDelta);
-    samples->ImageY = Lerp(v, yPixelStart, yPixelStart + lerpDelta);
+    float lerpDelta = float(max(xPixelEnd - xPixelStart,
+                                yPixelEnd - yPixelStart));
+    samples->imageX = Lerp(u, xPixelStart, xPixelStart + lerpDelta);
+    samples->imageY = Lerp(v, yPixelStart, yPixelStart + lerpDelta);
     ++currentSample;
-    if (samples->ImageX >= xPixelEnd || samples->ImageY >= yPixelEnd)
+    if (samples->imageX >= xPixelEnd || samples->imageY >= yPixelEnd)
         goto retry;
 
+    // Generate lens, time, and integrator samples for _HaltonSampler_
+    samples->lensU = (float)RadicalInverse(currentSample, 5);
+    samples->lensV = (float)RadicalInverse(currentSample, 7);
+    samples->time = Lerp((float)RadicalInverse(currentSample, 11),
+                         shutterOpen, shutterClose);
     for (u_int i = 0; i < samples->n1D.size(); ++i)
         LatinHypercube(samples->oneD[i], samples->n1D[i], 1, rng);
     for (u_int i = 0; i < samples->n2D.size(); ++i)
@@ -83,7 +84,7 @@ HaltonSampler *CreateHaltonSampler(const ParamSet &params, const Film *film,
     int nsamp = params.FindOneInt("pixelsamples", 4);
     if (getenv("PBRT_QUICK_RENDER")) nsamp = 1;
     return new HaltonSampler(xstart, xend, ystart, yend, nsamp,
-         camera->ShutterOpen, camera->ShutterClose, 0);
+         camera->shutterOpen, camera->shutterClose, 0);
 }
 
 

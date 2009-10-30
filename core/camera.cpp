@@ -39,13 +39,13 @@ float Camera::GenerateRayDifferential(const CameraSample &sample,
       RayDifferential *rd) const {
     float wt = GenerateRay(sample, rd);
     CameraSample sshift = sample;
-    ++(sshift.ImageX);
+    ++(sshift.imageX);
     Ray rx;
     float wtx = GenerateRay(sshift, &rx);
     rd->rxOrigin = rx.o;
     rd->rxDirection = rx.d;
-    --(sshift.ImageX);
-    ++(sshift.ImageY);
+    --(sshift.imageX);
+    ++(sshift.imageY);
     Ray ry;
     float wty = GenerateRay(sshift, &ry);
     rd->ryOrigin = ry.o;
@@ -58,7 +58,7 @@ float Camera::GenerateRayDifferential(const CameraSample &sample,
 
 Camera::Camera(const AnimatedTransform &cam2world,
                float sopen, float sclose, Film *f)
-    : CameraToWorld(cam2world), ShutterOpen(sopen), ShutterClose(sclose) {
+    : CameraToWorld(cam2world), shutterOpen(sopen), shutterClose(sclose) {
     film = f;
     if (CameraToWorld.HasScale())
         Warning("Scaling detected in world-to-camera transformation!\n"

@@ -36,9 +36,9 @@ OrthoCamera::OrthoCamera(const AnimatedTransform &cam2world,
                        Screen, sopen, sclose, lensr, focald, f) {
     // Compute differential changes in origin for ortho camera rays
     Point PrasCenter(0, 0, 0), PrasDx(1, 0, 0), PrasDy(0,1,0);
-    Point PworldCenter = CameraToWorld(ShutterOpen, RasterToCamera(PrasCenter));
-    Point PworldDx = CameraToWorld(ShutterOpen, RasterToCamera(PrasDx));
-    Point PworldDy = CameraToWorld(ShutterOpen, RasterToCamera(PrasDy));
+    Point PworldCenter = CameraToWorld(shutterOpen, RasterToCamera(PrasCenter));
+    Point PworldDx = CameraToWorld(shutterOpen, RasterToCamera(PrasDx));
+    Point PworldDy = CameraToWorld(shutterOpen, RasterToCamera(PrasDy));
     dOriginDx = PworldDx - PworldCenter;
     dOriginDy = PworldDy - PworldCenter;
 }
@@ -46,7 +46,7 @@ OrthoCamera::OrthoCamera(const AnimatedTransform &cam2world,
 
 float OrthoCamera::GenerateRay(const CameraSample &sample, Ray *ray) const {
     // Generate raster and camera samples
-    Point Pras(sample.ImageX, sample.ImageY, 0);
+    Point Pras(sample.imageX, sample.imageY, 0);
     Point Pcamera;
     RasterToCamera(Pras, &Pcamera);
     *ray = Ray(Pcamera, Vector(0,0,1), 0.f, INFINITY);
@@ -54,7 +54,7 @@ float OrthoCamera::GenerateRay(const CameraSample &sample, Ray *ray) const {
     if (LensRadius > 0.) {
         // Sample point on lens
         float lensU, lensV;
-        ConcentricSampleDisk(sample.LensU, sample.LensV,
+        ConcentricSampleDisk(sample.lensU, sample.lensV,
                              &lensU, &lensV);
         lensU *= LensRadius;
         lensV *= LensRadius;
@@ -67,7 +67,7 @@ float OrthoCamera::GenerateRay(const CameraSample &sample, Ray *ray) const {
         ray->o = Point(lensU, lensV, 0.f);
         ray->d = Normalize(Pfocus - ray->o);
     }
-    ray->time = Lerp(sample.Time, ShutterOpen, ShutterClose);
+    ray->time = Lerp(sample.time, shutterOpen, shutterClose);
     CameraToWorld(*ray, ray);
     return 1.f;
 }
@@ -77,7 +77,7 @@ float OrthoCamera::GenerateRayDifferential(const CameraSample &sample, RayDiffer
     // Compute main orthographic viewing ray
 
     // Generate raster and camera samples
-    Point Pras(sample.ImageX, sample.ImageY, 0);
+    Point Pras(sample.imageX, sample.imageY, 0);
     Point Pcamera;
     RasterToCamera(Pras, &Pcamera);
     *ray = RayDifferential(Pcamera, Vector(0,0,1), 0., INFINITY);
@@ -86,7 +86,7 @@ float OrthoCamera::GenerateRayDifferential(const CameraSample &sample, RayDiffer
     if (LensRadius > 0.) {
         // Sample point on lens
         float lensU, lensV;
-        ConcentricSampleDisk(sample.LensU, sample.LensV,
+        ConcentricSampleDisk(sample.lensU, sample.lensV,
                              &lensU, &lensV);
         lensU *= LensRadius;
         lensV *= LensRadius;
@@ -99,7 +99,7 @@ float OrthoCamera::GenerateRayDifferential(const CameraSample &sample, RayDiffer
         ray->o = Point(lensU, lensV, 0.f);
         ray->d = Normalize(Pfocus - ray->o);
     }
-    ray->time = Lerp(sample.Time, ShutterOpen, ShutterClose);
+    ray->time = Lerp(sample.time, shutterOpen, shutterClose);
     CameraToWorld(*ray, ray);
     ray->rxOrigin = ray->o + dOriginDx;
     ray->ryOrigin = ray->o + dOriginDy;

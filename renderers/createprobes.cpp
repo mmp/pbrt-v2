@@ -115,7 +115,7 @@ CreateRadianceProbes::~CreateRadianceProbes() {
 Spectrum CreateRadianceProbes::Li(const Scene *scene, const RayDifferential &ray,
     const Sample *sample, MemoryArena &arena, Intersection *isect,
     Spectrum *T) const {
-    Assert(ray.time == sample->Time);
+    Assert(ray.time == sample->time);
     Spectrum localT;
     if (!T) T = &localT;
     Intersection localIsect;
@@ -200,7 +200,7 @@ void CreateRadianceProbes::Render(const Scene *scene) {
         
             DifferentialGeometry &hitGeometry = isect.dg;
             pray = isect.dg.p;
-            rayEpsilon = isect.RayEpsilon;
+            rayEpsilon = isect.rayEpsilon;
             hitGeometry.nn = Faceforward(hitGeometry.nn, -ray.d);
         
             dir = UniformSampleSphere(rng.RandomFloat(), rng.RandomFloat());

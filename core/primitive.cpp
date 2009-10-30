@@ -161,7 +161,7 @@ bool GeometricPrimitive::Intersect(const Ray &r,
     isect->ObjectToWorld = *shape->ObjectToWorld;
     isect->ShapeId = shape->ShapeId;
     isect->PrimitiveId = PrimitiveId;
-    isect->RayEpsilon = rayEpsilon;
+    isect->rayEpsilon = rayEpsilon;
     r.maxt = thit;
     return true;
 }

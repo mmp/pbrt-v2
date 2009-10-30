@@ -41,7 +41,7 @@ public:
 
     // Camera Public Data
     AnimatedTransform CameraToWorld;
-    const float ShutterOpen, ShutterClose;
+    const float shutterOpen, shutterClose;
     Film *film;
 };
 

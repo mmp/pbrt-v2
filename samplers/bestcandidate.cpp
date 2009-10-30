@@ -51,8 +51,8 @@ Sampler *BestCandidateSampler::GetSubSampler(int num, int count) {
     int x0, x1, y0, y1;
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
-    return new BestCandidateSampler(x0, x1, y0, y1, SamplesPerPixel,
-        ShutterOpen, ShutterClose, 1024*num);
+    return new BestCandidateSampler(x0, x1, y0, y1, samplesPerPixel,
+        shutterOpen, shutterClose, 1024*num);
 }
 
 
@@ -113,22 +113,22 @@ again:
     }
     // Compute raster sample from table
 #define WRAP(x) ((x) > 1 ? ((x)-1) : (x))
-    sample->ImageX = xTableCorner + tableWidth *
+    sample->imageX = xTableCorner + tableWidth *
                      sampleTable[tableOffset][0];
-    sample->ImageY = yTableCorner + tableWidth *
+    sample->imageY = yTableCorner + tableWidth *
                      sampleTable[tableOffset][1];
-    sample->Time  = Lerp(WRAP(sampleOffsets[0] +
-                         sampleTable[tableOffset][2]), ShutterOpen, ShutterClose);
-    sample->LensU = WRAP(sampleOffsets[1] +
+    sample->time  = Lerp(WRAP(sampleOffsets[0] +
+                         sampleTable[tableOffset][2]), shutterOpen, shutterClose);
+    sample->lensU = WRAP(sampleOffsets[1] +
                          sampleTable[tableOffset][3]);
-    sample->LensV = WRAP(sampleOffsets[2] +
+    sample->lensV = WRAP(sampleOffsets[2] +
                          sampleTable[tableOffset][4]);
 
     // Check sample against crop window, goto _again_ if outside
-    if (sample->ImageX <  xPixelStart ||
-        sample->ImageX >= xPixelEnd   ||
-        sample->ImageY <  yPixelStart ||
-        sample->ImageY >= yPixelEnd) {
+    if (sample->imageX <  xPixelStart ||
+        sample->imageX >= xPixelEnd   ||
+        sample->imageY <  yPixelStart ||
+        sample->imageY >= yPixelEnd) {
         ++tableOffset;
         goto again;
     }
@@ -161,7 +161,7 @@ BestCandidateSampler *CreateBestCandidateSampler(const ParamSet &params, const F
     int nsamp = params.FindOneInt("pixelsamples", 4);
     if (getenv("PBRT_QUICK_RENDER")) nsamp = 1;
     return new BestCandidateSampler(xstart, xend, ystart, yend, nsamp,
-         camera->ShutterOpen, camera->ShutterClose, 0);
+         camera->shutterOpen, camera->shutterClose, 0);
 }
 
 

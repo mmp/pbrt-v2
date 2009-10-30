@@ -36,12 +36,12 @@ EnvironmentCamera::EnvironmentCamera(const AnimatedTransform &cam2world,
 
 float EnvironmentCamera::GenerateRay(const CameraSample &sample,
                                      Ray *ray) const {
-    float time = Lerp(sample.Time, ShutterOpen, ShutterClose);
+    float time = Lerp(sample.time, shutterOpen, shutterClose);
     ray->time = time;
     ray->o = CameraToWorld(time, Point(0,0,0));
     // Generate environment camera ray direction
-    float theta = M_PI * sample.ImageY / film->yResolution;
-    float phi = 2 * M_PI * sample.ImageX / film->xResolution;
+    float theta = M_PI * sample.imageY / film->yResolution;
+    float phi = 2 * M_PI * sample.imageX / film->xResolution;
     Vector dir(sinf(theta) * cosf(phi), cosf(theta),
                sinf(theta) * sinf(phi));
     ray->d = CameraToWorld(time, dir);

@@ -102,7 +102,7 @@ void AggregateTest::Render(const Scene *scene) {
                     rayAll.d.x, rayAll.d.y, rayAll.d.z, rayAll.mint);
         if (hitAll) {
             lastHit = rayAll(rayAll.maxt);
-            lastEps = isectAll.RayEpsilon;
+            lastEps = isectAll.rayEpsilon;
         }
         prog.Update();
     }

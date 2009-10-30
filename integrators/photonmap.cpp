@@ -341,7 +341,7 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
     int nTasks = NumSystemCores();
     for (int i = 0; i < nTasks; ++i)
         photonShootingTasks.push_back(new PhotonShootingTask(
-            i, camera ? camera->ShutterOpen : 0.f, *mutex, this, progress, abortTasks, nDirectPaths,
+            i, camera ? camera->shutterOpen : 0.f, *mutex, this, progress, abortTasks, nDirectPaths,
             directPhotons, indirectPhotons, causticPhotons, radiancePhotons,
             rpReflectances, rpTransmittances,
             nshot, lightDistribution, scene, renderer));
@@ -502,7 +502,7 @@ void PhotonShootingTask::Run() {
                     specularPath &= ((flags & BSDF_SPECULAR) != 0);
                     if (indirectDone && !specularPath) break;
                     photonRay = RayDifferential(photonIsect.dg.p, wi, photonRay,
-                                                photonIsect.RayEpsilon);
+                                                photonIsect.rayEpsilon);
                 }
                 PBRT_PHOTON_MAP_FINISHED_RAY_PATH(&photonRay, &alpha);
             }
@@ -626,7 +626,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
     const Point &p = bsdf->dgShading.p;
     const Normal &n = bsdf->dgShading.nn;
     L += UniformSampleAllLights(scene, renderer, arena, p, n,
-        wo, isect.RayEpsilon, bsdf, sample,
+        wo, isect.rayEpsilon, bsdf, sample,
         lightSampleOffsets, bsdfSampleOffsets);
     // Compute caustic lighting for photon map integrator
     L += LPhoton(causticMap, nCausticPaths, nLookup, arena, bsdf,
@@ -669,7 +669,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
                 Assert(pdf >= 0.f);
 
                 // Trace BSDF final gather ray and accumulate radiance
-                RayDifferential bounceRay(p, wi, ray, isect.RayEpsilon);
+                RayDifferential bounceRay(p, wi, ray, isect.rayEpsilon);
                 Intersection gatherIsect;
                 if (scene->Intersect(bounceRay, &gatherIsect)) {
                     // Compute exitant radiance _Lindir_ using radiance photons
@@ -716,7 +716,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
                 // Trace photon-sampled final gather ray and accumulate radiance
                 Spectrum fr = bsdf->f(wo, wi);
                 if (fr.IsBlack()) continue;
-                RayDifferential bounceRay(p, wi, ray, isect.RayEpsilon);
+                RayDifferential bounceRay(p, wi, ray, isect.rayEpsilon);
                 Intersection gatherIsect;
                 PBRT_PHOTON_MAP_STARTED_GATHER_RAY(&bounceRay);
                 if (scene->Intersect(bounceRay, &gatherIsect)) {

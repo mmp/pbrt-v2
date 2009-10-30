@@ -261,10 +261,10 @@ void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
     vector<Task *> tasks;
     RWMutex *mutex = RWMutex::Create();
     int nTasks = NumSystemCores();
-    Point origin = camera->CameraToWorld(camera->ShutterOpen,
+    Point origin = camera->CameraToWorld(camera->shutterOpen,
                                          Point(0, 0, 0));
     for (int i = 0; i < nTasks; ++i)
-        tasks.push_back(new PoissonPointTask(scene, origin, camera->ShutterOpen, i,
+        tasks.push_back(new PoissonPointTask(scene, origin, camera->shutterOpen, i,
             minSampleDist, maxFails, *mutex, repeatedFails, maxRepeatedFails,
             totalPathsTraced, totalRaysTraced, numPointsAdded, sphere, pointOctree,
             irradiancePoints, prog));
@@ -298,7 +298,7 @@ void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
                 float lightPdf;
                 VisibilityTester visibility;
                 Spectrum Li = light->Sample_L(ip.p, ip.rayEpsilon,
-                    ls, camera->ShutterOpen, &wi, &lightPdf, &visibility);
+                    ls, camera->shutterOpen, &wi, &lightPdf, &visibility);
                 if (Dot(wi, ip.n) <= 0.) continue;
                 if (Li.IsBlack() || lightPdf == 0.f) continue;
                 Li *= visibility.Transmittance(scene, renderer, NULL, &rng, arena);
@@ -356,14 +356,14 @@ void PoissonPointTask::Run() {
                     ip.p = hitGeometry.p;
                     ip.n = hitGeometry.nn;
                     ip.area = M_PI * minSampleDist * minSampleDist;
-                    ip.rayEpsilon = isect.RayEpsilon;
+                    ip.rayEpsilon = isect.rayEpsilon;
                     candidates.push_back(ip);
                 }
 
                 // Generate random ray from intersection point
                 Vector dir = UniformSampleSphere(rng.RandomFloat(), rng.RandomFloat());
                 dir = Faceforward(dir, hitGeometry.nn);
-                ray = Ray(hitGeometry.p, dir, ray, isect.RayEpsilon);
+                ray = Ray(hitGeometry.p, dir, ray, isect.rayEpsilon);
             }
             arena.FreeAll();
         }
@@ -464,7 +464,7 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
         }
     }
     L += UniformSampleAllLights(scene, renderer, arena, p, n,
-        wo, isect.RayEpsilon, bsdf, sample, lightSampleOffsets, bsdfSampleOffsets);
+        wo, isect.rayEpsilon, bsdf, sample, lightSampleOffsets, bsdfSampleOffsets);
     if (ray.depth < maxSpecularDepth) {
         // Trace rays for specular reflection and refraction
         L += SpecularReflect(ray, bsdf, *sample->rng, isect, renderer,

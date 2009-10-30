@@ -62,12 +62,12 @@ Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
         if (pathLength < SAMPLE_DEPTH)
             L += pathThroughput *
                  UniformSampleOneLight(scene, renderer, arena, p, n, wo,
-                     isectp->RayEpsilon, bsdf, sample, lightNumOffset[pathLength],
+                     isectp->rayEpsilon, bsdf, sample, lightNumOffset[pathLength],
                      &lightSampleOffsets[pathLength], &bsdfSampleOffsets[pathLength]);
         else
             L += pathThroughput *
                  UniformSampleOneLight(scene, renderer, arena, p, n, wo,
-                     isectp->RayEpsilon, bsdf, sample);
+                     isectp->rayEpsilon, bsdf, sample);
 
         // Sample BSDF to get new path direction
 
@@ -86,7 +86,7 @@ Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
             break;
         specularBounce = (flags & BSDF_SPECULAR) != 0;
         pathThroughput *= f * AbsDot(wi, n) / pdf;
-        ray = RayDifferential(p, wi, ray, isectp->RayEpsilon);
+        ray = RayDifferential(p, wi, ray, isectp->rayEpsilon);
 
         // Possibly terminate the path
         if (pathLength > 3) {

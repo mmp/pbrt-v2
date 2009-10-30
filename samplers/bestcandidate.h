@@ -38,8 +38,7 @@
 class BestCandidateSampler : public Sampler {
 public:
     // BestCandidateSampler Public Methods
-    BestCandidateSampler(int xstart, int xend,
-                         int ystart, int yend,
+    BestCandidateSampler(int xstart, int xend, int ystart, int yend,
                          int pixelsamples, float sopen, float sclose,
                          u_long rngSeed);
     ~BestCandidateSampler() {

@@ -76,7 +76,7 @@ void RenderTask::Run() {
 
     // Allocate space for samples and intersections
     int maxSamples = sampler->MaximumSampleCount();
-    Sample *samples = origSample->Duplicate(maxSamples, rng);
+    Sample *samples = origSample->Duplicate(maxSamples, &rng);
     RayDifferential *rays = new RayDifferential[maxSamples];
     Spectrum *Ls = new Spectrum[maxSamples];
     Spectrum *Ts = new Spectrum[maxSamples];
@@ -207,7 +207,7 @@ void SampleRenderer::Render(const Scene *scene) {
 Spectrum SampleRenderer::Li(const Scene *scene,
         const RayDifferential &ray, const Sample *sample,
         MemoryArena &arena, Intersection *isect, Spectrum *T) const {
-    Assert(ray.time == sample->Time);
+    Assert(ray.time == sample->time);
     Assert(!ray.HasNaNs());
     // Allocate local variables for _isect_ and _T_ if needed
     Spectrum localT;

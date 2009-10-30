@@ -51,8 +51,8 @@ Spectrum WhittedIntegrator::Li(const Scene *scene,
     for (u_int i = 0; i < scene->lights.size(); ++i) {
         VisibilityTester visibility;
         float pdf;
-        Spectrum Li = scene->lights[i]->Sample_L(p, isect.RayEpsilon,
-            LightSample(*sample->rng), sample->Time, &wi, &pdf, &visibility);
+        Spectrum Li = scene->lights[i]->Sample_L(p, isect.rayEpsilon,
+            LightSample(*sample->rng), sample->time, &wi, &pdf, &visibility);
         if (Li.IsBlack() || pdf == 0.f) continue;
         Li /= pdf;
         Spectrum f = bsdf->f(wo, wi);

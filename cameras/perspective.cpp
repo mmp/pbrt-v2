@@ -47,7 +47,7 @@ PerspectiveCamera:: PerspectiveCamera(const AnimatedTransform &cam2world,
 float PerspectiveCamera::GenerateRay(const CameraSample &sample,
                                      Ray *ray) const {
     // Generate raster and camera samples
-    Point Pras(sample.ImageX, sample.ImageY, 0);
+    Point Pras(sample.imageX, sample.imageY, 0);
     Point Pcamera;
     RasterToCamera(Pras, &Pcamera);
     *ray = Ray(Point(0,0,0), Vector(Pcamera.x, Pcamera.y, Pcamera.z), 0, INFINITY);
@@ -55,7 +55,7 @@ float PerspectiveCamera::GenerateRay(const CameraSample &sample,
     if (LensRadius > 0.) {
         // Sample point on lens
         float lensU, lensV;
-        ConcentricSampleDisk(sample.LensU, sample.LensV,
+        ConcentricSampleDisk(sample.lensU, sample.lensV,
                              &lensU, &lensV);
         lensU *= LensRadius;
         lensV *= LensRadius;
@@ -68,7 +68,7 @@ float PerspectiveCamera::GenerateRay(const CameraSample &sample,
         ray->o = Point(lensU, lensV, 0.f);
         ray->d = Normalize(Pfocus - ray->o);
     }
-    ray->time = Lerp(sample.Time, ShutterOpen, ShutterClose);
+    ray->time = Lerp(sample.time, shutterOpen, shutterClose);
     CameraToWorld(*ray, ray);
     return 1.f;
 }
@@ -77,7 +77,7 @@ float PerspectiveCamera::GenerateRay(const CameraSample &sample,
 float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
                                      RayDifferential *ray) const {
     // Generate raster and camera samples
-    Point Pras(sample.ImageX, sample.ImageY, 0);
+    Point Pras(sample.imageX, sample.imageY, 0);
     Point Pcamera;
     RasterToCamera(Pras, &Pcamera);
     Vector dir = Normalize(Vector(Pcamera.x, Pcamera.y, Pcamera.z));
@@ -86,7 +86,7 @@ float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
     if (LensRadius > 0.) {
         // Sample point on lens
         float lensU, lensV;
-        ConcentricSampleDisk(sample.LensU, sample.LensV,
+        ConcentricSampleDisk(sample.lensU, sample.lensV,
                              &lensU, &lensV);
         lensU *= LensRadius;
         lensV *= LensRadius;
@@ -104,7 +104,7 @@ float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
     ray->rxDirection = Normalize(Vector(Pcamera.x, Pcamera.y, Pcamera.z) + dPcameraDx);
     ray->ryDirection = Normalize(Vector(Pcamera.x, Pcamera.y, Pcamera.z) + dPcameraDy);
 
-    ray->time = Lerp(sample.Time, ShutterOpen, ShutterClose);
+    ray->time = Lerp(sample.time, shutterOpen, shutterClose);
     CameraToWorld(*ray, ray);
     ray->hasDifferentials = true;
     return 1.f;

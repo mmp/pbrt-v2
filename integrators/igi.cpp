@@ -99,7 +99,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
             Normal Nl;
             Spectrum alpha = light->Sample_L(scene, ls, lightSampDir[2*sampOffset],
                                              lightSampDir[2*sampOffset+1],
-                                             camera->ShutterOpen, &ray, &Nl, &pdf);
+                                             camera->shutterOpen, &ray, &Nl, &pdf);
             if (pdf == 0.f || alpha.IsBlack()) continue;
             alpha /= pdf * lightPdf;
             Intersection isect;
@@ -117,7 +117,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
                 Spectrum contrib = alpha * bsdf->rho(wo,
                     sqrtRhoSamples*sqrtRhoSamples, rhoSamples) / M_PI;
                 virtualLights[s].push_back(VirtualLight(isect.dg.p, isect.dg.nn, contrib,
-                    isect.RayEpsilon));
+                    isect.rayEpsilon));
 
                 // Sample new ray direction and update weight for virtual light path
                 Vector wi;
@@ -133,7 +133,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
                 if (rng.RandomFloat() > rrProb)
                     break;
                 alpha *= contribScale / rrProb;
-                ray = RayDifferential(isect.dg.p, wi, ray, isect.RayEpsilon);
+                ray = RayDifferential(isect.dg.p, wi, ray, isect.rayEpsilon);
             }
             arena.FreeAll();
         }
@@ -155,7 +155,7 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
     const Point &p = bsdf->dgShading.p;
     const Normal &n = bsdf->dgShading.nn;
     L += UniformSampleAllLights(scene, renderer, arena, p, n,
-                    wo, isect.RayEpsilon, bsdf, sample,
+                    wo, isect.rayEpsilon, bsdf, sample,
                     lightSampleOffsets, bsdfSampleOffsets);
     // Compute indirect illumination with virtual lights
     u_int lSet = min(u_int(sample->oneD[vlSetOffset][0] * nLightSets),
@@ -172,7 +172,7 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
         Spectrum f = bsdf->f(wo, wi);
         if (G == 0.f || f.IsBlack()) continue;
         Spectrum Llight = f * G * vl.pathContrib / virtualLights[lSet].size();
-        RayDifferential connectRay(p, wi, ray, isect.RayEpsilon,
+        RayDifferential connectRay(p, wi, ray, isect.rayEpsilon,
             sqrtf(d2) * (1.f - vl.rayEpsilon));
         Llight *= renderer->Transmittance(scene, connectRay, NULL, arena,
                                           sample->rng);

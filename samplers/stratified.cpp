@@ -38,7 +38,7 @@ StratifiedSampler::StratifiedSampler(int xstart, int xend,
     yPos = yPixelStart;
     xPixelSamples = xs;
     yPixelSamples = ys;
-    sampleBuf = NULL;
+    sampleBuf = new float[5 * xPixelSamples * yPixelSamples];
 }
 
 
@@ -52,7 +52,7 @@ Sampler *StratifiedSampler::GetSubSampler(int num, int count) {
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
     return new StratifiedSampler(x0, x1, y0, y1, xPixelSamples,
-        yPixelSamples, jitterSamples, ShutterOpen, ShutterClose);
+        yPixelSamples, jitterSamples, shutterOpen, shutterClose);
 }
 
 
@@ -60,18 +60,19 @@ int StratifiedSampler::GetMoreSamples(Sample *samples) {
     if (yPos == yPixelEnd) return 0;
     int nSamples = xPixelSamples * yPixelSamples;
     // Generate stratified camera samples for (_xPos_,_yPos_)
-    if (!sampleBuf) sampleBuf = new float[5 * nSamples];
+
+    // Generate initial stratified samples into _sampleBuf_ memory
+    RNG &rng = *samples[0].rng;
     float *bufp = sampleBuf;
     float *imageSamples = bufp; bufp += 2 * nSamples;
     float *lensSamples = bufp;  bufp += 2 * nSamples;
     float *timeSamples = bufp;
-    
-    StratifiedSample2D(imageSamples, xPixelSamples, yPixelSamples,
-                       *samples[0].rng, jitterSamples);
-    StratifiedSample2D(lensSamples, xPixelSamples, yPixelSamples,
-                       *samples[0].rng, jitterSamples);
-    StratifiedSample1D(timeSamples, xPixelSamples*yPixelSamples,
-                       *samples[0].rng, jitterSamples);
+    StratifiedSample2D(imageSamples, xPixelSamples, yPixelSamples, rng,
+                       jitterSamples);
+    StratifiedSample2D(lensSamples, xPixelSamples, yPixelSamples, rng,
+                       jitterSamples);
+    StratifiedSample1D(timeSamples, xPixelSamples * yPixelSamples, rng,
+                       jitterSamples);
 
     // Shift stratified image samples to pixel coordinates
     for (int o = 0; o < 2 * xPixelSamples * yPixelSamples; o += 2) {
@@ -80,21 +81,21 @@ int StratifiedSampler::GetMoreSamples(Sample *samples) {
     }
 
     // Decorrelate sample dimensions
-    Shuffle(lensSamples, xPixelSamples*yPixelSamples, 2, *samples[0].rng);
-    Shuffle(timeSamples, xPixelSamples*yPixelSamples, 1, *samples[0].rng);
+    Shuffle(lensSamples, xPixelSamples*yPixelSamples, 2, rng);
+    Shuffle(timeSamples, xPixelSamples*yPixelSamples, 1, rng);
 
     // Initialize stratified _samples_ with sample values
     for (int i = 0; i < nSamples; ++i) {
-        samples[i].ImageX = imageSamples[2*i];
-        samples[i].ImageY = imageSamples[2*i+1];
-        samples[i].LensU = lensSamples[2*i];
-        samples[i].LensV = lensSamples[2*i+1];
-        samples[i].Time = Lerp(timeSamples[i], ShutterOpen, ShutterClose);
+        samples[i].imageX = imageSamples[2*i];
+        samples[i].imageY = imageSamples[2*i+1];
+        samples[i].lensU = lensSamples[2*i];
+        samples[i].lensV = lensSamples[2*i+1];
+        samples[i].time = Lerp(timeSamples[i], shutterOpen, shutterClose);
         // Generate stratified samples for integrators
         for (u_int j = 0; j < samples[i].n1D.size(); ++j)
-            LatinHypercube(samples[i].oneD[j], samples[i].n1D[j], 1, *samples[i].rng);
+            LatinHypercube(samples[i].oneD[j], samples[i].n1D[j], 1, rng);
         for (u_int j = 0; j < samples[i].n2D.size(); ++j)
-            LatinHypercube(samples[i].twoD[j], samples[i].n2D[j], 2, *samples[i].rng);
+            LatinHypercube(samples[i].twoD[j], samples[i].n2D[j], 2, rng);
     }
 
     // Advance to next pixel for stratified sampling
@@ -116,7 +117,7 @@ StratifiedSampler *CreateStratifiedSampler(const ParamSet &params, const Film *f
     int ysamp = params.FindOneInt("ysamples", 2);
     if (getenv("PBRT_QUICK_RENDER")) xsamp = ysamp = 1;
     return new StratifiedSampler(xstart, xend, ystart, yend, xsamp, ysamp,
-        jitter, camera->ShutterOpen, camera->ShutterClose);
+        jitter, camera->shutterOpen, camera->shutterClose);
 }
 
 

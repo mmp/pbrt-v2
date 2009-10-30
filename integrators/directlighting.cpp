@@ -87,11 +87,11 @@ Spectrum DirectLightingIntegrator::Li(const Scene *scene,
         switch (strategy) {
             case SAMPLE_ALL_UNIFORM:
                 L += UniformSampleAllLights(scene, renderer, arena, p, n, wo,
-                    isect.RayEpsilon, bsdf, sample, lightSampleOffsets, bsdfSampleOffsets);
+                    isect.rayEpsilon, bsdf, sample, lightSampleOffsets, bsdfSampleOffsets);
                 break;
             case SAMPLE_ONE_UNIFORM:
                 L += UniformSampleOneLight(scene, renderer, arena, p, n, wo,
-                    isect.RayEpsilon, bsdf, sample, lightNumOffset, lightSampleOffsets,
+                    isect.rayEpsilon, bsdf, sample, lightNumOffset, lightSampleOffsets,
                     bsdfSampleOffsets);
                 break;
         }

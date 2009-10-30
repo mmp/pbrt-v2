@@ -96,12 +96,12 @@ ImageFilm::ImageFilm(int xres, int yres,
 void ImageFilm::AddSample(const CameraSample &sample,
                           const Spectrum &L) {
     // Compute sample's raster extent
-    float dImageX = sample.ImageX - 0.5f;
-    float dImageY = sample.ImageY - 0.5f;
-    int x0 = Ceil2Int (dImageX - filter->xWidth);
-    int x1 = Floor2Int(dImageX + filter->xWidth);
-    int y0 = Ceil2Int (dImageY - filter->yWidth);
-    int y1 = Floor2Int(dImageY + filter->yWidth);
+    float dimageX = sample.imageX - 0.5f;
+    float dimageY = sample.imageY - 0.5f;
+    int x0 = Ceil2Int (dimageX - filter->xWidth);
+    int x1 = Floor2Int(dimageX + filter->xWidth);
+    int y0 = Ceil2Int (dimageY - filter->yWidth);
+    int y1 = Floor2Int(dimageY + filter->yWidth);
     x0 = max(x0, xPixelStart);
     x1 = min(x1, xPixelStart + xPixelCount - 1);
     y0 = max(y0, yPixelStart);
@@ -118,13 +118,13 @@ void ImageFilm::AddSample(const CameraSample &sample,
     // Precompute $x$ and $y$ filter table offsets
     int *ifx = ALLOCA(int, x1 - x0 + 1);
     for (int x = x0; x <= x1; ++x) {
-        float fx = fabsf((x - dImageX) *
+        float fx = fabsf((x - dimageX) *
                          filter->invXWidth * FILTER_TABLE_SIZE);
         ifx[x-x0] = min(Floor2Int(fx), FILTER_TABLE_SIZE-1);
     }
     int *ify = ALLOCA(int, y1 - y0 + 1);
     for (int y = y0; y <= y1; ++y) {
-        float fy = fabsf((y - dImageY) *
+        float fy = fabsf((y - dimageY) *
                          filter->invYWidth * FILTER_TABLE_SIZE);
         ify[y-y0] = min(Floor2Int(fy), FILTER_TABLE_SIZE-1);
     }
@@ -177,7 +177,7 @@ void ImageFilm::GetPixelExtent(int *xstart, int *xend,
 void ImageFilm::Splat(const CameraSample &sample, const Spectrum &L) {
     float xyz[3];
     L.ToXYZ(xyz);
-    int x = Floor2Int(sample.ImageX), y = Floor2Int(sample.ImageY);
+    int x = Floor2Int(sample.imageX), y = Floor2Int(sample.imageY);
     if (x < xPixelStart || x - xPixelStart >= xPixelCount ||
         y < yPixelStart || y - yPixelStart >= yPixelCount) return;
     Pixel &pixel = (*pixels)(x - xPixelStart, y - yPixelStart);

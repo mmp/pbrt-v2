@@ -51,7 +51,7 @@ void DiffusePRTIntegrator::Preprocess(const Scene *scene,
     Point p = .5f * bbox.pMin + .5f * bbox.pMax;
     RNG rng;
     MemoryArena arena;
-    SHProjectIncidentDirectRadiance(p, 0.f, camera->ShutterOpen, arena,
+    SHProjectIncidentDirectRadiance(p, 0.f, camera->shutterOpen, arena,
         scene, false, lmax, rng, c_in);
 }
 
@@ -76,7 +76,7 @@ Spectrum DiffusePRTIntegrator::Li(const Scene *scene, const Renderer *,
 
     // Project diffuse transfer function at point to SH
     Spectrum *c_transfer = arena.Alloc<Spectrum>(SHTerms(lmax));
-    SHComputeDiffuseTransfer(p, Faceforward(n, wo), isect.RayEpsilon,
+    SHComputeDiffuseTransfer(p, Faceforward(n, wo), isect.rayEpsilon,
         scene, *sample->rng, nSamples, lmax, c_transfer);
 
     // Compute integral of product of incident radiance and transfer function

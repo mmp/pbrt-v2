@@ -37,18 +37,17 @@ public:
     virtual ~Sampler();
     Sampler(int xstart, int xend, int ystart, int yend,
             int spp, float sopen, float sclose);
-    virtual int MaximumSampleCount() = 0;
     virtual int GetMoreSamples(Sample *sample) = 0;
+    virtual int MaximumSampleCount() = 0;
+    virtual bool ReportResults(Sample *samples, const RayDifferential *rays,
+        const Spectrum *Ls, const Intersection *isects, int count);
     virtual Sampler *GetSubSampler(int num, int count) = 0;
-    virtual bool ReportResults(Sample *samples,
-        const RayDifferential *rays, const Spectrum *Ls,
-        const Intersection *isects, int count);
     virtual int RoundSize(int size) const = 0;
 
     // Sampler Public Data
     int xPixelStart, xPixelEnd, yPixelStart, yPixelEnd;
-    int SamplesPerPixel;
-    float ShutterOpen, ShutterClose;
+    int samplesPerPixel;
+    float shutterOpen, shutterClose;
 protected:
     // Sampler Protected Methods
     void ComputeSubWindow(int num, int count, int *xstart, int *xend, int *ystart, int *yend) const;
@@ -56,10 +55,9 @@ protected:
 
 
 struct CameraSample {
-    // Camera _Sample_ Data
-    float ImageX, ImageY;
-    float LensU, LensV;
-    float Time;
+    float imageX, imageY;
+    float lensU, lensV;
+    float time;
 };
 
 
@@ -81,7 +79,7 @@ struct Sample : public CameraSample {
             FreeAligned(oneD);
         }
     }
-    Sample *Duplicate(int count, RNG &rng) const;
+    Sample *Duplicate(int count, RNG *rng) const;
 
     // Sample Public Data
     vector<u_int> n1D, n2D;

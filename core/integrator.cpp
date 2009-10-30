@@ -61,7 +61,7 @@ Spectrum UniformSampleAllLights(const Scene *scene,
                 bsdfSample = BSDFSample(*sample->rng);
             }
             Ld += EstimateDirect(scene, renderer, arena, light, p, n, wo,
-                rayEpsilon, sample->Time, bsdf, sample->rng, lightSample, bsdfSample);
+                rayEpsilon, sample->time, bsdf, sample->rng, lightSample, bsdfSample);
         }
         L += Ld / nSamples;
     }
@@ -99,7 +99,7 @@ Spectrum UniformSampleOneLight(const Scene *scene,
     }
     return (float)nLights *
         EstimateDirect(scene, renderer, arena, light, p, n, wo,
-                       rayEpsilon, sample->Time, bsdf, sample->rng, lightSample, bsdfSample);
+                       rayEpsilon, sample->time, bsdf, sample->rng, lightSample, bsdfSample);
 }
 
 
@@ -170,10 +170,8 @@ Spectrum SpecularReflect(const RayDifferential &ray, BSDF *bsdf,
     Spectrum L = 0.f;
     if (!f.IsBlack() && AbsDot(wi, n) != 0.f) {
         // Compute ray differential _rd_ for specular reflection
-        RayDifferential rd(p, wi, isect.RayEpsilon);
+        RayDifferential rd(p, wi, ray, isect.rayEpsilon);
         rd.hasDifferentials = true;
-        rd.depth = ray.depth + 1;
-        rd.time = ray.time;
         rd.rxOrigin = p + isect.dg.dpdx;
         rd.ryOrigin = p + isect.dg.dpdy;
 
@@ -186,9 +184,9 @@ Spectrum SpecularReflect(const RayDifferential &ray, BSDF *bsdf,
         float dDNdx = Dot(dwodx, n) + Dot(wo, dndx);
         float dDNdy = Dot(dwody, n) + Dot(wo, dndy);
         rd.rxDirection = wi - dwodx + 2 * Vector(Dot(wo, n) * dndx +
-                                          dDNdx * n);
+                                                 dDNdx * n);
         rd.ryDirection = wi - dwody + 2 * Vector(Dot(wo, n) * dndy +
-                                          dDNdy * n);
+                                                 dDNdy * n);
         PBRT_STARTED_SPECULAR_REFLECTION_RAY(const_cast<RayDifferential *>(&rd));
         L = renderer->Li(scene, rd, sample, arena) * f * AbsDot(wi, n);
         PBRT_FINISHED_SPECULAR_REFLECTION_RAY(const_cast<RayDifferential *>(&rd));
@@ -208,10 +206,8 @@ Spectrum SpecularTransmit(const RayDifferential &ray, BSDF *bsdf,
     Spectrum L = 0.f;
     if (!f.IsBlack() && AbsDot(wi, n) != 0.f) {
         // Compute ray differential _rd_ for specular transmission
-        RayDifferential rd(p, wi, isect.RayEpsilon);
+        RayDifferential rd(p, wi, ray, isect.rayEpsilon);
         rd.hasDifferentials = true;
-        rd.depth = ray.depth + 1;
-        rd.time = ray.time;
         rd.rxOrigin = p + isect.dg.dpdx;
         rd.ryOrigin = p + isect.dg.dpdy;
         
