@@ -417,7 +417,7 @@ private:
 
 class Blinn : public MicrofacetDistribution {
 public:
-    Blinn(float e) { if (e > 1000.f || isnan(e)) e = 1000.f; exponent = e; }
+    Blinn(float e) { if (e > 10000.f || isnan(e)) e = 10000.f; exponent = e; }
     // Blinn Public Methods
     float D(const Vector &wh) const {
         float costhetah = AbsCosTheta(wh);
@@ -435,8 +435,8 @@ public:
     // Anisotropic Public Methods
     Anisotropic(float x, float y) {
         ex = x; ey = y;
-        if (ex > 1000.f || isnan(ex)) ex = 1000.f;
-        if (ey > 1000.f || isnan(ey)) ey = 1000.f;
+        if (ex > 10000.f || isnan(ex)) ex = 10000.f;
+        if (ey > 10000.f || isnan(ey)) ey = 10000.f;
     }
     float D(const Vector &wh) const {
         float costhetah = AbsCosTheta(wh);
@@ -487,14 +487,14 @@ private:
 class RegularHalfangleBRDF : public BxDF {
 public:
     // RegularHalfangleBRDF Public Methods
-    RegularHalfangleBRDF(const float *d, int nth, int ntd, int npd)
+    RegularHalfangleBRDF(const float *d, u_int nth, u_int ntd, u_int npd)
         : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), brdf(d),
           nThetaH(nth), nThetaD(ntd), nPhiD(npd) { }
     Spectrum f(const Vector &wo, const Vector &wi) const;
 private:
     // RegularHalfangleBRDF Private Data
     const float *brdf;
-    int nThetaH, nThetaD, nPhiD;
+    u_int nThetaH, nThetaD, nPhiD;
 };
 
 
