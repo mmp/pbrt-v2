@@ -65,7 +65,7 @@ void DifferentialGeometry::ComputeDifferentials(
         // Compute $(u,v)$ offsets at auxiliary points
 
         // Initialize _A_, _Bx_, and _By_ matrices for offset computation
-        float A[2][2], Bx[2], By[2], x[2];
+        float A[2][2], Bx[2], By[2];
         int axes[2];
         if (fabsf(nn.x) > fabsf(nn.y) && fabsf(nn.x) > fabsf(nn.z)) {
             axes[0] = 1; axes[1] = 2;
@@ -86,16 +86,10 @@ void DifferentialGeometry::ComputeDifferentials(
         Bx[1] = px[axes[1]] - p[axes[1]];
         By[0] = py[axes[0]] - p[axes[0]];
         By[1] = py[axes[1]] - p[axes[1]];
-        if (SolveLinearSystem2x2(A, Bx, x)) {
-            dudx = x[0]; dvdx = x[1];
-        }
-        else  {
+        if (!SolveLinearSystem2x2(A, Bx, &dudx, &dvdx)) {
             dudx = 1.; dvdx = 0.;
         }
-        if (SolveLinearSystem2x2(A, By, x)) {
-            dudy = x[0]; dvdy = x[1];
-        }
-        else {
+        if (!SolveLinearSystem2x2(A, By, &dudy, &dvdy)) {
             dudy = 0.; dvdy = 1.;
         }
     }

@@ -199,7 +199,6 @@ const T &MIPMap<T>::Texel(u_int level, int s, int t) const {
             s = Mod(s, l.uSize());
             t = Mod(t, l.vSize());
             break;
-    
         case TEXTURE_CLAMP:
             s = Clamp(s, 0, l.uSize() - 1);
             t = Clamp(t, 0, l.vSize() - 1);
@@ -332,8 +331,8 @@ T MIPMap<T>::EWA(u_int level, float s, float t, float ds0, float dt0,
     int t1 = Floor2Int(t + 2.f * invDet * vSqrt);
 
     // Scan over ellipse bound and compute quadratic equation
-    T num(0.);
-    float den = 0;
+    T sum(0.);
+    float sumWts = 0.f;
     for (int it = t0; it <= t1; ++it) {
         float tt = it - t;
         for (int is = s0; is <= s1; ++is) {
@@ -343,12 +342,12 @@ T MIPMap<T>::EWA(u_int level, float s, float t, float ds0, float dt0,
             if (r2 < 1.) {
                 float weight = weightLut[min(Float2Int(r2 * WEIGHT_LUT_SIZE),
                                              WEIGHT_LUT_SIZE-1)];
-                num += Texel(level, is, it) * weight;
-                den += weight;
+                sum += Texel(level, is, it) * weight;
+                sumWts += weight;
             }
         }
     }
-    return num / den;
+    return sum / sumWts;
 }
 
 

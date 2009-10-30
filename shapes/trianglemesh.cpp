@@ -266,7 +266,7 @@ void Triangle::GetShadingGeometry(const Transform &obj2world,
         { { uv[1][0] - uv[0][0], uv[2][0] - uv[0][0] },
           { uv[1][1] - uv[0][1], uv[2][1] - uv[0][1] } };
     float C[2] = { dg.u - uv[0][0], dg.v - uv[0][1] };
-    if (!SolveLinearSystem2x2(A, C, &b[1])) {
+    if (!SolveLinearSystem2x2(A, C, &b[1], &b[2])) {
         // Handle degenerate parametric mapping
         b[0] = b[1] = b[2] = 1.f/3.f;
     }

@@ -88,11 +88,15 @@ private:
 class PlanarMapping2D : public TextureMapping2D {
 public:
     // PlanarMapping2D Public Methods
-    PlanarMapping2D(const Vector &v1, const Vector &v2,
-        float du = 0, float dv = 0);
     void Map(const DifferentialGeometry &dg, float *s, float *t,
-        float *dsdx, float *dtdx,
-        float *dsdy, float *dtdy) const;
+             float *dsdx, float *dtdx, float *dsdy, float *dtdy) const;
+    PlanarMapping2D(const Vector &vv1, const Vector &vv2,
+                    float dds = 0, float ddt = 0) {
+        vs = vv1;
+        vt = vv2;
+        ds = dds;
+        dt = ddt;
+    }
 private:
     Vector vs, vt;
     float ds, dt;

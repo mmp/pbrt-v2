@@ -74,10 +74,9 @@ static int NoisePerm[2 * NOISE_PERM_SIZE] = {
 
 
 // Texture Method Definitions
-UVMapping2D::UVMapping2D(float _su, float _sv,
-                         float _du, float _dv) {
-    su = _su; sv = _sv;
-    du = _du; dv = _dv;
+UVMapping2D::UVMapping2D(float ssu, float ssv, float ddu, float ddv) {
+    su = ssu; sv = ssv;
+    du = ddu; dv = ddv;
 }
 
 
@@ -148,15 +147,6 @@ void CylindricalMapping2D::cylinder(const Point &p,
     Vector vec = Normalize(WorldToTexture(p) - Point(0,0,0));
     *s = (M_PI + atan2f(vec.y, vec.x)) / (2.f * M_PI);
     *t = vec.z;
-}
-
-
-PlanarMapping2D::PlanarMapping2D(const Vector &_v1,
-        const Vector &_v2, float _ds, float _dt) {
-    vs = _v1;
-    vt = _v2;
-    ds = _ds;
-    dt = _dt;
 }
 
 
@@ -238,7 +228,7 @@ inline float NoiseWeight(float t) {
 
 
 float FBm(const Point &P, const Vector &dpdx,
-                  const Vector &dpdy, float omega, int maxOctaves) {
+          const Vector &dpdy, float omega, int maxOctaves) {
     // Compute number of octaves for antialiased FBm
     float s2 = max(dpdx.LengthSquared(), dpdy.LengthSquared());
     float foctaves = min((float)maxOctaves, 1.f - .5f * Log2(s2));
@@ -258,7 +248,7 @@ float FBm(const Point &P, const Vector &dpdx,
 
 
 float Turbulence(const Point &P, const Vector &dpdx,
-        const Vector &dpdy, float omega, int maxOctaves) {
+                 const Vector &dpdy, float omega, int maxOctaves) {
     // Compute number of octaves for antialiased FBm
     float s2 = max(dpdx.LengthSquared(), dpdy.LengthSquared());
     float foctaves = min((float)maxOctaves, 1.f - .5f * Log2(s2));

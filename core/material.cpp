@@ -47,7 +47,7 @@ void Material::Bump(const Reference<Texture<float> > &d,
     dgEval.p = dgs.p + du * dgs.dpdu;
     dgEval.u = dgs.u + du;
     dgEval.nn = Normalize((Normal)Cross(dgs.dpdu, dgs.dpdv) +
-                                 du * dgs.dndu);
+                          du * dgs.dndu);
     float uDisplace = d->Evaluate(dgEval);
     if (isnan(uDisplace))
         uDisplace = d->Evaluate(dgEval);
@@ -59,7 +59,7 @@ void Material::Bump(const Reference<Texture<float> > &d,
     dgEval.u = dgs.u;
     dgEval.v = dgs.v + dv;
     dgEval.nn = Normalize((Normal)Cross(dgs.dpdu, dgs.dpdv) +
-                                 dv * dgs.dndv);
+                          dv * dgs.dndv);
     float vDisplace = d->Evaluate(dgEval);
     float displace = d->Evaluate(dgs);
 

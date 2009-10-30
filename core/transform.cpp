@@ -28,13 +28,13 @@
 
 // Matrix4x4 Method Definitions
 bool SolveLinearSystem2x2(const float A[2][2],
-        const float B[2], float x[2]) {
+        const float B[2], float *x0, float *x1) {
     float det = A[0][0]*A[1][1] - A[0][1]*A[1][0];
-    if (fabsf(det) < 1e-5)
+    if (fabsf(det) < 1e-5f)
         return false;
     float invDet = 1.0f/det;
-    x[0] = (A[1][1]*B[0] - A[0][1]*B[1]) * invDet;
-    x[1] = (A[0][0]*B[1] - A[1][0]*B[0]) * invDet;
+    *x0 = (A[1][1]*B[0] - A[0][1]*B[1]) * invDet;
+    *x1 = (A[0][0]*B[1] - A[1][0]*B[0]) * invDet;
     return true;
 }
 
