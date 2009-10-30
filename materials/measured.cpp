@@ -28,10 +28,6 @@
 #include "floatfile.h"
 
 // MeasuredMaterial Method Definitions
-#define BRDF_SAMPLING_RES_THETA_H       90
-#define BRDF_SAMPLING_RES_THETA_D       90
-#define BRDF_SAMPLING_RES_PHI_D         180
-
 static map<string, float *> loadedRegularHalfangle;
 static map<string, KdTree<IrregIsotropicBRDFSample> *> loadedThetaPhi;
 MeasuredMaterial::MeasuredMaterial(const string &filename,
@@ -82,6 +78,10 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
     }
     else {
         // Load RegularHalfangle BRDF Data
+        nThetaH = 90;
+        nThetaD = 90;
+        nPhiD = 180;
+        
         if (loadedRegularHalfangle.find(filename) != loadedRegularHalfangle.end()) {
             regularHalfangleData = loadedRegularHalfangle[filename];
             return;
@@ -96,15 +96,13 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
             Error("Premature end-of-file in measured BRDF data file \"%s\"",
                   filename.c_str());
         u_int n = dims[0] * dims[1] * dims[2];
-        if (n != BRDF_SAMPLING_RES_THETA_H *
-             BRDF_SAMPLING_RES_THETA_D *
-             BRDF_SAMPLING_RES_PHI_D)  {
+        if (n != nThetaH * nThetaD * nPhiD)  {
             Error("Dimensions don't match\n");
             fclose(f);
         }
         
         regularHalfangleData = new float[3*n];
-        const u_int chunkSize = 2*BRDF_SAMPLING_RES_PHI_D;
+        const u_int chunkSize = 2*nPhiD;
         double tmp[chunkSize];
         u_int nChunks = n / chunkSize;
         Assert((n % chunkSize) == 0);
@@ -127,8 +125,8 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
 
 
 BSDF *MeasuredMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
-        const DifferentialGeometry &dgShading,
-        MemoryArena &arena) const {
+                                const DifferentialGeometry &dgShading,
+                                MemoryArena &arena) const {
     // Allocate _BSDF_, possibly doing bump mapping with _bumpMap_
     DifferentialGeometry dgs;
     if (bumpMap)
@@ -138,8 +136,7 @@ BSDF *MeasuredMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
     if (regularHalfangleData)
         bsdf->Add(BSDF_ALLOC(arena, RegularHalfangleBRDF)
-            (regularHalfangleData, BRDF_SAMPLING_RES_THETA_H, BRDF_SAMPLING_RES_THETA_D,
-             BRDF_SAMPLING_RES_PHI_D));
+            (regularHalfangleData, nThetaH, nThetaD, nPhiD));
     else
         bsdf->Add(BSDF_ALLOC(arena, IrregIsotropicBRDF)(thetaPhiData));
     return bsdf;
