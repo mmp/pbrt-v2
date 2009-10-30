@@ -27,12 +27,13 @@
 #include "paramset.h"
 #include "film.h"
 #include "primitive.h"
+#include "intersection.h"
 #include "camera.h"
 #include "montecarlo.h"
 
 // AdaptiveSampler Method Definitions
 AdaptiveSampler::AdaptiveSampler(int xstart, int xend,
-                     int ystart, int yend, int mins, int maxs,
+                     int ystart, int yend, int mins, int maxs, const string &m,
                      float sopen, float sclose)
     : Sampler(xstart, xend, ystart, yend, RoundUpPow2(maxSamples),
               sopen, sclose) {
@@ -63,6 +64,13 @@ AdaptiveSampler::AdaptiveSampler(int xstart, int xend,
         Warning("Adaptive sampler must have more maximum samples than minimum.  Using %d - %d",
                 minSamples, maxSamples);
     }
+    if (m == "contrast") method = ADAPTIVE_CONTRAST_THRESHOLD;
+    else if (m == "shapeid") method = ADAPTIVE_COMPARE_SHAPE_ID;
+    else {
+        Warning("Adaptive sampling metric \"%s\" unknown.  Using \"contrast\".",
+                m.c_str());
+        method = ADAPTIVE_CONTRAST_THRESHOLD;
+    }
     sampleBuf = NULL;
 }
 
@@ -77,7 +85,8 @@ Sampler *AdaptiveSampler::GetSubSampler(int num, int count) {
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
     return new AdaptiveSampler(x0, x1, y0, y1, minSamples, maxSamples,
-        ShutterOpen, ShutterClose);
+        method == ADAPTIVE_CONTRAST_THRESHOLD ? "contrast" : "shapeid",
+        shutterOpen, shutterClose);
 }
 
 
@@ -85,27 +94,28 @@ int AdaptiveSampler::GetMoreSamples(Sample *samples) {
     if (!sampleBuf)
         sampleBuf = new float[LDPixelSampleFloatsNeeded(samples, maxSamples)];
     if (superSamplePixel) {
-        LDPixelSample(xPos, yPos, ShutterOpen, ShutterClose, maxSamples, samples,
-                      sampleBuf);
+        LDPixelSample(xPos, yPos, shutterOpen, shutterClose, maxSamples,
+                      samples, sampleBuf);
         return maxSamples;
     }
     else {
         if (yPos == yPixelEnd) return 0;
-        LDPixelSample(xPos, yPos, ShutterOpen, ShutterClose, minSamples, samples,
-                      sampleBuf);
+        LDPixelSample(xPos, yPos, shutterOpen, shutterClose, minSamples,
+                      samples, sampleBuf);
         return minSamples;
     }
 }
 
 
-bool AdaptiveSampler::ReportResults(Sample *samples, const RayDifferential *rays,
-        const Spectrum *Ls, const Intersection *isects,
-        int count) {
+bool AdaptiveSampler::ReportResults(Sample *samples,
+        const RayDifferential *rays, const Spectrum *Ls,
+        const Intersection *isects, int count) {
     if (superSamplePixel) {
         superSamplePixel = false;
+        // Advance to next pixel for sampling for _AdaptiveSampler_
         if (++xPos == xPixelEnd) {
             xPos = xPixelStart;
-            ++yPos;
+             ++yPos;
         }
         return true;
     }
@@ -116,35 +126,38 @@ bool AdaptiveSampler::ReportResults(Sample *samples, const RayDifferential *rays
     }
     else {
         PBRT_SUPERSAMPLE_PIXEL_NO(xPos, yPos);
+        // Advance to next pixel for sampling for _AdaptiveSampler_
         if (++xPos == xPixelEnd) {
             xPos = xPixelStart;
-            ++yPos;
+             ++yPos;
         }
         return true;
     }
 }
 
 
-bool AdaptiveSampler::needsSupersampling(Sample *samples, const RayDifferential *rays,
-        const Spectrum *Ls, const Intersection *isects,
-        int count) {
-#if 0
-// diff primitives
-    for (int i = 0; i < count; ++i)
-        for (int j = i+1; j < count; ++j)
-            if (isects[i].ShapeId != isects[j].ShapeId) return true;
+bool AdaptiveSampler::needsSupersampling(Sample *samples,
+        const RayDifferential *rays, const Spectrum *Ls,
+        const Intersection *isects, int count) {
+    switch (method) {
+    case ADAPTIVE_COMPARE_SHAPE_ID:
+        // See if any shape ids differ within samples
+        for (int i = 0; i < count; ++i)
+            for (int j = i+1; j < count; ++j)
+                if (isects[i].ShapeId != isects[j].ShapeId) return true;
+        return false;
+    case ADAPTIVE_CONTRAST_THRESHOLD:
+        // Compare contrast of sample differences to threshold
+        float Lavg = 0.f;
+        for (int i = 0; i < count; ++i)
+            Lavg += Ls[i].y();
+        Lavg /= count;
+        float maxc = 0.f;
+        for (int i = 0; i < count; ++i)
+            maxc = max(maxc, fabsf(Ls[i].y() - Lavg) / Lavg);
+        return maxc > .5f;
+    }
     return false;
-#else
-// mitchell's contrast metric (I think)
-    float Lavg = 0.f;
-    for (int i = 0; i < count; ++i)
-        Lavg += Ls[i].y();
-    Lavg /= count;
-    float maxc = 0.f;
-    for (int i = 0; i < count; ++i)
-        maxc = max(maxc, fabsf(Ls[i].y() - Lavg) / Lavg);
-    return maxc > .5f;
-#endif
 }
 
 
@@ -156,8 +169,9 @@ AdaptiveSampler *CreateAdaptiveSampler(const ParamSet &params, const Film *film,
     int minsamp = params.FindOneInt("minsamples", 4);
     int maxsamp = params.FindOneInt("maxsamples", 32);
     if (getenv("PBRT_QUICK_RENDER")) { minsamp = 2; maxsamp = 4; }
-    return new AdaptiveSampler(xstart, xend, ystart, yend, minsamp, maxsamp,
-         camera->ShutterOpen, camera->ShutterClose);
+    string method = params.FindOneString("method", "contrast");
+    return new AdaptiveSampler(xstart, xend, ystart, yend, minsamp, maxsamp, method,
+         camera->shutterOpen, camera->shutterClose);
 }
 
 
