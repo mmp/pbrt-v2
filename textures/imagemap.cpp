@@ -46,7 +46,8 @@ template <typename Tmemory, typename Treturn>
 template <typename Tmemory, typename Treturn>
 MIPMap<Tmemory> *
 ImageTexture<Tmemory, Treturn>::GetTexture(const string &filename,
-                       bool doTrilinear, float maxAniso, ImageWrap wrap, float scale, float gamma) {
+        bool doTrilinear, float maxAniso, ImageWrap wrap,
+        float scale, float gamma) {
     // Look for texture in texture cache
     TexInfo texInfo(filename, doTrilinear, maxAniso, wrap, scale, gamma);
     if (textures.find(texInfo) != textures.end())
@@ -80,7 +81,8 @@ ImageTexture<Tmemory, Treturn>::GetTexture(const string &filename,
 template <typename Tmemory, typename Treturn>
     std::map<TexInfo, void *> ImageTexture<Tmemory, Treturn>::textures;
 template <typename Tmemory, typename Treturn>
-Treturn ImageTexture<Tmemory, Treturn>::Evaluate(const DifferentialGeometry &dg) const {
+Treturn
+ImageTexture<Tmemory, Treturn>::Evaluate(const DifferentialGeometry &dg) const {
     float s, t, dsdx, dtdx, dsdy, dtdy;
     mapping->Map(dg, &s, &t, &dsdx, &dtdx, &dsdy, &dtdy);
     Tmemory mem = mipmap->Lookup(s, t, dsdx, dtdx, dsdy, dtdy);

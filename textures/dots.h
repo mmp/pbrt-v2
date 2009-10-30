@@ -36,11 +36,9 @@ public:
     ~DotsTexture() {
         delete mapping;
     }
-    DotsTexture(TextureMapping2D *m, Reference<Texture<T> > c1,
-                Reference<Texture<T> > c2) {
-        mapping = m;
-        outsideDot = c1;
-        insideDot = c2;
+    DotsTexture(TextureMapping2D *m, Reference<Texture<T> > t1,
+                Reference<Texture<T> > t2)
+        : mapping(m), outsideDot(t1), insideDot(t2) {
     }
     T Evaluate(const DifferentialGeometry &dg) const {
         // Compute cell indices for dots
@@ -64,8 +62,8 @@ public:
     }
 private:
     // DotsTexture Private Data
-    Reference<Texture<T> > outsideDot, insideDot;
     TextureMapping2D *mapping;
+    Reference<Texture<T> > outsideDot, insideDot;
 };
 
 

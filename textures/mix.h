@@ -30,8 +30,7 @@
 #include "paramset.h"
 
 // MixTexture Declarations
-template <typename T>
-class MixTexture : public Texture<T> {
+template <typename T> class MixTexture : public Texture<T> {
 public:
     // MixTexture Public Methods
     MixTexture(Reference<Texture<T> > t1, Reference<Texture<T> > t2,

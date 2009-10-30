@@ -73,10 +73,12 @@ private:
     // ImageTexture Private Methods
     static MIPMap<Tmemory> *GetTexture(const string &filename,
         bool doTrilinear, float maxAniso, ImageWrap wm, float scale, float gamma);
-    static void convertIn(const RGBSpectrum &from, RGBSpectrum *to, float scale, float gamma) {
+    static void convertIn(const RGBSpectrum &from, RGBSpectrum *to,
+                          float scale, float gamma) {
         *to = Pow(scale * from, gamma);
     }
-    static void convertIn(const RGBSpectrum &from, float *to, float scale, float gamma) {
+    static void convertIn(const RGBSpectrum &from, float *to,
+                          float scale, float gamma) {
         *to = powf(scale * from.y(), gamma);
     }
     static void convertOut(const RGBSpectrum &from, Spectrum *to) {

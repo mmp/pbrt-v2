@@ -38,14 +38,12 @@ template <typename T> class Checkerboard2DTexture : public Texture<T> {
 public:
     // Checkerboard2DTexture Public Methods
     Checkerboard2DTexture(TextureMapping2D *m, Reference<Texture<T> > c1,
-                   Reference<Texture<T> > c2, const string &aa) {
-        mapping = m;
-        tex1 = c1;
-        tex2 = c2;
+                          Reference<Texture<T> > c2, const string &aa)
+        : mapping(m), tex1(c1), tex2(c2) {
         // Select antialiasing method for _Checkerboard2DTexture_
-        if (aa == "none") aaMethod = NONE;
+        if (aa == "none")             aaMethod = NONE;
         else if (aa == "supersample") aaMethod = SUPERSAMPLE;
-        else if (aa == "closedform") aaMethod = CLOSEDFORM;
+        else if (aa == "closedform")  aaMethod = CLOSEDFORM;
         else {
             Warning("Anti-aliasing mode \"%s\" not understood "
                     "by Checkerboard2DTexture, defaulting"
@@ -94,7 +92,8 @@ public:
 #define N_SAMPLES (SQRT_SAMPLES * SQRT_SAMPLES)
             float samples[2*N_SAMPLES];
             { MutexLock lock(*mutex);
-            StratifiedSample2D(samples, SQRT_SAMPLES, SQRT_SAMPLES, rng); }
+              StratifiedSample2D(samples, SQRT_SAMPLES, SQRT_SAMPLES, rng);
+            }
             T value = 0.;
             float filterSum = 0.;
             for (int i = 0; i < N_SAMPLES; ++i) {
@@ -122,6 +121,7 @@ public:
             }
             return value / filterSum;
             #undef N_SAMPLES
+            #undef SQRT_SAMPLES
         }
         // Point sample _Checkerboard2DTexture_
         if ((Floor2Int(s) + Floor2Int(t)) % 2 == 0)
@@ -130,8 +130,8 @@ public:
     }
 private:
     // Checkerboard2DTexture Private Data
-    Reference<Texture<T> > tex1, tex2;
     TextureMapping2D *mapping;
+    Reference<Texture<T> > tex1, tex2;
     enum { NONE, SUPERSAMPLE, CLOSEDFORM } aaMethod;
     mutable RNG rng;
     mutable Mutex *mutex;
@@ -141,13 +141,14 @@ private:
 template <typename T> class Checkerboard3DTexture : public Texture<T> {
 public:
     // Checkerboard3DTexture Public Methods
-    Checkerboard3DTexture(TextureMapping3D *m,
-                   Reference<Texture<T> > c1,
-                   Reference<Texture<T> > c2) {
-        mapping = m;
-        tex1 = c1;
-        tex2 = c2;
-        mutex = Mutex::Create(); // FIXME LEAK
+    Checkerboard3DTexture(TextureMapping3D *m, Reference<Texture<T> > c1,
+                          Reference<Texture<T> > c2)
+        : mapping(m), tex1(c1), tex2(c2) {
+        mutex = Mutex::Create();
+    }
+    ~Checkerboard3DTexture() {
+        delete mapping;
+        Mutex::Destroy(mutex);
     }
     T Evaluate(const DifferentialGeometry &dg) const {
         // Supersample _Checkerboard3DTexture_
@@ -184,8 +185,8 @@ public:
     }
 private:
     // Checkerboard3DTexture Private Data
-    Reference<Texture<T> > tex1, tex2;
     TextureMapping3D *mapping;
+    Reference<Texture<T> > tex1, tex2;
     mutable RNG rng;
     mutable Mutex *mutex;
 };

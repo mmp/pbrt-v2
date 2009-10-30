@@ -33,14 +33,9 @@
 template <typename T> class BilerpTexture : public Texture<T> {
 public:
     // BilerpTexture Public Methods
-    BilerpTexture(TextureMapping2D *m,
-                  const T &t00, const T &t01,
-                  const T &t10, const T &t11) {
-        mapping = m;
-        v00 = t00;
-        v01 = t01;
-        v10 = t10;
-        v11 = t11;
+    BilerpTexture(TextureMapping2D *m, const T &t00, const T &t01,
+                  const T &t10, const T &t11)
+        : mapping(m), v00(t00), v01(t01), v10(t10), v11(t11) {
     }
     ~BilerpTexture() {
         delete mapping;
