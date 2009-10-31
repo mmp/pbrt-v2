@@ -44,25 +44,21 @@ public:
         delete pixels;
         delete filter;
         delete[] filterTable;
-        Mutex::Destroy(mutex);
     }
     void AddSample(const CameraSample &sample, const Spectrum &L);
-    void GetSampleExtent(int *xstart, int *xend,
-                         int *ystart, int *yend) const;
-    void GetPixelExtent(int *xstart, int *xend,
-                        int *ystart, int *yend) const;
     void Splat(const CameraSample &sample, const Spectrum &L);
+    void GetSampleExtent(int *xstart, int *xend, int *ystart, int *yend) const;
+    void GetPixelExtent(int *xstart, int *xend, int *ystart, int *yend) const;
     void WriteImage();
     void UpdateDisplay(int x0, int y0, int x1, int y1, float splatScale);
 private:
     // ImageFilm Private Data
     Filter *filter;
-    string filename;
     float cropWindow[4];
-#ifdef PBRT_HAS_LIBSDL
+    string filename;
+    #ifdef PBRT_HAS_LIBSDL
     SDL_Surface *sdlWindow;
-#endif // PBRT_HAS_LIBSDL
-    Mutex *mutex;
+    #endif // PBRT_HAS_LIBSDL
     int xPixelStart, yPixelStart, xPixelCount, yPixelCount;
     struct Pixel {
         Pixel() {
@@ -70,8 +66,9 @@ private:
             weightSum = 0.f;
         }
         float Lxyz[3];
-        float splatXYZ[3];
         float weightSum;
+        float splatXYZ[3];
+        float pad;
     };
     BlockedArray<Pixel> *pixels;
     float *filterTable;

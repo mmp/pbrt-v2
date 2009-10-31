@@ -32,8 +32,7 @@
 #endif // PBRT_HAS_LIBSDL
 
 // ImageFilm Method Definitions
-ImageFilm::ImageFilm(int xres, int yres,
-                     Filter *filt, const float crop[4],
+ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
                      const string &fn, bool openWindow)
     : Film(xres, yres) {
     filter = filt;
@@ -61,9 +60,9 @@ ImageFilm::ImageFilm(int xres, int yres,
             *ftp++ = filter->Evaluate(fx, fy);
         }
     }
-    mutex = Mutex::Create();
+
+    // Possibly open window for image display
     if (openWindow || getenv("PBRT_DISPLAY_WINDOW")) {
-        // Open window for image display
 #ifdef PBRT_HAS_LIBSDL
         SDL_Init(SDL_INIT_VIDEO);
         SDL_WM_SetCaption(filename.c_str(), filename.c_str());
@@ -106,7 +105,8 @@ void ImageFilm::AddSample(const CameraSample &sample,
     x1 = min(x1, xPixelStart + xPixelCount - 1);
     y0 = max(y0, yPixelStart);
     y1 = min(y1, yPixelStart + yPixelCount - 1);
-    if ((x1-x0) < 0 || (y1-y0) < 0) {
+    if ((x1-x0) < 0 || (y1-y0) < 0)
+    {
         PBRT_SAMPLE_OUTSIDE_IMAGE_EXTENT(const_cast<CameraSample *>(&sample));
         return;
     }
@@ -128,7 +128,7 @@ void ImageFilm::AddSample(const CameraSample &sample,
                          filter->invYWidth * FILTER_TABLE_SIZE);
         ify[y-y0] = min(Floor2Int(fy), FILTER_TABLE_SIZE-1);
     }
-    bool atomicsNeeded = (filter->xWidth > 0.5f || filter->yWidth > 0.5f);
+    bool syncNeeded = (filter->xWidth > 0.5f || filter->yWidth > 0.5f);
     for (int y = y0; y <= y1; ++y) {
         for (int x = x0; x <= x1; ++x) {
             // Evaluate filter value at $(x,y)$ pixel
@@ -137,25 +137,39 @@ void ImageFilm::AddSample(const CameraSample &sample,
 
             // Update pixel values with filtered sample contribution
             Pixel &pixel = (*pixels)(x - xPixelStart, y - yPixelStart);
-            if (atomicsNeeded) {
-                AtomicAdd(&pixel.Lxyz[0], filterWt * xyz[0]);
-                AtomicAdd(&pixel.Lxyz[1], filterWt * xyz[1]);
-                AtomicAdd(&pixel.Lxyz[2], filterWt * xyz[2]);
-                AtomicAdd(&pixel.weightSum, filterWt);
-            }
-            else {
+            if (!syncNeeded) {
                 pixel.Lxyz[0] += filterWt * xyz[0];
                 pixel.Lxyz[1] += filterWt * xyz[1];
                 pixel.Lxyz[2] += filterWt * xyz[2];
                 pixel.weightSum += filterWt;
+            }
+            else {
+                // Safely update _Lxyz_ and _weightSum_ even with concurrency
+                AtomicAdd(&pixel.Lxyz[0], filterWt * xyz[0]);
+                AtomicAdd(&pixel.Lxyz[1], filterWt * xyz[1]);
+                AtomicAdd(&pixel.Lxyz[2], filterWt * xyz[2]);
+                AtomicAdd(&pixel.weightSum, filterWt);
             }
         }
     }
 }
 
 
+void ImageFilm::Splat(const CameraSample &sample, const Spectrum &L) {
+    float xyz[3];
+    L.ToXYZ(xyz);
+    int x = Floor2Int(sample.imageX), y = Floor2Int(sample.imageY);
+    if (x < xPixelStart || x - xPixelStart >= xPixelCount ||
+        y < yPixelStart || y - yPixelStart >= yPixelCount) return;
+    Pixel &pixel = (*pixels)(x - xPixelStart, y - yPixelStart);
+    AtomicAdd(&pixel.splatXYZ[0], xyz[0]);
+    AtomicAdd(&pixel.splatXYZ[1], xyz[1]);
+    AtomicAdd(&pixel.splatXYZ[2], xyz[2]);
+}
+
+
 void ImageFilm::GetSampleExtent(int *xstart, int *xend,
-                                int *ystart, int *yend) const {
+                               int *ystart, int *yend) const {
     *xstart = Floor2Int(xPixelStart + 0.5f - filter->xWidth);
     *xend   = Floor2Int(xPixelStart + 0.5f + xPixelCount  +
                         filter->xWidth);
@@ -174,37 +188,23 @@ void ImageFilm::GetPixelExtent(int *xstart, int *xend,
 }
 
 
-void ImageFilm::Splat(const CameraSample &sample, const Spectrum &L) {
-    float xyz[3];
-    L.ToXYZ(xyz);
-    int x = Floor2Int(sample.imageX), y = Floor2Int(sample.imageY);
-    if (x < xPixelStart || x - xPixelStart >= xPixelCount ||
-        y < yPixelStart || y - yPixelStart >= yPixelCount) return;
-    Pixel &pixel = (*pixels)(x - xPixelStart, y - yPixelStart);
-    AtomicAdd(&pixel.splatXYZ[0], xyz[0]);
-    AtomicAdd(&pixel.splatXYZ[1], xyz[1]);
-    AtomicAdd(&pixel.splatXYZ[2], xyz[2]);
-}
-
-
 void ImageFilm::WriteImage() {
-    MutexLock lock(*mutex);
     // Convert image to RGB and compute final pixel values
     int nPix = xPixelCount * yPixelCount;
     float *rgb = new float[3*nPix];
     int offset = 0;
     for (int y = 0; y < yPixelCount; ++y) {
         for (int x = 0; x < xPixelCount; ++x) {
-            // Convert pixel spectral radiance to RGB
+            // Convert pixel XYZ color to RGB
             XYZToRGB((*pixels)(x, y).Lxyz, &rgb[3*offset]);
 
             // Normalize pixel with weight sum
             float weightSum = (*pixels)(x, y).weightSum;
             if (weightSum != 0.f) {
                 float invWt = 1.f / weightSum;
-                rgb[3*offset  ] = Clamp(rgb[3*offset  ] * invWt, 0.f, INFINITY);
-                rgb[3*offset+1] = Clamp(rgb[3*offset+1] * invWt, 0.f, INFINITY);
-                rgb[3*offset+2] = Clamp(rgb[3*offset+2] * invWt, 0.f, INFINITY);
+                rgb[3*offset  ] = max(0.f, rgb[3*offset  ] * invWt);
+                rgb[3*offset+1] = max(0.f, rgb[3*offset+1] * invWt);
+                rgb[3*offset+2] = max(0.f, rgb[3*offset+2] * invWt);
             }
 
             // Add splat value at pixel
@@ -266,10 +266,8 @@ void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
                 u_char(Clamp(powf(rgb[2], 1./1.8), 0.f, 1.f) * 255));
         }
     }
-    // Acquire mutex lock, update window pixels, redraw
-    MutexLock lock(*mutex);
+    // Update window pixels, redraw
     if (SDL_LockSurface(sdlWindow) == -1) { }
-    
     pp=pix;
     for (int y = y0; y < y1; ++y) {
         for (int x = x0; x < x1; ++x) {
