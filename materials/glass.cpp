@@ -31,16 +31,15 @@
 
 // GlassMaterial Method Definitions
 BSDF *GlassMaterial::GetBSDF(const DifferentialGeometry &dgGeom, const DifferentialGeometry &dgShading, MemoryArena &arena) const {
-    // Allocate _BSDF_, possibly doing bump mapping with _bumpMap_
     DifferentialGeometry dgs;
     if (bumpMap)
         Bump(bumpMap, dgGeom, dgShading, &dgs);
     else
         dgs = dgShading;
-    BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
+    float ior = index->Evaluate(dgs);
+    BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn, ior);
     Spectrum R = Kr->Evaluate(dgs).Clamp();
     Spectrum T = Kt->Evaluate(dgs).Clamp();
-    float ior = index->Evaluate(dgs);
     if (!R.IsBlack())
         bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(R,
             BSDF_ALLOC(arena, FresnelDielectric)(1., ior)));

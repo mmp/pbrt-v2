@@ -31,13 +31,14 @@
 
 // TranslucentMaterial Method Definitions
 BSDF *TranslucentMaterial::GetBSDF(const DifferentialGeometry &dgGeom, const DifferentialGeometry &dgShading, MemoryArena &arena) const {
-    // Allocate _BSDF_, possibly doing bump mapping with _bumpMap_
+    float ior = 1.5f;
     DifferentialGeometry dgs;
     if (bumpMap)
         Bump(bumpMap, dgGeom, dgShading, &dgs);
     else
         dgs = dgShading;
-    BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
+    BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn, ior);
+
     Spectrum r = reflect->Evaluate(dgs).Clamp();
     Spectrum t = transmit->Evaluate(dgs).Clamp();
     if (r.IsBlack() && t.IsBlack()) return bsdf;
@@ -51,12 +52,12 @@ BSDF *TranslucentMaterial::GetBSDF(const DifferentialGeometry &dgGeom, const Dif
     if (!ks.IsBlack()) {
         float rough = roughness->Evaluate(dgs);
         if (!r.IsBlack()) {
-            Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
+            Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(ior, 1.f);
             bsdf->Add(BSDF_ALLOC(arena, Microfacet)(r * ks, fresnel,
                 BSDF_ALLOC(arena, Blinn)(1.f / rough)));
         }
         if (!t.IsBlack()) {
-            Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
+            Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(ior, 1.f);
             bsdf->Add(BSDF_ALLOC(arena, BRDFToBTDF)(BSDF_ALLOC(arena, Microfacet)(t * ks, fresnel,
                 BSDF_ALLOC(arena, Blinn)(1.f / rough))));
         }
