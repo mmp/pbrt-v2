@@ -33,7 +33,7 @@
 class Primitive : public ReferenceCounted {
 public:
     // Primitive Interface
-    Primitive() : PrimitiveId(nextPrimitiveId++) { }
+    Primitive() : primitiveId(nextprimitiveId++) { }
     virtual ~Primitive();
     virtual BBox WorldBound() const = 0;
     virtual bool CanIntersect() const;
@@ -48,10 +48,10 @@ public:
         const Transform &ObjectToWorld, MemoryArena &arena) const = 0;
 
     // Primitive Public Data
-    const uint32_t PrimitiveId;
+    const uint32_t primitiveId;
 protected:
     // Primitive Protected Data
-    static uint32_t nextPrimitiveId;
+    static uint32_t nextprimitiveId;
 };
 
 

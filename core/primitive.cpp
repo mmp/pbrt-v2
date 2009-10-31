@@ -28,7 +28,7 @@
 #include "intersection.h"
 
 // Primitive Method Definitions
-uint32_t Primitive::nextPrimitiveId = 1;
+uint32_t Primitive::nextprimitiveId = 1;
 Primitive::~Primitive() { }
 
 bool Primitive::CanIntersect() const {
@@ -91,7 +91,7 @@ bool TransformedPrimitive::Intersect(const Ray &r,
     if (!primitive->Intersect(ray, isect))
         return false;
     r.maxt = ray.maxt;
-    isect->PrimitiveId = PrimitiveId;
+    isect->primitiveId = primitiveId;
     if (!w2p.IsIdentity()) {
         // Compute world-to-object transformation for instance
         isect->WorldToObject = isect->WorldToObject * w2p;
@@ -159,8 +159,8 @@ bool GeometricPrimitive::Intersect(const Ray &r,
     isect->primitive = this;
     isect->WorldToObject = *shape->WorldToObject;
     isect->ObjectToWorld = *shape->ObjectToWorld;
-    isect->ShapeId = shape->ShapeId;
-    isect->PrimitiveId = PrimitiveId;
+    isect->shapeId = shape->shapeId;
+    isect->primitiveId = primitiveId;
     isect->rayEpsilon = rayEpsilon;
     r.maxt = thit;
     return true;

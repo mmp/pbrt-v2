@@ -66,8 +66,8 @@ public:
     // Shape Public Data
     const Transform *ObjectToWorld, *WorldToObject;
     const bool ReverseOrientation, TransformSwapsHandedness;
-    const uint32_t ShapeId;
-    static uint32_t nextShapeId;
+    const uint32_t shapeId;
+    static uint32_t nextshapeId;
 };
 
 

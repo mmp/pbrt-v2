@@ -33,13 +33,13 @@ Shape::~Shape() {
 Shape::Shape(const Transform *o2w, const Transform *w2o, bool ro)
     : ObjectToWorld(o2w), WorldToObject(w2o), ReverseOrientation(ro),
     TransformSwapsHandedness(o2w->SwapsHandedness()),
-    ShapeId(nextShapeId++) {
+    shapeId(nextshapeId++) {
     // Update shape creation statistics
     PBRT_CREATED_SHAPE(this);
 }
 
 
-uint32_t Shape::nextShapeId = 1;
+uint32_t Shape::nextshapeId = 1;
 BBox Shape::WorldBound() const {
     return (*ObjectToWorld)(ObjectBound());
 }
