@@ -39,7 +39,7 @@ AdaptiveSampler::AdaptiveSampler(int xstart, int xend,
               sopen, sclose) {
     xPos = xPixelStart;
     yPos = yPixelStart;
-    superSamplePixel = false;
+    supersamplePixel = false;
     if (mins > maxs) std::swap(mins, maxs);
 
     if (!IsPowerOf2(mins)) {
@@ -93,7 +93,7 @@ Sampler *AdaptiveSampler::GetSubSampler(int num, int count) {
 int AdaptiveSampler::GetMoreSamples(Sample *samples) {
     if (!sampleBuf)
         sampleBuf = new float[LDPixelSampleFloatsNeeded(samples, maxSamples)];
-    if (superSamplePixel) {
+    if (supersamplePixel) {
         LDPixelSample(xPos, yPos, shutterOpen, shutterClose, maxSamples,
                       samples, sampleBuf);
         return maxSamples;
@@ -110,8 +110,8 @@ int AdaptiveSampler::GetMoreSamples(Sample *samples) {
 bool AdaptiveSampler::ReportResults(Sample *samples,
         const RayDifferential *rays, const Spectrum *Ls,
         const Intersection *isects, int count) {
-    if (superSamplePixel) {
-        superSamplePixel = false;
+    if (supersamplePixel) {
+        supersamplePixel = false;
         // Advance to next pixel for sampling for _AdaptiveSampler_
         if (++xPos == xPixelEnd) {
             xPos = xPixelStart;
@@ -121,7 +121,7 @@ bool AdaptiveSampler::ReportResults(Sample *samples,
     }
     else if (needsSupersampling(samples, rays, Ls, isects, count)) {
         PBRT_SUPERSAMPLE_PIXEL_YES(xPos, yPos);
-        superSamplePixel = true;
+        supersamplePixel = true;
         return false;
     }
     else {
@@ -142,9 +142,8 @@ bool AdaptiveSampler::needsSupersampling(Sample *samples,
     switch (method) {
     case ADAPTIVE_COMPARE_SHAPE_ID:
         // See if any shape ids differ within samples
-        for (int i = 0; i < count; ++i)
-            for (int j = i+1; j < count; ++j)
-                if (isects[i].ShapeId != isects[j].ShapeId) return true;
+        for (int i = 0; i < count-1; ++i)
+            if (isects[i].shapeId != isects[i+1].shapeId) return true;
         return false;
     case ADAPTIVE_CONTRAST_THRESHOLD:
         // Compare contrast of sample differences to threshold
@@ -152,10 +151,11 @@ bool AdaptiveSampler::needsSupersampling(Sample *samples,
         for (int i = 0; i < count; ++i)
             Lavg += Ls[i].y();
         Lavg /= count;
-        float maxc = 0.f;
+        const float maxContrast = 0.5f;
         for (int i = 0; i < count; ++i)
-            maxc = max(maxc, fabsf(Ls[i].y() - Lavg) / Lavg);
-        return maxc > .5f;
+            if (fabsf(Ls[i].y() - Lavg) / Lavg > maxContrast)
+                return true;
+        return false;
     }
     return false;
 }

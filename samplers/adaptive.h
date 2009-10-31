@@ -43,8 +43,7 @@ public:
     int MaximumSampleCount() { return maxSamples; }
     int GetMoreSamples(Sample *sample);
     bool ReportResults(Sample *samples, const RayDifferential *rays,
-            const Spectrum *Ls, const Intersection *isects,
-            int count);
+        const Spectrum *Ls, const Intersection *isects, int count);
 private:
     // AdaptiveSampler Private Methods
     bool needsSupersampling(Sample *samples, const RayDifferential *rays,
@@ -52,11 +51,11 @@ private:
 
     // AdaptiveSampler Private Data
     int xPos, yPos;
-    bool superSamplePixel;
     int minSamples, maxSamples;
     float *sampleBuf;
     enum AdaptiveTest { ADAPTIVE_COMPARE_SHAPE_ID, ADAPTIVE_CONTRAST_THRESHOLD };
     AdaptiveTest method;
+    bool supersamplePixel;
 };
 
 
