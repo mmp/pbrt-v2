@@ -32,17 +32,6 @@ float LanczosSincFilter::Evaluate(float x, float y) const {
 }
 
 
-float LanczosSincFilter::Sinc1D(float x) const {
-    x = fabsf(x);
-    if (x < 1e-5) return 1.f;
-    if (x > 1.)   return 0.f;
-    x *= M_PI;
-    float sinc = sinf(x * tau) / (x * tau);
-    float lanczos = sinf(x) / x;
-    return sinc * lanczos;
-}
-
-
 LanczosSincFilter *CreateSincFilter(const ParamSet &ps) {
     float xw = ps.FindOneFloat("xwidth", 4.);
     float yw = ps.FindOneFloat("ywidth", 4.);

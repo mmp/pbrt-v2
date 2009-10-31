@@ -32,7 +32,8 @@ class MitchellFilter : public Filter {
 public:
     // MitchellFilter Public Methods
     MitchellFilter(float b, float c, float xw, float yw)
-        : Filter(xw, yw) { B = b; C = c; }
+        : Filter(xw, yw), B(b), C(c) {
+    }
     float Evaluate(float x, float y) const;
     float Mitchell1D(float x) const {
         x = fabsf(2.f * x);
@@ -45,7 +46,7 @@ public:
                     (6 - 2*B)) * (1.f/6.f);
     }
 private:
-    float B, C;
+    const float B, C;
 };
 
 

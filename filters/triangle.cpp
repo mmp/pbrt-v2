@@ -29,7 +29,7 @@
 // Triangle Filter Method Definitions
 float TriangleFilter::Evaluate(float x, float y) const {
     return max(0.f, xWidth - fabsf(x)) *
-        max(0.f, yWidth - fabsf(y));
+           max(0.f, yWidth - fabsf(y));
 }
 
 

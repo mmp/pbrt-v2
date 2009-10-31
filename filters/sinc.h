@@ -30,14 +30,22 @@
 // Sinc Filter Declarations
 class LanczosSincFilter : public Filter {
 public:
+    // LanczosSincFilter Public Methods
     LanczosSincFilter(float xw, float yw, float t)
-        : Filter(xw, yw) {
-        tau = t;
+        : Filter(xw, yw), tau(t) {
     }
     float Evaluate(float x, float y) const;
-    float Sinc1D(float x) const;
+    float Sinc1D(float x) const {
+        x = fabsf(x);
+        if (x < 1e-5) return 1.f;
+        if (x > 1.)   return 0.f;
+        x *= M_PI;
+        float sinc = sinf(x * tau) / (x * tau);
+        float lanczos = sinf(x) / x;
+        return sinc * lanczos;
+    }
 private:
-    float tau;
+    const float tau;
 };
 
 
