@@ -39,30 +39,32 @@ class BestCandidateSampler : public Sampler {
 public:
     // BestCandidateSampler Public Methods
     BestCandidateSampler(int xstart, int xend, int ystart, int yend,
-                         int pixelsamples, float sopen, float sclose,
-                         u_long rngSeed);
-    ~BestCandidateSampler() {
-        delete[] strat2D;
-        delete[] sampleFloats;
-        delete[] oneDSamples;
-        delete[] twoDSamples;
+            int pixelSamples, float sopen, float sclose, u_long rngSeed)
+        : Sampler(xstart, xend, ystart, yend, pixelSamples, sopen, sclose),
+          rng(rngSeed) {
+        tableWidth = (float)SQRT_SAMPLE_TABLE_SIZE / (float)sqrtf(pixelSamples);
+        xTileStart = Floor2Int(xstart / tableWidth);
+        xTileEnd = Floor2Int(xend / tableWidth);
+        yTileStart = Floor2Int(ystart / tableWidth);
+        yTileEnd = Floor2Int(yend / tableWidth);
+        xTile = xTileStart;
+        yTile = yTileStart;
+        tableOffset = 0;
     }
     Sampler *GetSubSampler(int num, int count);
     int RoundSize(int size) const {
-        int root = Ceil2Int(sqrtf((float)size - .5f));
-        return root*root;
+        return RoundUpPow2(size);
     }
     int MaximumSampleCount() { return 1; }
     int GetMoreSamples(Sample *sample);
 private:
     // BestCandidateSampler Private Data
+    float tableWidth;
     int tableOffset;
-    float xTableCorner, yTableCorner, tableWidth;
+    int xTileStart, xTileEnd, yTileStart, yTileEnd;
+    int xTile, yTile;
     RNG rng;
     static const float sampleTable[SAMPLE_TABLE_SIZE][5];
-    float *sampleFloats;
-    float **oneDSamples, **twoDSamples;
-    int *strat2D;
     float sampleOffsets[3];
 };
 
