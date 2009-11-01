@@ -40,7 +40,6 @@
 #include "cameras/environment.h"
 #include "cameras/orthographic.h"
 #include "cameras/perspective.h"
-#include "cameras/realistic.h"
 #include "film/image.h"
 #include "filters/box.h"
 #include "filters/gaussian.h"
