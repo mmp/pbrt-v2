@@ -591,8 +591,6 @@ Camera *MakeCamera(const string &name,
         camera = CreateOrthographicCamera(paramSet, animatedCam2World, film);
     else if (name == "environment")
         camera = CreateEnvironmentCamera(paramSet, animatedCam2World, film);
-    else if (name == "realistic")
-        camera = CreateRealisticCamera(paramSet, animatedCam2World, film);
     else
         Warning("Camera \"%s\" unknown.", name.c_str());
     paramSet.ReportUnused();
