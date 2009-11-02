@@ -46,6 +46,7 @@
 #include "filters/mitchell.h"
 #include "filters/sinc.h"
 #include "filters/triangle.h"
+#include "integrators/ambientocclusion.h"
 #include "integrators/diffuseprt.h"
 #include "integrators/dipolesubsurface.h"
 #include "integrators/directlighting.h"
@@ -526,6 +527,8 @@ SurfaceIntegrator *MakeSurfaceIntegrator(const string &name,
         si = CreateIGISurfaceIntegrator(paramSet);
     else if (name == "dipolesubsurface")
         si = CreateDipoleSubsurfaceIntegrator(paramSet);
+    else if (name == "ambientocclusion")
+        si = CreateAmbientOcclusionIntegrator(paramSet);
     else if (name == "useprobes")
         si = CreateRadianceProbesSurfaceIntegrator(paramSet);
     else if (name == "diffuseprt")
