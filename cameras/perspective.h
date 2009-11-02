@@ -34,10 +34,11 @@ class PerspectiveCamera : public ProjectiveCamera {
 public:
     // PerspectiveCamera Public Methods
     PerspectiveCamera(const AnimatedTransform &cam2world,
-        const float Screen[4], float sopen, float sclose,
+        const float screenWindow[4], float sopen, float sclose,
         float lensr, float focald, float fov, Film *film);
     float GenerateRay(const CameraSample &sample, Ray *) const;
-    float GenerateRayDifferential(const CameraSample &sample, RayDifferential *) const;
+    float GenerateRayDifferential(const CameraSample &sample,
+                                  RayDifferential *ray) const;
 private:
     // PerspectiveCamera Private Data
     Vector dPcameraDx, dPcameraDy;

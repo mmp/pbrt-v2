@@ -30,10 +30,10 @@
 
 // OrthographicCamera Definitions
 OrthoCamera::OrthoCamera(const AnimatedTransform &cam2world,
-        const float Screen[4], float sopen, float sclose, float lensr,
-        float focald, Film *f)
-    : ProjectiveCamera(cam2world, Orthographic(0., 1.),
-                       Screen, sopen, sclose, lensr, focald, f) {
+        const float screenWindow[4], float sopen, float sclose,
+        float lensr, float focald, Film *f)
+    : ProjectiveCamera(cam2world, Orthographic(0., 1.), screenWindow,
+                       sopen, sclose, lensr, focald, f) {
     // Compute differential changes in origin for ortho camera rays
     Point PrasCenter(0, 0, 0), PrasDx(1, 0, 0), PrasDy(0,1,0);
     Point PworldCenter = CameraToWorld(shutterOpen, RasterToCamera(PrasCenter));
@@ -51,16 +51,15 @@ float OrthoCamera::GenerateRay(const CameraSample &sample, Ray *ray) const {
     RasterToCamera(Pras, &Pcamera);
     *ray = Ray(Pcamera, Vector(0,0,1), 0.f, INFINITY);
     // Modify ray for depth of field
-    if (LensRadius > 0.) {
+    if (lensRadius > 0.) {
         // Sample point on lens
         float lensU, lensV;
-        ConcentricSampleDisk(sample.lensU, sample.lensV,
-                             &lensU, &lensV);
-        lensU *= LensRadius;
-        lensV *= LensRadius;
+        ConcentricSampleDisk(sample.lensU, sample.lensV, &lensU, &lensV);
+        lensU *= lensRadius;
+        lensV *= lensRadius;
 
         // Compute point on plane of focus
-        float ft = FocalDistance / ray->d.z;
+        float ft = focalDistance / ray->d.z;
         Point Pfocus = (*ray)(ft);
 
         // Update ray for effect of lens
@@ -83,16 +82,15 @@ float OrthoCamera::GenerateRayDifferential(const CameraSample &sample, RayDiffer
     *ray = RayDifferential(Pcamera, Vector(0,0,1), 0., INFINITY);
 
     // Modify ray for depth of field
-    if (LensRadius > 0.) {
+    if (lensRadius > 0.) {
         // Sample point on lens
         float lensU, lensV;
-        ConcentricSampleDisk(sample.lensU, sample.lensV,
-                             &lensU, &lensV);
-        lensU *= LensRadius;
-        lensV *= LensRadius;
+        ConcentricSampleDisk(sample.lensU, sample.lensV, &lensU, &lensV);
+        lensU *= lensRadius;
+        lensV *= lensRadius;
 
         // Compute point on plane of focus
-        float ft = FocalDistance / ray->d.z;
+        float ft = focalDistance / ray->d.z;
         Point Pfocus = (*ray)(ft);
 
         // Update ray for effect of lens

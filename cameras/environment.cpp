@@ -28,25 +28,16 @@
 #include "sampler.h"
 
 // EnvironmentCamera Method Definitions
-EnvironmentCamera::EnvironmentCamera(const AnimatedTransform &cam2world,
-                                     float sopen, float sclose, Film *film)
-    : Camera(cam2world, sopen, sclose, film) {
-}
-
-
 float EnvironmentCamera::GenerateRay(const CameraSample &sample,
                                      Ray *ray) const {
     float time = Lerp(sample.time, shutterOpen, shutterClose);
-    ray->time = time;
-    ray->o = CameraToWorld(time, Point(0,0,0));
-    // Generate environment camera ray direction
+    // Compute environment camera ray direction
     float theta = M_PI * sample.imageY / film->yResolution;
     float phi = 2 * M_PI * sample.imageX / film->xResolution;
     Vector dir(sinf(theta) * cosf(phi), cosf(theta),
                sinf(theta) * sinf(phi));
-    ray->d = CameraToWorld(time, dir);
-    ray->mint = 0.;
-    ray->maxt = INFINITY;
+    *ray = Ray(Point(0,0,0), dir, 0.f, INFINITY, time);
+    CameraToWorld(*ray, ray);
     return 1.f;
 }
 

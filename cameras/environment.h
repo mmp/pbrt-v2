@@ -33,7 +33,9 @@ class EnvironmentCamera : public Camera {
 public:
     // EnvironmentCamera Public Methods
     EnvironmentCamera(const AnimatedTransform &cam2world, float sopen,
-        float sclose, Film *film);
+                      float sclose, Film *film)
+        : Camera(cam2world, sopen, sclose, film) {
+    }
     float GenerateRay(const CameraSample &sample, Ray *) const;
 };
 

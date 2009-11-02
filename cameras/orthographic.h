@@ -33,7 +33,7 @@
 class OrthoCamera : public ProjectiveCamera {
 public:
     // OrthoCamera Public Methods
-    OrthoCamera(const AnimatedTransform &cam2world, const float Screen[4],
+    OrthoCamera(const AnimatedTransform &cam2world, const float screenWindow[4],
         float sopen, float sclose, float lensr, float focald, Film *film);
     float GenerateRay(const CameraSample &sample, Ray *) const;
     float GenerateRayDifferential(const CameraSample &sample, RayDifferential *) const;

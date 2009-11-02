@@ -30,10 +30,10 @@
 
 // PerspectiveCamera Method Definitions
 PerspectiveCamera:: PerspectiveCamera(const AnimatedTransform &cam2world,
-        const float Screen[4], float sopen, float sclose,
+        const float screenWindow[4], float sopen, float sclose,
         float lensr, float focald, float fov, Film *f)
     : ProjectiveCamera(cam2world, Perspective(fov, 1e-2f, 1000.f),
-                       Screen, sopen, sclose, lensr, focald, f) {
+                       screenWindow, sopen, sclose, lensr, focald, f) {
     // Compute differential changes in origin for perspective camera rays
     Point PrasCenter(0, 0, 0), PrasDx(1, 0, 0), PrasDy(0,1,0);
     Point PcameraCenter = RasterToCamera(PrasCenter);
@@ -50,18 +50,17 @@ float PerspectiveCamera::GenerateRay(const CameraSample &sample,
     Point Pras(sample.imageX, sample.imageY, 0);
     Point Pcamera;
     RasterToCamera(Pras, &Pcamera);
-    *ray = Ray(Point(0,0,0), Vector(Pcamera.x, Pcamera.y, Pcamera.z), 0, INFINITY);
+    *ray = Ray(Point(0,0,0), Vector(Pcamera), 0.f, INFINITY);
     // Modify ray for depth of field
-    if (LensRadius > 0.) {
+    if (lensRadius > 0.) {
         // Sample point on lens
         float lensU, lensV;
-        ConcentricSampleDisk(sample.lensU, sample.lensV,
-                             &lensU, &lensV);
-        lensU *= LensRadius;
-        lensV *= LensRadius;
+        ConcentricSampleDisk(sample.lensU, sample.lensV, &lensU, &lensV);
+        lensU *= lensRadius;
+        lensV *= lensRadius;
 
         // Compute point on plane of focus
-        float ft = FocalDistance / ray->d.z;
+        float ft = focalDistance / ray->d.z;
         Point Pfocus = (*ray)(ft);
 
         // Update ray for effect of lens
@@ -75,7 +74,7 @@ float PerspectiveCamera::GenerateRay(const CameraSample &sample,
 
 
 float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
-                                     RayDifferential *ray) const {
+                                                 RayDifferential *ray) const {
     // Generate raster and camera samples
     Point Pras(sample.imageX, sample.imageY, 0);
     Point Pcamera;
@@ -83,16 +82,15 @@ float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
     Vector dir = Normalize(Vector(Pcamera.x, Pcamera.y, Pcamera.z));
     *ray = RayDifferential(Point(0,0,0), dir, 0.f, INFINITY);
     // Modify ray for depth of field
-    if (LensRadius > 0.) {
+    if (lensRadius > 0.) {
         // Sample point on lens
         float lensU, lensV;
-        ConcentricSampleDisk(sample.lensU, sample.lensV,
-                             &lensU, &lensV);
-        lensU *= LensRadius;
-        lensV *= LensRadius;
+        ConcentricSampleDisk(sample.lensU, sample.lensV, &lensU, &lensV);
+        lensU *= lensRadius;
+        lensV *= lensRadius;
 
         // Compute point on plane of focus
-        float ft = FocalDistance / ray->d.z;
+        float ft = focalDistance / ray->d.z;
         Point Pfocus = (*ray)(ft);
 
         // Update ray for effect of lens
@@ -100,10 +98,10 @@ float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
         ray->d = Normalize(Pfocus - ray->o);
     }
 
+    // Compute offset rays for \use{PerspectiveCamera} ray differentials
     ray->rxOrigin = ray->ryOrigin = ray->o;
-    ray->rxDirection = Normalize(Vector(Pcamera.x, Pcamera.y, Pcamera.z) + dPcameraDx);
-    ray->ryDirection = Normalize(Vector(Pcamera.x, Pcamera.y, Pcamera.z) + dPcameraDy);
-
+    ray->rxDirection = Normalize(Vector(Pcamera) + dPcameraDx);
+    ray->ryDirection = Normalize(Vector(Pcamera) + dPcameraDy);
     ray->time = Lerp(sample.time, shutterOpen, shutterClose);
     CameraToWorld(*ray, ray);
     ray->hasDifferentials = true;

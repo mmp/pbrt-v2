@@ -33,16 +33,16 @@
 class Camera {
 public:
     // Camera Interface
+    Camera(const AnimatedTransform &cam2world, float sopen, float sclose,
+           Film *film);
+    virtual ~Camera();
     virtual float GenerateRay(const CameraSample &sample, Ray *ray) const = 0;
     virtual float GenerateRayDifferential(const CameraSample &sample, RayDifferential *rd) const;
-    virtual ~Camera();
-    Camera(const AnimatedTransform &cam2world, float sopen, float sclose,
-        Film *film);
 
     // Camera Public Data
     AnimatedTransform CameraToWorld;
-    const float shutterOpen, shutterClose;
     Film *film;
+    const float shutterOpen, shutterClose;
 };
 
 
@@ -50,14 +50,13 @@ class ProjectiveCamera : public Camera {
 public:
     // ProjectiveCamera Public Methods
     ProjectiveCamera(const AnimatedTransform &cam2world,
-        const Transform &proj, const float Screen[4],
-        float sopen, float sclose,
-        float lensr, float focald, Film *film);
+        const Transform &proj, const float screenWindow[4],
+        float sopen, float sclose, float lensr, float focald, Film *film);
 protected:
     // ProjectiveCamera Protected Data
     Transform CameraToScreen, RasterToCamera;
     Transform ScreenToRaster, RasterToScreen;
-    float LensRadius, FocalDistance;
+    float lensRadius, focalDistance;
 };
 
 

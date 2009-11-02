@@ -35,27 +35,6 @@ Camera::~Camera() {
 }
 
 
-float Camera::GenerateRayDifferential(const CameraSample &sample,
-      RayDifferential *rd) const {
-    float wt = GenerateRay(sample, rd);
-    CameraSample sshift = sample;
-    ++(sshift.imageX);
-    Ray rx;
-    float wtx = GenerateRay(sshift, &rx);
-    rd->rxOrigin = rx.o;
-    rd->rxDirection = rx.d;
-    --(sshift.imageX);
-    ++(sshift.imageY);
-    Ray ry;
-    float wty = GenerateRay(sshift, &ry);
-    rd->ryOrigin = ry.o;
-    rd->ryDirection = ry.d;
-    if (wtx == 0. || wty == 0.) return 0;
-    rd->hasDifferentials = true;
-    return wt;
-}
-
-
 Camera::Camera(const AnimatedTransform &cam2world,
                float sopen, float sclose, Film *f)
     : CameraToWorld(cam2world), shutterOpen(sopen), shutterClose(sclose) {
@@ -69,13 +48,37 @@ Camera::Camera(const AnimatedTransform &cam2world,
 }
 
 
+float Camera::GenerateRayDifferential(const CameraSample &sample,
+      RayDifferential *rd) const {
+    float wt = GenerateRay(sample, rd);
+    // Find ray after shifting one pixel in the $x$ direction
+    CameraSample sshift = sample;
+    ++(sshift.imageX);
+    Ray rx;
+    float wtx = GenerateRay(sshift, &rx);
+    rd->rxOrigin = rx.o;
+    rd->rxDirection = rx.d;
+
+    // Find ray after shifting one pixel in the $y$ direction
+    --(sshift.imageX);
+    ++(sshift.imageY);
+    Ray ry;
+    float wty = GenerateRay(sshift, &ry);
+    rd->ryOrigin = ry.o;
+    rd->ryDirection = ry.d;
+    if (wtx == 0.f || wty == 0.f) return 0.f;
+    rd->hasDifferentials = true;
+    return wt;
+}
+
+
 ProjectiveCamera::ProjectiveCamera(const AnimatedTransform &cam2world,
-        const Transform &proj, const float Screen[4],
-        float sopen, float sclose, float lensr, float focald, Film *f)
+        const Transform &proj, const float screenWindow[4], float sopen,
+        float sclose, float lensr, float focald, Film *f)
     : Camera(cam2world, sopen, sclose, f) {
     // Initialize depth of field parameters
-    LensRadius = lensr;
-    FocalDistance = focald;
+    lensRadius = lensr;
+    focalDistance = focald;
 
     // Compute projective camera transformations
     CameraToScreen = proj;
@@ -83,9 +86,9 @@ ProjectiveCamera::ProjectiveCamera(const AnimatedTransform &cam2world,
     // Compute projective camera screen transformations
     ScreenToRaster = Scale(float(film->xResolution),
                            float(film->yResolution), 1.f) *
-        Scale(1.f / (Screen[1] - Screen[0]),
-              1.f / (Screen[2] - Screen[3]), 1.f) *
-        Translate(Vector(-Screen[0], -Screen[3], 0.f));
+        Scale(1.f / (screenWindow[1] - screenWindow[0]),
+              1.f / (screenWindow[2] - screenWindow[3]), 1.f) *
+        Translate(Vector(-screenWindow[0], -screenWindow[3], 0.f));
     RasterToScreen = Inverse(ScreenToRaster);
     RasterToCamera = Inverse(CameraToScreen) * RasterToScreen;
 }

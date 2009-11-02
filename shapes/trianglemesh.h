@@ -75,7 +75,7 @@ public:
             DifferentialGeometry *dgShading) const;
     Point Sample(float u1, float u2, Normal *Ns) const;
 private:
-    // Triangle Data
+    // Triangle Private Data
     Reference<TriangleMesh> mesh;
     int *v;
 };
