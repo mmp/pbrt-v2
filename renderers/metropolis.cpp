@@ -127,10 +127,10 @@ struct PathSample {
 
 
 
-#define MAX_DEPTH 10
 struct MLTSample {
+    MLTSample(int maxDepth) { pathSamples.resize(maxDepth); }
     CameraSample cameraSample;
-    PathSample pathSamples[MAX_DEPTH];
+    vector<PathSample> pathSamples;
 };
 
 
@@ -226,8 +226,8 @@ MetropolisRenderer::MetropolisRenderer(int ts, int perPixelSamples,
     directPixelSamples = dps;
     largeStepProbability = lsp;
     doDirectSeparately = dds;
+    maxDepth = md;
     maxConsecutiveRejects = mr;
-    maxDepth = min(md, MAX_DEPTH);
     indirectOnly = io;
     nSamplesFinished = 0.f;
 }
@@ -300,9 +300,9 @@ void MetropolisRenderer::Render(const Scene *scene) {
     float sumContrib = 0.f;
     bootstrapSamples.reserve(nBootstrap);
     bool ignoreDirect = doDirectSeparately || indirectOnly;
+    MLTSample sample(maxDepth);
     for (int i = 0; i < nBootstrap; ++i) {
         // Compute contribution for random sample for MLT bootstrapping
-        MLTSample sample;
         LargeStep(rng, &sample, maxDepth, x0, x1, y0, y1, t0, t1);
         float contrib = I(L(scene, this, camera, arena, rng, maxDepth, ignoreDirect, sample), sample);
         sumContrib += contrib;
@@ -315,7 +315,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
     rng.Seed(0);
     float contribOffset = rng.RandomFloat() * sumContrib;
     sumContrib = 0.f;
-    MLTSample initialSample;
+    MLTSample initialSample(maxDepth);
     for (int i = 0; i < nBootstrap; ++i) {
         LargeStep(rng, &initialSample, maxDepth, x0, x1, y0, y1, t0, t1);
         sumContrib += bootstrapSamples[i];
@@ -328,7 +328,6 @@ void MetropolisRenderer::Render(const Scene *scene) {
         nTasks = max(nTasks, 32 * NumSystemCores());
         nTasks = min(nTasks, 32768);
         nSamples = (nSamples / nTasks) * nTasks;
-        //fprintf(stderr, "Running %d MLT tasks\n", nTasks);
         ProgressReporter progress(nTasks, "Metropolis");
         vector<Task *> tasks;
         for (int i = 0; i < nTasks; ++i)
@@ -489,7 +488,7 @@ void MLTTask::Run() {
     // Declare basic _MLTTask_ variables and prepare for sampling
     RNG rng(taskNum);
     MemoryArena arena;
-    MLTSample mltSamples[2];
+    vector<MLTSample> mltSamples(2, MLTSample(maxDepth));
     Spectrum sampleLs[2];
     u_int currentSample = 0, proposedSample = 1;
     mltSamples[currentSample] = initialSample;
