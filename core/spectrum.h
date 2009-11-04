@@ -50,6 +50,7 @@ inline void RGBToXYZ(const float rgb[3], float xyz[3]) {
 }
 
 
+enum SpectrumType { SPECTRUM_REFLECTANCE, SPECTRUM_ILLUMINANT };
 extern void Blackbody(const float *wl, int n, float temp, float *vals);
 extern float InterpolateSpectrumSamples(const float *lambda, const float *vals,
     int n, float l);
@@ -62,13 +63,20 @@ extern const float CIE_Z[nCIESamples];
 extern const float CIE_lambda[nCIESamples];
 static const int nRGB2SpectSamples = 32;
 extern const float RGB2SpectLambda[nRGB2SpectSamples];
-extern const float RGB2SpectWhite[nRGB2SpectSamples];
-extern const float RGB2SpectCyan[nRGB2SpectSamples];
-extern const float RGB2SpectMagenta[nRGB2SpectSamples];
-extern const float RGB2SpectYellow[nRGB2SpectSamples];
-extern const float RGB2SpectRed[nRGB2SpectSamples];
-extern const float RGB2SpectGreen[nRGB2SpectSamples];
-extern const float RGB2SpectBlue[nRGB2SpectSamples];
+extern const float RGBRefl2SpectWhite[nRGB2SpectSamples];
+extern const float RGBRefl2SpectCyan[nRGB2SpectSamples];
+extern const float RGBRefl2SpectMagenta[nRGB2SpectSamples];
+extern const float RGBRefl2SpectYellow[nRGB2SpectSamples];
+extern const float RGBRefl2SpectRed[nRGB2SpectSamples];
+extern const float RGBRefl2SpectGreen[nRGB2SpectSamples];
+extern const float RGBRefl2SpectBlue[nRGB2SpectSamples];
+extern const float RGBIllum2SpectWhite[nRGB2SpectSamples];
+extern const float RGBIllum2SpectCyan[nRGB2SpectSamples];
+extern const float RGBIllum2SpectMagenta[nRGB2SpectSamples];
+extern const float RGBIllum2SpectYellow[nRGB2SpectSamples];
+extern const float RGBIllum2SpectRed[nRGB2SpectSamples];
+extern const float RGBIllum2SpectGreen[nRGB2SpectSamples];
+extern const float RGBIllum2SpectBlue[nRGB2SpectSamples];
 
 // Spectrum Declarations
 template <int nSamples> class CoefficientSpectrum {
@@ -288,19 +296,34 @@ public:
                              sampledLambdaStart, sampledLambdaEnd);
             float wl1 = Lerp(float(i+1) / float(nSpectralSamples),
                              sampledLambdaStart, sampledLambdaEnd);
-            rgb2spectWhite.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGB2SpectWhite,
+            rgbRefl2SpectWhite.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectWhite,
                 nRGB2SpectSamples, wl0, wl1);
-            rgb2spectCyan.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGB2SpectCyan,
+            rgbRefl2SpectCyan.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectCyan,
                 nRGB2SpectSamples, wl0, wl1);
-            rgb2spectMagenta.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGB2SpectMagenta,
+            rgbRefl2SpectMagenta.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectMagenta,
                 nRGB2SpectSamples, wl0, wl1);
-            rgb2spectYellow.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGB2SpectYellow,
+            rgbRefl2SpectYellow.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectYellow,
                 nRGB2SpectSamples, wl0, wl1);
-            rgb2spectRed.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGB2SpectRed,
+            rgbRefl2SpectRed.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectRed,
                 nRGB2SpectSamples, wl0, wl1);
-            rgb2spectGreen.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGB2SpectGreen,
+            rgbRefl2SpectGreen.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectGreen,
                 nRGB2SpectSamples, wl0, wl1);
-            rgb2spectBlue.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGB2SpectBlue,
+            rgbRefl2SpectBlue.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBRefl2SpectBlue,
+                nRGB2SpectSamples, wl0, wl1);
+        
+            rgbIllum2SpectWhite.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectWhite,
+                nRGB2SpectSamples, wl0, wl1);
+            rgbIllum2SpectCyan.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectCyan,
+                nRGB2SpectSamples, wl0, wl1);
+            rgbIllum2SpectMagenta.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectMagenta,
+                nRGB2SpectSamples, wl0, wl1);
+            rgbIllum2SpectYellow.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectYellow,
+                nRGB2SpectSamples, wl0, wl1);
+            rgbIllum2SpectRed.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectRed,
+                nRGB2SpectSamples, wl0, wl1);
+            rgbIllum2SpectGreen.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectGreen,
+                nRGB2SpectSamples, wl0, wl1);
+            rgbIllum2SpectBlue.c[i] = AverageSpectrumSamples(RGB2SpectLambda, RGBIllum2SpectBlue,
                 nRGB2SpectSamples, wl0, wl1);
         }
     }
@@ -327,21 +350,27 @@ public:
         XYZToRGB(xyz, rgb);
     }
     RGBSpectrum ToRGBSpectrum() const;
-    static SampledSpectrum FromRGB(const float rgb[3]);
-    static SampledSpectrum FromXYZ(const float xyz[3]) {
+    static SampledSpectrum FromRGB(const float rgb[3],
+        SpectrumType type = SPECTRUM_REFLECTANCE);
+    static SampledSpectrum FromXYZ(const float xyz[3],
+            SpectrumType type = SPECTRUM_REFLECTANCE) {
         float rgb[3];
         XYZToRGB(xyz, rgb);
-        return FromRGB(rgb);
+        return FromRGB(rgb, type);
     }
-    SampledSpectrum(const RGBSpectrum &r);
+    SampledSpectrum(const RGBSpectrum &r, SpectrumType type = SPECTRUM_REFLECTANCE);
 private:
     // SampledSpectrum Private Data
     static SampledSpectrum X, Y, Z;
     static float yint;
-    static SampledSpectrum rgb2spectWhite, rgb2spectCyan;
-    static SampledSpectrum rgb2spectMagenta, rgb2spectYellow;
-    static SampledSpectrum rgb2spectRed, rgb2spectGreen;
-    static SampledSpectrum rgb2spectBlue;
+    static SampledSpectrum rgbRefl2SpectWhite, rgbRefl2SpectCyan;
+    static SampledSpectrum rgbRefl2SpectMagenta, rgbRefl2SpectYellow;
+    static SampledSpectrum rgbRefl2SpectRed, rgbRefl2SpectGreen;
+    static SampledSpectrum rgbRefl2SpectBlue;
+    static SampledSpectrum rgbIllum2SpectWhite, rgbIllum2SpectCyan;
+    static SampledSpectrum rgbIllum2SpectMagenta, rgbIllum2SpectYellow;
+    static SampledSpectrum rgbIllum2SpectRed, rgbIllum2SpectGreen;
+    static SampledSpectrum rgbIllum2SpectBlue;
 };
 
 
@@ -352,13 +381,17 @@ public:
     RGBSpectrum(float v = 0.f) : CoefficientSpectrum<3>(v) { }
     RGBSpectrum(const CoefficientSpectrum<3> &v)
         : CoefficientSpectrum<3>(v) { }
-    static RGBSpectrum FromRGB(const float rgb[3]) {
-          RGBSpectrum s;
-          s.c[0] = rgb[0];
-          s.c[1] = rgb[1];
-          s.c[2] = rgb[2];
-          Assert(!s.HasNaNs());
-          return s;
+    RGBSpectrum(const RGBSpectrum &s, SpectrumType type = SPECTRUM_REFLECTANCE) {
+        *this = s;
+    }
+    static RGBSpectrum FromRGB(const float rgb[3],
+            SpectrumType type = SPECTRUM_REFLECTANCE) {
+        RGBSpectrum s;
+        s.c[0] = rgb[0];
+        s.c[1] = rgb[1];
+        s.c[2] = rgb[2];
+        Assert(!s.HasNaNs());
+        return s;
     }
     void ToRGB(float *rgb) const {
         rgb[0] = c[0];
@@ -371,7 +404,8 @@ public:
     void ToXYZ(float xyz[3]) const {
         RGBToXYZ(c, xyz);
     }
-    static RGBSpectrum  FromXYZ(const float xyz[3]) {
+    static RGBSpectrum FromXYZ(const float xyz[3],
+            SpectrumType type = SPECTRUM_REFLECTANCE) {
         RGBSpectrum r;
         XYZToRGB(xyz, r.c);
         return r;

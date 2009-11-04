@@ -103,7 +103,7 @@ Spectrum InfiniteAreaLight::Power(const Scene *scene) const {
     Point worldCenter;
     float worldRadius;
     scene->WorldBound().BoundingSphere(&worldCenter, &worldRadius);
-    return Spectrum(radianceMap->Lookup(.5f, .5f, .5f)) *
+    return Spectrum(radianceMap->Lookup(.5f, .5f, .5f), SPECTRUM_ILLUMINANT) *
            M_PI * worldRadius * worldRadius;
 }
 
@@ -112,7 +112,7 @@ Spectrum InfiniteAreaLight::Le(const RayDifferential &r) const {
     Vector wh = Normalize(WorldToLight(r.d));
     float s = SphericalPhi(wh) * INV_TWOPI;
     float t = SphericalTheta(wh) * INV_PI;
-    return radianceMap->Lookup(s, t);
+    return Spectrum(radianceMap->Lookup(s, t), SPECTRUM_ILLUMINANT);
 }
 
 
@@ -154,7 +154,8 @@ void InfiniteAreaLight::SHProject(const Point &p, float pEpsilon,
                                   costheta[theta]);
                 w = Normalize(LightToWorld(w));
                 if (!computeLightVis || !scene->IntersectP(Ray(p, w, pEpsilon))) {
-                    Spectrum Le = radianceMap->Texel(0, phi, theta);
+                    Spectrum Le = Spectrum(radianceMap->Texel(0, phi, theta),
+                                           SPECTRUM_ILLUMINANT);
                     SHEvaluate(w, lmax, Ylm);
                     for (int i = 0; i < SHTerms(lmax); ++i)
                         coeffs[i] += Le * Ylm[i] * sintheta[theta] *
@@ -206,7 +207,7 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
 
     // Return radiance value for infinite light direction
     visibility->SetRay(p, pEpsilon, *wi, time);
-    return radianceMap->Lookup(uv[0], uv[1]);
+    return Spectrum(radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
 }
 
 
@@ -251,7 +252,7 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     float areaPdf = 1.f / (M_PI * worldRadius * worldRadius);
     *pdf = directionPdf * areaPdf;
     if (sintheta == 0.f) *pdf = 0.f;
-    return radianceMap->Lookup(uv[0], uv[1]);
+    return Spectrum(radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
 }
 
 

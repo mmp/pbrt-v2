@@ -89,12 +89,12 @@ Spectrum ProjectionLight::Projection(const Vector &w) const {
     if (!projectionMap) return 1;
     float s = (Pl.x - screenX0) / (screenX1 - screenX0);
     float t = (Pl.y - screenY0) / (screenY1 - screenY0);
-    return projectionMap->Lookup(s, t);
+    return Spectrum(projectionMap->Lookup(s, t), SPECTRUM_ILLUMINANT);
 }
 
 
 Spectrum ProjectionLight::Power(const Scene *) const {
-    return Spectrum(projectionMap->Lookup(.5f, .5f, .5f)) *
+    return Spectrum(projectionMap->Lookup(.5f, .5f, .5f), SPECTRUM_ILLUMINANT) *
         Intensity * 2.f * M_PI * (1.f - cosTotalWidth);
 }
 

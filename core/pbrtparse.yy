@@ -132,7 +132,7 @@ enum { PARAM_TYPE_INT, PARAM_TYPE_BOOL, PARAM_TYPE_FLOAT, PARAM_TYPE_POINT,
     PARAM_TYPE_BLACKBODY, PARAM_TYPE_SPECTRUM,
     PARAM_TYPE_STRING, PARAM_TYPE_TEXTURE };
 static const char *paramTypeToName(int type);
-static void InitParamSet(ParamSet &ps);
+static void InitParamSet(ParamSet &ps, SpectrumType);
 static bool lookupType(const char *name, int *type, string &sname);
 #define YYPRINT(file, type, value)  { \
     if ((type) == ID || (type) == STRING) \
@@ -342,7 +342,7 @@ pbrt_stmt_list: pbrt_stmt_list pbrt_stmt
 pbrt_stmt: ACCELERATOR STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtAccelerator($2, params);
     FreeArgs();
 }
@@ -369,7 +369,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | AREALIGHTSOURCE STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_ILLUMINANT);
     pbrtAreaLightSource($2, params);
     FreeArgs();
 }
@@ -390,7 +390,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | CAMERA STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtCamera($2, params);
     FreeArgs();
 }
@@ -419,7 +419,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | FILM STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtFilm($2, params);
     FreeArgs();
 }
@@ -434,7 +434,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | LIGHTSOURCE STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_ILLUMINANT);
     pbrtLightSource($2, params);
     FreeArgs();
 }
@@ -449,7 +449,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | MAKENAMEDMATERIAL STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtMakeNamedMaterial($2, params);
     FreeArgs();
 }
@@ -458,7 +458,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | MATERIAL STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtMaterial($2, params);
     FreeArgs();
 }
@@ -491,7 +491,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | PIXELFILTER STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtPixelFilter($2, params);
     FreeArgs();
 }
@@ -500,7 +500,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | RENDERER STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtRenderer($2, params);
     FreeArgs();
 }
@@ -521,7 +521,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | SAMPLER STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtSampler($2, params);
     FreeArgs();
 }
@@ -536,7 +536,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | SHAPE STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtShape($2, params);
     FreeArgs();
 }
@@ -545,7 +545,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | SURFACEINTEGRATOR STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtSurfaceIntegrator($2, params);
     FreeArgs();
 }
@@ -554,7 +554,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | TEXTURE STRING STRING STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtTexture($2, $3, $4, params);
     FreeArgs();
 }
@@ -595,7 +595,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | VOLUMEINTEGRATOR STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtVolumeIntegrator($2, params);
     FreeArgs();
 }
@@ -604,7 +604,7 @@ pbrt_stmt: ACCELERATOR STRING paramlist
 | VOLUME STRING paramlist
 {
     ParamSet params;
-    InitParamSet(params);
+    InitParamSet(params, SPECTRUM_REFLECTANCE);
     pbrtVolume($2, params);
     FreeArgs();
 }
@@ -642,7 +642,7 @@ static const char *paramTypeToName(int type) {
 }
 
 
-static void InitParamSet(ParamSet &ps) {
+static void InitParamSet(ParamSet &ps, SpectrumType type) {
     ps.Clear();
     for (u_int i = 0; i < cur_paramlist.size(); ++i) {
         int type;
