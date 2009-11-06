@@ -32,14 +32,6 @@
 #include "paramset.h"
 #include "camera.h"
 
-inline float SmoothStep(float min, float max, float value) {
-    float v = Clamp((value - min) / (max - min), 0.f, 1.f);
-    return v * v * (-2.f * v  + 3.f);
-}
-
-
-
-
 // IGIIntegrator Method Definitions
 IGIIntegrator::~IGIIntegrator() {
     delete[] lightSampleOffsets;
@@ -61,6 +53,8 @@ void IGIIntegrator::RequestSamples(Sampler *sampler,
         bsdfSampleOffsets[i] = BSDFSampleOffsets(nSamples, sample);
     }
     vlSetOffset = sample->Add1D(1);
+    if (sampler) nGatherSamples = sampler->RoundSize(nGatherSamples);
+    gatherSampleOffset = BSDFSampleOffsets(nGatherSamples, sample);
 }
 
 
@@ -162,14 +156,12 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
                      nLightSets-1);
     for (u_int i = 0; i < virtualLights[lSet].size(); ++i) {
         const VirtualLight &vl = virtualLights[lSet][i];
-        // Ignore virtual light if it's too close to current point
-        float d2 = DistanceSquared(p, vl.p);
-        float distScale = SmoothStep(.8 * minDist2, 1.2 * minDist2, d2);
-
         // Compute virtual light's tentative contribution _Llight_
+        float d2 = DistanceSquared(p, vl.p);
         Vector wi = Normalize(vl.p - p);
-        float G = distScale * AbsDot(wi, n) * AbsDot(wi, vl.n) / d2;
+        float G = AbsDot(wi, n) * AbsDot(wi, vl.n) / d2;
         Spectrum f = bsdf->f(wo, wi);
+        G = min(G, gLimit);
         if (G == 0.f || f.IsBlack()) continue;
         Spectrum Llight = f * G * vl.pathContrib / virtualLights[lSet].size();
         RayDifferential connectRay(p, wi, ray, isect.rayEpsilon,
@@ -189,6 +181,32 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
         if (!scene->IntersectP(connectRay))
             L += Llight;
     }
+    if (ray.depth < maxSpecularDepth) {
+        // Do bias compensation for bounding geoemtry term
+        int nSamples = (ray.depth == 0) ? nGatherSamples : 1;
+        for (int i = 0; i < nSamples; ++i) {
+            Vector wi;
+            float pdf;
+            BSDFSample bsdfSample = (ray.depth == 0) ?
+                                    BSDFSample(sample, gatherSampleOffset, i) :
+                                    BSDFSample(*sample->rng);
+            Spectrum f = bsdf->Sample_f(wo, &wi, bsdfSample,
+                                        &pdf, BxDFType(BSDF_ALL & ~BSDF_SPECULAR));
+            if (!f.IsBlack() && pdf > 0.f) {
+                // Trace ray for bias compensation gather sample
+                float maxDist = sqrtf(AbsDot(wi, n) / gLimit);
+                RayDifferential gatherRay(p, wi, ray, isect.rayEpsilon, maxDist);
+                Intersection gatherIsect;
+                Spectrum Li = renderer->Li(scene, gatherRay, sample, arena, &gatherIsect);
+                if (Li.IsBlack()) continue;
+                float Ggather = AbsDot(wi, n) * AbsDot(-wi, gatherIsect.dg.nn) /
+                    DistanceSquared(p, gatherIsect.dg.p);
+                if (Ggather - gLimit > 0.f && !isinf(Ggather))
+                    L += f * Li * ((Ggather - gLimit) / Ggather * AbsDot(wi, n) /
+                        (nSamples * pdf));
+            }
+        }
+    }
     if (ray.depth + 1 < maxSpecularDepth) {
         Vector wi;
         // Trace rays for specular reflection and refraction
@@ -206,9 +224,12 @@ IGIIntegrator *CreateIGISurfaceIntegrator(const ParamSet &params) {
     if (getenv("PBRT_QUICK_RENDER")) nLightPaths = max(1, nLightPaths / 4);
     int nLightSets = params.FindOneInt("nsets", 4);
     float minDist = params.FindOneFloat("mindist", .1f);
-    float rrThresh = params.FindOneFloat("rrthreshold", .01f);
+    float rrThresh = params.FindOneFloat("rrthreshold", .0001f);
     int maxDepth = params.FindOneInt("maxdepth", 5);
-    return new IGIIntegrator(nLightPaths, nLightSets, minDist, rrThresh, maxDepth);
+    float glimit = params.FindOneFloat("glimit", 10.f);
+    int gatherSamples = params.FindOneInt("gathersamples", 16);
+    return new IGIIntegrator(nLightPaths, nLightSets, minDist, rrThresh,
+                             maxDepth, glimit, gatherSamples);
 }
 
 
