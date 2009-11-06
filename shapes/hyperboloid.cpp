@@ -153,12 +153,9 @@ bool Hyperboloid::Intersect(const Ray &r, float *tHit,
                          (f*F - g*E) * invEGF2 * dpdv);
 
     // Initialize _DifferentialGeometry_ from parametric information
-    *dg = DifferentialGeometry((*ObjectToWorld)(phit),
-                               (*ObjectToWorld)(dpdu),
-                               (*ObjectToWorld)(dpdv),
-                               (*ObjectToWorld)(dndu),
-                               (*ObjectToWorld)(dndv),
-                               u, v, this);
+    const Transform &o2w = *ObjectToWorld;
+    *dg = DifferentialGeometry(o2w(phit), o2w(dpdu), o2w(dpdv),
+                               o2w(dndu), o2w(dndv), u, v, this);
 
     // Update _tHit_ for quadric intersection
     *tHit = thit;

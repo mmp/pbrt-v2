@@ -374,19 +374,14 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
     // Compute vertex tangents on limit surface
     vector<Normal> Ns;
     Ns.reserve(v.size());
-    int ringSize = 16;
-    Point *Pring = new Point[ringSize];
+    vector<Point> Pring(16, Point());
     for (u_int i = 0; i < v.size(); ++i) {
         SDVertex *vert = v[i];
         Vector S(0,0,0), T(0,0,0);
         int valence = vert->valence();
-        if (valence > ringSize) {
-            ringSize = valence;
-            delete[] Pring;
-            Pring = new Point[ringSize];
-        }
-        vert->oneRing(Pring);
-    
+        if (valence > (int)Pring.size())
+            Pring.resize(valence);
+        vert->oneRing(&Pring[0]);
         if (!vert->boundary) {
             // Compute tangents of interior face
             for (int k = 0; k < valence; ++k) {
@@ -439,7 +434,6 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
             WorldToObject, ReverseOrientation, paramSet));
     delete[] verts;
     delete[] Plimit;
-    delete[] Pring;
 }
 
 
