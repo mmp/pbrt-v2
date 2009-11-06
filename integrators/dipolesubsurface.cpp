@@ -448,10 +448,6 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
         Spectrum sigmap_s = bssrdf->sigma_prime_s();
         Spectrum sigmap_t = sigmap_s + sigma_a;
         if (!sigmap_t.IsBlack()) {
-            // Compute direct transmittance in scattering medium
-
-            // Compute single scattering in scattering medium
-
             // Use hierarchical integration to evaluate reflection from dipole model
             PBRT_SUBSURFACE_STARTED_OCTREE_LOOKUP(const_cast<Point *>(&p));
             DiffusionReflectance Rd(sigma_a, sigmap_s, bssrdf->eta());
