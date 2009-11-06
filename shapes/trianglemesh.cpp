@@ -221,23 +221,6 @@ bool Triangle::IntersectP(const Ray &ray) const {
 }
 
 
-void Triangle::GetUVs(float uv[3][2]) const {
-    if (mesh->uvs) {
-        uv[0][0] = mesh->uvs[2*v[0]];
-        uv[0][1] = mesh->uvs[2*v[0]+1];
-        uv[1][0] = mesh->uvs[2*v[1]];
-        uv[1][1] = mesh->uvs[2*v[1]+1];
-        uv[2][0] = mesh->uvs[2*v[2]];
-        uv[2][1] = mesh->uvs[2*v[2]+1];
-    }
-    else {
-        uv[0][0] = 0.; uv[0][1] = 0.;
-        uv[1][0] = 1.; uv[1][1] = 0.;
-        uv[2][0] = 1.; uv[2][1] = 1.;
-    }
-}
-
-
 float Triangle::Area() const {
     // Get triangle vertices in _p1_, _p2_, and _p3_
     const Point &p1 = mesh->p[v[0]];
