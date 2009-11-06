@@ -41,7 +41,7 @@ public:
                                   RayDifferential *ray) const;
 private:
     // PerspectiveCamera Private Data
-    Vector dPcameraDx, dPcameraDy;
+    Vector dxCamera, dyCamera;
 };
 
 

@@ -39,7 +39,7 @@ public:
     float GenerateRayDifferential(const CameraSample &sample, RayDifferential *) const;
 private:
     // OrthoCamera Private Data
-    Vector dOriginDx, dOriginDy;
+    Vector dxCamera, dyCamera;
 };
 
 

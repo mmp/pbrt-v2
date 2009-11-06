@@ -35,12 +35,8 @@ PerspectiveCamera:: PerspectiveCamera(const AnimatedTransform &cam2world,
     : ProjectiveCamera(cam2world, Perspective(fov, 1e-2f, 1000.f),
                        screenWindow, sopen, sclose, lensr, focald, f) {
     // Compute differential changes in origin for perspective camera rays
-    Point PrasCenter(0, 0, 0), PrasDx(1, 0, 0), PrasDy(0,1,0);
-    Point PcameraCenter = RasterToCamera(PrasCenter);
-    Point PcameraDx = RasterToCamera(PrasDx);
-    Point PcameraDy = RasterToCamera(PrasDy);
-    dPcameraDx = PcameraDx - PcameraCenter;
-    dPcameraDy = PcameraDy - PcameraCenter;
+    dxCamera = RasterToCamera(Point(1,0,0)) - RasterToCamera(Point(0,0,0));
+    dyCamera = RasterToCamera(Point(0,1,0)) - RasterToCamera(Point(0,0,0));
 }
 
 
@@ -100,8 +96,8 @@ float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
 
     // Compute offset rays for \use{PerspectiveCamera} ray differentials
     ray->rxOrigin = ray->ryOrigin = ray->o;
-    ray->rxDirection = Normalize(Vector(Pcamera) + dPcameraDx);
-    ray->ryDirection = Normalize(Vector(Pcamera) + dPcameraDy);
+    ray->rxDirection = Normalize(Vector(Pcamera) + dxCamera);
+    ray->ryDirection = Normalize(Vector(Pcamera) + dyCamera);
     ray->time = Lerp(sample.time, shutterOpen, shutterClose);
     CameraToWorld(*ray, ray);
     ray->hasDifferentials = true;
