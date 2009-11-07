@@ -436,7 +436,7 @@ void PhotonShootingTask::Run() {
                         // Deposit photon at surface
                         Photon photon(photonIsect.dg.p, alpha, wo);
                         bool depositedPhoton = false;
-                        if (nIntersections == 1) {
+                        if (nIntersections == 1 && !indirectDone) {
                             PBRT_PHOTON_MAP_DEPOSITED_DIRECT_PHOTON(&photonIsect.dg, &alpha, &wo);
                             depositedPhoton = true;
                             localDirectPhotons.push_back(photon);
