@@ -29,7 +29,7 @@
 
 // ImageIO Declarations
 RGBSpectrum *ReadImage(const string &name, int *xSize, int *ySize);
-void WriteRGBAImage(const string &name, float *pixels, float *alpha,
+void WriteImage(const string &name, float *pixels, float *alpha,
     int XRes, int YRes, int totalXRes, int totalYRes, int xOffset,
     int yOffset);
 

@@ -232,7 +232,7 @@ void SHWriteImage(const char *filename, const Spectrum *c, int lmax, int yres) {
         }
     }
 
-    WriteRGBAImage(filename, rgb, NULL, xres, yres, xres, yres, 0, 0);
+    WriteImage(filename, rgb, NULL, xres, yres, xres, yres, 0, 0);
     delete[] rgb;
 }
 

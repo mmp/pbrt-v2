@@ -218,7 +218,7 @@ void ImageFilm::WriteImage() {
     }
 
     // Write RGB image
-    WriteRGBAImage(filename, rgb, NULL, xPixelCount, yPixelCount,
+    ::WriteImage(filename, rgb, NULL, xPixelCount, yPixelCount,
                    xResolution, yResolution, xPixelStart, yPixelStart);
 
     // Release temporary image memory

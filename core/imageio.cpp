@@ -61,7 +61,7 @@ RGBSpectrum *ReadImage(const string &name, int *width, int *height) {
 }
 
 
-void WriteRGBAImage(const string &name, float *pixels,
+void WriteImage(const string &name, float *pixels,
         float *alpha, int xRes, int yRes,
         int totalXRes, int totalYRes,
         int xOffset, int yOffset) {
