@@ -68,8 +68,7 @@ struct Matrix4x4 {
         }
         fprintf(f, " ] ");
     }
-    static Matrix4x4
-    Mul(const Matrix4x4 &m1, const Matrix4x4 &m2) {
+    static Matrix4x4 Mul(const Matrix4x4 &m1, const Matrix4x4 &m2) {
         Matrix4x4 r;
         for (int i = 0; i < 4; ++i)
             for (int j = 0; j < 4; ++j)

@@ -138,7 +138,7 @@ class VolumeIntegrator;
 #ifdef M_PI
 #undef M_PI
 #endif
-#define M_PI           3.14159265358979323846f
+#define M_PI       3.14159265358979323846f
 #define INV_PI     0.31830988618379067154f
 #define INV_TWOPI  0.15915494309189533577f
 #ifndef INFINITY
@@ -208,10 +208,8 @@ inline bool IsPowerOf2(int v) {
 
 inline uint32_t RoundUpPow2(uint32_t v) {
     v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
+    v |= v >> 1;    v |= v >> 2;
+    v |= v >> 4;    v |= v >> 8;
     v |= v >> 16;
     return v+1;
 }

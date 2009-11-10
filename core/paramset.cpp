@@ -28,8 +28,8 @@
 #include "textures/constant.h"
 
 // ParamSet Methods
-void ParamSet::AddFloat(const string &name,
-                        const float *data, int nItems) {
+void ParamSet::AddFloat(const string &name, const float *data,
+                        int nItems) {
     EraseFloat(name);
     floats.push_back(new ParamSetItem<float>(name, data, nItems));
 }
@@ -561,8 +561,8 @@ TextureParams::GetSpectrumTexture(const string &n,
         else
             Error("Couldn't find spectrum texture \"%s\"", n.c_str());
     }
-    Spectrum val =
-     geomParams.FindOneSpectrum(n, materialParams.FindOneSpectrum(n, def));
+    Spectrum val = geomParams.FindOneSpectrum(n,
+                                materialParams.FindOneSpectrum(n, def));
     return new ConstantTexture<Spectrum>(val);
 }
 

@@ -710,10 +710,6 @@ void ConditionVariable::Signal() {
 
 
 #endif // WIN32
-Task::~Task() {
-}
-
-
 void TasksInit() {
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     return;
@@ -771,6 +767,10 @@ void TasksCleanup() {
 }
 
 
+Task::~Task() {
+}
+
+
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
 static void lRunTask(void *t) {
     Task *task = (Task *)t;
@@ -784,7 +784,7 @@ static void lRunTask(void *t) {
 void EnqueueTasks(const vector<Task *> &tasks) {
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     static bool oneThread = (getenv("PBRT_NTHREADS") &&
-                               atoi(getenv("PBRT_NTHREADS")) == 1);
+                             atoi(getenv("PBRT_NTHREADS")) == 1);
     for (uint32_t i = 0; i < tasks.size(); ++i)
         if (oneThread)
             dispatch_sync_f(gcdQueue, tasks[i], lRunTask);

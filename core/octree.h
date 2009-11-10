@@ -47,9 +47,7 @@ template <typename NodeData> class Octree {
 public:
     // Octree Public Methods
     Octree(const BBox &b, int md = 16)
-        : bound(b) {
-        maxDepth = md;
-    }
+        : maxDepth(md), bound(b) { }
     void Add(const NodeData &dataItem, const BBox &dataBound) {
         addPrivate(&root, bound, dataItem, dataBound,
                    DistanceSquared(dataBound.pMin, dataBound.pMax));
@@ -64,7 +62,7 @@ private:
     void addPrivate(OctNode<NodeData> *node, const BBox &nodeBound,
         const NodeData &dataItem, const BBox &dataBound, float diag2,
         int depth = 0);
-    template <typename LookupProc> void lookupPrivate(OctNode<NodeData> *node,
+    template <typename LookupProc> bool lookupPrivate(OctNode<NodeData> *node,
             const BBox &nodeBound, const Point &P, LookupProc &process);
 
     // Octree Private Data
@@ -105,25 +103,13 @@ void Octree<NodeData>::addPrivate(
     Point pMid = .5 * nodeBound.pMin + .5 * nodeBound.pMax;
 
     // Determine which children the item overlaps
-    bool over[8];
-    over[0] = over[1] = over[2] = over[3] = (dataBound.pMin.x <= pMid.x);
-    over[4] = over[5] = over[6] = over[7] = (dataBound.pMax.x  > pMid.x);
-    over[0] &= (dataBound.pMin.y <= pMid.y);
-    over[1] &= (dataBound.pMin.y <= pMid.y);
-    over[4] &= (dataBound.pMin.y <= pMid.y);
-    over[5] &= (dataBound.pMin.y <= pMid.y);
-    over[2] &= (dataBound.pMax.y  > pMid.y);
-    over[3] &= (dataBound.pMax.y  > pMid.y);
-    over[6] &= (dataBound.pMax.y  > pMid.y);
-    over[7] &= (dataBound.pMax.y  > pMid.y);
-    over[0] &= (dataBound.pMin.z <= pMid.z);
-    over[2] &= (dataBound.pMin.z <= pMid.z);
-    over[4] &= (dataBound.pMin.z <= pMid.z);
-    over[6] &= (dataBound.pMin.z <= pMid.z);
-    over[1] &= (dataBound.pMax.z  > pMid.z);
-    over[3] &= (dataBound.pMax.z  > pMid.z);
-    over[5] &= (dataBound.pMax.z  > pMid.z);
-    over[7] &= (dataBound.pMax.z  > pMid.z);
+    bool x[2] = { dataBound.pMin.x <= pMid.x, dataBound.pMax.x  > pMid.x };
+    bool y[2] = { dataBound.pMin.y <= pMid.y, dataBound.pMax.y  > pMid.y };
+    bool z[2] = { dataBound.pMin.z <= pMid.z, dataBound.pMax.z  > pMid.z };
+    bool over[8] = { x[0] & y[0] & z[0], x[0] & y[0] & z[1],
+                     x[0] & y[1] & z[0], x[0] & y[1] & z[1],
+                     x[1] & y[0] & z[0], x[1] & y[0] & z[1],
+                     x[1] & y[1] & z[0], x[1] & y[1] & z[1] };
     for (int child = 0; child < 8; ++child) {
         if (!over[child]) continue;
         if (!node->children[child])
@@ -136,21 +122,19 @@ void Octree<NodeData>::addPrivate(
 
 
 template <typename NodeData> template <typename LookupProc>
-void Octree<NodeData>::lookupPrivate(
-        OctNode<NodeData> *node, const BBox &nodeBound,
-        const Point &p, LookupProc &process) {
+bool Octree<NodeData>::lookupPrivate(OctNode<NodeData> *node,
+        const BBox &nodeBound, const Point &p, LookupProc &process) {
     for (uint32_t i = 0; i < node->data.size(); ++i)
         if (!process(node->data[i]))
-            return;
-
+            return false;
     // Determine which octree child node _p_ is inside
     Point pMid = .5f * nodeBound.pMin + .5f * nodeBound.pMax;
-    int child = (p.x > pMid.x ? 4 : 0) +
-                (p.y > pMid.y ? 2 : 0) + (p.z > pMid.z ? 1 : 0);
-    if (node->children[child]) {
-        BBox childBound = octreeChildBound(child, nodeBound, pMid);
-        lookupPrivate(node->children[child], childBound, p, process);
-    }
+    int child = (p.x > pMid.x ? 4 : 0) + (p.y > pMid.y ? 2 : 0) +
+                (p.z > pMid.z ? 1 : 0);
+    if (!node->children[child])
+        return true;
+    BBox childBound = octreeChildBound(child, nodeBound, pMid);
+    return lookupPrivate(node->children[child], childBound, p, process);
 }
 
 

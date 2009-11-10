@@ -35,10 +35,10 @@ void *AllocAligned(size_t size) {
     char *amem = ((char*)mem) + sizeof(void*);
 #if (PBRT_POINTER_SIZE == 8)
     amem += PBRT_L1_CACHE_LINE_SIZE - (reinterpret_cast<uint64_t>(amem) &
-                                  (PBRT_L1_CACHE_LINE_SIZE - 1));
+                                       (PBRT_L1_CACHE_LINE_SIZE - 1));
 #else
     amem += PBRT_L1_CACHE_LINE_SIZE - (reinterpret_cast<uint32_t>(amem) &
-                                  (PBRT_L1_CACHE_LINE_SIZE - 1));
+                                       (PBRT_L1_CACHE_LINE_SIZE - 1));
 #endif
     ((void**)amem)[-1] = mem;
     return amem;

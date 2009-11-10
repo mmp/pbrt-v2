@@ -148,8 +148,8 @@ public:
         for (uint32_t i = 0; i < nAlloc; ++i)
             new (&data[i]) T();
         if (d)
-            for (uint32_t v = 0; v < nv; ++v)
-                for (uint32_t u = 0; u < nu; ++u)
+            for (uint32_t v = 0; v < vRes; ++v)
+                for (uint32_t u = 0; u < uRes; ++u)
                     (*this)(u, v) = d[v * uRes + u];
     }
     uint32_t BlockSize() const { return 1 << logBlockSize; }

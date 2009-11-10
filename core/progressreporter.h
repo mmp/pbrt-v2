@@ -32,7 +32,7 @@ class ProgressReporter {
 public:
     // ProgressReporter Public Methods
     ProgressReporter(int totalWork, const string &title,
-                     int barLength=58);
+                     int barLength = 58);
     ~ProgressReporter();
     void Update(int num = 1);
     void Done();
