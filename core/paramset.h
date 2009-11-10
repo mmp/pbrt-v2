@@ -36,26 +36,6 @@
 #include <map>
 using std::map;
 
-// ParamSet Macros
-#define ADD_PARAM_TYPE(T, vec) \
-    (vec).push_back(new ParamSetItem<T>(name, (T *)data, nItems))
-#define LOOKUP_PTR(vec) \
-    for (uint32_t i = 0; i < (vec).size(); ++i) \
-        if ((vec)[i]->name == name) { \
-            *nItems = (vec)[i]->nItems; \
-            (vec)[i]->lookedUp = true; \
-            return (vec)[i]->data; \
-        } \
-    return NULL
-#define LOOKUP_ONE(vec) \
-    for (uint32_t i = 0; i < (vec).size(); ++i) { \
-        if ((vec)[i]->name == name && \
-            (vec)[i]->nItems == 1) { \
-            (vec)[i]->lookedUp = true; \
-            return *((vec)[i]->data); \
-}        } \
-    return d
-
 // ParamSet Declarations
 class ParamSet {
 public:
