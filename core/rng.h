@@ -30,12 +30,12 @@
 // Random Number Declarations
 class RNG {
 public:
-    RNG(u_long seed = 5489UL) {
+    RNG(uint32_t seed = 5489UL) {
         mti = N+1; /* mti==N+1 means mt[N] is not initialized */
         Seed(seed);
     }
 
-    void Seed(u_long seed) const;
+    void Seed(uint32_t seed) const;
     float RandomFloat() const;
     unsigned long RandomUInt() const;
 

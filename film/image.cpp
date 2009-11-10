@@ -74,7 +74,7 @@ ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
         else {
             for (int y = 0; y < yPixelCount; ++y) {
                 for (int x = 0; x < xPixelCount; ++x) {
-                    u_int *bufp = (u_int *)sdlWindow->pixels + y*sdlWindow->pitch/4 + x;
+                    uint32_t *bufp = (uint32_t *)sdlWindow->pixels + y*sdlWindow->pitch/4 + x;
                     *bufp = SDL_MapRGB(sdlWindow->format, 64, 64, 64);
                 }
             }
@@ -239,8 +239,8 @@ void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
     x1 = Clamp(x1, 0, xPixelCount);
     y0 = Clamp(y0, 0, yPixelCount);
     y1 = Clamp(y1, 0, yPixelCount);
-    u_int *pix = new u_int[(x1-x0)*(y1-y0)];
-    u_int *pp = pix;
+    uint32_t *pix = new uint32_t[(x1-x0)*(y1-y0)];
+    uint32_t *pp = pix;
     for (int y = y0; y < y1; ++y) {
         for (int x = x0; x < x1; ++x) {
             // Compute weighted pixel value and update window pixel
@@ -261,9 +261,9 @@ void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
             rgb[2] += splatScale * splatRGB[2];
             
             *pp++ = SDL_MapRGB(sdlWindow->format,
-                u_char(Clamp(powf(rgb[0], 1./1.8), 0.f, 1.f) * 255),
-                u_char(Clamp(powf(rgb[1], 1./1.8), 0.f, 1.f) * 255),
-                u_char(Clamp(powf(rgb[2], 1./1.8), 0.f, 1.f) * 255));
+                uint8_t(Clamp(powf(rgb[0], 1./1.8), 0.f, 1.f) * 255),
+                uint8_t(Clamp(powf(rgb[1], 1./1.8), 0.f, 1.f) * 255),
+                uint8_t(Clamp(powf(rgb[2], 1./1.8), 0.f, 1.f) * 255));
         }
     }
     // Update window pixels, redraw
@@ -271,7 +271,7 @@ void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
     pp=pix;
     for (int y = y0; y < y1; ++y) {
         for (int x = x0; x < x1; ++x) {
-            u_int *bufp = (u_int *)sdlWindow->pixels + y*sdlWindow->pitch/4 + x;
+            uint32_t *bufp = (uint32_t *)sdlWindow->pixels + y*sdlWindow->pitch/4 + x;
             *bufp = *pp++;
         }
     }

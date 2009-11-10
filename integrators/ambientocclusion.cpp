@@ -38,7 +38,7 @@ Spectrum AmbientOcclusionIntegrator::Li(const Scene *scene, const Renderer *rend
     const Point &p = bsdf->dgShading.p;
     Normal n = Faceforward(isect.dg.nn, -ray.d);
 
-    u_int scramble[2] = { sample->rng->RandomUInt(),
+    uint32_t scramble[2] = { sample->rng->RandomUInt(),
                           sample->rng->RandomUInt() };
     float u[2];
     int nClear = 0;

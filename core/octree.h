@@ -139,7 +139,7 @@ template <typename NodeData> template <typename LookupProc>
 void Octree<NodeData>::lookupPrivate(
         OctNode<NodeData> *node, const BBox &nodeBound,
         const Point &p, LookupProc &process) {
-    for (u_int i = 0; i < node->data.size(); ++i)
+    for (uint32_t i = 0; i < node->data.size(); ++i)
         if (!process(node->data[i]))
             return;
 

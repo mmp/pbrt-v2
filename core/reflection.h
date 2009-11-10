@@ -119,7 +119,7 @@ struct BSDFSample {
       uDir[1] = rng.RandomFloat();
       uComponent = rng.RandomFloat();
    }
-   BSDFSample(const Sample *sample, const BSDFSampleOffsets &offsets, u_int num);
+   BSDFSample(const Sample *sample, const BSDFSampleOffsets &offsets, uint32_t num);
    BSDFSample() { }
    float uDir[2], uComponent;
 };
@@ -487,14 +487,14 @@ private:
 class RegularHalfangleBRDF : public BxDF {
 public:
     // RegularHalfangleBRDF Public Methods
-    RegularHalfangleBRDF(const float *d, u_int nth, u_int ntd, u_int npd)
+    RegularHalfangleBRDF(const float *d, uint32_t nth, uint32_t ntd, uint32_t npd)
         : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), brdf(d),
           nThetaH(nth), nThetaD(ntd), nPhiD(npd) { }
     Spectrum f(const Vector &wo, const Vector &wi) const;
 private:
     // RegularHalfangleBRDF Private Data
     const float *brdf;
-    u_int nThetaH, nThetaD, nPhiD;
+    uint32_t nThetaH, nThetaD, nPhiD;
 };
 
 

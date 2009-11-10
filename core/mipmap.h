@@ -38,24 +38,24 @@ typedef enum {
 template <typename T> class MIPMap {
 public:
     // MIPMap Public Methods
-    MIPMap(u_int xres, u_int yres, const T *data, bool doTri = false,
+    MIPMap(uint32_t xres, uint32_t yres, const T *data, bool doTri = false,
            float maxAniso = 8.f, ImageWrap wrapMode = TEXTURE_REPEAT);
     ~MIPMap();
-    u_int Width() const { return width; }
-    u_int Height() const { return height; }
-    u_int Levels() const { return nLevels; }
-    const T &Texel(u_int level, int s, int t) const;
+    uint32_t Width() const { return width; }
+    uint32_t Height() const { return height; }
+    uint32_t Levels() const { return nLevels; }
+    const T &Texel(uint32_t level, int s, int t) const;
     T Lookup(float s, float t, float width = 0.f) const;
     T Lookup(float s, float t, float ds0, float dt0,
         float ds1, float dt1) const;
 private:
     // MIPMap Private Methods
     struct ResampleWeight;
-    ResampleWeight *resampleWeights(u_int oldres, u_int newres) {
+    ResampleWeight *resampleWeights(uint32_t oldres, uint32_t newres) {
         Assert(newres >= oldres);
         ResampleWeight *wt = new ResampleWeight[newres];
         float filterwidth = 2.f;
-        for (u_int i = 0; i < newres; ++i) {
+        for (uint32_t i = 0; i < newres; ++i) {
             // Compute image resampling weights for _i_th texel
             float center = (i + .5f) * oldres / newres;
             wt[i].firstTexel = Floor2Int((center - filterwidth) + 0.5f);
@@ -67,7 +67,7 @@ private:
             // Normalize filter weights for texel resampling
             float invSumWts = 1.f / (wt[i].weight[0] + wt[i].weight[1] +
                                      wt[i].weight[2] + wt[i].weight[3]);
-            for (u_int j = 0; j < 4; ++j)
+            for (uint32_t j = 0; j < 4; ++j)
                 wt[i].weight[j] *= invSumWts;
         }
         return wt;
@@ -75,8 +75,8 @@ private:
     float clamp(float v) { return Clamp(v, 0.f, INFINITY); }
     RGBSpectrum clamp(const RGBSpectrum &v) { return v.Clamp(0.f, INFINITY); }
     SampledSpectrum clamp(const SampledSpectrum &v) { return v.Clamp(0.f, INFINITY); }
-    T triangle(u_int level, float s, float t) const;
-    T EWA(u_int level, float s, float t, float ds0, float dt0, float ds1, float dt1) const;
+    T triangle(uint32_t level, float s, float t) const;
+    T EWA(uint32_t level, float s, float t, float ds0, float dt0, float ds1, float dt1) const;
 
     // MIPMap Private Data
     bool doTrilinear;
@@ -87,7 +87,7 @@ private:
         float weight[4];
     };
     BlockedArray<T> **pyramid;
-    u_int width, height, nLevels;
+    uint32_t width, height, nLevels;
 #define WEIGHT_LUT_SIZE 128
     static float *weightLut;
 };
@@ -96,7 +96,7 @@ private:
 
 // MIPMap Method Definitions
 template <typename T>
-MIPMap<T>::MIPMap(u_int sres, u_int tres, const T *img, bool doTri,
+MIPMap<T>::MIPMap(uint32_t sres, uint32_t tres, const T *img, bool doTri,
                   float maxAniso, ImageWrap wm) {
     doTrilinear = doTri;
     maxAnisotropy = maxAniso;
@@ -104,15 +104,15 @@ MIPMap<T>::MIPMap(u_int sres, u_int tres, const T *img, bool doTri,
     T *resampledImage = NULL;
     if (!IsPowerOf2(sres) || !IsPowerOf2(tres)) {
         // Resample image to power-of-two resolution
-        u_int sPow2 = RoundUpPow2(sres), tPow2 = RoundUpPow2(tres);
+        uint32_t sPow2 = RoundUpPow2(sres), tPow2 = RoundUpPow2(tres);
 
         // Resample image in $s$ direction
         ResampleWeight *sWeights = resampleWeights(sres, sPow2);
         resampledImage = new T[sPow2 * tPow2];
 
         // Apply _sWeights_ to zoom in $s$ direction
-        for (u_int t = 0; t < tres; ++t) {
-            for (u_int s = 0; s < sPow2; ++s) {
+        for (uint32_t t = 0; t < tres; ++t) {
+            for (uint32_t s = 0; s < sPow2; ++s) {
                 // Compute texel $(s,t)$ in $s$-zoomed image
                 resampledImage[t*sPow2+s] = 0.;
                 for (int j = 0; j < 4; ++j) {
@@ -132,10 +132,10 @@ MIPMap<T>::MIPMap(u_int sres, u_int tres, const T *img, bool doTri,
         // Resample image in $t$ direction
         ResampleWeight *tWeights = resampleWeights(tres, tPow2);
         T *workData = new T[tPow2];
-        for (u_int s = 0; s < sPow2; ++s) {
-            for (u_int t = 0; t < tPow2; ++t) {
+        for (uint32_t s = 0; s < sPow2; ++s) {
+            for (uint32_t t = 0; t < tPow2; ++t) {
                 workData[t] = 0.;
-                for (u_int j = 0; j < 4; ++j) {
+                for (uint32_t j = 0; j < 4; ++j) {
                     int offset = tWeights[t].firstTexel + j;
                     if (wrapMode == TEXTURE_REPEAT) offset = Mod(offset, tres);
                     else if (wrapMode == TEXTURE_CLAMP) offset = Clamp(offset, 0, tres-1);
@@ -144,7 +144,7 @@ MIPMap<T>::MIPMap(u_int sres, u_int tres, const T *img, bool doTri,
                             resampledImage[offset*sPow2 + s];
                 }
             }
-            for (u_int t = 0; t < tPow2; ++t)
+            for (uint32_t t = 0; t < tPow2; ++t)
                 resampledImage[t*sPow2 + s] = clamp(workData[t]);
         }
         delete[] workData;
@@ -161,15 +161,15 @@ MIPMap<T>::MIPMap(u_int sres, u_int tres, const T *img, bool doTri,
 
     // Initialize most detailed level of MIPMap
     pyramid[0] = new BlockedArray<T>(sres, tres, img);
-    for (u_int i = 1; i < nLevels; ++i) {
+    for (uint32_t i = 1; i < nLevels; ++i) {
         // Initialize $i$th MIPMap level from $i-1$st level
-        u_int sRes = max(1u, pyramid[i-1]->uSize()/2);
-        u_int tRes = max(1u, pyramid[i-1]->vSize()/2);
+        uint32_t sRes = max(1u, pyramid[i-1]->uSize()/2);
+        uint32_t tRes = max(1u, pyramid[i-1]->vSize()/2);
         pyramid[i] = new BlockedArray<T>(sRes, tRes);
 
         // Filter four texels from finer level of pyramid
-        for (u_int t = 0; t < tRes; ++t)
-            for (u_int s = 0; s < sRes; ++s)
+        for (uint32_t t = 0; t < tRes; ++t)
+            for (uint32_t s = 0; s < sRes; ++s)
                 (*pyramid[i])(s, t) = .25f * (
                     Texel(i-1, 2*s,   2*t) +
                     Texel(i-1, 2*s+1, 2*t) +
@@ -190,7 +190,7 @@ MIPMap<T>::MIPMap(u_int sres, u_int tres, const T *img, bool doTri,
 
 
 template <typename T>
-const T &MIPMap<T>::Texel(u_int level, int s, int t) const {
+const T &MIPMap<T>::Texel(uint32_t level, int s, int t) const {
     Assert(level < nLevels);
     const BlockedArray<T> &l = *pyramid[level];
     // Compute texel $(s,t)$ accounting for boundary conditions
@@ -218,7 +218,7 @@ const T &MIPMap<T>::Texel(u_int level, int s, int t) const {
 
 template <typename T>
 MIPMap<T>::~MIPMap() {
-    for (u_int i = 0; i < nLevels; ++i)
+    for (uint32_t i = 0; i < nLevels; ++i)
         delete pyramid[i];
     delete[] pyramid;
 }
@@ -236,7 +236,7 @@ T MIPMap<T>::Lookup(float s, float t, float width) const {
     else if (level >= nLevels - 1)
         return Texel(nLevels-1, 0, 0);
     else {
-        u_int iLevel = Floor2Int(level);
+        uint32_t iLevel = Floor2Int(level);
         float delta = level - iLevel;
         return (1.f-delta) * triangle(iLevel, s, t) +
                delta * triangle(iLevel+1, s, t);
@@ -245,7 +245,7 @@ T MIPMap<T>::Lookup(float s, float t, float width) const {
 
 
 template <typename T>
-T MIPMap<T>::triangle(u_int level, float s, float t) const {
+T MIPMap<T>::triangle(uint32_t level, float s, float t) const {
     level = Clamp(level, 0, nLevels-1);
     s = s * pyramid[level]->uSize() - 0.5f;
     t = t * pyramid[level]->vSize() - 0.5f;
@@ -290,7 +290,7 @@ T MIPMap<T>::Lookup(float s, float t, float ds0, float dt0,
 
     // Choose level of detail for EWA lookup and perform EWA filtering
     float lod = max(0.f, nLevels - 1.f + Log2(minorLength));
-    u_int ilod = Floor2Int(lod);
+    uint32_t ilod = Floor2Int(lod);
     PBRT_MIPMAP_EWA_FILTER(const_cast<MIPMap<T> *>(this), s, t, ds0, ds1, dt0, dt1, minorLength, majorLength, lod, nLevels);
     float d = lod - ilod;
     T val = (1.f - d) * EWA(ilod, s, t, ds0, dt0, ds1, dt1) +
@@ -301,7 +301,7 @@ T MIPMap<T>::Lookup(float s, float t, float ds0, float dt0,
 
 
 template <typename T>
-T MIPMap<T>::EWA(u_int level, float s, float t, float ds0, float dt0,
+T MIPMap<T>::EWA(uint32_t level, float s, float t, float ds0, float dt0,
                  float ds1, float dt1) const {
     if (level >= nLevels) return Texel(nLevels-1, 0, 0);
     // Convert EWA coordinates to appropriate scale for level

@@ -42,7 +42,7 @@ private:
     // MeasuredMaterial Private Data
     KdTree<IrregIsotropicBRDFSample> *thetaPhiData;
     float *regularHalfangleData;
-    u_int nThetaH, nThetaD, nPhiD;
+    uint32_t nThetaH, nThetaD, nPhiD;
     Reference<Texture<float> > bumpMap;
 };
 

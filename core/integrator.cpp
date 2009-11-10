@@ -42,7 +42,7 @@ Spectrum UniformSampleAllLights(const Scene *scene,
         const LightSampleOffsets *lightSampleOffsets,
         const BSDFSampleOffsets *bsdfSampleOffsets) {
     Spectrum L(0.);
-    for (u_int i = 0; i < scene->lights.size(); ++i) {
+    for (uint32_t i = 0; i < scene->lights.size(); ++i) {
         Light *light = scene->lights[i];
         int nSamples = lightSampleOffsets ?
                        lightSampleOffsets[i].nSamples : 1;
@@ -240,10 +240,10 @@ Spectrum SpecularTransmit(const RayDifferential &ray, BSDF *bsdf,
 
 
 Distribution1D *ComputeLightSamplingCDF(const Scene *scene) {
-    u_int nLights = int(scene->lights.size());
+    uint32_t nLights = int(scene->lights.size());
     Assert(nLights > 0);
     vector<float>lightPower(nLights, 0.f);
-    for (u_int i = 0; i < nLights; ++i)
+    for (uint32_t i = 0; i < nLights; ++i)
         lightPower[i] = scene->lights[i]->Power(scene).y();
     return new Distribution1D(&lightPower[0], nLights);
 }

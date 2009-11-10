@@ -39,7 +39,7 @@ class BestCandidateSampler : public Sampler {
 public:
     // BestCandidateSampler Public Methods
     BestCandidateSampler(int xstart, int xend, int ystart, int yend,
-            int pixelSamples, float sopen, float sclose, u_long rngSeed)
+            int pixelSamples, float sopen, float sclose, uint32_t rngSeed)
         : Sampler(xstart, xend, ystart, yend, pixelSamples, sopen, sclose),
           rng(rngSeed) {
         tableWidth = (float)SQRT_SAMPLE_TABLE_SIZE / (float)sqrtf(pixelSamples);

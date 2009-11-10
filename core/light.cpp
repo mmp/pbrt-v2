@@ -60,7 +60,7 @@ LightSampleOffsets::LightSampleOffsets(int count, Sample *sample) {
 
 
 LightSample::LightSample(const Sample *sample,
-        const LightSampleOffsets &offsets, u_int num) {
+        const LightSampleOffsets &offsets, uint32_t num) {
     Assert(num < sample->n2D[offsets.posOffset]);
     Assert(num < sample->n1D[offsets.componentOffset]);
     uPos[0] = sample->twoD[offsets.posOffset][2*num];
@@ -74,11 +74,11 @@ void Light::SHProject(const Point &p, float pEpsilon, int lmax,
         RNG &rng, Spectrum *coeffs) const {
     for (int i = 0; i < SHTerms(lmax); ++i)
         coeffs[i] = 0.f;
-    u_int ns = RoundUpPow2(nSamples);
-    u_int scramble1D = rng.RandomUInt();
-    u_int scramble2D[2] = { rng.RandomUInt(), rng.RandomUInt() };
+    uint32_t ns = RoundUpPow2(nSamples);
+    uint32_t scramble1D = rng.RandomUInt();
+    uint32_t scramble2D[2] = { rng.RandomUInt(), rng.RandomUInt() };
     float *Ylm = ALLOCA(float, SHTerms(lmax));
-    for (u_int i = 0; i < ns; ++i) {
+    for (uint32_t i = 0; i < ns; ++i) {
         // Compute incident radiance sample from _light_, update SH _coeffs_
         float u[2], pdf;
         Sample02(i, scramble2D, u);
@@ -117,7 +117,7 @@ ShapeSet::ShapeSet(const Reference<Shape> &s) {
 
     // Compute total area of shapes in _ShapeSet_ and area CDF
     sumArea = 0.f;
-    for (u_int i = 0; i < shapes.size(); ++i) {
+    for (uint32_t i = 0; i < shapes.size(); ++i) {
         float a = shapes[i]->Area();
         areas.push_back(a);
         sumArea += a;
@@ -146,7 +146,7 @@ Point ShapeSet::Sample(const LightSample &ls, Normal *Ns) const {
 
 float ShapeSet::Pdf(const Point &p, const Vector &wi) const {
     float pdf = 0.f;
-    for (u_int i = 0; i < shapes.size(); ++i)
+    for (uint32_t i = 0; i < shapes.size(); ++i)
         pdf += areas[i] * shapes[i]->Pdf(p, wi);
     return pdf / sumArea;
 }
@@ -154,7 +154,7 @@ float ShapeSet::Pdf(const Point &p, const Vector &wi) const {
 
 float ShapeSet::Pdf(const Point &p) const {
     float pdf = 0.f;
-    for (u_int i = 0; i < shapes.size(); ++i)
+    for (uint32_t i = 0; i < shapes.size(); ++i)
         pdf += areas[i] * shapes[i]->Pdf(p);
     return pdf / sumArea;
 }

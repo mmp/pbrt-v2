@@ -242,7 +242,7 @@ void SHProjectIncidentDirectRadiance(const Point &p, float pEpsilon,
         bool computeLightVis, int lmax, RNG &rng, Spectrum *c_d) {
     // Loop over light sources and sum their SH coefficients
     Spectrum *c = arena.Alloc<Spectrum>(SHTerms(lmax));
-    for (u_int i = 0; i < scene->lights.size(); ++i) {
+    for (uint32_t i = 0; i < scene->lights.size(); ++i) {
         Light *light = scene->lights[i];
         light->SHProject(p, pEpsilon, lmax, scene,
                          computeLightVis, time, rng, c);
@@ -267,7 +267,7 @@ void SHProjectIncidentIndirectRadiance(const Point &p, float pEpsilon,
         const Scene *scene, int lmax, RNG &rng, int ns, Spectrum *c_i) {
     Sample *sample = origSample->Duplicate(1, &rng);
     MemoryArena arena;
-    u_int scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
+    uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
     int nSamples = RoundUpPow2(ns);
     float *Ylm = ALLOCA(float, SHTerms(lmax));
     for (int i = 0; i < nSamples; ++i) {
@@ -283,11 +283,11 @@ void SHProjectIncidentIndirectRadiance(const Point &p, float pEpsilon,
 
         // Fill in values in _sample_ for radiance probe ray
         sample->time = time;
-        for (u_int j = 0; j < sample->n1D.size(); ++j)
-            for (u_int k = 0; k < sample->n1D[j]; ++k)
+        for (uint32_t j = 0; j < sample->n1D.size(); ++j)
+            for (uint32_t k = 0; k < sample->n1D[j]; ++k)
                 sample->oneD[j][k] = rng.RandomFloat();
-        for (u_int j = 0; j < sample->n2D.size(); ++j)
-            for (u_int k = 0; k < 2 * sample->n2D[j]; ++k)
+        for (uint32_t j = 0; j < sample->n2D.size(); ++j)
+            for (uint32_t k = 0; k < 2 * sample->n2D[j]; ++k)
                 sample->twoD[j][k] = rng.RandomFloat();
         Li = renderer->Li(scene, ray, sample, arena);
 
@@ -375,7 +375,7 @@ void SHComputeDiffuseTransfer(const Point &p, const Normal &n,
         int lmax, Spectrum *c_transfer) {
     for (int i = 0; i < SHTerms(lmax); ++i)
         c_transfer[i] = 0.f;
-    u_int scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
+    uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
     float *Ylm = ALLOCA(float, SHTerms(lmax));
     for (int i = 0; i < nSamples; ++i) {
         // Sample _i_th direction and compute estimate for transfer coefficients
@@ -401,7 +401,7 @@ void SHComputeBSDFMatrix(const Spectrum &Kd, const Spectrum &Ks,
     // Precompute directions $\w{}$ and SH values for directions
     float *Ylm = new float[SHTerms(lmax) * nSamples];
     Vector *w = new Vector[nSamples];
-    u_int scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
+    uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
     for (int i = 0; i < nSamples; ++i) {
         float u[2];
         Sample02(i, scramble, u);
@@ -448,7 +448,7 @@ void SHComputeTransferMatrix(const Point &p,
         int lmax, Spectrum *T) {
     for (int i = 0; i < SHTerms(lmax)*SHTerms(lmax); ++i)
         T[i] = 0.f;
-    u_int scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
+    uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
     float *Ylm = ALLOCA(float, SHTerms(lmax));
     for (int i = 0; i < nSamples; ++i) {
         float u[2];

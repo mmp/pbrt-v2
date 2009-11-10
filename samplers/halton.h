@@ -32,7 +32,7 @@
 class HaltonSampler : public Sampler {
 public:
     HaltonSampler(int xs, int xe, int ys, int ye, int ps, float sopen,
-        float sclose, u_long rngSeed);
+        float sclose, uint32_t rngSeed);
     int MaximumSampleCount() { return 1; }
     int GetMoreSamples(Sample *sample);
     Sampler *GetSubSampler(int num, int count);

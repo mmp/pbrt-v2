@@ -288,7 +288,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
         std::reverse(directTasks.begin(), directTasks.end());
         EnqueueTasks(directTasks);
         WaitForAllTasks();
-        for (u_int i = 0; i < directTasks.size(); ++i)
+        for (uint32_t i = 0; i < directTasks.size(); ++i)
             delete directTasks[i];
         delete sample;
         directProgress.Done();
@@ -337,7 +337,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
                 &nSamplesFinished));
         EnqueueTasks(tasks);
         WaitForAllTasks();
-        for (u_int i = 0; i < tasks.size(); ++i)
+        for (uint32_t i = 0; i < tasks.size(); ++i)
             delete tasks[i];
         progress.Done();
     }
@@ -347,10 +347,10 @@ void MetropolisRenderer::Render(const Scene *scene) {
 
 void MLTDirectIntegrator::RequestSamples(Sampler *sampler, Sample *sample,
         const Scene *scene) {
-    u_int nLights = scene->lights.size();
+    uint32_t nLights = scene->lights.size();
     lightSampleOffsets = new LightSampleOffsets[nLights];
     bsdfSampleOffsets = new BSDFSampleOffsets[nLights];
-    for (u_int i = 0; i < nLights; ++i) {
+    for (uint32_t i = 0; i < nLights; ++i) {
         const Light *light = scene->lights[i];
         int nSamples = light->nSamples;
         if (sampler) nSamples = sampler->RoundSize(nSamples);
@@ -406,7 +406,7 @@ void MLTDirectTask::Run() {
                     Ls[i] = rayWeight * direct->Li(scene, renderer,
                         rays[i], isects[i], &samples[i], arena);
                 else {
-                    for (u_int j = 0; j < scene->lights.size(); ++j)
+                    for (uint32_t j = 0; j < scene->lights.size(); ++j)
                         Ls[i] += rayWeight * scene->lights[j]->Le(rays[i]);
                 }
             }
@@ -490,7 +490,7 @@ void MLTTask::Run() {
     MemoryArena arena;
     vector<MLTSample> mltSamples(2, MLTSample(maxDepth));
     Spectrum sampleLs[2];
-    u_int currentSample = 0, proposedSample = 1;
+    uint32_t currentSample = 0, proposedSample = 1;
     mltSamples[currentSample] = initialSample;
     sampleLs[currentSample] = L(scene, renderer, camera, arena, rng, maxDepth, ignoreDirect,
         mltSamples[currentSample]);
@@ -562,7 +562,7 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
             bool includeLe = (specularBounce && pathLength >= 1) ||
                              (!ignoreDirect && pathLength == 0);
             if (includeLe)
-                for (u_int i = 0; i < scene->lights.size(); ++i)
+                for (uint32_t i = 0; i < scene->lights.size(); ++i)
                    L += pathThroughput * scene->lights[i]->Le(ray);
             break;
         }
@@ -577,8 +577,8 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
         if (!ignoreDirect || pathLength > 0) {
             LightSample lightSample(ps.lightDir0, ps.lightDir1, ps.lightNum0);
             BSDFSample bsdfSample(ps.bsdfLightDir0, ps.bsdfLightDir1, ps.bsdfLightComponent);
-            u_int lightNum = Floor2Int(ps.lightNum1 * scene->lights.size());
-            lightNum = min(lightNum, (u_int)(scene->lights.size()-1));
+            uint32_t lightNum = Floor2Int(ps.lightNum1 * scene->lights.size());
+            lightNum = min(lightNum, (uint32_t)(scene->lights.size()-1));
             const Light *light = scene->lights[lightNum];
             L += pathThroughput *
                  EstimateDirect(scene, renderer, arena, light, p, n, wo,

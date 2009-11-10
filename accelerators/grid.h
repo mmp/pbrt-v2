@@ -34,7 +34,7 @@ struct Voxel;
 // Voxel Declarations
 struct Voxel {
     // Voxel Public Methods
-    u_int size() const { return primitives.size(); }
+    uint32_t size() const { return primitives.size(); }
     Voxel() { }
     Voxel(Reference<Primitive> op) {
         allCanIntersect = false;

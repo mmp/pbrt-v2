@@ -65,11 +65,11 @@ struct Sample : public CameraSample {
     // Sample Public Methods
     Sample(Sampler *sampler, SurfaceIntegrator *surf, VolumeIntegrator *vol,
         const Scene *scene);
-    u_int Add1D(u_int num) {
+    uint32_t Add1D(uint32_t num) {
         n1D.push_back(num);
         return n1D.size()-1;
     }
-    u_int Add2D(u_int num) {
+    uint32_t Add2D(uint32_t num) {
         n2D.push_back(num);
         return n2D.size()-1;
     }
@@ -82,7 +82,7 @@ struct Sample : public CameraSample {
     Sample *Duplicate(int count, RNG *rng) const;
 
     // Sample Public Data
-    vector<u_int> n1D, n2D;
+    vector<uint32_t> n1D, n2D;
     float **oneD, **twoD;
     mutable RNG *rng;
 private:

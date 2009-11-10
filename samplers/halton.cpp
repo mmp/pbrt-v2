@@ -39,7 +39,7 @@ Sampler *HaltonSampler::GetSubSampler(int num, int count) {
 
 
 HaltonSampler::HaltonSampler(int xs, int xe, int ys, int ye, int ps,
-        float sopen, float sclose, u_long rngSeed)
+        float sopen, float sclose, uint32_t rngSeed)
     : Sampler(xs, xe, ys, ye, ps, sopen, sclose), rng(rngSeed) {
     int delta = max(xPixelEnd - xPixelStart,
                     yPixelEnd - yPixelStart);
@@ -68,9 +68,9 @@ retry:
     samples->lensV = (float)RadicalInverse(currentSample, 7);
     samples->time = Lerp((float)RadicalInverse(currentSample, 11),
                          shutterOpen, shutterClose);
-    for (u_int i = 0; i < samples->n1D.size(); ++i)
+    for (uint32_t i = 0; i < samples->n1D.size(); ++i)
         LatinHypercube(samples->oneD[i], samples->n1D[i], 1, rng);
-    for (u_int i = 0; i < samples->n2D.size(); ++i)
+    for (uint32_t i = 0; i < samples->n2D.size(); ++i)
         LatinHypercube(samples->twoD[i], samples->n2D[i], 2, rng);
     return 1;
 }

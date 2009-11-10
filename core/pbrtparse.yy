@@ -109,7 +109,7 @@ static void ArrayFree(ParamArray *ra) {
 
 
 static void FreeArgs() {
-    for (u_int i = 0; i < cur_paramlist.size(); ++i)
+    for (uint32_t i = 0; i < cur_paramlist.size(); ++i)
         free((char *)cur_paramlist[i].arg);
     cur_paramlist.erase(cur_paramlist.begin(), cur_paramlist.end());
 }
@@ -298,9 +298,9 @@ paramlist: paramlist_init paramlist_contents
 
 paramlist_init: %prec HIGH_PRECEDENCE
 {
-    for (u_int i = 0; i < cur_paramlist.size(); ++i) {
+    for (uint32_t i = 0; i < cur_paramlist.size(); ++i) {
         if (cur_paramlist[i].isString) {
-            for (u_int j = 0; j < cur_paramlist[i].size; ++j)
+            for (uint32_t j = 0; j < cur_paramlist[i].size; ++j)
                 free(((char **)cur_paramlist[i].arg)[j]);
         }
     }
@@ -644,7 +644,7 @@ static const char *paramTypeToName(int type) {
 
 static void InitParamSet(ParamSet &ps, SpectrumType type) {
     ps.Clear();
-    for (u_int i = 0; i < cur_paramlist.size(); ++i) {
+    for (uint32_t i = 0; i < cur_paramlist.size(); ++i) {
         int type;
         string name;
         if (lookupType(cur_paramlist[i].name, &type, name)) {

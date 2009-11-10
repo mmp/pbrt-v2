@@ -157,17 +157,17 @@ void StratifiedSample2D(float *samp, int nx, int ny, RNG &rng, bool jitter) {
 }
 
 
-void LatinHypercube(float *samples, u_int nSamples, u_int nDim, RNG &rng) {
+void LatinHypercube(float *samples, uint32_t nSamples, uint32_t nDim, RNG &rng) {
     // Generate LHS samples along diagonal
     float delta = 1.f / nSamples;
-    for (u_int i = 0; i < nSamples; ++i)
-        for (u_int j = 0; j < nDim; ++j)
+    for (uint32_t i = 0; i < nSamples; ++i)
+        for (uint32_t j = 0; j < nDim; ++j)
             samples[nDim * i + j] = (i + (rng.RandomFloat())) * delta;
 
     // Permute LHS samples in each dimension
-    for (u_int i = 0; i < nDim; ++i) {
-        for (u_int j = 0; j < nSamples; ++j) {
-            u_int other = j + (rng.RandomUInt() % (nSamples - j));
+    for (uint32_t i = 0; i < nDim; ++i) {
+        for (uint32_t j = 0; j < nSamples; ++j) {
+            uint32_t other = j + (rng.RandomUInt() % (nSamples - j));
             swap(samples[nDim * j + i], samples[nDim * other + i]);
         }
     }
@@ -176,9 +176,9 @@ void LatinHypercube(float *samples, u_int nSamples, u_int nDim, RNG &rng) {
 
 int LDPixelSampleFloatsNeeded(const Sample *sample, int pixelSamples) {
     int n = 5; // 2 lens + 2 pixel + time
-    for (u_int i = 0; i < sample->n1D.size(); ++i)
+    for (uint32_t i = 0; i < sample->n1D.size(); ++i)
         n += sample->n1D[i];
-    for (u_int i = 0; i < sample->n2D.size(); ++i)
+    for (uint32_t i = 0; i < sample->n2D.size(); ++i)
         n += 2 * sample->n2D[i];
     return pixelSamples * n;
 }
@@ -192,17 +192,17 @@ void LDPixelSample(int xPos, int yPos, float shutterOpen,
     float *timeSamples = buf;  buf += pixelSamples;
 
     // Prepare temporary arrays for low-discrepancy integrator samples
-    u_int count1D = samples[0].n1D.size();
-    u_int count2D = samples[0].n2D.size();
-    const u_int *n1D = count1D > 0 ? &samples[0].n1D[0] : NULL;
-    const u_int *n2D = count2D > 0 ? &samples[0].n2D[0] : NULL;
+    uint32_t count1D = samples[0].n1D.size();
+    uint32_t count2D = samples[0].n2D.size();
+    const uint32_t *n1D = count1D > 0 ? &samples[0].n1D[0] : NULL;
+    const uint32_t *n2D = count2D > 0 ? &samples[0].n2D[0] : NULL;
     float **oneDSamples = ALLOCA(float *, count1D);
     float **twoDSamples = ALLOCA(float *, count2D);
-    for (u_int i = 0; i < count1D; ++i) {
+    for (uint32_t i = 0; i < count1D; ++i) {
         oneDSamples[i] = buf;
         buf += n1D[i] * pixelSamples;
     }
-    for (u_int i = 0; i < count2D; ++i) {
+    for (uint32_t i = 0; i < count2D; ++i) {
         twoDSamples[i] = buf;
         buf += 2 * n2D[i] * pixelSamples;
     }
@@ -212,9 +212,9 @@ void LDPixelSample(int xPos, int yPos, float shutterOpen,
     LDShuffleScrambled2D(1, pixelSamples, imageSamples, rng);
     LDShuffleScrambled2D(1, pixelSamples, lensSamples, rng);
     LDShuffleScrambled1D(1, pixelSamples, timeSamples, rng);
-    for (u_int i = 0; i < count1D; ++i)
+    for (uint32_t i = 0; i < count1D; ++i)
         LDShuffleScrambled1D(n1D[i], pixelSamples, oneDSamples[i], rng);
-    for (u_int i = 0; i < count2D; ++i)
+    for (uint32_t i = 0; i < count2D; ++i)
         LDShuffleScrambled2D(n2D[i], pixelSamples, twoDSamples[i], rng);
 
     // Initialize _samples_ with computed sample values
@@ -225,14 +225,14 @@ void LDPixelSample(int xPos, int yPos, float shutterOpen,
         samples[i].lensU = lensSamples[2*i];
         samples[i].lensV = lensSamples[2*i+1];
         // Copy integrator samples into _samples[i]_
-        for (u_int j = 0; j < count1D; ++j) {
+        for (uint32_t j = 0; j < count1D; ++j) {
             int startSamp = n1D[j] * i;
-            for (u_int k = 0; k < n1D[j]; ++k)
+            for (uint32_t k = 0; k < n1D[j]; ++k)
                 samples[i].oneD[j][k] = oneDSamples[j][startSamp+k];
         }
-        for (u_int j = 0; j < count2D; ++j) {
+        for (uint32_t j = 0; j < count2D; ++j) {
             int startSamp = 2 * n2D[j] * i;
-            for (u_int k = 0; k < 2*n2D[j]; ++k)
+            for (uint32_t k = 0; k < 2*n2D[j]; ++k)
                 samples[i].twoD[j][k] = twoDSamples[j][startSamp+k];
         }
     }
@@ -363,25 +363,25 @@ Distribution2D::Distribution2D(const float *func, int nu, int nv) {
 
 Distribution2D::~Distribution2D() {
     delete pMarginal;
-    for (u_int i = 0; i < pConditionalV.size(); ++i)
+    for (uint32_t i = 0; i < pConditionalV.size(); ++i)
         delete pConditionalV[i];
 }
 
 
-PermutedHalton::PermutedHalton(u_int d, RNG &rng) {
+PermutedHalton::PermutedHalton(uint32_t d, RNG &rng) {
     dims = d;
     // Determine bases $b_i$ and their sum
-    b = new u_int[dims];
-    u_int sumBases = 0;
-    for (u_int i = 0; i < dims; ++i) {
+    b = new uint32_t[dims];
+    uint32_t sumBases = 0;
+    for (uint32_t i = 0; i < dims; ++i) {
         b[i] = primes[i];
         sumBases += b[i];
     }
 
     // Compute permutation tables for each base
-    permute = new u_int[sumBases];
-    u_int *p = permute;
-    for (u_int i = 0; i < dims; ++i) {
+    permute = new uint32_t[sumBases];
+    uint32_t *p = permute;
+    for (uint32_t i = 0; i < dims; ++i) {
         GeneratePermutation(p, b[i], rng);
         p += b[i];
     }

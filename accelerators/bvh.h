@@ -37,7 +37,7 @@ struct LinearBVHNode;
 class BVHAccel : public Aggregate {
 public:
     // BVHAccel Public Methods
-    BVHAccel(const vector<Reference<Primitive> > &p, u_int maxPrims = 1,
+    BVHAccel(const vector<Reference<Primitive> > &p, uint32_t maxPrims = 1,
         const string &sm = "sah");
     BBox WorldBound() const;
     bool CanIntersect() const { return true; }
@@ -47,12 +47,12 @@ public:
 private:
     // BVHAccel Private Methods
     BVHBuildNode *recursiveBuild(MemoryArena &buildArena,
-        vector<BVHPrimitiveInfo> &buildData, u_int start, u_int end,
-        u_int *totalNodes, vector<Reference<Primitive> > &orderedPrims);
-    u_int flattenBVHTree(BVHBuildNode *node, u_int *offset);
+        vector<BVHPrimitiveInfo> &buildData, uint32_t start, uint32_t end,
+        uint32_t *totalNodes, vector<Reference<Primitive> > &orderedPrims);
+    uint32_t flattenBVHTree(BVHBuildNode *node, uint32_t *offset);
 
     // BVHAccel Private Data
-    u_int maxPrimsInNode;
+    uint32_t maxPrimsInNode;
     enum SplitMethod { SPLIT_MIDDLE, SPLIT_EQUAL_COUNTS, SPLIT_SAH };
     SplitMethod splitMethod;
     vector<Reference<Primitive> > primitives;

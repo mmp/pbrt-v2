@@ -29,17 +29,17 @@
 // KdTreeAccel Local Declarations
 struct KdAccelNode {
     // KdAccelNode Methods
-    void initLeaf(u_int *primNums, int np, MemoryArena &arena);
-    void initInterior(u_int axis, u_int ac, float s) {
+    void initLeaf(uint32_t *primNums, int np, MemoryArena &arena);
+    void initInterior(uint32_t axis, uint32_t ac, float s) {
         split = s;
         flags = axis;
         aboveChild |= (ac << 2);
     }
     float SplitPos() const { return split; }
-    u_int nPrimitives() const { return nPrims >> 2; }
-    u_int SplitAxis() const { return flags & 3; }
+    uint32_t nPrimitives() const { return nPrims >> 2; }
+    uint32_t SplitAxis() const { return flags & 3; }
     bool IsLeaf() const { return (flags & 3) == 3; }
-    u_int AboveChild() const { return aboveChild >> 2; }
+    uint32_t AboveChild() const { return aboveChild >> 2; }
     union {
         float split;            // Interior
         uint32_t onePrimitive;  // Leaf
@@ -81,7 +81,7 @@ KdTreeAccel::KdTreeAccel(const vector<Reference<Primitive> > &p,
     : isectCost(icost), traversalCost(tcost),
       maxPrims(maxp), maxDepth(md), emptyBonus(ebonus) {
     PBRT_KDTREE_STARTED_CONSTRUCTION(this, p.size());
-    for (u_int i = 0; i < p.size(); ++i)
+    for (uint32_t i = 0; i < p.size(); ++i)
         p[i]->FullyRefine(primitives);
     // Build kd-tree for accelerator
     nextFreeNode = nAllocedNodes = 0;
@@ -91,7 +91,7 @@ KdTreeAccel::KdTreeAccel(const vector<Reference<Primitive> > &p,
     // Compute bounds for kd-tree construction
     vector<BBox> primBounds;
     primBounds.reserve(primitives.size());
-    for (u_int i = 0; i < primitives.size(); ++i) {
+    for (uint32_t i = 0; i < primitives.size(); ++i) {
         BBox b = primitives[i]->WorldBound();
         bounds = Union(bounds, b);
         primBounds.push_back(b);
@@ -101,12 +101,12 @@ KdTreeAccel::KdTreeAccel(const vector<Reference<Primitive> > &p,
     BoundEdge *edges[3];
     for (int i = 0; i < 3; ++i)
         edges[i] = new BoundEdge[2*primitives.size()];
-    u_int *prims0 = new u_int[primitives.size()];
-    u_int *prims1 = new u_int[(maxDepth+1) * primitives.size()];
+    uint32_t *prims0 = new uint32_t[primitives.size()];
+    uint32_t *prims1 = new uint32_t[(maxDepth+1) * primitives.size()];
 
     // Initialize _primNums_ for kd-tree construction
-    u_int *primNums = new u_int[primitives.size()];
-    for (u_int i = 0; i < primitives.size(); ++i)
+    uint32_t *primNums = new uint32_t[primitives.size()];
+    for (uint32_t i = 0; i < primitives.size(); ++i)
         primNums[i] = i;
 
     // Start recursive construction of kd-tree
@@ -123,7 +123,7 @@ KdTreeAccel::KdTreeAccel(const vector<Reference<Primitive> > &p,
 }
 
 
-void KdAccelNode::initLeaf(u_int *primNums, int np,
+void KdAccelNode::initLeaf(uint32_t *primNums, int np,
         MemoryArena &arena) {
     flags = 3;
     nPrims |= (np << 2);
@@ -133,7 +133,7 @@ void KdAccelNode::initLeaf(u_int *primNums, int np,
     else if (np == 1)
         onePrimitive = primNums[0];
     else {
-        primitives = arena.Alloc<u_int>(np);
+        primitives = arena.Alloc<uint32_t>(np);
         for (int i = 0; i < np; ++i)
             primitives[i] = primNums[i];
     }
@@ -146,9 +146,9 @@ KdTreeAccel::~KdTreeAccel() {
 
 
 void KdTreeAccel::buildTree(int nodeNum, const BBox &nodeBounds,
-        const vector<BBox> &allPrimBounds, u_int *primNums,
+        const vector<BBox> &allPrimBounds, uint32_t *primNums,
         int nPrimitives, int depth, BoundEdge *edges[3],
-        u_int *prims0, u_int *prims1, int badRefines) {
+        uint32_t *prims0, uint32_t *prims1, int badRefines) {
     Assert(nodeNum == nextFreeNode);
     // Get next free node from _nodes_ array
     if (nextFreeNode == nAllocedNodes) {
@@ -181,7 +181,7 @@ void KdTreeAccel::buildTree(int nodeNum, const BBox &nodeBounds,
     Vector d = nodeBounds.pMax - nodeBounds.pMin;
 
     // Choose which axis to split along
-    u_int axis = nodeBounds.MaximumExtent();
+    uint32_t axis = nodeBounds.MaximumExtent();
     int retries = 0;
     retrySplit:
 
@@ -202,7 +202,7 @@ void KdTreeAccel::buildTree(int nodeNum, const BBox &nodeBounds,
         if (edget > nodeBounds.pMin[axis] &&
             edget < nodeBounds.pMax[axis]) {
             // Compute cost for split at _i_th edge
-            u_int otherAxis0 = (axis + 1) % 3, otherAxis1 = (axis + 2) % 3;
+            uint32_t otherAxis0 = (axis + 1) % 3, otherAxis1 = (axis + 2) % 3;
             float belowSA = 2 * (d[otherAxis0] * d[otherAxis1] +
                                  (edget - nodeBounds.pMin[axis]) *
                                  (d[otherAxis0] + d[otherAxis1]));
@@ -257,7 +257,7 @@ void KdTreeAccel::buildTree(int nodeNum, const BBox &nodeBounds,
     buildTree(nodeNum+1, bounds0,
               allPrimBounds, prims0, n0, depth-1, edges,
               prims0, prims1 + nPrimitives, badRefines);
-    u_int aboveChild = nextFreeNode;
+    uint32_t aboveChild = nextFreeNode;
     nodes[nodeNum].initInterior(bestAxis, aboveChild, tsplit);
     buildTree(aboveChild, bounds1, allPrimBounds, prims1, n1,
               depth-1, edges, prims0, prims1 + nPrimitives, badRefines);
@@ -326,7 +326,7 @@ bool KdTreeAccel::Intersect(const Ray &ray,
         else {
             PBRT_KDTREE_INTERSECTION_TRAVERSED_LEAF_NODE(const_cast<KdAccelNode *>(node), node->nPrimitives());
             // Check for intersections inside leaf node
-            u_int nPrimitives = node->nPrimitives();
+            uint32_t nPrimitives = node->nPrimitives();
             if (nPrimitives == 1) {
                 const Reference<Primitive> &prim = primitives[node->onePrimitive];
                 // Check one primitive inside leaf node
@@ -337,8 +337,8 @@ bool KdTreeAccel::Intersect(const Ray &ray,
                 }
             }
             else {
-                u_int *prims = node->primitives;
-                for (u_int i = 0; i < nPrimitives; ++i) {
+                uint32_t *prims = node->primitives;
+                for (uint32_t i = 0; i < nPrimitives; ++i) {
                     const Reference<Primitive> &prim = primitives[prims[i]];
                     // Check one primitive inside leaf node
                     PBRT_KDTREE_INTERSECTION_PRIMITIVE_TEST(const_cast<Primitive *>(prim.GetPtr()));
@@ -384,7 +384,7 @@ bool KdTreeAccel::IntersectP(const Ray &ray) const {
         if (node->IsLeaf()) {
             PBRT_KDTREE_INTERSECTIONP_TRAVERSED_LEAF_NODE(const_cast<KdAccelNode *>(node), node->nPrimitives());
             // Check for shadow ray intersections inside leaf node
-            u_int nPrimitives = node->nPrimitives();
+            uint32_t nPrimitives = node->nPrimitives();
             if (nPrimitives == 1) {
                 const Reference<Primitive> &prim = primitives[node->onePrimitive];
                 PBRT_KDTREE_INTERSECTIONP_PRIMITIVE_TEST(const_cast<Primitive *>(prim.GetPtr()));
@@ -394,8 +394,8 @@ bool KdTreeAccel::IntersectP(const Ray &ray) const {
                 }
             }
             else {
-                u_int *prims = node->primitives;
-                for (u_int i = 0; i < nPrimitives; ++i) {
+                uint32_t *prims = node->primitives;
+                for (uint32_t i = 0; i < nPrimitives; ++i) {
                     const Reference<Primitive> &prim = primitives[prims[i]];
                     PBRT_KDTREE_INTERSECTIONP_PRIMITIVE_TEST(const_cast<Primitive *>(prim.GetPtr()));
                     if (prim->IntersectP(ray)) {

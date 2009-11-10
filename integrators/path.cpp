@@ -101,7 +101,7 @@ Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
         // Find next vertex of path
         if (!scene->Intersect(ray, &localIsect)) {
             if (specularBounce) {
-                for (u_int i = 0; i < scene->lights.size(); ++i)
+                for (uint32_t i = 0; i < scene->lights.size(); ++i)
                    L += pathThroughput * scene->lights[i]->Le(ray);
             }
             break;

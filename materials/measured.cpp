@@ -50,7 +50,7 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
         if (!ReadFloatFile(filename.c_str(), &values))
             Error("Unable to read BRDF data from file \"%s\"", filename.c_str());
         
-        u_int pos = 0;
+        uint32_t pos = 0;
         int numWls = int(values[pos++]);
         if ((values.size() - 1 - numWls) % (4 + numWls) != 0)
             Error("Excess or insufficient data in theta, phi BRDF file \"%s\"",
@@ -95,25 +95,25 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
         if (fread(dims, sizeof(int), 3, f) != 3)
             Error("Premature end-of-file in measured BRDF data file \"%s\"",
                   filename.c_str());
-        u_int n = dims[0] * dims[1] * dims[2];
+        uint32_t n = dims[0] * dims[1] * dims[2];
         if (n != nThetaH * nThetaD * nPhiD)  {
             Error("Dimensions don't match\n");
             fclose(f);
         }
         
         regularHalfangleData = new float[3*n];
-        const u_int chunkSize = 2*nPhiD;
+        const uint32_t chunkSize = 2*nPhiD;
         double tmp[chunkSize];
-        u_int nChunks = n / chunkSize;
+        uint32_t nChunks = n / chunkSize;
         Assert((n % chunkSize) == 0);
         float scales[3] = { 1.f/1500.f, 1.15f/1500.f, 1.66f/1500.f };
         for (int c = 0; c < 3; ++c) {
             int offset = 0;
-            for (u_int i = 0; i < nChunks; ++i) {
+            for (uint32_t i = 0; i < nChunks; ++i) {
                 if (fread(tmp, sizeof(double), chunkSize, f) != chunkSize)
                     Error("Premature end-of-file in measured BRDF data file \"%s\"",
                           filename.c_str());
-                for (u_int j = 0; j < chunkSize; ++j)
+                for (uint32_t j = 0; j < chunkSize; ++j)
                     regularHalfangleData[3 * offset++ + c] = max(0., tmp[j] * scales[c]);
             }
         }

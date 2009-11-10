@@ -140,16 +140,16 @@ void StratifiedSample1D(float *samples, int nsamples, RNG &rng,
 void StratifiedSample2D(float *samples, int nx, int ny, RNG &rng,
                         bool jitter = true);
 template <typename T>
-void Shuffle(T *samp, u_int count, u_int dims, RNG &rng) {
-    for (u_int i = 0; i < count; ++i) {
-        u_int other = i + (rng.RandomUInt() % (count - i));
-        for (u_int j = 0; j < dims; ++j)
+void Shuffle(T *samp, uint32_t count, uint32_t dims, RNG &rng) {
+    for (uint32_t i = 0; i < count; ++i) {
+        uint32_t other = i + (rng.RandomUInt() % (count - i));
+        for (uint32_t j = 0; j < dims; ++j)
             swap(samp[dims*i + j], samp[dims*other + j]);
     }
 }
 
 
-void LatinHypercube(float *samples, u_int nSamples, u_int nDim, RNG &rng);
+void LatinHypercube(float *samples, uint32_t nSamples, uint32_t nDim, RNG &rng);
 inline double RadicalInverse(int n, int base) {
     double val = 0;
     double invBase = 1. / base, invBi = invBase;
@@ -164,18 +164,18 @@ inline double RadicalInverse(int n, int base) {
 }
 
 
-inline void GeneratePermutation(u_int *buf, u_int b, RNG &rng) {
-    for (u_int i = 0; i < b; ++i)
+inline void GeneratePermutation(uint32_t *buf, uint32_t b, RNG &rng) {
+    for (uint32_t i = 0; i < b; ++i)
         buf[i] = i;
     Shuffle(buf, b, 1, rng);
 }
 
 
-inline double PermutedRadicalInverse(u_int n, u_int base, const u_int *p) {
+inline double PermutedRadicalInverse(uint32_t n, uint32_t base, const uint32_t *p) {
     double val = 0;
     double invBase = 1. / base, invBi = invBase;
     while (n > 0) {
-        u_int d_i = p[n % base];
+        uint32_t d_i = p[n % base];
         val += d_i * invBi;
         n *= invBase;
         invBi *= invBase;
@@ -187,31 +187,31 @@ inline double PermutedRadicalInverse(u_int n, u_int base, const u_int *p) {
 class PermutedHalton {
 public:
     // PermutedHalton Public Methods
-    PermutedHalton(u_int d, RNG &rng);
+    PermutedHalton(uint32_t d, RNG &rng);
     ~PermutedHalton() {
         delete[] b;
         delete[] permute;
     }
-    void Sample(u_int n, float *out) const {
-        u_int *p = permute;
-        for (u_int i = 0; i < dims; ++i) {
+    void Sample(uint32_t n, float *out) const {
+        uint32_t *p = permute;
+        for (uint32_t i = 0; i < dims; ++i) {
             out[i] = PermutedRadicalInverse(n, b[i], p);
             p += b[i];
         }
     }
 private:
     // PermutedHalton Private Data
-    u_int dims;
-    u_int *b, *permute;
+    uint32_t dims;
+    uint32_t *b, *permute;
     PermutedHalton(const PermutedHalton &);
     PermutedHalton &operator=(const PermutedHalton &);
 };
 
 
-inline float VanDerCorput(u_int n, u_int scramble = 0);
-inline float Sobol2(u_int n, u_int scramble = 0);
-inline float LarcherPillichshammer2(u_int n, u_int scramble = 0);
-inline void Sample02(u_int n, u_int scramble[2], float sample[2]);
+inline float VanDerCorput(uint32_t n, uint32_t scramble = 0);
+inline float Sobol2(uint32_t n, uint32_t scramble = 0);
+inline float LarcherPillichshammer2(uint32_t n, uint32_t scramble = 0);
+inline void Sample02(uint32_t n, uint32_t scramble[2], float sample[2]);
 int LDPixelSampleFloatsNeeded(const Sample *sample, int pixelSamples);
 void LDPixelSample(int xPos, int yPos, float shutterOpen,
     float shutterClose, int pixelSamples, Sample *samples, float *buf);
@@ -234,13 +234,13 @@ inline float PowerHeuristic(int nf, float fPdf, int ng, float gPdf) {
 
 
 // Sampling Inline Functions
-inline void Sample02(u_int n, u_int scramble[2], float sample[2]) {
+inline void Sample02(uint32_t n, uint32_t scramble[2], float sample[2]) {
     sample[0] = VanDerCorput(n, scramble[0]);
     sample[1] = Sobol2(n, scramble[1]);
 }
 
 
-inline float VanDerCorput(u_int n, u_int scramble) {
+inline float VanDerCorput(uint32_t n, uint32_t scramble) {
     // Reverse bits of _n_
     n = (n << 16) | (n >> 16);
     n = ((n & 0x00ff00ff) << 8) | ((n & 0xff00ff00) >> 8);
@@ -252,16 +252,16 @@ inline float VanDerCorput(u_int n, u_int scramble) {
 }
 
 
-inline float Sobol2(u_int n, u_int scramble) {
-    for (u_int v = 1 << 31; n != 0; n >>= 1, v ^= v >> 1)
+inline float Sobol2(uint32_t n, uint32_t scramble) {
+    for (uint32_t v = 1 << 31; n != 0; n >>= 1, v ^= v >> 1)
         if (n & 0x1) scramble ^= v;
     return (float)scramble / (float)0x100000000LL;
 }
 
 
 inline float
-LarcherPillichshammer2(u_int n, u_int scramble) {
-    for (u_int v = 1 << 31; n != 0; n >>= 1, v |= v >> 1)
+LarcherPillichshammer2(uint32_t n, uint32_t scramble) {
+    for (uint32_t v = 1 << 31; n != 0; n >>= 1, v |= v >> 1)
         if (n & 0x1) scramble ^= v;
     return (float)scramble / (float)0x100000000LL;
 }
@@ -269,7 +269,7 @@ LarcherPillichshammer2(u_int n, u_int scramble) {
 
 inline void LDShuffleScrambled1D(int nSamples, int nPixel,
         float *samples, RNG &rng) {
-    u_int scramble = rng.RandomUInt();
+    uint32_t scramble = rng.RandomUInt();
     for (int i = 0; i < nSamples * nPixel; ++i)
         samples[i] = VanDerCorput(i, scramble);
     for (int i = 0; i < nPixel; ++i)
@@ -280,7 +280,7 @@ inline void LDShuffleScrambled1D(int nSamples, int nPixel,
 
 inline void LDShuffleScrambled2D(int nSamples,
         int nPixel, float *samples, RNG &rng) {
-    u_int scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
+    uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
     for (int i = 0; i < nSamples * nPixel; ++i)
         Sample02(i, scramble, &samples[2*i]);
     for (int i = 0; i < nPixel; ++i)

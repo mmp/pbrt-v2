@@ -50,7 +50,7 @@ public:
         ProgressReporter &prog, bool &at, int &ndp,
         vector<Photon> &direct, vector<Photon> &indir, vector<Photon> &caustic,
         vector<RadiancePhoton> &rps, vector<Spectrum> &rpR, vector<Spectrum> &rpT,
-        u_int &ns, Distribution1D *distrib, const Scene *sc,
+        uint32_t &ns, Distribution1D *distrib, const Scene *sc,
         const Renderer *sr)
     : taskNum(tn), time(ti), mutex(m), integrator(in), progress(prog),
       abortTasks(at), nDirectPaths(ndp),
@@ -69,7 +69,7 @@ public:
     vector<Photon> &directPhotons, &indirectPhotons, &causticPhotons;
     vector<RadiancePhoton> &radiancePhotons;
     vector<Spectrum> &rpReflectances, &rpTransmittances;
-    u_int &nshot;
+    uint32_t &nshot;
     const Distribution1D *lightDistribution;
     const Scene *scene;
     const Renderer *renderer;
@@ -88,10 +88,10 @@ struct RadiancePhoton {
 
 class ComputeRadianceTask : public Task {
 public:
-    ComputeRadianceTask(ProgressReporter &prog, u_int tn, u_int nt,
+    ComputeRadianceTask(ProgressReporter &prog, uint32_t tn, uint32_t nt,
         vector<RadiancePhoton> &rps, const vector<Spectrum> &rhor,
         const vector<Spectrum> &rhot,
-        u_int nlookup, float md2,
+        uint32_t nlookup, float md2,
         int ndirect, KdTree<Photon> *direct,
         int nindirect, KdTree<Photon> *indirect,
         int ncaus, KdTree<Photon> *caustic)
@@ -104,10 +104,10 @@ public:
 
 private:
     ProgressReporter &progress;
-    u_int taskNum, numTasks;
+    uint32_t taskNum, numTasks;
     vector<RadiancePhoton> &radiancePhotons;
     const vector<Spectrum> &rpReflectances, &rpTransmittances;
-    u_int nLookup;
+    uint32_t nLookup;
     float maxDistSquared;
     int nDirectPaths, nIndirectPaths, nCausticPaths;
     KdTree<Photon> *directMap, *indirectMap, *causticMap;
@@ -116,11 +116,11 @@ private:
 
 struct PhotonProcess {
     // PhotonProcess Public Methods
-    PhotonProcess(u_int mp, ClosePhoton *buf);
+    PhotonProcess(uint32_t mp, ClosePhoton *buf);
     void operator()(const Point &p, const Photon &photon, float dist2, float &maxDistSquared);
     ClosePhoton *photons;
-    u_int nLookup;
-    u_int nFound;
+    uint32_t nLookup;
+    uint32_t nFound;
 };
 
 
@@ -139,7 +139,7 @@ struct ClosePhoton {
 };
 
 
-PhotonProcess::PhotonProcess(u_int mp, ClosePhoton *buf) {
+PhotonProcess::PhotonProcess(uint32_t mp, ClosePhoton *buf) {
     photons = buf;
     nLookup = mp;
     nFound = 0;
@@ -172,7 +172,7 @@ static Spectrum EPhoton(KdTree<Photon> *map, int count, int nLookup,
     ClosePhoton *lookupBuf, float maxDistSquared, const Point &p, const Normal &n);
 
 // PhotonIntegrator Local Definitions
-inline bool unsuccessful(u_int needed, u_int found, u_int shot) {
+inline bool unsuccessful(uint32_t needed, uint32_t found, uint32_t shot) {
     return (found < needed && (found == 0 || found < shot / 1024));
 }
 
@@ -256,7 +256,7 @@ Spectrum EPhoton(KdTree<Photon> *map, int count, int nLookup,
     if (proc.nFound == 0) return Spectrum(0.f);
     ClosePhoton *photons = proc.photons;
     Spectrum E(0.);
-    for (u_int i = 0; i < proc.nFound; ++i)
+    for (uint32_t i = 0; i < proc.nFound; ++i)
         if (Dot(n, photons[i].photon->wi) > 0.)
             E += photons[i].photon->alpha;
     return E / (count * md2 * M_PI);
@@ -297,10 +297,10 @@ PhotonIntegrator::~PhotonIntegrator() {
 void PhotonIntegrator::RequestSamples(Sampler *sampler, Sample *sample,
         const Scene *scene) {
     // Allocate and request samples for sampling all lights
-    u_int nLights = scene->lights.size();
+    uint32_t nLights = scene->lights.size();
     lightSampleOffsets = new LightSampleOffsets[nLights];
     bsdfSampleOffsets = new BSDFSampleOffsets[nLights];
-    for (u_int i = 0; i < nLights; ++i) {
+    for (uint32_t i = 0; i < nLights; ++i) {
         const Light *light = scene->lights[i];
         int nSamples = light->nSamples;
         if (sampler) nSamples = sampler->RoundSize(nSamples);
@@ -329,7 +329,7 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
     bool abortTasks = false;
     causticPhotons.reserve(nCausticPhotonsWanted);
     indirectPhotons.reserve(nIndirectPhotonsWanted);
-    u_int nshot = 0;
+    uint32_t nshot = 0;
     vector<Spectrum> rpReflectances, rpTransmittances;
 
     // Compute light power CDF for photon shooting
@@ -347,7 +347,7 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
             nshot, lightDistribution, scene, renderer));
     EnqueueTasks(photonShootingTasks);
     WaitForAllTasks();
-    for (u_int i = 0; i < photonShootingTasks.size(); ++i)
+    for (uint32_t i = 0; i < photonShootingTasks.size(); ++i)
         delete photonShootingTasks[i];
     Mutex::Destroy(mutex);
     progress.Done();
@@ -365,9 +365,9 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
     if (finalGather) {
         // Launch tasks to compute photon radiances
         vector<Task *> radianceTasks;
-        u_int numTasks = 64;
+        uint32_t numTasks = 64;
         ProgressReporter progRadiance(numTasks, "Computing photon radiances");
-        for (u_int i = 0; i < numTasks; ++i)
+        for (uint32_t i = 0; i < numTasks; ++i)
             radianceTasks.push_back(new ComputeRadianceTask(progRadiance,
                 i, numTasks, radiancePhotons, rpReflectances, rpTransmittances,
                 nLookup, maxDistSquared, nDirectPaths, directMap,
@@ -375,7 +375,7 @@ void PhotonIntegrator::Preprocess(const Scene *scene,
                 nCausticPaths, causticMap));
         EnqueueTasks(radianceTasks);
         WaitForAllTasks();
-        for (u_int i = 0; i < radianceTasks.size(); ++i)
+        for (uint32_t i = 0; i < radianceTasks.size(); ++i)
             delete radianceTasks[i];
         progRadiance.Done();
     }
@@ -391,15 +391,15 @@ void PhotonShootingTask::Run() {
     RNG rng(31 * taskNum);
     vector<Photon> localDirectPhotons, localIndirectPhotons, localCausticPhotons;
     vector<RadiancePhoton> localRadiancePhotons;
-    u_int totalPaths = 0;
+    uint32_t totalPaths = 0;
     bool causticDone = (integrator->nCausticPhotonsWanted == 0);
     bool indirectDone = (integrator->nIndirectPhotonsWanted == 0);
     PermutedHalton halton(6, rng);
     vector<Spectrum> localRpReflectances, localRpTransmittances;
     while (true) {
         // Follow photon paths for a block of samples
-        const u_int blockSize = 4096;
-        for (u_int i = 0; i < blockSize; ++i) {
+        const uint32_t blockSize = 4096;
+        for (uint32_t i = 0; i < blockSize; ++i) {
             float u[6];
             halton.Sample(++totalPaths, u);
             // Choose light to shoot photon from
@@ -421,7 +421,7 @@ void PhotonShootingTask::Run() {
                 PBRT_PHOTON_MAP_STARTED_RAY_PATH(&photonRay, &alpha);
                 bool specularPath = true;
                 Intersection photonIsect;
-                u_int nIntersections = 0;
+                uint32_t nIntersections = 0;
                 while (scene->Intersect(photonRay, &photonIsect)) {
                     ++nIntersections;
                     // Handle photon/surface intersection
@@ -529,7 +529,7 @@ void PhotonShootingTask::Run() {
 
         // Merge direct photons into shared array
         nDirectPaths += blockSize;
-        for (u_int i = 0; i < localDirectPhotons.size(); ++i)
+        for (uint32_t i = 0; i < localDirectPhotons.size(); ++i)
             directPhotons.push_back(localDirectPhotons[i]);
         localDirectPhotons.erase(localDirectPhotons.begin(),
                                  localDirectPhotons.end());
@@ -537,7 +537,7 @@ void PhotonShootingTask::Run() {
         // Merge indirect photons into shared array
         if (!indirectDone) {
             integrator->nIndirectPaths += blockSize;
-            for (u_int i = 0; i < localIndirectPhotons.size(); ++i)
+            for (uint32_t i = 0; i < localIndirectPhotons.size(); ++i)
                 indirectPhotons.push_back(localIndirectPhotons[i]);
             localIndirectPhotons.erase(localIndirectPhotons.begin(),
                                        localIndirectPhotons.end());
@@ -548,7 +548,7 @@ void PhotonShootingTask::Run() {
         // Merge caustic photons into shared array
         if (!causticDone) {
             integrator->nCausticPaths += blockSize;
-            for (u_int i = 0; i < localCausticPhotons.size(); ++i)
+            for (uint32_t i = 0; i < localCausticPhotons.size(); ++i)
                 causticPhotons.push_back(localCausticPhotons[i]);
             localCausticPhotons.erase(localCausticPhotons.begin(), localCausticPhotons.end());
             if (causticPhotons.size() >= integrator->nCausticPhotonsWanted)
@@ -556,13 +556,13 @@ void PhotonShootingTask::Run() {
         }
 
         // Merge radiance photons and reflectances into shared array
-        for (u_int i = 0; i < localRadiancePhotons.size(); ++i)
+        for (uint32_t i = 0; i < localRadiancePhotons.size(); ++i)
             radiancePhotons.push_back(localRadiancePhotons[i]);
         localRadiancePhotons.erase(localRadiancePhotons.begin(), localRadiancePhotons.end());
-        for (u_int i = 0; i < localRpReflectances.size(); ++i)
+        for (uint32_t i = 0; i < localRpReflectances.size(); ++i)
             rpReflectances.push_back(localRpReflectances[i]);
         localRpReflectances.erase(localRpReflectances.begin(), localRpReflectances.end());
-        for (u_int i = 0; i < localRpTransmittances.size(); ++i)
+        for (uint32_t i = 0; i < localRpTransmittances.size(); ++i)
             rpTransmittances.push_back(localRpTransmittances[i]);
         localRpTransmittances.erase(localRpTransmittances.begin(), localRpTransmittances.end());
         }
@@ -576,14 +576,14 @@ void PhotonShootingTask::Run() {
 
 void ComputeRadianceTask::Run() {
     // Compute range of radiance photons to process in task
-    u_int taskSize = radiancePhotons.size() / numTasks;
-    u_int excess = radiancePhotons.size() % numTasks;
-    u_int rpStart = min(taskNum, excess) * (taskSize+1) +
+    uint32_t taskSize = radiancePhotons.size() / numTasks;
+    uint32_t excess = radiancePhotons.size() % numTasks;
+    uint32_t rpStart = min(taskNum, excess) * (taskSize+1) +
                     max(0, (int)taskNum-(int)excess) * taskSize;
-    u_int rpEnd = rpStart + taskSize + (taskNum < excess ? 1 : 0);
+    uint32_t rpEnd = rpStart + taskSize + (taskNum < excess ? 1 : 0);
     if (taskNum == numTasks-1) Assert(rpEnd == radiancePhotons.size());
     ClosePhoton *lookupBuf = new ClosePhoton[nLookup];
-    for (u_int i = rpStart; i < rpEnd; ++i) {
+    for (uint32_t i = rpStart; i < rpEnd; ++i) {
         // Compute radiance for radiance photon _i_
         RadiancePhoton &rp = radiancePhotons[i];
         const Spectrum &rho_r = rpReflectances[i], &rho_t = rpTransmittances[i];
@@ -640,7 +640,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
             BSDF_TRANSMISSION | BSDF_DIFFUSE | BSDF_GLOSSY);
         if (bsdf->NumComponents(nonSpecular) > 0) {
             // Find indirect photons around point for importance sampling
-            const u_int nIndirSamplePhotons = 50;
+            const uint32_t nIndirSamplePhotons = 50;
             PhotonProcess proc(nIndirSamplePhotons,
                                arena.Alloc<ClosePhoton>(nIndirSamplePhotons));
             float searchDist2 = maxDistSquared;
@@ -653,7 +653,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
 
             // Copy photon directions to local array
             Vector *photonDirs = arena.Alloc<Vector>(nIndirSamplePhotons);
-            for (u_int i = 0; i < nIndirSamplePhotons; ++i)
+            for (uint32_t i = 0; i < nIndirSamplePhotons; ++i)
                 photonDirs[i] = proc.photons[i].photon->wi;
 
             // Use BSDF to do final gathering
@@ -689,7 +689,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
                     // Compute PDF for photon-sampling of direction _wi_
                     float photonPdf = 0.f;
                     float conePdf = UniformConePdf(cosGatherAngle);
-                    for (u_int j = 0; j < nIndirSamplePhotons; ++j)
+                    for (uint32_t j = 0; j < nIndirSamplePhotons; ++j)
                         if (Dot(photonDirs[j], wi) > .999f * cosGatherAngle)
                             photonPdf += conePdf;
                     photonPdf /= nIndirSamplePhotons;
@@ -735,7 +735,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
                     // Compute PDF for photon-sampling of direction _wi_
                     float photonPdf = 0.f;
                     float conePdf = UniformConePdf(cosGatherAngle);
-                    for (u_int j = 0; j < nIndirSamplePhotons; ++j)
+                    for (uint32_t j = 0; j < nIndirSamplePhotons; ++j)
                         if (Dot(photonDirs[j], wi) > .999f * cosGatherAngle)
                             photonPdf += conePdf;
                     photonPdf /= nIndirSamplePhotons;

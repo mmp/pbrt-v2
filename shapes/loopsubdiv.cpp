@@ -222,7 +222,7 @@ LoopSubdiv::~LoopSubdiv() {
 
 BBox LoopSubdiv::ObjectBound() const {
     BBox b;
-    for (u_int i = 0; i < vertices.size(); i++)
+    for (uint32_t i = 0; i < vertices.size(); i++)
         b = Union(b, vertices[i]->P);
     return b;
 }
@@ -230,7 +230,7 @@ BBox LoopSubdiv::ObjectBound() const {
 
 BBox LoopSubdiv::WorldBound() const {
     BBox b;
-    for (u_int i = 0; i < vertices.size(); i++)
+    for (uint32_t i = 0; i < vertices.size(); i++)
         b = Union(b, (*ObjectToWorld)(vertices[i]->P));
     return b;
 }
@@ -251,13 +251,13 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
         vector<SDVertex *> newVertices;
 
         // Allocate next level of children in mesh tree
-        for (u_int j = 0; j < v.size(); ++j) {
+        for (uint32_t j = 0; j < v.size(); ++j) {
             v[j]->child = arena.Alloc<SDVertex>();
             v[j]->child->regular = v[j]->regular;
             v[j]->child->boundary = v[j]->boundary;
             newVertices.push_back(v[j]->child);
         }
-        for (u_int j = 0; j < f.size(); ++j)
+        for (uint32_t j = 0; j < f.size(); ++j)
             for (int k = 0; k < 4; ++k) {
                 f[j]->children[k] = arena.Alloc<SDFace>();
                 newFaces.push_back(f[j]->children[k]);
@@ -266,7 +266,7 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
         // Update vertex positions and create new edge vertices
 
         // Update vertex positions for even vertices
-        for (u_int j = 0; j < v.size(); ++j) {
+        for (uint32_t j = 0; j < v.size(); ++j) {
             if (!v[j]->boundary) {
                 // Apply one-ring rule for even vertex
                 if (v[j]->regular)
@@ -282,7 +282,7 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
 
         // Compute new odd edge vertices
         map<SDEdge, SDVertex *> edgeVerts;
-        for (u_int j = 0; j < f.size(); ++j) {
+        for (uint32_t j = 0; j < f.size(); ++j) {
             SDFace *face = f[j];
             for (int k = 0; k < 3; ++k) {
                 // Compute odd vertex on _k_th edge
@@ -316,7 +316,7 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
         // Update new mesh topology
 
         // Update even vertex face pointers
-        for (u_int j = 0; j < v.size(); ++j) {
+        for (uint32_t j = 0; j < v.size(); ++j) {
             SDVertex *vert = v[j];
             int vertNum = vert->startFace->vnum(vert);
             vert->child->startFace =
@@ -324,7 +324,7 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
         }
 
         // Update face neighbor pointers
-        for (u_int j = 0; j < f.size(); ++j) {
+        for (uint32_t j = 0; j < f.size(); ++j) {
             SDFace *face = f[j];
             for (int k = 0; k < 3; ++k) {
                 // Update children _f_ pointers for siblings
@@ -342,7 +342,7 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
         }
 
         // Update face vertex pointers
-        for (u_int j = 0; j < f.size(); ++j) {
+        for (uint32_t j = 0; j < f.size(); ++j) {
             SDFace *face = f[j];
             for (int k = 0; k < 3; ++k) {
                 // Update child vertex pointer to new even vertex
@@ -362,20 +362,20 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
     }
     // Push vertices to limit surface
     Point *Plimit = new Point[v.size()];
-    for (u_int i = 0; i < v.size(); ++i) {
+    for (uint32_t i = 0; i < v.size(); ++i) {
         if (v[i]->boundary)
             Plimit[i] =  weightBoundary(v[i], 1.f/5.f);
         else
             Plimit[i] =  weightOneRing(v[i], gamma(v[i]->valence()));
     }
-    for (u_int i = 0; i < v.size(); ++i)
+    for (uint32_t i = 0; i < v.size(); ++i)
         v[i]->P = Plimit[i];
 
     // Compute vertex tangents on limit surface
     vector<Normal> Ns;
     Ns.reserve(v.size());
     vector<Point> Pring(16, Point());
-    for (u_int i = 0; i < v.size(); ++i) {
+    for (uint32_t i = 0; i < v.size(); ++i) {
         SDVertex *vert = v[i];
         Vector S(0,0,0), T(0,0,0);
         int valence = vert->valence();
@@ -413,14 +413,14 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
     }
 
     // Create _TriangleMesh_ from subdivision mesh
-    u_int ntris = u_int(f.size());
+    uint32_t ntris = uint32_t(f.size());
     int *verts = new int[3*ntris];
     int *vp = verts;
-    u_int totVerts = u_int(v.size());
+    uint32_t totVerts = uint32_t(v.size());
     map<SDVertex *, int> usedVerts;
-    for (u_int i = 0; i < totVerts; ++i)
+    for (uint32_t i = 0; i < totVerts; ++i)
         usedVerts[v[i]] = i;
-    for (u_int i = 0; i < ntris; ++i) {
+    for (uint32_t i = 0; i < ntris; ++i) {
         for (int j = 0; j < 3; ++j) {
             *vp = usedVerts[f[i]->v[j]];
             ++vp;

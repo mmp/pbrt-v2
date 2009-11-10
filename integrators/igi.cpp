@@ -42,10 +42,10 @@ IGIIntegrator::~IGIIntegrator() {
 void IGIIntegrator::RequestSamples(Sampler *sampler,
         Sample *sample, const Scene *scene) {
     // Allocate and request samples for sampling all lights
-    u_int nLights = scene->lights.size();
+    uint32_t nLights = scene->lights.size();
     lightSampleOffsets = new LightSampleOffsets[nLights];
     bsdfSampleOffsets = new BSDFSampleOffsets[nLights];
-    for (u_int i = 0; i < nLights; ++i) {
+    for (uint32_t i = 0; i < nLights; ++i) {
         const Light *light = scene->lights[i];
         int nSamples = light->nSamples;
         if (sampler) nSamples = sampler->RoundSize(nSamples);
@@ -75,8 +75,8 @@ void IGIIntegrator::Preprocess(const Scene *scene,
 
     // Precompute information for light sampling densities
     Distribution1D *lightDistribution = ComputeLightSamplingCDF(scene);
-    for (u_int s = 0; s < nLightSets; ++s) {
-        for (u_int i = 0; i < nLightPaths; ++i) {
+    for (uint32_t s = 0; s < nLightSets; ++s) {
+        for (uint32_t i = 0; i < nLightPaths; ++i) {
             // Follow path _i_ from light to create virtual lights
             int sampOffset = s*nLightPaths + i;
 
@@ -152,9 +152,9 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
                     wo, isect.rayEpsilon, bsdf, sample,
                     lightSampleOffsets, bsdfSampleOffsets);
     // Compute indirect illumination with virtual lights
-    u_int lSet = min(u_int(sample->oneD[vlSetOffset][0] * nLightSets),
+    uint32_t lSet = min(uint32_t(sample->oneD[vlSetOffset][0] * nLightSets),
                      nLightSets-1);
-    for (u_int i = 0; i < virtualLights[lSet].size(); ++i) {
+    for (uint32_t i = 0; i < virtualLights[lSet].size(); ++i) {
         const VirtualLight &vl = virtualLights[lSet][i];
         // Compute virtual light's tentative contribution _Llight_
         float d2 = DistanceSquared(p, vl.p);

@@ -194,7 +194,7 @@ void SampleRenderer::Render(const Scene *scene) {
                                              reporter));
     EnqueueTasks(renderTasks);
     WaitForAllTasks();
-    for (u_int i = 0; i < renderTasks.size(); ++i)
+    for (uint32_t i = 0; i < renderTasks.size(); ++i)
         delete renderTasks[i];
     reporter.Done();
     PBRT_FINISHED_RENDERING();
@@ -220,7 +220,7 @@ Spectrum SampleRenderer::Li(const Scene *scene,
             arena);
     else {
         // Handle ray that doesn't intersect any geometry
-        for (u_int i = 0; i < scene->lights.size(); ++i)
+        for (uint32_t i = 0; i < scene->lights.size(); ++i)
            Lo += scene->lights[i]->Le(ray);
     }
     Spectrum Lv = volumeIntegrator->Li(scene, this, ray, sample, T,

@@ -114,8 +114,8 @@ public:
         return t.m != m || t.mInv != mInv;
     }
     bool operator<(const Transform &t2) const {
-        for (u_int i = 0; i < 4; ++i)
-            for (u_int j = 0; j < 4; ++j) {
+        for (uint32_t i = 0; i < 4; ++i)
+            for (uint32_t j = 0; j < 4; ++j) {
                 if (m.m[i][j] < t2.m.m[i][j]) return true;
                 if (m.m[i][j] > t2.m.m[i][j]) return false;
             }

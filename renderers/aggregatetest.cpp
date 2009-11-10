@@ -35,9 +35,9 @@
 AggregateTest::AggregateTest(int niters,
         const vector<Reference<Primitive> > &p) {
     nIterations = niters;
-    for (u_int i = 0; i < p.size(); ++i)
+    for (uint32_t i = 0; i < p.size(); ++i)
         p[i]->FullyRefine(primitives);
-    for (u_int i = 0; i < primitives.size(); ++i)
+    for (uint32_t i = 0; i < primitives.size(); ++i)
         bboxes.push_back(primitives[i]->WorldBound());
 }
 
@@ -85,7 +85,7 @@ void AggregateTest::Render(const Scene *scene) {
         bool hitAccel = scene->Intersect(rayAccel, &isectAccel);
         bool hitAll = false;
         bool inconsistentBounds = false;
-        for (u_int j = 0; j < primitives.size(); ++j) {
+        for (uint32_t j = 0; j < primitives.size(); ++j) {
             if (bboxes[j].IntersectP(rayAll))
                 hitAll |= primitives[j]->Intersect(rayAll, &isectAll);
             else if (primitives[j]->Intersect(rayAll, &isectAll))

@@ -263,7 +263,7 @@ static RenderOptions *renderOptions = NULL;
 static GraphicsState graphicsState;
 static vector<GraphicsState> pushedGraphicsStates;
 static vector<TransformSet> pushedTransforms;
-static vector<u_int> pushedActiveTransformBits;
+static vector<uint32_t> pushedActiveTransformBits;
 static TransformCache transformCache;
 
 // API Macros

@@ -92,9 +92,9 @@ int StratifiedSampler::GetMoreSamples(Sample *samples) {
         samples[i].lensV = lensSamples[2*i+1];
         samples[i].time = Lerp(timeSamples[i], shutterOpen, shutterClose);
         // Generate stratified samples for integrators
-        for (u_int j = 0; j < samples[i].n1D.size(); ++j)
+        for (uint32_t j = 0; j < samples[i].n1D.size(); ++j)
             LatinHypercube(samples[i].oneD[j], samples[i].n1D[j], 1, rng);
-        for (u_int j = 0; j < samples[i].n2D.size(); ++j)
+        for (uint32_t j = 0; j < samples[i].n2D.size(); ++j)
             LatinHypercube(samples[i].twoD[j], samples[i].n2D[j], 2, rng);
     }
 

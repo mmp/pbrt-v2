@@ -138,7 +138,7 @@ void ParamSet::AddSampledSpectrumFiles(const string &name, const char **names,
                         "Ignoring it.", names[i]);
             }
             vector<float> wls, v;
-            for (u_int j = 0; j < vals.size() / 2; ++j) {
+            for (uint32_t j = 0; j < vals.size() / 2; ++j) {
                 wls.push_back(vals[2*j]);
                 v.push_back(vals[2*j+1]);
             }
@@ -164,7 +164,7 @@ void ParamSet::AddTexture(const string &name, const string &value) {
 
 
 bool ParamSet::EraseInt(const string &n) {
-    for (u_int i = 0; i < ints.size(); ++i)
+    for (uint32_t i = 0; i < ints.size(); ++i)
         if (ints[i]->name == n) {
             ints.erase(ints.begin() + i);
             return true;
@@ -174,7 +174,7 @@ bool ParamSet::EraseInt(const string &n) {
 
 
 bool ParamSet::EraseBool(const string &n) {
-    for (u_int i = 0; i < bools.size(); ++i)
+    for (uint32_t i = 0; i < bools.size(); ++i)
         if (bools[i]->name == n) {
             bools.erase(bools.begin() + i);
             return true;
@@ -184,7 +184,7 @@ bool ParamSet::EraseBool(const string &n) {
 
 
 bool ParamSet::EraseFloat(const string &n) {
-    for (u_int i = 0; i < floats.size(); ++i)
+    for (uint32_t i = 0; i < floats.size(); ++i)
         if (floats[i]->name == n) {
             floats.erase(floats.begin() + i);
             return true;
@@ -194,7 +194,7 @@ bool ParamSet::EraseFloat(const string &n) {
 
 
 bool ParamSet::ErasePoint(const string &n) {
-    for (u_int i = 0; i < points.size(); ++i)
+    for (uint32_t i = 0; i < points.size(); ++i)
         if (points[i]->name == n) {
             points.erase(points.begin() + i);
             return true;
@@ -204,7 +204,7 @@ bool ParamSet::ErasePoint(const string &n) {
 
 
 bool ParamSet::EraseVector(const string &n) {
-    for (u_int i = 0; i < vectors.size(); ++i)
+    for (uint32_t i = 0; i < vectors.size(); ++i)
         if (vectors[i]->name == n) {
             vectors.erase(vectors.begin() + i);
             return true;
@@ -214,7 +214,7 @@ bool ParamSet::EraseVector(const string &n) {
 
 
 bool ParamSet::EraseNormal(const string &n) {
-    for (u_int i = 0; i < normals.size(); ++i)
+    for (uint32_t i = 0; i < normals.size(); ++i)
         if (normals[i]->name == n) {
             normals.erase(normals.begin() + i);
             return true;
@@ -224,7 +224,7 @@ bool ParamSet::EraseNormal(const string &n) {
 
 
 bool ParamSet::EraseSpectrum(const string &n) {
-    for (u_int i = 0; i < spectra.size(); ++i)
+    for (uint32_t i = 0; i < spectra.size(); ++i)
         if (spectra[i]->name == n) {
             spectra.erase(spectra.begin() + i);
             return true;
@@ -234,7 +234,7 @@ bool ParamSet::EraseSpectrum(const string &n) {
 
 
 bool ParamSet::EraseString(const string &n) {
-    for (u_int i = 0; i < strings.size(); ++i)
+    for (uint32_t i = 0; i < strings.size(); ++i)
         if (strings[i]->name == n) {
             strings.erase(strings.begin() + i);
             return true;
@@ -244,7 +244,7 @@ bool ParamSet::EraseString(const string &n) {
 
 
 bool ParamSet::EraseTexture(const string &n) {
-    for (u_int i = 0; i < textures.size(); ++i)
+    for (uint32_t i = 0; i < textures.size(); ++i)
         if (textures[i]->name == n) {
             textures.erase(textures.begin() + i);
             return true;
@@ -254,7 +254,7 @@ bool ParamSet::EraseTexture(const string &n) {
 
 
 float ParamSet::FindOneFloat(const string &name, float d) const {
-    for (u_int i = 0; i < floats.size(); ++i)
+    for (uint32_t i = 0; i < floats.size(); ++i)
         if (floats[i]->name == name && floats[i]->nItems == 1) {
             floats[i]->lookedUp = true;
             return *(floats[i]->data);
@@ -264,7 +264,7 @@ float ParamSet::FindOneFloat(const string &name, float d) const {
 
 
 const float *ParamSet::FindFloat(const string &name, int *n) const {
-    for (u_int i = 0; i < floats.size(); ++i)
+    for (uint32_t i = 0; i < floats.size(); ++i)
         if (floats[i]->name == name) {
             *n = floats[i]->nItems;
             floats[i]->lookedUp = true;
@@ -356,7 +356,7 @@ void ParamSet::ReportUnused() const {
         if (!(v)[i]->lookedUp) \
             Warning("Parameter \"%s\" not used", \
                 (v)[i]->name.c_str())
-    u_int i;
+    uint32_t i;
     CHECK_UNUSED(ints);    CHECK_UNUSED(bools);
     CHECK_UNUSED(floats);  CHECK_UNUSED(points);
     CHECK_UNUSED(vectors); CHECK_UNUSED(normals);
@@ -379,7 +379,7 @@ void ParamSet::Clear() {
 
 string ParamSet::ToString() const {
     string ret;
-    u_int i;
+    uint32_t i;
     int j;
     string typeString;
     const int bufLen = 48*1024*1024;

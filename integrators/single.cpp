@@ -81,7 +81,7 @@ Spectrum SingleScatteringIntegrator::Li(const Scene *scene, const Renderer *rend
     LDShuffleScrambled1D(1, nSamples, lightComp, *sample->rng);
     float *lightPos = arena.Alloc<float>(2*nSamples);
     LDShuffleScrambled2D(1, nSamples, lightPos, *sample->rng);
-    u_int sampOffset = 0;
+    uint32_t sampOffset = 0;
     for (int i = 0; i < nSamples; ++i, t0 += step) {
         // Advance to sample at _t0_ and update _T_
         pPrev = p;

@@ -37,13 +37,13 @@ GridAccel::GridAccel(const vector<Reference<Primitive> > &p,
 
     // Initialize _primitives_ with primitives for grid
     if (refineImmediately)
-        for (u_int i = 0; i < p.size(); ++i)
+        for (uint32_t i = 0; i < p.size(); ++i)
             p[i]->FullyRefine(primitives);
     else
         primitives = p;
 
     // Compute bounds and choose grid resolution
-    for (u_int i = 0; i < primitives.size(); ++i)
+    for (uint32_t i = 0; i < primitives.size(); ++i)
         bounds = Union(bounds, primitives[i]->WorldBound());
     Vector delta = bounds.pMax - bounds.pMin;
 
@@ -69,7 +69,7 @@ GridAccel::GridAccel(const vector<Reference<Primitive> > &p,
     memset(voxels, 0, nVoxels * sizeof(Voxel *));
 
     // Add primitives to grid voxels
-    for (u_int i = 0; i < primitives.size(); ++i) {
+    for (uint32_t i = 0; i < primitives.size(); ++i) {
         // Find voxel extent of primitive
         BBox pb = primitives[i]->WorldBound();
         int vmin[3], vmax[3];
@@ -185,7 +185,7 @@ bool Voxel::Intersect(const Ray &ray, Intersection *isect,
     // Refine primitives in voxel if needed
     if (!allCanIntersect) {
         lock.UpgradeToWrite();
-        for (u_int i = 0; i < primitives.size(); ++i) {
+        for (uint32_t i = 0; i < primitives.size(); ++i) {
             Reference<Primitive> &prim = primitives[i];
             // Refine primitive _prim_ if it's not intersectable
             if (!prim->CanIntersect()) {
@@ -204,7 +204,7 @@ bool Voxel::Intersect(const Ray &ray, Intersection *isect,
 
     // Loop over primitives in voxel and find intersections
     bool hitSomething = false;
-    for (u_int i = 0; i < primitives.size(); ++i) {
+    for (uint32_t i = 0; i < primitives.size(); ++i) {
         Reference<Primitive> &prim = primitives[i];
         PBRT_GRID_RAY_PRIMITIVE_INTERSECTION_TEST(const_cast<Primitive *>(prim.GetPtr()));
         if (prim->Intersect(ray, isect)) {
@@ -283,7 +283,7 @@ bool Voxel::IntersectP(const Ray &ray, RWMutexLock &lock) {
     // Refine primitives in voxel if needed
     if (!allCanIntersect) {
         lock.UpgradeToWrite();
-        for (u_int i = 0; i < primitives.size(); ++i) {
+        for (uint32_t i = 0; i < primitives.size(); ++i) {
             Reference<Primitive> &prim = primitives[i];
             // Refine primitive _prim_ if it's not intersectable
             if (!prim->CanIntersect()) {
@@ -299,7 +299,7 @@ bool Voxel::IntersectP(const Ray &ray, RWMutexLock &lock) {
         allCanIntersect = true;
         lock.DowngradeToRead();
     }
-    for (u_int i = 0; i < primitives.size(); ++i) {
+    for (uint32_t i = 0; i < primitives.size(); ++i) {
         Reference<Primitive> &prim = primitives[i];
         PBRT_GRID_RAY_PRIMITIVE_INTERSECTIONP_TEST(const_cast<Primitive *>(prim.GetPtr()));
         if (prim->IntersectP(ray)) {

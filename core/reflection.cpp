@@ -451,7 +451,7 @@ BSDFSampleOffsets::BSDFSampleOffsets(int count, Sample *sample) {
 
 
 BSDFSample::BSDFSample(const Sample *sample,
-                       const BSDFSampleOffsets &offsets, u_int num) {
+                       const BSDFSampleOffsets &offsets, uint32_t num) {
     Assert(num < sample->n2D[offsets.dirOffset]);
     Assert(num < sample->n1D[offsets.componentOffset]);
     uDir[0] = sample->twoD[offsets.dirOffset][2*num];

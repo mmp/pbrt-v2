@@ -43,13 +43,13 @@ struct BVHPrimitiveInfo {
 struct BVHBuildNode {
     // BVHBuildNode Public Methods
     BVHBuildNode() { children[0] = children[1] = NULL; }
-    void InitLeaf(u_int first, u_int n,
+    void InitLeaf(uint32_t first, uint32_t n,
             const BBox &b) {
         firstPrimOffset = first;
         nPrimitives = n;
         bounds = b;
     }
-    void InitInterior(u_int axis, BVHBuildNode *c0,
+    void InitInterior(uint32_t axis, BVHBuildNode *c0,
             BVHBuildNode *c1) {
         children[0] = c0;
         children[1] = c1;
@@ -59,9 +59,9 @@ struct BVHBuildNode {
     }
     BBox bounds;
     BVHBuildNode *children[2];
-    u_int splitAxis;
-    u_int firstPrimOffset;
-    u_int nPrimitives;
+    uint32_t splitAxis;
+    uint32_t firstPrimOffset;
+    uint32_t nPrimitives;
 };
 
 
@@ -119,7 +119,7 @@ struct LinearBVHNode {
 
 
 static inline bool IntersectP(const BBox &bounds, const Ray &ray,
-                       const Vector &invDir, const u_int dirIsNeg[3]) {
+                       const Vector &invDir, const uint32_t dirIsNeg[3]) {
     // Check for ray intersection against $x$ and $y$ slabs
     float tmin = (bounds[  dirIsNeg[0]].x - ray.o.x) * invDir.x;
     float tmax = (bounds[1-dirIsNeg[0]].x - ray.o.x) * invDir.x;
@@ -146,9 +146,9 @@ static inline bool IntersectP(const BBox &bounds, const Ray &ray,
 
 // BVHAccel Method Definitions
 BVHAccel::BVHAccel(const vector<Reference<Primitive> > &p,
-                   u_int mp, const string &sm) {
+                   uint32_t mp, const string &sm) {
     maxPrimsInNode = mp;
-    for (u_int i = 0; i < p.size(); ++i)
+    for (uint32_t i = 0; i < p.size(); ++i)
         p[i]->FullyRefine(primitives);
     if (sm == "sah")         splitMethod = SPLIT_SAH;
     else if (sm == "middle") splitMethod = SPLIT_MIDDLE;
@@ -168,14 +168,14 @@ BVHAccel::BVHAccel(const vector<Reference<Primitive> > &p,
     // Initialize _buildData_ array for primitives
     vector<BVHPrimitiveInfo> buildData;
     buildData.reserve(primitives.size());
-    for (u_int i = 0; i < primitives.size(); ++i) {
+    for (uint32_t i = 0; i < primitives.size(); ++i) {
         BBox bbox = primitives[i]->WorldBound();
         buildData.push_back(BVHPrimitiveInfo(i, bbox));
     }
 
     // Recursively build BVH tree for primitives
     MemoryArena buildArena;
-    u_int totalNodes = 0;
+    uint32_t totalNodes = 0;
     vector<Reference<Primitive> > orderedPrims;
     orderedPrims.reserve(primitives.size());
     BVHBuildNode *root = recursiveBuild(buildArena, buildData,
@@ -184,9 +184,9 @@ BVHAccel::BVHAccel(const vector<Reference<Primitive> > &p,
 
     // Compute representation of depth-first traversal of BVH tree
     nodes = AllocAligned<LinearBVHNode>(totalNodes);
-    for (u_int i = 0; i < totalNodes; ++i)
+    for (uint32_t i = 0; i < totalNodes; ++i)
         new (&nodes[i]) LinearBVHNode;
-    u_int offset = 0;
+    uint32_t offset = 0;
     flattenBVHTree(root, &offset);
     Assert(offset == totalNodes);
     PBRT_BVH_FINISHED_CONSTRUCTION(this);
@@ -200,18 +200,18 @@ BBox BVHAccel::WorldBound() const {
 
 BVHBuildNode *
 BVHAccel::recursiveBuild(MemoryArena &buildArena,
-        vector<BVHPrimitiveInfo> &buildData, u_int start, u_int end,
-        u_int *totalNodes, vector<Reference<Primitive> > &orderedPrims) {
+        vector<BVHPrimitiveInfo> &buildData, uint32_t start, uint32_t end,
+        uint32_t *totalNodes, vector<Reference<Primitive> > &orderedPrims) {
     Assert(start != end);
     (*totalNodes)++;
     BVHBuildNode *node = buildArena.Alloc<BVHBuildNode>();
-    u_int nPrimitives = end - start;
+    uint32_t nPrimitives = end - start;
     if (nPrimitives <= maxPrimsInNode) {
         // Create leaf _BVHBuildNode_
-        u_int firstPrimOffset = orderedPrims.size();
+        uint32_t firstPrimOffset = orderedPrims.size();
         BBox bbox;
-        for (u_int i = start; i < end; ++i) {
-            u_int primNum = buildData[i].primitiveNumber;
+        for (uint32_t i = start; i < end; ++i) {
+            uint32_t primNum = buildData[i].primitiveNumber;
             orderedPrims.push_back(primitives[primNum]);
             bbox = Union(bbox, primitives[primNum]->WorldBound());
         }
@@ -220,18 +220,18 @@ BVHAccel::recursiveBuild(MemoryArena &buildArena,
     else {
         // Compute bound of primitive centroids, choose split dimension _dim_
         BBox centroidBounds;
-        for (u_int i = start; i < end; ++i)
+        for (uint32_t i = start; i < end; ++i)
             centroidBounds = Union(centroidBounds, buildData[i].centroid);
         int dim = centroidBounds.MaximumExtent();
 
         // Partition primitives into two sets and build children
-        u_int mid = (start + end) / 2;
+        uint32_t mid = (start + end) / 2;
         if (centroidBounds.pMax[dim] == centroidBounds.pMin[dim]) {
             // Create leaf _BVHBuildNode_
-            u_int firstPrimOffset = orderedPrims.size();
+            uint32_t firstPrimOffset = orderedPrims.size();
             BBox bbox;
-            for (u_int i = start; i < end; ++i) {
-                u_int primNum = buildData[i].primitiveNumber;
+            for (uint32_t i = start; i < end; ++i) {
+                uint32_t primNum = buildData[i].primitiveNumber;
                 orderedPrims.push_back(primitives[primNum]);
                 bbox = Union(bbox, primitives[primNum]->WorldBound());
             }
@@ -276,7 +276,7 @@ BVHAccel::recursiveBuild(MemoryArena &buildArena,
                     BucketInfo buckets[nBuckets];
 
                     // Initialize _BucketInfo_ for SAH partition buckets
-                    for (u_int i = start; i < end; ++i) {
+                    for (uint32_t i = start; i < end; ++i) {
                         int b = nBuckets *
                             ((buildData[i].centroid[dim] - centroidBounds.pMin[dim]) /
                              (centroidBounds.pMax[dim] - centroidBounds.pMin[dim]));
@@ -304,7 +304,7 @@ BVHAccel::recursiveBuild(MemoryArena &buildArena,
 
                     // Find bucket to split at that minimizes SAH metric
                     float minCost = cost[0];
-                    u_int minCostSplit = 0;
+                    uint32_t minCostSplit = 0;
                     for (int i = 1; i < nBuckets; ++i) {
                         if (cost[i] < minCost) {
                             minCost = cost[i];
@@ -332,10 +332,10 @@ BVHAccel::recursiveBuild(MemoryArena &buildArena,
 }
 
 
-u_int BVHAccel::flattenBVHTree(BVHBuildNode *node, u_int *offset) {
+uint32_t BVHAccel::flattenBVHTree(BVHBuildNode *node, uint32_t *offset) {
     LinearBVHNode *linearNode = &nodes[*offset];
     linearNode->bounds = node->bounds;
-    u_int myOffset = (*offset)++;
+    uint32_t myOffset = (*offset)++;
     if (node->nPrimitives > 0) {
         Assert(!node->children[0] && !node->children[1]);
         linearNode->primitivesOffset = node->firstPrimOffset;
@@ -365,7 +365,7 @@ bool BVHAccel::Intersect(const Ray &ray,
     bool hit = false;
     Point origin = ray(ray.mint);
     Vector invDir(1.f / ray.d.x, 1.f / ray.d.y, 1.f / ray.d.z);
-    u_int dirIsNeg[3] = { ray.d.x < 0, ray.d.y < 0, ray.d.z < 0 };
+    uint32_t dirIsNeg[3] = { ray.d.x < 0, ray.d.y < 0, ray.d.z < 0 };
     // Follow ray through BVH nodes to find primitive intersections
     uint32_t todoOffset = 0, nodeNum = 0;
     uint32_t todo[64];
@@ -376,7 +376,7 @@ bool BVHAccel::Intersect(const Ray &ray,
             if (node->nPrimitives > 0) {
                 // Intersect ray with primitives in leaf BVH node
                 PBRT_BVH_INTERSECTION_TRAVERSED_LEAF_NODE(const_cast<LinearBVHNode *>(node));
-                for (u_int i = 0; i < node->nPrimitives; ++i)
+                for (uint32_t i = 0; i < node->nPrimitives; ++i)
                 {
                     PBRT_BVH_INTERSECTION_PRIMITIVE_TEST(const_cast<Primitive *>(primitives[node->primitivesOffset+i].GetPtr()));
                     if (primitives[node->primitivesOffset+i]->Intersect(ray, isect))
@@ -418,7 +418,7 @@ bool BVHAccel::IntersectP(const Ray &ray) const {
     if (!nodes) return false;
     PBRT_BVH_INTERSECTIONP_STARTED(const_cast<BVHAccel *>(this), const_cast<Ray *>(&ray));
     Vector invDir(1.f / ray.d.x, 1.f / ray.d.y, 1.f / ray.d.z);
-    u_int dirIsNeg[3] = { ray.d.x < 0, ray.d.y < 0, ray.d.z < 0 };
+    uint32_t dirIsNeg[3] = { ray.d.x < 0, ray.d.y < 0, ray.d.z < 0 };
     uint32_t todo[64];
     uint32_t todoOffset = 0, nodeNum = 0;
     while (true) {
@@ -427,7 +427,7 @@ bool BVHAccel::IntersectP(const Ray &ray) const {
             // Process BVH node _node_ for traversal
             if (node->nPrimitives > 0) {
                 PBRT_BVH_INTERSECTIONP_TRAVERSED_LEAF_NODE(const_cast<LinearBVHNode *>(node));
-                  for (u_int i = 0; i < node->nPrimitives; ++i) {
+                  for (uint32_t i = 0; i < node->nPrimitives; ++i) {
                     PBRT_BVH_INTERSECTIONP_PRIMITIVE_TEST(const_cast<Primitive *>(primitives[node->primitivesOffset + i].GetPtr()));
                     if (primitives[node->primitivesOffset+i]->IntersectP(ray)) {
                         PBRT_BVH_INTERSECTIONP_PRIMITIVE_HIT(const_cast<Primitive *>(primitives[node->primitivesOffset+i].GetPtr()));
@@ -466,7 +466,7 @@ bool BVHAccel::IntersectP(const Ray &ray) const {
 BVHAccel *CreateBVHAccelerator(const vector<Reference<Primitive> > &prims,
         const ParamSet &ps) {
     string splitMethod = ps.FindOneString("splitmethod", "sah");
-    u_int maxPrimsInNode = ps.FindOneInt("maxnodeprims", 1);
+    uint32_t maxPrimsInNode = ps.FindOneInt("maxnodeprims", 1);
     return new BVHAccel(prims, maxPrimsInNode, splitMethod);
 }
 

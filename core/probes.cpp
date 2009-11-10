@@ -57,7 +57,7 @@ public:
     void Min(int64_t newval) {
         int64_t oldval;
         do {
-            oldval = (u_int)num;
+            oldval = (uint32_t)num;
             newval = min(oldval, newval);
             if (newval == oldval) return;
         } while(AtomicCompareAndSwap(&num, newval, oldval) != oldval);
@@ -74,7 +74,7 @@ public:
     void Min(int32_t newval) {
         int32_t oldval;
         do {
-            oldval = (u_int)num;
+            oldval = (uint32_t)num;
             newval = min(oldval, newval);
             if (newval == oldval) return;
         } while(AtomicCompareAndSwap(&num, newval, oldval) != oldval);

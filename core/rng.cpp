@@ -31,7 +31,7 @@
 #define UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
-void RNG::Seed(u_long seed) const {
+void RNG::Seed(uint32_t seed) const {
     mt[0]= seed & 0xffffffffUL;
     for (mti=1; mti<N; mti++) {
         mt[mti] =

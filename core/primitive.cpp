@@ -137,7 +137,7 @@ void GeometricPrimitive::
         const {
     vector<Reference<Shape> > r;
     shape->Refine(r);
-    for (u_int i = 0; i < r.size(); ++i) {
+    for (uint32_t i = 0; i < r.size(); ++i) {
         GeometricPrimitive *gp = new GeometricPrimitive(r[i],
                material, areaLight);
         refined.push_back(gp);

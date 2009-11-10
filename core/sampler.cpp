@@ -95,18 +95,18 @@ void Sample::AllocateSampleMemory() {
 
     // Compute total number of sample values needed
     int totSamples = 0;
-    for (u_int i = 0; i < n1D.size(); ++i)
+    for (uint32_t i = 0; i < n1D.size(); ++i)
         totSamples += n1D[i];
-    for (u_int i = 0; i < n2D.size(); ++i)
+    for (uint32_t i = 0; i < n2D.size(); ++i)
         totSamples += 2 * n2D[i];
 
     // Allocate storage for sample values
     float *mem = AllocAligned<float>(totSamples);
-    for (u_int i = 0; i < n1D.size(); ++i) {
+    for (uint32_t i = 0; i < n1D.size(); ++i) {
         oneD[i] = mem;
         mem += n1D[i];
     }
-    for (u_int i = 0; i < n2D.size(); ++i) {
+    for (uint32_t i = 0; i < n2D.size(); ++i) {
         twoD[i] = mem;
         mem += 2 * n2D[i];
     }

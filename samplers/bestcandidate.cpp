@@ -72,9 +72,9 @@ again:
     }
 
     // Compute integrator samples for best-candidate sample
-    for (u_int i = 0; i < sample->n1D.size(); ++i)
+    for (uint32_t i = 0; i < sample->n1D.size(); ++i)
          LDShuffleScrambled1D(sample->n1D[i], 1, sample->oneD[i], rng);
-    for (u_int i = 0; i < sample->n2D.size(); ++i)
+    for (uint32_t i = 0; i < sample->n2D.size(); ++i)
          LDShuffleScrambled2D(sample->n2D[i], 1, sample->twoD[i], rng);
     ++tableOffset;
     return 1;

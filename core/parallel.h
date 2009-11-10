@@ -305,7 +305,7 @@ private:
 #endif // PBRT_HAS_PTHREADS
 #ifdef WIN32
     // Count of the number of waiters.
-    u_int waitersCount;
+    uint32_t waitersCount;
     // Serialize access to <waitersCount>.
     CRITICAL_SECTION waitersCountMutex, conditionMutex;
     // Signal and broadcast event HANDLEs.

@@ -99,7 +99,7 @@ public:
 struct LightSample {
    // LightSample Public Methods
    LightSample() { }
-   LightSample(const Sample *sample, const LightSampleOffsets &offsets, u_int num);
+   LightSample(const Sample *sample, const LightSampleOffsets &offsets, uint32_t num);
    LightSample(RNG &rng) {
        uPos[0] = rng.RandomFloat();
        uPos[1] = rng.RandomFloat();

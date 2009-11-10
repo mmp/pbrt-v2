@@ -41,7 +41,7 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *w, int *h);
 // ImageIO Function Definitions
 RGBSpectrum *ReadImage(const string &name, int *width, int *height) {
     if (name.size() >= 5) {
-        u_int suffixOffset = name.size() - 4;
+        uint32_t suffixOffset = name.size() - 4;
 #ifdef PBRT_HAS_OPENEXR
         if (!strcmp(name.c_str() + suffixOffset, ".exr") ||
             !strcmp(name.c_str() + suffixOffset, ".EXR"))
@@ -66,7 +66,7 @@ void WriteRGBAImage(const string &name, float *pixels,
         int totalXRes, int totalYRes,
         int xOffset, int yOffset) {
     if (name.size() >= 5) {
-        u_int suffixOffset = name.size() - 4;
+        uint32_t suffixOffset = name.size() - 4;
 #ifdef PBRT_HAS_OPENEXR
         if (!strcmp(name.c_str() + suffixOffset, ".exr") ||
             !strcmp(name.c_str() + suffixOffset, ".EXR")) {
@@ -436,14 +436,14 @@ void WriteImageTGA(const string &name, float *pixels,
     uchar *dst = outBuf;
     for (int y = yRes-1; y >= 0; --y) {
         for (int x = 0; x < xRes; ++x) {
-#define TO_BYTE(v) (u_char(Clamp(255.f * powf((v), 1.f/2.3f), 0.f, 255.f)))
+#define TO_BYTE(v) (uint8_t(Clamp(255.f * powf((v), 1.f/2.3f), 0.f, 255.f)))
             dst[0] = TO_BYTE(pixels[3*(y*xRes+x)+2]);
             dst[1] = TO_BYTE(pixels[3*(y*xRes+x)+1]);
             dst[2] = TO_BYTE(pixels[3*(y*xRes+x)+0]);
             dst += 3;
         }
     }
-    if (fwrite(outBuf, 1, 3 * xRes * yRes, file) != u_int(3*xRes*yRes))
+    if (fwrite(outBuf, 1, 3 * xRes * yRes, file) != uint32_t(3*xRes*yRes))
         Error("Error writing TGA image file \"%s\"", name.c_str());
     free(outBuf);
     fclose(file);
@@ -505,7 +505,7 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
     // Read the pixel data.
     int size = *width * *height * pixbytes;
     srcBuf = (uchar *)malloc(size);
-    if (fread(srcBuf, 1, size, file) != (u_int)size) {
+    if (fread(srcBuf, 1, size, file) != (uint32_t)size) {
         Error("Premature end-of-file when reading TGA image \"%s\"", name.c_str());
         free(srcBuf);
         return NULL;

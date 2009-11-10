@@ -40,7 +40,7 @@ using std::map;
 #define ADD_PARAM_TYPE(T, vec) \
     (vec).push_back(new ParamSetItem<T>(name, (T *)data, nItems))
 #define LOOKUP_PTR(vec) \
-    for (u_int i = 0; i < (vec).size(); ++i) \
+    for (uint32_t i = 0; i < (vec).size(); ++i) \
         if ((vec)[i]->name == name) { \
             *nItems = (vec)[i]->nItems; \
             (vec)[i]->lookedUp = true; \
@@ -48,7 +48,7 @@ using std::map;
         } \
     return NULL
 #define LOOKUP_ONE(vec) \
-    for (u_int i = 0; i < (vec).size(); ++i) { \
+    for (uint32_t i = 0; i < (vec).size(); ++i) { \
         if ((vec)[i]->name == name && \
             (vec)[i]->nItems == 1) { \
             (vec)[i]->lookedUp = true; \

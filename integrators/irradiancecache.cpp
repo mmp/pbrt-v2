@@ -109,10 +109,10 @@ void IrradianceCacheIntegrator::RequestSamples(Sampler *sampler,
         Sample *sample, const Scene *scene) {
 //    if (lightSampleOffsets != NULL) return;
     // Allocate and request samples for sampling all lights
-    u_int nLights = scene->lights.size();
+    uint32_t nLights = scene->lights.size();
     lightSampleOffsets = new LightSampleOffsets[nLights];
     bsdfSampleOffsets = new BSDFSampleOffsets[nLights];
-    for (u_int i = 0; i < nLights; ++i) {
+    for (uint32_t i = 0; i < nLights; ++i) {
         const Light *light = scene->lights[i];
         int nSamples = light->nSamples;
         if (sampler) nSamples = sampler->RoundSize(nSamples);
@@ -145,7 +145,7 @@ void IrradianceCacheIntegrator::Preprocess(const Scene *scene,
                                                 progress, i, nTasks));
     EnqueueTasks(tasks);
     WaitForAllTasks();
-    for (u_int i = 0; i < tasks.size(); ++i)
+    for (uint32_t i = 0; i < tasks.size(); ++i)
         delete tasks[i];
     progress.Done();
     delete sample;
@@ -238,7 +238,7 @@ Spectrum IrradianceCacheIntegrator::indirectLo(const Point &p,
     if (!interpolateE(scene, p, ng, &E, &wi)) {
         // Compute irradiance at current point
         PBRT_IRRADIANCE_CACHE_STARTED_COMPUTING_IRRADIANCE(const_cast<Point *>(&p), const_cast<Normal *>(&ng));
-        u_int scramble[2] = { sample->rng->RandomUInt(),
+        uint32_t scramble[2] = { sample->rng->RandomUInt(),
                               sample->rng->RandomUInt() };
         float minHitDistance = INFINITY;
         Vector weightedPrimaryDir(0,0,0);

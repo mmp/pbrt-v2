@@ -45,8 +45,8 @@ public:
 private:
     // KdTreeAccel Private Methods
     void buildTree(int nodeNum, const BBox &bounds,
-        const vector<BBox> &primBounds, u_int *primNums, int nprims, int depth,
-        BoundEdge *edges[3], u_int *prims0, u_int *prims1, int badRefines = 0);
+        const vector<BBox> &primBounds, uint32_t *primNums, int nprims, int depth,
+        BoundEdge *edges[3], uint32_t *prims0, uint32_t *prims1, int badRefines = 0);
 
     // KdTreeAccel Private Data
     int isectCost, traversalCost;
