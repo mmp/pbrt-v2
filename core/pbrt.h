@@ -104,7 +104,7 @@ template <int nSamples> class CoefficientSpectrum;
 class RGBSpectrum;
 class SampledSpectrum;
 typedef RGBSpectrum Spectrum;
-//typedef SampledSpectrum Spectrum;
+// typedef SampledSpectrum Spectrum;
 class Camera;
 class ProjectiveCamera;
 class Sampler;

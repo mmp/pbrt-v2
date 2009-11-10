@@ -437,8 +437,8 @@ public:
 
 
 // Spectrum Inline Functions
-template <int nSamples> inline
-CoefficientSpectrum<nSamples> Pow(const CoefficientSpectrum<nSamples> &s, float e) {
+template <int nSamples> inline CoefficientSpectrum<nSamples>
+Pow(const CoefficientSpectrum<nSamples> &s, float e) {
     CoefficientSpectrum<nSamples> ret;
     for (int i = 0; i < nSamples; ++i)
         ret.c[i] = powf(s.c[i], e);

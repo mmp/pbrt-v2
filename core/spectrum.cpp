@@ -67,17 +67,17 @@ float AverageSpectrumSamples(const float *lambda, const float *vals,
     Assert(i+1 < n);
 
     // Loop over wavelength sample segments and add contributions
-#define INTERP(w, i) Lerp(((w)-lambda[i]) /           \
-                               (lambda[(i)+1]-lambda[i]), \
-                              vals[i], vals[(i)+1])
-#define SEGMENT(wl0, wl1, i) (0.5f * (INTERP(wl0, i) + INTERP(wl1, i)))
+#define INTERP(w, i) \
+        Lerp(((w) - lambda[i]) / (lambda[(i)+1] - lambda[i]), \
+             vals[i], vals[(i)+1])
+#define SEG_AVG(wl0, wl1, i) (0.5f * (INTERP(wl0, i) + INTERP(wl1, i)))
     for (; i+1 < n && lambdaEnd >= lambda[i]; ++i) {
         float segStart = max(lambdaStart, lambda[i]);
         float segEnd =   min(lambdaEnd,   lambda[i+1]);
-        sum += SEGMENT(segStart, segEnd, i) * (segEnd - segStart);
+        sum += SEG_AVG(segStart, segEnd, i) * (segEnd - segStart);
     }
 #undef INTERP
-#undef SEGMENT
+#undef SEG_AVG
     return sum / (lambdaEnd - lambdaStart);
 }
 
