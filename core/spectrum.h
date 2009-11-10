@@ -198,13 +198,7 @@ public:
         Assert(!ret.HasNaNs());
         return ret;
     }
-    friend CoefficientSpectrum Pow(const CoefficientSpectrum &s, float e) {
-        CoefficientSpectrum ret;
-        for (int i = 0; i < nSamples; ++i)
-            ret.c[i] = powf(s.c[i], e);
-        Assert(!ret.HasNaNs());
-        return ret;
-    }
+    template <int n> friend inline CoefficientSpectrum<n> Pow(const CoefficientSpectrum<n> &s, float e);
     CoefficientSpectrum operator-() const {
         CoefficientSpectrum ret;
         for (int i = 0; i < nSamples; ++i)
@@ -443,6 +437,16 @@ public:
 
 
 // Spectrum Inline Functions
+template <int nSamples> inline
+CoefficientSpectrum<nSamples> Pow(const CoefficientSpectrum<nSamples> &s, float e) {
+    CoefficientSpectrum<nSamples> ret;
+    for (int i = 0; i < nSamples; ++i)
+        ret.c[i] = powf(s.c[i], e);
+    Assert(!ret.HasNaNs());
+    return ret;
+}
+
+
 inline Spectrum Lerp(float t, const Spectrum &s1, const Spectrum &s2) {
     return (1.f - t) * s1 + t * s2;
 }
