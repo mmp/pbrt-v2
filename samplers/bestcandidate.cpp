@@ -34,7 +34,7 @@ Sampler *BestCandidateSampler::GetSubSampler(int num, int count) {
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
     return new BestCandidateSampler(x0, x1, y0, y1, samplesPerPixel,
-        shutterOpen, shutterClose, 1024*num);
+        shutterOpen, shutterClose);
 }
 
 
@@ -50,8 +50,9 @@ again:
         }
 
         // Update sample shifts
+        RNG rng((xTile<<8) + (yTile<<8));
         for (int i = 0; i < 3; ++i)
-            sampleOffsets[i] = sample->rng->RandomFloat();
+            sampleOffsets[i] = rng.RandomFloat();
     }
     // Compute raster sample from table
 #define WRAP(x) ((x) > 1 ? ((x)-1) : (x))
@@ -73,9 +74,9 @@ again:
 
     // Compute integrator samples for best-candidate sample
     for (uint32_t i = 0; i < sample->n1D.size(); ++i)
-         LDShuffleScrambled1D(sample->n1D[i], 1, sample->oneD[i], rng);
+         LDShuffleScrambled1D(sample->n1D[i], 1, sample->oneD[i], *sample->rng);
     for (uint32_t i = 0; i < sample->n2D.size(); ++i)
-         LDShuffleScrambled2D(sample->n2D[i], 1, sample->twoD[i], rng);
+         LDShuffleScrambled2D(sample->n2D[i], 1, sample->twoD[i], *sample->rng);
     ++tableOffset;
     return 1;
 }
@@ -89,7 +90,7 @@ BestCandidateSampler *CreateBestCandidateSampler(const ParamSet &params, const F
     int nsamp = params.FindOneInt("pixelsamples", 4);
     if (getenv("PBRT_QUICK_RENDER")) nsamp = 1;
     return new BestCandidateSampler(xstart, xend, ystart, yend, nsamp,
-         camera->shutterOpen, camera->shutterClose, 0);
+         camera->shutterOpen, camera->shutterClose);
 }
 
 

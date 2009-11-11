@@ -39,9 +39,8 @@ class BestCandidateSampler : public Sampler {
 public:
     // BestCandidateSampler Public Methods
     BestCandidateSampler(int xstart, int xend, int ystart, int yend,
-            int pixelSamples, float sopen, float sclose, uint32_t rngSeed)
-        : Sampler(xstart, xend, ystart, yend, pixelSamples, sopen, sclose),
-          rng(rngSeed) {
+            int pixelSamples, float sopen, float sclose)
+        : Sampler(xstart, xend, ystart, yend, pixelSamples, sopen, sclose) {
         tableWidth = (float)SQRT_SAMPLE_TABLE_SIZE / (float)sqrtf(pixelSamples);
         xTileStart = Floor2Int(xstart / tableWidth);
         xTileEnd = Floor2Int(xend / tableWidth);
@@ -50,6 +49,10 @@ public:
         xTile = xTileStart;
         yTile = yTileStart;
         tableOffset = 0;
+      // Update sample shifts
+      RNG rng((xTile<<8) + (yTile<<8));
+      for (int i = 0; i < 3; ++i)
+          sampleOffsets[i] = rng.RandomFloat();
     }
     Sampler *GetSubSampler(int num, int count);
     int RoundSize(int size) const {
@@ -63,7 +66,6 @@ private:
     int tableOffset;
     int xTileStart, xTileEnd, yTileStart, yTileEnd;
     int xTile, yTile;
-    RNG rng;
     static const float sampleTable[SAMPLE_TABLE_SIZE][5];
     float sampleOffsets[3];
 };
