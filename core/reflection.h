@@ -339,17 +339,13 @@ class Lambertian : public BxDF {
 public:
     // Lambertian Public Methods
     Lambertian(const Spectrum &reflectance)
-        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)),
-          R(reflectance), RoverPI(reflectance * INV_PI) {
-    }
+        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), R(reflectance) { }
     Spectrum f(const Vector &wo, const Vector &wi) const;
-    Spectrum rho(const Vector &, int, const float *) const {
-        return R;
-    }
+    Spectrum rho(const Vector &, int, const float *) const { return R; }
     Spectrum rho(int, const float *, const float *) const { return R; }
 private:
     // Lambertian Private Data
-    Spectrum R, RoverPI;
+    Spectrum R;
 };
 
 

@@ -162,7 +162,7 @@ Spectrum SpecularTransmission::Sample_f(const Vector &wo,
 
 
 Spectrum Lambertian::f(const Vector &wo, const Vector &wi) const {
-    return RoverPI;
+    return R * INV_PI;
 }
 
 
