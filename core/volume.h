@@ -107,8 +107,8 @@ private:
 };
 
 
-bool GetVolumeScatteringProperties(const string &name, float *sigma_a,
-    float *sigma_prime_s);
+bool GetVolumeScatteringProperties(const string &name, Spectrum *sigma_a,
+                                   Spectrum *sigma_prime_s);
 class VolumeIntegrator : public Integrator {
 public:
     // VolumeIntegrator Interface

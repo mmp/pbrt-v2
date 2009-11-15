@@ -252,14 +252,12 @@ BBox AggregateVolume::WorldBound() const {
 }
 
 
-bool GetVolumeScatteringProperties(const string &name, float *sigma_a,
-        float *sigma_prime_s) {
+bool GetVolumeScatteringProperties(const string &name, Spectrum *sigma_a,
+        Spectrum *sigma_prime_s) {
     for (uint32_t i = 0; i < sizeof(mss) / sizeof(mss[0]); ++i) {
         if (name == mss[i].name) {
-            for (int j = 0; j < 3; ++j) {
-                sigma_a[j] = mss[i].sigma_a[j];
-                sigma_prime_s[j] = mss[i].sigma_prime_s[j];
-            }
+            *sigma_a = Spectrum::FromRGB(mss[i].sigma_a);
+            *sigma_prime_s = Spectrum::FromRGB(mss[i].sigma_prime_s);
             return true;
         }
     }

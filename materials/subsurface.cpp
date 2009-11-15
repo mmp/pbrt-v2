@@ -60,16 +60,17 @@ BSSRDF *SubsurfaceMaterial::GetBSSRDF(const DifferentialGeometry &dgGeom,
 
 SubsurfaceMaterial *CreateSubsurfaceMaterial(const Transform &xform,
         const TextureParams &mp) {
-    float sa[3] = { .0011f, .0024f, .014f }, sps[3] = { 2.55f, 3.21f, 3.77f };
+    float sa_rgb[3] = { .0011f, .0024f, .014f }, sps_rgb[3] = { 2.55f, 3.21f, 3.77f };
+    Spectrum sa = Spectrum::FromRGB(sa_rgb), sps = Spectrum::FromRGB(sps_rgb);
     string name = mp.FindString("name");
-    bool found = GetVolumeScatteringProperties(name, sa, sps);
+    bool found = GetVolumeScatteringProperties(name, &sa, &sps);
     if (name != "" && !found)
         Warning("Named material \"%s\" not found.  Using defaults.", name.c_str());
     float scale = mp.FindFloat("scale", 1.f);
 
     Reference<Texture<Spectrum> > sigma_a, sigma_prime_s;
-    sigma_a = mp.GetSpectrumTexture("sigma_a", Spectrum::FromRGB(sa));
-    sigma_prime_s = mp.GetSpectrumTexture("sigma_prime_s", Spectrum::FromRGB(sps));
+    sigma_a = mp.GetSpectrumTexture("sigma_a", sa);
+    sigma_prime_s = mp.GetSpectrumTexture("sigma_prime_s", sps);
     Reference<Texture<float> > ior = mp.GetFloatTexture("index", 1.3f);
     Reference<Texture<Spectrum> > Kr = mp.GetSpectrumTexture("Kr", Spectrum(1.f));
     Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
