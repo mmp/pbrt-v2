@@ -43,7 +43,7 @@ inline float NoiseWeight(float t);
 static int NoisePerm[2 * NOISE_PERM_SIZE] = {
     151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96,
     53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142,
-    // Rest of noise permutation table
+    // Remainder of the noise permutation table
     8, 99, 37, 240, 21, 10, 23,
        190,  6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
        88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168,  68, 175, 74, 165, 71, 134, 139, 48, 27, 166,
@@ -74,12 +74,8 @@ static int NoisePerm[2 * NOISE_PERM_SIZE] = {
 
 
 // Texture Method Definitions
-UVMapping2D::UVMapping2D(float ssu, float ssv, float ddu, float ddv) {
-    su = ssu; sv = ssv;
-    du = ddu; dv = ddv;
-}
-
-
+UVMapping2D::UVMapping2D(float ssu, float ssv, float ddu, float ddv)
+    : su(ssu), sv(ssv), du(ddu), dv(ddv) { }
 void UVMapping2D::Map(const DifferentialGeometry &dg,
                       float *s, float *t, float *dsdx, float *dtdx,
                       float *dsdy, float *dtdy) const {
@@ -142,14 +138,6 @@ void CylindricalMapping2D::Map(const DifferentialGeometry &dg,
 }
 
 
-void CylindricalMapping2D::cylinder(const Point &p,
-                                    float *s, float *t) const {
-    Vector vec = Normalize(WorldToTexture(p) - Point(0,0,0));
-    *s = (M_PI + atan2f(vec.y, vec.x)) / (2.f * M_PI);
-    *t = vec.z;
-}
-
-
 void PlanarMapping2D::Map(const DifferentialGeometry &dg,
         float *s, float *t, float *dsdx, float *dtdx,
         float *dsdy, float *dtdy) const {
@@ -173,9 +161,7 @@ Point IdentityMapping3D::Map(const DifferentialGeometry &dg,
 
 float Noise(float x, float y, float z) {
     // Compute noise cell coordinates and offsets
-    int ix = Floor2Int(x);
-    int iy = Floor2Int(y);
-    int iz = Floor2Int(z);
+    int ix = Floor2Int(x), iy = Floor2Int(y), iz = Floor2Int(z);
     float dx = x - ix, dy = y - iy, dz = z - iz;
 
     // Compute gradient weights
@@ -192,9 +178,7 @@ float Noise(float x, float y, float z) {
     float w111 = Grad(ix+1, iy+1, iz+1, dx-1, dy-1, dz-1);
 
     // Compute trilinear interpolation of weights
-    float wx = NoiseWeight(dx);
-    float wy = NoiseWeight(dy);
-    float wz = NoiseWeight(dz);
+    float wx = NoiseWeight(dx), wy = NoiseWeight(dy), wz = NoiseWeight(dz);
     float x00 = Lerp(wx, w000, w100);
     float x10 = Lerp(wx, w010, w110);
     float x01 = Lerp(wx, w001, w101);
@@ -205,13 +189,8 @@ float Noise(float x, float y, float z) {
 }
 
 
-float Noise(const Point &P) {
-    return Noise(P.x, P.y, P.z);
-}
-
-
-inline float Grad(int x, int y, int z,
-                  float dx, float dy, float dz) {
+float Noise(const Point &P) { return Noise(P.x, P.y, P.z); }
+inline float Grad(int x, int y, int z, float dx, float dy, float dz) {
     int h = NoisePerm[NoisePerm[NoisePerm[x]+y]+z];
     h &= 15;
     float u = h<8 || h==12 || h==13 ? dx : dy;
@@ -227,8 +206,8 @@ inline float NoiseWeight(float t) {
 }
 
 
-float FBm(const Point &P, const Vector &dpdx,
-          const Vector &dpdy, float omega, int maxOctaves) {
+float FBm(const Point &P, const Vector &dpdx, const Vector &dpdy,
+          float omega, int maxOctaves) {
     // Compute number of octaves for antialiased FBm
     float s2 = max(dpdx.LengthSquared(), dpdy.LengthSquared());
     float foctaves = min((float)maxOctaves, 1.f - .5f * Log2(s2));
@@ -247,8 +226,8 @@ float FBm(const Point &P, const Vector &dpdx,
 }
 
 
-float Turbulence(const Point &P, const Vector &dpdx,
-                 const Vector &dpdy, float omega, int maxOctaves) {
+float Turbulence(const Point &P, const Vector &dpdx, const Vector &dpdy,
+                 float omega, int maxOctaves) {
     // Compute number of octaves for antialiased FBm
     float s2 = max(dpdx.LengthSquared(), dpdy.LengthSquared());
     float foctaves = min((float)maxOctaves, 1.f - .5f * Log2(s2));

@@ -43,10 +43,8 @@ public:
     T Evaluate(const DifferentialGeometry &dg) const {
         float s, t, dsdx, dtdx, dsdy, dtdy;
         mapping->Map(dg, &s, &t, &dsdx, &dtdx, &dsdy, &dtdy);
-        return (1-s)*(1-t) * v00 +
-               (1-s)*(  t) * v01 +
-               (  s)*(1-t) * v10 +
-               (  s)*(  t) * v11;
+        return (1-s)*(1-t) * v00 + (1-s)*(  t) * v01 +
+               (  s)*(1-t) * v10 + (  s)*(  t) * v11;
     }
 private:
     // BilerpTexture Private Data

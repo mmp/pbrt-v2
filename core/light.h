@@ -56,7 +56,8 @@ public:
     virtual Spectrum Le(const RayDifferential &r) const;
     virtual float Pdf(const Point &p, const Vector &wi) const = 0;
     virtual Spectrum Sample_L(const Scene *scene, const LightSample &ls,
-        float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const = 0;
+                              float u1, float u2, float time, Ray *ray,
+                              Normal *Ns, float *pdf) const = 0;
     virtual void SHProject(const Point &p, float pEpsilon, int lmax, const Scene *scene,
         bool computeLightVisibility, float time, RNG &rng, Spectrum *coeffs) const;
 
@@ -71,7 +72,7 @@ protected:
 struct VisibilityTester {
     // VisibilityTester Public Methods
     void SetSegment(const Point &p1, float eps1,
-                          const Point &p2, float eps2, float time) {
+                    const Point &p2, float eps2, float time) {
         float dist = Distance(p1, p2);
         r = Ray(p1, (p2-p1) / dist, eps1, dist * (1.f - eps2), time);
         Assert(!r.HasNaNs());
@@ -116,8 +117,7 @@ struct LightSample {
 struct LightSampleOffsets {
     LightSampleOffsets() { }
     LightSampleOffsets(int count, Sample *sample);
-    int posOffset, componentOffset;
-    int nSamples;
+    int nSamples, componentOffset, posOffset;
 };
 
 

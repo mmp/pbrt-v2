@@ -45,11 +45,9 @@ public:
 class UVMapping2D : public TextureMapping2D {
 public:
     // UVMapping2D Public Methods
-    UVMapping2D(float su = 1, float sv = 1,
-        float du = 0, float dv = 0);
+    UVMapping2D(float su = 1, float sv = 1, float du = 0, float dv = 0);
     void Map(const DifferentialGeometry &dg, float *s, float *t,
-        float *dsdx, float *dtdx,
-        float *dsdy, float *dtdy) const;
+        float *dsdx, float *dtdx, float *dsdy, float *dtdy) const;
 private:
     float su, sv, du, dv;
 };
@@ -77,10 +75,14 @@ public:
         : WorldToTexture(toCyl) {
     }
     void Map(const DifferentialGeometry &dg, float *s, float *t,
-        float *dsdx, float *dtdx,
-        float *dsdy, float *dtdy) const;
+        float *dsdx, float *dtdx, float *dsdy, float *dtdy) const;
 private:
-    void cylinder(const Point &P, float *s, float *t) const;
+    // CylindricalMapping2D Private Methods
+    void cylinder(const Point &p, float *s, float *t) const {
+        Vector vec = Normalize(WorldToTexture(p) - Point(0,0,0));
+        *s = (M_PI + atan2f(vec.y, vec.x)) / (2.f * M_PI);
+        *t = vec.z;
+    }
     Transform WorldToTexture;
 };
 
@@ -91,15 +93,11 @@ public:
     void Map(const DifferentialGeometry &dg, float *s, float *t,
              float *dsdx, float *dtdx, float *dsdy, float *dtdy) const;
     PlanarMapping2D(const Vector &vv1, const Vector &vv2,
-                    float dds = 0, float ddt = 0) {
-        vs = vv1;
-        vt = vv2;
-        ds = dds;
-        dt = ddt;
-    }
+                    float dds = 0, float ddt = 0)
+        : vs(vv1), vt(vv2), ds(dds), dt(ddt) { }
 private:
-    Vector vs, vt;
-    float ds, dt;
+    const Vector vs, vt;
+    const float ds, dt;
 };
 
 

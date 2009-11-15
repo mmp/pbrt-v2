@@ -29,11 +29,11 @@
 // ImageTexture Method Definitions
 template <typename Tmemory, typename Treturn>
 ImageTexture<Tmemory, Treturn>::ImageTexture(TextureMapping2D *m,
-        const string &filename, bool doTrilinear,
-        float maxAniso, ImageWrap wrapMode, float scale, float gamma) {
+        const string &filename, bool doTrilinear, float maxAniso,
+        ImageWrap wrapMode, float scale, float gamma) {
     mapping = m;
-    mipmap = GetTexture(filename, doTrilinear,
-                        maxAniso, wrapMode, scale, gamma);
+    mipmap = GetTexture(filename, doTrilinear, maxAniso,
+                        wrapMode, scale, gamma);
 }
 
 

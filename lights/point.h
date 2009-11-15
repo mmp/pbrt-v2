@@ -38,8 +38,8 @@ public:
         float time, Vector *wi, float *pdf, VisibilityTester *vis) const;
     Spectrum Power(const Scene *) const;
     bool IsDeltaLight() const { return true; }
-    Spectrum Sample_L(const Scene *scene, const LightSample &ls,
-            float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const;
+    Spectrum Sample_L(const Scene *scene, const LightSample &ls, float u1,
+                      float u2, float time, Ray *ray, Normal *Ns, float *pdf) const;
     float Pdf(const Point &, const Vector &) const;
     void SHProject(const Point &p, float pEpsilon, int lmax, const Scene *scene,
         bool computeLightVisibility, float time, RNG &rng, Spectrum *coeffs) const;

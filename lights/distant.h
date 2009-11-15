@@ -39,8 +39,8 @@ public:
     Spectrum Sample_L(const Point &p, float pEpsilon, const LightSample &ls,
         float time, Vector *wi, float *pdf, VisibilityTester *) const;
     Spectrum Power(const Scene *) const;
-    Spectrum Sample_L(const Scene *scene, const LightSample &ls, float u1, float u2,
-        float time, Ray *ray, Normal *Ns, float *pdf) const;
+    Spectrum Sample_L(const Scene *scene, const LightSample &ls, float u1,
+                      float u2, float time, Ray *ray, Normal *Ns, float *pdf) const;
     float Pdf(const Point &, const Vector &) const;
 private:
     // DistantLight Private Data

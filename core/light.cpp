@@ -54,13 +54,13 @@ Spectrum Light::Le(const RayDifferential &) const {
 
 LightSampleOffsets::LightSampleOffsets(int count, Sample *sample) {
     nSamples = count;
-    posOffset = sample->Add2D(nSamples);
     componentOffset = sample->Add1D(nSamples);
+    posOffset = sample->Add2D(nSamples);
 }
 
 
 LightSample::LightSample(const Sample *sample,
-        const LightSampleOffsets &offsets, uint32_t num) {
+                         const LightSampleOffsets &offsets, uint32_t num) {
     Assert(num < sample->n2D[offsets.posOffset]);
     Assert(num < sample->n1D[offsets.componentOffset]);
     uPos[0] = sample->twoD[offsets.posOffset][2*num];

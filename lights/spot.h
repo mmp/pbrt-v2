@@ -44,9 +44,9 @@ public:
     float Pdf(const Point &, const Vector &) const;
 private:
     // SpotLight Private Data
-    float cosTotalWidth, cosFalloffStart;
     Point lightPos;
     Spectrum Intensity;
+    float cosTotalWidth, cosFalloffStart;
 };
 
 

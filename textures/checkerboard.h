@@ -42,24 +42,26 @@ public:
         : mapping(m), tex1(c1), tex2(c2) {
         // Select antialiasing method for _Checkerboard2DTexture_
         if (aa == "none")             aaMethod = NONE;
-        else if (aa == "supersample") aaMethod = SUPERSAMPLE;
         else if (aa == "closedform")  aaMethod = CLOSEDFORM;
         else {
-            Warning("Anti-aliasing mode \"%s\" not understood "
-                    "by Checkerboard2DTexture, defaulting"
-                    "to \"supersample\"", aa.c_str());
-            aaMethod = SUPERSAMPLE;
+            Warning("Anti-aliasing mode \"%s\" not understood by "
+                    "Checkerboard2DTexture; using \"closedform\"", aa.c_str());
+            aaMethod = CLOSEDFORM;
         }
-        mutex = Mutex::Create();
     }
     ~Checkerboard2DTexture() {
         delete mapping;
-        Mutex::Destroy(mutex);
     }
     T Evaluate(const DifferentialGeometry &dg) const {
         float s, t, dsdx, dtdx, dsdy, dtdy;
         mapping->Map(dg, &s, &t, &dsdx, &dtdx, &dsdy, &dtdy);
-        if (aaMethod == CLOSEDFORM) {
+        if (aaMethod == NONE) {
+            // Point sample _Checkerboard2DTexture_
+            if ((Floor2Int(s) + Floor2Int(t)) % 2 == 0)
+                return tex1->Evaluate(dg);
+            return tex2->Evaluate(dg);
+        }
+        else {
             // Compute closed-form box-filtered _Checkerboard2DTexture_ value
 
             // Evaluate single check if filter is entirely inside one of them
@@ -84,57 +86,14 @@ public:
             if (ds > 1.f || dt > 1.f)
                 area2 = .5f;
             return (1.f - area2) * tex1->Evaluate(dg) +
-                   area2 * tex2->Evaluate(dg);
+                   area2         * tex2->Evaluate(dg);
         }
-        else if (aaMethod == SUPERSAMPLE) {
-            // Supersample _Checkerboard2DTexture_
-#define SQRT_SAMPLES 4
-#define N_SAMPLES (SQRT_SAMPLES * SQRT_SAMPLES)
-            float samples[2*N_SAMPLES];
-            { MutexLock lock(*mutex);
-              StratifiedSample2D(samples, SQRT_SAMPLES, SQRT_SAMPLES, rng);
-            }
-            T value = 0.;
-            float filterSum = 0.;
-            for (int i = 0; i < N_SAMPLES; ++i) {
-                // Compute new differential geometry for supersample location
-                float dx = samples[2*i]   - 0.5f;
-                float dy = samples[2*i+1] - 0.5f;
-                DifferentialGeometry dgs = dg;
-                dgs.p += dx * dgs.dpdx + dy * dgs.dpdy;
-                dgs.u += dx * dgs.dudx + dy * dgs.dudy;
-                dgs.v += dx * dgs.dvdx + dy * dgs.dvdy;
-                dgs.dudx /= N_SAMPLES;
-                dgs.dudy /= N_SAMPLES;
-                dgs.dvdx /= N_SAMPLES;
-                dgs.dvdy /= N_SAMPLES;
-
-                // Compute $(s,t)$ for supersample and evaluate subtexture
-                float ss, ts, dsdxs, dtdxs, dsdys, dtdys;
-                mapping->Map(dgs, &ss, &ts, &dsdxs, &dtdxs, &dsdys, &dtdys);
-                float wt = expf(-2.f * (dx*dx + dy*dy));
-                filterSum += wt;
-                if ((Floor2Int(ss) + Floor2Int(ts)) % 2 == 0)
-                    value += wt * tex1->Evaluate(dgs);
-                else
-                    value += wt * tex2->Evaluate(dgs);
-            }
-            return value / filterSum;
-            #undef N_SAMPLES
-            #undef SQRT_SAMPLES
-        }
-        // Point sample _Checkerboard2DTexture_
-        if ((Floor2Int(s) + Floor2Int(t)) % 2 == 0)
-            return tex1->Evaluate(dg);
-        return tex2->Evaluate(dg);
     }
 private:
     // Checkerboard2DTexture Private Data
     TextureMapping2D *mapping;
     Reference<Texture<T> > tex1, tex2;
-    enum { NONE, SUPERSAMPLE, CLOSEDFORM } aaMethod;
-    mutable RNG rng;
-    mutable Mutex *mutex;
+    enum { NONE, CLOSEDFORM } aaMethod;
 };
 
 
@@ -144,51 +103,22 @@ public:
     Checkerboard3DTexture(TextureMapping3D *m, Reference<Texture<T> > c1,
                           Reference<Texture<T> > c2)
         : mapping(m), tex1(c1), tex2(c2) {
-        mutex = Mutex::Create();
     }
     ~Checkerboard3DTexture() {
         delete mapping;
-        Mutex::Destroy(mutex);
     }
     T Evaluate(const DifferentialGeometry &dg) const {
-        // Supersample _Checkerboard3DTexture_
-#define N_SAMPLES 4
-        float samples[2*N_SAMPLES*N_SAMPLES];
-        { MutexLock lock(*mutex);
-        StratifiedSample2D(samples, N_SAMPLES, N_SAMPLES, rng); }
-        T value = 0.;
-        float filterSum = 0.;
-        for (int i = 0; i < N_SAMPLES*N_SAMPLES; ++i) {
-            // Compute new differential geometry for supersample location
-            float dx = samples[2*i]   - 0.5f;
-            float dy = samples[2*i+1] - 0.5f;
-            DifferentialGeometry dgs = dg;
-            dgs.p += dx * dgs.dpdx + dy * dgs.dpdy;
-            dgs.u += dx * dgs.dudx + dy * dgs.dudy;
-            dgs.v += dx * dgs.dvdx + dy * dgs.dvdy;
-            dgs.dudx /= N_SAMPLES;
-            dgs.dudy /= N_SAMPLES;
-            dgs.dvdx /= N_SAMPLES;
-            dgs.dvdy /= N_SAMPLES;
-
-            // Compute 3D supersample position and evaluate sub-texture
-            Vector dPPdx, dPPdy;
-            Point PP = mapping->Map(dgs, &dPPdx, &dPPdy);
-            float wt = expf(-2.f * (dx*dx + dy*dy));
-            filterSum += wt;
-            if ((Floor2Int(PP.x) + Floor2Int(PP.y) + Floor2Int(PP.z)) % 2 == 0)
-                value += wt * tex1->Evaluate(dgs);
-            else
-                value += wt * tex2->Evaluate(dgs);
-        }
-        return value / filterSum;
+        Vector dpdx, dpdy;
+        Point p = mapping->Map(dg, &dpdx, &dpdy);
+        if ((Floor2Int(p.x) + Floor2Int(p.y) + Floor2Int(p.z)) % 2 == 0)
+            return tex1->Evaluate(dg);
+        else
+            return tex2->Evaluate(dg);
     }
 private:
     // Checkerboard3DTexture Private Data
     TextureMapping3D *mapping;
     Reference<Texture<T> > tex1, tex2;
-    mutable RNG rng;
-    mutable Mutex *mutex;
 };
 
 

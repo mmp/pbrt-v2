@@ -34,9 +34,7 @@ float VolumeGridDensity::Density(const Point &Pobj) const {
     vox.x = vox.x * nx - .5f;
     vox.y = vox.y * ny - .5f;
     vox.z = vox.z * nz - .5f;
-    int vx = Floor2Int(vox.x);
-    int vy = Floor2Int(vox.y);
-    int vz = Floor2Int(vox.z);
+    int vx = Floor2Int(vox.x), vy = Floor2Int(vox.y), vz = Floor2Int(vox.z);
     float dx = vox.x - vx, dy = vox.y - vy, dz = vox.z - vz;
 
     // Trilinearly interpolate density values to compute local density

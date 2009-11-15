@@ -38,6 +38,7 @@ typedef enum {
 template <typename T> class MIPMap {
 public:
     // MIPMap Public Methods
+    MIPMap() { pyramid = NULL; width = height = nLevels = 0; }
     MIPMap(uint32_t xres, uint32_t yres, const T *data, bool doTri = false,
            float maxAniso = 8.f, ImageWrap wrapMode = TEXTURE_REPEAT);
     ~MIPMap();
@@ -170,11 +171,9 @@ MIPMap<T>::MIPMap(uint32_t sres, uint32_t tres, const T *img, bool doTri,
         // Filter four texels from finer level of pyramid
         for (uint32_t t = 0; t < tRes; ++t)
             for (uint32_t s = 0; s < sRes; ++s)
-                (*pyramid[i])(s, t) = .25f * (
-                    Texel(i-1, 2*s,   2*t) +
-                    Texel(i-1, 2*s+1, 2*t) +
-                    Texel(i-1, 2*s,   2*t+1) +
-                    Texel(i-1, 2*s+1, 2*t+1));
+                (*pyramid[i])(s, t) = .25f *
+                   (Texel(i-1, 2*s, 2*t)   + Texel(i-1, 2*s+1, 2*t) +
+                    Texel(i-1, 2*s, 2*t+1) + Texel(i-1, 2*s+1, 2*t+1));
     }
     if (resampledImage) delete[] resampledImage;
     // Initialize EWA filter weights if needed
@@ -251,10 +250,10 @@ T MIPMap<T>::triangle(uint32_t level, float s, float t) const {
     t = t * pyramid[level]->vSize() - 0.5f;
     int s0 = Floor2Int(s), t0 = Floor2Int(t);
     float ds = s - s0, dt = t - t0;
-    return (1.f-ds)*(1.f-dt) * Texel(level, s0, t0) +
-        (1.f-ds)*dt * Texel(level, s0, t0+1) +
-        ds*(1.f-dt) * Texel(level, s0+1, t0) +
-        ds*dt * Texel(level, s0+1, t0+1);
+    return (1.f-ds) * (1.f-dt) * Texel(level, s0, t0) +
+           (1.f-ds) * dt       * Texel(level, s0, t0+1) +
+           ds       * (1.f-dt) * Texel(level, s0+1, t0) +
+           ds       * dt       * Texel(level, s0+1, t0+1);
 }
 
 
@@ -293,8 +292,8 @@ T MIPMap<T>::Lookup(float s, float t, float ds0, float dt0,
     uint32_t ilod = Floor2Int(lod);
     PBRT_MIPMAP_EWA_FILTER(const_cast<MIPMap<T> *>(this), s, t, ds0, ds1, dt0, dt1, minorLength, majorLength, lod, nLevels);
     float d = lod - ilod;
-    T val = (1.f - d) * EWA(ilod, s, t, ds0, dt0, ds1, dt1) +
-            d * EWA(ilod+1, s, t, ds0, dt0, ds1, dt1);
+    T val = (1.f - d) * EWA(ilod,   s, t, ds0, dt0, ds1, dt1) +
+            d         * EWA(ilod+1, s, t, ds0, dt0, ds1, dt1);
     PBRT_FINISHED_EWA_TEXTURE_LOOKUP();
     return val;
 }

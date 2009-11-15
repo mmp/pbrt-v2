@@ -36,9 +36,9 @@ DistantLight::DistantLight(const Transform &light2world,
 }
 
 
-Spectrum DistantLight::Sample_L(const Point &p,
-        float pEpsilon, const LightSample &ls, float time, Vector *wi,
-        float *pdf, VisibilityTester *visibility) const {
+Spectrum DistantLight::Sample_L(const Point &p, float pEpsilon,
+        const LightSample &ls, float time, Vector *wi, float *pdf,
+        VisibilityTester *visibility) const {
     *wi = lightDir;
     *pdf = 1.f;
     visibility->SetRay(p, pEpsilon, *wi, time);
@@ -71,7 +71,8 @@ float DistantLight::Pdf(const Point &, const Vector &) const {
 
 
 Spectrum DistantLight::Sample_L(const Scene *scene, const LightSample &ls,
-        float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const {
+        float u1, float u2, float time, Ray *ray, Normal *Ns,
+        float *pdf) const {
     // Choose point on disk oriented toward infinite light direction
     Point worldCenter;
     float worldRadius;

@@ -34,11 +34,8 @@ template <typename T1, typename T2>
 class ScaleTexture : public Texture<T2> {
 public:
     // ScaleTexture Public Methods
-    ScaleTexture(Reference<Texture<T1> > t1,
-                 Reference<Texture<T2> > t2) {
-        tex1 = t1;
-        tex2 = t2;
-    }
+    ScaleTexture(Reference<Texture<T1> > t1, Reference<Texture<T2> > t2)
+        : tex1(t1), tex2(t2) { }
     T2 Evaluate(const DifferentialGeometry &dg) const {
         return tex1->Evaluate(dg) * tex2->Evaluate(dg);
     }

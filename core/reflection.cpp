@@ -296,7 +296,7 @@ Spectrum BxDF::Sample_f(const Vector &wo, Vector *wi,
 
 
 float BxDF::Pdf(const Vector &wo, const Vector &wi) const {
-    return SameHemisphere(wo, wi) ? fabsf(wi.z) * INV_PI : 0.f;
+    return SameHemisphere(wo, wi) ? AbsCosTheta(wi) * INV_PI : 0.f;
 }
 
 
@@ -407,7 +407,7 @@ Spectrum FresnelBlend::Sample_f(const Vector &wo, Vector *wi,
 
 float FresnelBlend::Pdf(const Vector &wo, const Vector &wi) const {
     if (!SameHemisphere(wo, wi)) return 0.f;
-    return .5f * (fabsf(wi.z) * INV_PI + distribution->Pdf(wo, wi));
+    return .5f * (AbsCosTheta(wi) * INV_PI + distribution->Pdf(wo, wi));
 }
 
 
@@ -426,7 +426,7 @@ Spectrum BxDF::rho(const Vector &w, int nSamples,
 
 
 Spectrum BxDF::rho(int nSamples, const float *samples1,
-        const float *samples2) const {
+                   const float *samples2) const {
     Spectrum r = 0.;
     for (int i = 0; i < nSamples; ++i) {
         // Estimate one term of $\rho_\roman{hh}$
@@ -445,8 +445,8 @@ Spectrum BxDF::rho(int nSamples, const float *samples1,
 // BSDF Method Definitions
 BSDFSampleOffsets::BSDFSampleOffsets(int count, Sample *sample) {
     nSamples = count;
-    dirOffset = sample->Add2D(nSamples);
     componentOffset = sample->Add1D(nSamples);
+    dirOffset = sample->Add2D(nSamples);
 }
 
 
@@ -461,7 +461,7 @@ BSDFSample::BSDFSample(const Sample *sample,
 
 
 Spectrum BSDF::Sample_f(const Vector &wo, Vector *wi, RNG &rng, BxDFType flags,
-    BxDFType *sampledType) const {
+        BxDFType *sampledType) const {
     float pdf;
     BSDFSample bsdfSample(rng);
     Spectrum f = Sample_f(wo, wi, bsdfSample, &pdf, flags, sampledType);
@@ -501,13 +501,10 @@ Spectrum BSDF::Sample_f(const Vector &woW, Vector *wiW,
     *wiW = LocalToWorld(wi);
 
     // Compute overall PDF with all matching _BxDF_s
-    if (!(bxdf->type & BSDF_SPECULAR) && matchingComps > 1) {
-        for (int i = 0; i < nBxDFs; ++i) {
-            if (bxdfs[i] != bxdf &&
-                bxdfs[i]->MatchesFlags(flags))
+    if (!(bxdf->type & BSDF_SPECULAR) && matchingComps > 1)
+        for (int i = 0; i < nBxDFs; ++i)
+            if (bxdfs[i] != bxdf && bxdfs[i]->MatchesFlags(flags))
                 *pdf += bxdfs[i]->Pdf(wo, wi);
-        }
-    }
     if (matchingComps > 1) *pdf /= matchingComps;
 
     // Compute value of BSDF for sampled direction

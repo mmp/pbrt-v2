@@ -290,8 +290,7 @@ void UniformSampleDisk(float u1, float u2, float *x, float *y) {
 }
 
 
-void ConcentricSampleDisk(float u1, float u2,
-                          float *dx, float *dy) {
+void ConcentricSampleDisk(float u1, float u2, float *dx, float *dy) {
     float r, theta;
     // Map uniform random numbers to $[-1,1]^2$
     float sx = 2 * u1 - 1;
@@ -309,10 +308,8 @@ void ConcentricSampleDisk(float u1, float u2,
         if (sx > sy) {
             // Handle first region of disk
             r = sx;
-            if (sy > 0.0)
-                theta = sy/r;
-            else
-                theta = 8.0f + sy/r;
+            if (sy > 0.0) theta = sy/r;
+            else          theta = 8.0f + sy/r;
         }
         else {
             // Handle second region of disk
@@ -333,13 +330,12 @@ void ConcentricSampleDisk(float u1, float u2,
         }
     }
     theta *= M_PI / 4.f;
-    *dx = r*cosf(theta);
-    *dy = r*sinf(theta);
+    *dx = r * cosf(theta);
+    *dy = r * sinf(theta);
 }
 
 
-void UniformSampleTriangle(float u1, float u2,
-                           float *u, float *v) {
+void UniformSampleTriangle(float u1, float u2, float *u, float *v) {
     float su1 = sqrtf(u1);
     *u = 1.f - su1;
     *v = u2 * su1;
@@ -428,9 +424,7 @@ Vector UniformSampleCone(float u1, float u2, float costhetamax) {
     float costheta = (1.f - u1) + u1 * costhetamax;
     float sintheta = sqrtf(1.f - costheta*costheta);
     float phi = u2 * 2.f * M_PI;
-    return Vector(cosf(phi) * sintheta,
-                  sinf(phi) * sintheta,
-                  costheta);
+    return Vector(cosf(phi) * sintheta, sinf(phi) * sintheta, costheta);
 }
 
 

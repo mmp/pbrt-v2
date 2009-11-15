@@ -62,7 +62,7 @@ struct Distribution1D {
         // Compute PDF for sampled offset
         if (pdf) *pdf = func[offset] / funcInt;
 
-        // Return $x \in [0,1]$ corresponding to sample
+        // Return $x \in [0,1)$ corresponding to sample
         return (offset + du) / count;
     }
     int SampleDiscrete(float u, float *pdf) const {

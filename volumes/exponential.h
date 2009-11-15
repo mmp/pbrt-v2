@@ -35,8 +35,7 @@ public:
                        float gg, const Spectrum &emit, const BBox &e,
                        const Transform &v2w, float aa, float bb,
                        const Vector &up)
-        : DensityRegion(sa, ss, gg, emit, v2w),
-          extent(e), a(aa), b(bb) {
+        : DensityRegion(sa, ss, gg, emit, v2w), extent(e), a(aa), b(bb) {
         upDir = Normalize(up);
     }
     BBox WorldBound() const { return Inverse(WorldToVolume)(extent); }

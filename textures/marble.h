@@ -37,13 +37,9 @@ public:
         delete mapping;
     }
     MarbleTexture(int oct, float roughness, float sc, float var,
-                  TextureMapping3D *map) {
-        omega = roughness;
-        octaves = oct;
-        mapping = map;
-        scale = sc;
-        variation = var;
-    }
+                  TextureMapping3D *map)
+        : octaves(oct), omega(roughness), scale(sc), variation(var),
+          mapping(map) { }
     Spectrum Evaluate(const DifferentialGeometry &dg) const {
         Vector dpdx, dpdy;
         Point P = mapping->Map(dg, &dpdx, &dpdy);

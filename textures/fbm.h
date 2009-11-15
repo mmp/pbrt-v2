@@ -36,11 +36,8 @@ public:
     ~FBmTexture() {
         delete mapping;
     }
-    FBmTexture(int oct, float roughness, TextureMapping3D *map) {
-        omega = roughness;
-        octaves = oct;
-        mapping = map;
-    }
+    FBmTexture(int oct, float roughness, TextureMapping3D *map)
+        : omega(roughness), octaves(oct), mapping(map) { }
     T Evaluate(const DifferentialGeometry &dg) const {
         Vector dpdx, dpdy;
         Point P = mapping->Map(dg, &dpdx, &dpdy);
@@ -48,8 +45,8 @@ public:
     }
 private:
     // FBmTexture Private Data
-    int octaves;
     float omega;
+    int octaves;
     TextureMapping3D *mapping;
 };
 

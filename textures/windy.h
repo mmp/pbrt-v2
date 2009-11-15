@@ -36,9 +36,7 @@ public:
     ~WindyTexture() {
         delete mapping;
     }
-    WindyTexture(TextureMapping3D *map) {
-        mapping = map;
-    }
+    WindyTexture(TextureMapping3D *map) : mapping(map) { }
     T Evaluate(const DifferentialGeometry &dg) const {
         Vector dpdx, dpdy;
         Point P = mapping->Map(dg, &dpdx, &dpdy);

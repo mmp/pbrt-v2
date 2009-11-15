@@ -89,7 +89,8 @@ RGBSpectrum SampledSpectrum::ToRGBSpectrum() const {
 }
 
 
-SampledSpectrum SampledSpectrum::FromRGB(const float rgb[3], SpectrumType type) {
+SampledSpectrum SampledSpectrum::FromRGB(const float rgb[3],
+        SpectrumType type) {
     SampledSpectrum r;
     if (type == SPECTRUM_REFLECTANCE) {
         // Convert reflectance spectrum to RGB

@@ -128,9 +128,7 @@ struct BSDFSample {
 struct BSDFSampleOffsets {
     BSDFSampleOffsets() { }
     BSDFSampleOffsets(int count, Sample *sample);
-    // BSDFSampleOffsets Public Methods
-    int dirOffset, componentOffset;
-    int nSamples;
+    int nSamples, componentOffset, dirOffset;
 };
 
 
@@ -140,8 +138,8 @@ public:
     Spectrum Sample_f(const Vector &wo, Vector *wi, RNG &rng,
         BxDFType flags = BSDF_ALL, BxDFType *sampledType = NULL) const;
     Spectrum Sample_f(const Vector &wo, Vector *wi, const BSDFSample &bsdfSample,
-                        float *pdf, BxDFType flags = BSDF_ALL,
-                        BxDFType *sampledType = NULL) const;
+                      float *pdf, BxDFType flags = BSDF_ALL,
+                      BxDFType *sampledType = NULL) const;
     float Pdf(const Vector &wo, const Vector &wi,
               BxDFType flags = BSDF_ALL) const;
     BSDF(const DifferentialGeometry &dgs,
@@ -170,7 +168,6 @@ public:
 private:
     // BSDF Private Methods
     ~BSDF() { }
-    friend class NoSuchClass;
 
     // BSDF Private Data
     Normal nn, ng;
@@ -196,9 +193,10 @@ public:
     virtual Spectrum f(const Vector &wo, const Vector &wi) const = 0;
     virtual Spectrum Sample_f(const Vector &wo, Vector *wi, float u1, float u2,
         float *pdf) const;
-    virtual Spectrum rho(const Vector &wo, int nSamples, const float *samples) const;
+    virtual Spectrum rho(const Vector &wo, int nSamples,
+                         const float *samples) const;
     virtual Spectrum rho(int nSamples, const float *samples1,
-        const float *samples2) const;
+                         const float *samples2) const;
     virtual float Pdf(const Vector &wi, const Vector &wo) const;
 
     // BxDF Public Data
@@ -216,6 +214,9 @@ public:
     static Vector otherHemisphere(const Vector &w) {
         return Vector(w.x, w.y, -w.z);
     }
+    Spectrum f(const Vector &wo, const Vector &wi) const;
+    Spectrum Sample_f(const Vector &wo, Vector *wi, float u1, float u2,
+                      float *pdf) const;
     Spectrum rho(const Vector &w, int nSamples, const float *samples) const {
         return brdf->rho(otherHemisphere(w), nSamples, samples);
     }
@@ -223,9 +224,6 @@ public:
                  const float *samples2) const {
         return brdf->rho(nSamples, samples1, samples2);
     }
-    Spectrum f(const Vector &wo, const Vector &wi) const;
-    Spectrum Sample_f(const Vector &wo, Vector *wi,
-        float u1, float u2, float *pdf) const;
     float Pdf(const Vector &wo, const Vector &wi) const;
 private:
     BxDF *brdf;
@@ -236,9 +234,7 @@ class ScaledBxDF : public BxDF {
 public:
     // ScaledBxDF Public Methods
     ScaledBxDF(BxDF *b, const Spectrum &sc)
-        : BxDF(BxDFType(b->type)) {
-        bxdf = b;
-        s = sc;
+        : BxDF(BxDFType(b->type)), bxdf(b), s(sc) {
     }
     Spectrum rho(const Vector &w, int nSamples, const float *samples) const {
         return s * bxdf->rho(w, nSamples, samples);
@@ -280,10 +276,7 @@ class FresnelDielectric : public Fresnel {
 public:
     // FresnelDielectric Public Methods
     Spectrum Evaluate(float cosi) const;
-    FresnelDielectric(float ei, float et) {
-        eta_i = ei;
-        eta_t = et;
-    }
+    FresnelDielectric(float ei, float et) : eta_i(ei), eta_t(et) { }
 private:
     float eta_i, eta_t;
 };
@@ -417,7 +410,8 @@ private:
 
 class Blinn : public MicrofacetDistribution {
 public:
-    Blinn(float e) { if (e > 10000.f || isnan(e)) e = 10000.f; exponent = e; }
+    Blinn(float e) { if (e > 10000.f || isnan(e)) e = 10000.f;
+                     exponent = e; }
     // Blinn Public Methods
     float D(const Vector &wh) const {
         float costhetah = AbsCosTheta(wh);

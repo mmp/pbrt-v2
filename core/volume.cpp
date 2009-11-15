@@ -158,17 +158,8 @@ VolumeRegion::~VolumeRegion() {
 
 
 Spectrum VolumeRegion::sigma_t(const Point &p, const Vector &w,
-    float time) const {
+                               float time) const {
     return sigma_a(p, w, time) + sigma_s(p, w, time);
-}
-
-
-DensityRegion::DensityRegion(const Spectrum &sa,
-                             const Spectrum &ss, float gg,
-                             const Spectrum &emit,
-                             const Transform &VolumeToWorld)
-    : sig_a(sa), sig_s(ss), le(emit), g(gg)  {
-    WorldToVolume = Inverse(VolumeToWorld);
 }
 
 

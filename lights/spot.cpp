@@ -51,10 +51,8 @@ Spectrum SpotLight::Sample_L(const Point &p, float pEpsilon,
 float SpotLight::Falloff(const Vector &w) const {
     Vector wl = Normalize(WorldToLight(w));
     float costheta = wl.z;
-    if (costheta < cosTotalWidth)
-        return 0.;
-     if (costheta > cosFalloffStart)
-        return 1.;
+    if (costheta < cosTotalWidth)     return 0.;
+    if (costheta > cosFalloffStart)   return 1.;
     // Compute falloff inside spotlight cone
     float delta = (costheta - cosTotalWidth) /
                   (cosFalloffStart - cosTotalWidth);
@@ -97,7 +95,8 @@ float SpotLight::Pdf(const Point &, const Vector &) const {
 
 
 Spectrum SpotLight::Sample_L(const Scene *scene, const LightSample &ls,
-        float u1, float u2, float time, Ray *ray, Normal *Ns, float *pdf) const {
+        float u1, float u2, float time, Ray *ray, Normal *Ns,
+        float *pdf) const {
     Vector v = UniformSampleCone(ls.uPos[0], ls.uPos[1], cosTotalWidth);
     *ray = Ray(lightPos, LightToWorld(v), 0.f, INFINITY, time);
     *Ns = (Normal)ray->d;

@@ -34,11 +34,8 @@ template <typename T> class MixTexture : public Texture<T> {
 public:
     // MixTexture Public Methods
     MixTexture(Reference<Texture<T> > t1, Reference<Texture<T> > t2,
-               Reference<Texture<float> > amt) {
-        tex1 = t1;
-        tex2 = t2;
-        amount = amt;
-    }
+               Reference<Texture<float> > amt)
+        : tex1(t1), tex2(t2), amount(amt) { }
     T Evaluate(const DifferentialGeometry &dg) const {
         T t1 = tex1->Evaluate(dg), t2 = tex2->Evaluate(dg);
         float amt = amount->Evaluate(dg);
