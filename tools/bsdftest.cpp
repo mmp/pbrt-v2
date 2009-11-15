@@ -27,6 +27,7 @@ void createBlinn05(BSDF* bsdf);
 void createBlinn2(BSDF* bsdf);
 void createBlinn30and0(BSDF* bsdf);
 void createAniso0_0(BSDF* bsdf);
+void createAniso10_10(BSDF* bsdf);
 void createAniso30_30(BSDF* bsdf);
 void createLambertian(BSDF* bsdf);
 void createOrenNayar0(BSDF* bsdf);
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
 
     // number of monte carlo estimates
     //const int estimates = 1;
-    const int estimates = 10000000;
+    const int estimates = 100000000;
 
     // radiance of uniform environment map
     const double environmentRadiance = 1.0;
@@ -72,15 +73,16 @@ int main(int argc, char *argv[])
 //CO        createBlinn05,
 //CO        createBlinn2,
 //CO        createBlinn30and0,
-        createAniso0_0,
-        createAniso30_30,
-        createLambertian,
-        createOrenNayar0,
-        createOrenNayar20,
-        createFresnelBlend0,
-        createFresnelBlend30,
-        createPlastic,
-        createSubstrate,
+//CO        createAniso0_0,
+        createAniso10_10,
+//CO        createAniso30_30,
+//CO        createLambertian,
+//CO        createOrenNayar0,
+//CO        createOrenNayar20,
+//CO        createFresnelBlend0,
+//CO        createFresnelBlend30,
+//CO        createPlastic,
+//CO        createSubstrate,
     };
 
     const char* BSDFFuncDescripArray[] = {
@@ -88,27 +90,28 @@ int main(int argc, char *argv[])
 //CO        "Blinn (exponent 0.5)",
 //CO        "Blinn (exponent 2)",
 //CO        "Blinn (exponent 30 and 0)",
-        "Anisotropic (exponent 0, 0)",
-        "Anisotropic (exponent 30, 30)",
-        "Lambertian",
-        "Oren Nayar (sigma 0)",
-        "Oren Nayar (sigma 20)",
-        "FresnelBlend (Blinn exponent 0)",
-        "FresnelBlend (Blinn exponent 30)",
-        "Plastic",
-        "Substrate",
+//CO        "Anisotropic (exponent 0, 0)",
+        "Anisotropic (exponent 10, 10)",
+//CO        "Anisotropic (exponent 30, 30)",
+//CO        "Lambertian",
+//CO        "Oren Nayar (sigma 0)",
+//CO        "Oren Nayar (sigma 20)",
+//CO        "FresnelBlend (Blinn exponent 0)",
+//CO        "FresnelBlend (Blinn exponent 30)",
+//CO        "Plastic",
+//CO        "Substrate",
     };
 
     GenSampleFunc SampleFuncArray[] = {
         Gen_Sample_f,
-        Gen_CosHemisphere,
-        Gen_UniformHemisphere,
+//CO        Gen_CosHemisphere,
+//CO        Gen_UniformHemisphere,
     };
 
     const char* SampleFuncDescripArray[] = {
         "BSDF Importance Sampling",
-        "Cos Hemisphere",
-        "Uniform Hemisphere",
+//CO        "Cos Hemisphere",
+//CO        "Uniform Hemisphere",
     };
 
     int numModels = sizeof(BSDFFuncArray) / sizeof(BSDFFuncArray[0]);
@@ -384,6 +387,18 @@ void createAniso0_0(BSDF* bsdf)
     bsdf->Add(bxdf);
 }
 
+
+void createAniso10_10(BSDF* bsdf)
+{
+    const float aniso1 = 10.0;
+    const float aniso2 = 10.0;
+    Spectrum Ks(1);
+    MicrofacetDistribution* distribution =
+        BSDF_ALLOC(arena, Anisotropic(aniso1, aniso2));
+    Fresnel* fresnel = BSDF_ALLOC(arena, FresnelNoOp)();
+    BxDF* bxdf = BSDF_ALLOC(arena, Microfacet)(Ks, fresnel, distribution);
+    bsdf->Add(bxdf);
+}
 
 void createAniso30_30(BSDF* bsdf)
 {
