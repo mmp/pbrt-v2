@@ -433,7 +433,7 @@ public:
         float d = 1.f - costhetah * costhetah;
         if (d == 0.f) return 0.f;
         float e = (ex * wh.x * wh.x + ey * wh.y * wh.y) / d;
-        return sqrtf((ex+1.f) * (ey+1.f)) * INV_TWOPI * powf(costhetah, e);
+        return sqrtf((ex+2.f) * (ey+2.f)) * INV_TWOPI * powf(costhetah, e);
     }
     void Sample_f(const Vector &wo, Vector *wi, float u1, float u2, float *pdf) const;
     float Pdf(const Vector &wo, const Vector &wi) const;

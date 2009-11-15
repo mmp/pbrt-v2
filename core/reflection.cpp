@@ -378,8 +378,14 @@ void Anisotropic::Sample_f(const Vector &wo, Vector *wi,
     *wi = -wo + 2.f * Dot(wo, wh) * wh;
 
     // Compute PDF for $\wi$ from anisotropic distribution
-    float anisotropic_pdf = D(wh) / (4.f * Dot(wo, wh));
-    if (Dot(wo, wh) < 0.f) anisotropic_pdf = 0.f;
+    float costhetah = AbsCosTheta(wh);
+    float ds = 1.f - costhetah * costhetah;
+    float anisotropic_pdf = 0.f;
+    if (ds > 0.f && Dot(wo, wh) > 0.f) {
+        float e = (ex * wh.x * wh.x + ey * wh.y * wh.y) / ds;
+        float d = sqrtf((ex+1.f) * (ey+1.f)) * INV_TWOPI * powf(costhetah, e);
+        anisotropic_pdf = d / (4.f * Dot(wo, wh));
+    }
     *pdf = anisotropic_pdf;
 }
 
@@ -399,10 +405,15 @@ void Anisotropic::sampleFirstQuadrant(float u1, float u2,
 
 float Anisotropic::Pdf(const Vector &wo, const Vector &wi) const {
     Vector wh = Normalize(wo + wi);
-    if (!SameHemisphere(wo, wh)) wh = -wh;
     // Compute PDF for $\wi$ from anisotropic distribution
-    float anisotropic_pdf = D(wh) / (4.f * Dot(wo, wh));
-    if (Dot(wo, wh) < 0.f) anisotropic_pdf = 0.f;
+    float costhetah = AbsCosTheta(wh);
+    float ds = 1.f - costhetah * costhetah;
+    float anisotropic_pdf = 0.f;
+    if (ds > 0.f && Dot(wo, wh) > 0.f) {
+        float e = (ex * wh.x * wh.x + ey * wh.y * wh.y) / ds;
+        float d = sqrtf((ex+1.f) * (ey+1.f)) * INV_TWOPI * powf(costhetah, e);
+        anisotropic_pdf = d / (4.f * Dot(wo, wh));
+    }
     return anisotropic_pdf;
 }
 
