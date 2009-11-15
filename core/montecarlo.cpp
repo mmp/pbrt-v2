@@ -384,37 +384,6 @@ PermutedHalton::PermutedHalton(uint32_t d, RNG &rng) {
 }
 
 
-void SampleBlinn(const Vector &wo, Vector *wi, float u1, float u2, float *pdf,
-        float exponent) {
-    // Compute sampled half-angle vector $\wh$ for Blinn distribution
-    float costheta = powf(u1, 1.f / (exponent+1));
-    float sintheta = sqrtf(max(0.f, 1.f - costheta*costheta));
-    float phi = u2 * 2.f * M_PI;
-    Vector wh = SphericalDirection(sintheta, costheta, phi);
-    if (!SameHemisphere(wo, wh)) wh = -wh;
-
-    // Compute incident direction by reflecting about $\wh$
-    *wi = -wo + 2.f * Dot(wo, wh) * wh;
-
-    // Compute PDF for $\wi$ from Blinn distribution
-    float blinn_pdf = ((exponent + 1.f) * powf(costheta, exponent)) /
-                      (2.f * M_PI * 4.f * Dot(wo, wh));
-    if (Dot(wo, wh) < 0.f) blinn_pdf = 0.f;
-    *pdf = blinn_pdf;
-}
-
-
-float BlinnPdf(const Vector &wo, const Vector &wi, float exponent) {
-    Vector wh = Normalize(wo + wi);
-    float costheta = fabsf(wh.z);
-    // Compute PDF for $\wi$ from Blinn distribution
-    float blinn_pdf = ((exponent + 1.f) * powf(costheta, exponent)) /
-                      (2.f * M_PI * 4.f * Dot(wo, wh));
-    if (Dot(wo, wh) < 0.f) blinn_pdf = 0.f;
-    return blinn_pdf;
-}
-
-
 float UniformConePdf(float cosThetaMax) {
     return 1.f / (2.f * M_PI * (1.f - cosThetaMax));
 }

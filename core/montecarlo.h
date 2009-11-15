@@ -215,8 +215,6 @@ inline void Sample02(uint32_t n, uint32_t scramble[2], float sample[2]);
 int LDPixelSampleFloatsNeeded(const Sample *sample, int pixelSamples);
 void LDPixelSample(int xPos, int yPos, float shutterOpen,
     float shutterClose, int pixelSamples, Sample *samples, float *buf);
-void SampleBlinn(const Vector &wo, Vector *wi, float u1, float u2, float *pdf, float exponent);
-float BlinnPdf(const Vector &wo, const Vector &wi, float exponent);
 Vector SampleHG(const Vector &w, float g, float u1, float u2);
 float HGPdf(const Vector &w, const Vector &wp, float g);
 
