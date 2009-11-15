@@ -103,7 +103,7 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
         
         regularHalfangleData = new float[3*n];
         const uint32_t chunkSize = 2*nPhiD;
-        double tmp[chunkSize];
+        double *tmp = ALLOCA(double, chunkSize);
         uint32_t nChunks = n / chunkSize;
         Assert((n % chunkSize) == 0);
         float scales[3] = { 1.f/1500.f, 1.15f/1500.f, 1.66f/1500.f };

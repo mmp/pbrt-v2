@@ -413,7 +413,7 @@ Vector SampleHG(const Vector &w, float g, float u1, float u2) {
         costheta = 1.f - 2.f * u1;
     else {
         float sqrTerm = (1.f - g * g) /
-                (1.f - g + 2.f * g * u1);
+                        (1.f - g + 2.f * g * u1);
         costheta = (1.f + g * g - sqrTerm * sqrTerm) / (2.f * g);
     }
     float sintheta = sqrtf(max(0.f, 1.f-costheta*costheta));

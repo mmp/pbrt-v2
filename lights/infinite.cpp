@@ -196,8 +196,8 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
 
     // Convert infinite light sample point to direction
     float theta = uv[1] * M_PI, phi = uv[0] * 2.f * M_PI;
-    float costheta = cos(theta), sintheta = sin(theta);
-    float sinphi = sin(phi), cosphi = cos(phi);
+    float costheta = cosf(theta), sintheta = sinf(theta);
+    float sinphi = sinf(phi), cosphi = cosf(phi);
     *wi = LightToWorld(Vector(sintheta * cosphi, sintheta * sinphi,
                               costheta));
 

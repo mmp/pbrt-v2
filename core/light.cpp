@@ -132,7 +132,7 @@ ShapeSet::~ShapeSet() {
 
 
 Point ShapeSet::Sample(const Point &p, const LightSample &ls,
-        Normal *Ns) const {
+                       Normal *Ns) const {
     int sn = areaDistribution->SampleDiscrete(ls.uComponent, NULL);
     return shapes[sn]->Sample(p, ls.uPos[0], ls.uPos[1], Ns);
 }

@@ -233,13 +233,12 @@ Point Sphere::Sample(const Point &p, float u1, float u2,
         return Sample(u1, u2, ns);
 
     // Sample sphere uniformly inside subtended cone
-    float cosThetaMax =
-        sqrtf(max(0.f, 1.f - radius*radius / DistanceSquared(p, Pcenter)));
+    float sinThetaMax2 = radius*radius / DistanceSquared(p, Pcenter);
+    float cosThetaMax = sqrtf(max(0.f, 1.f - sinThetaMax2));
     DifferentialGeometry dgSphere;
     float thit, rayEpsilon;
     Point ps;
-    Ray r(p, UniformSampleCone(u1, u2, cosThetaMax, wcX, wcY, wc),
-          1e-3f);
+    Ray r(p, UniformSampleCone(u1, u2, cosThetaMax, wcX, wcY, wc), 1e-3f);
     if (!Intersect(r, &thit, &rayEpsilon, &dgSphere))
         ps = Pcenter - radius * wc;
     else
@@ -257,8 +256,8 @@ float Sphere::Pdf(const Point &p, const Vector &wi) const {
         return Shape::Pdf(p, wi);
 
     // Compute general sphere weight
-    float cosThetaMax =
-        sqrtf(max(0.f, 1.f - radius*radius / DistanceSquared(p, Pcenter)));
+    float sinThetaMax2 = radius*radius / DistanceSquared(p, Pcenter);
+    float cosThetaMax = sqrtf(max(0.f, 1.f - sinThetaMax2));
     return UniformConePdf(cosThetaMax);
 }
 
