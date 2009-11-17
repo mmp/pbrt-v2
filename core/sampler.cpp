@@ -34,17 +34,10 @@ Sampler::~Sampler() {
 
 
 Sampler::Sampler(int xstart, int xend, int ystart, int yend, int spp,
-                 float sopen, float sclose) {
-    xPixelStart = xstart;
-    xPixelEnd = xend;
-    yPixelStart = ystart;
-    yPixelEnd = yend;
-    samplesPerPixel = spp;
-    shutterOpen = sopen;
-    shutterClose = sclose;
-}
-
-
+                 float sopen, float sclose)
+    : xPixelStart(xstart), xPixelEnd(xend), yPixelStart(ystart),
+      yPixelEnd(yend), samplesPerPixel(spp), shutterOpen(sopen),
+      shutterClose(sclose) { }
 bool Sampler::ReportResults(Sample *samples, const RayDifferential *rays,
         const Spectrum *Ls, const Intersection *isects, int count) {
     return true;
