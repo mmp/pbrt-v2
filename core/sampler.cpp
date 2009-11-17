@@ -106,13 +106,12 @@ void Sample::AllocateSampleMemory() {
 }
 
 
-Sample *Sample::Duplicate(int count, RNG *rng) const {
+Sample *Sample::Duplicate(int count) const {
     Sample *ret = new Sample[count];
     for (int i = 0; i < count; ++i) {
         ret[i].n1D = n1D;
         ret[i].n2D = n2D;
         ret[i].AllocateSampleMemory();
-        ret[i].rng = rng;
     }
     return ret;
 }

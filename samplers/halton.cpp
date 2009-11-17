@@ -34,22 +34,21 @@ Sampler *HaltonSampler::GetSubSampler(int num, int count) {
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
     return new HaltonSampler(x0, x1, y0, y1, samplesPerPixel, shutterOpen,
-        shutterClose, num * 1024);
+        shutterClose);
 }
 
 
 HaltonSampler::HaltonSampler(int xs, int xe, int ys, int ye, int ps,
-        float sopen, float sclose, uint32_t rngSeed)
-    : Sampler(xs, xe, ys, ye, ps, sopen, sclose), rng(rngSeed) {
+        float sopen, float sclose)
+    : Sampler(xs, xe, ys, ye, ps, sopen, sclose) {
     int delta = max(xPixelEnd - xPixelStart,
                     yPixelEnd - yPixelStart);
-
     wantedSamples = samplesPerPixel * delta * delta;
     currentSample = 0;
 }
 
 
-int HaltonSampler::GetMoreSamples(Sample *samples) {
+int HaltonSampler::GetMoreSamples(Sample *samples, RNG &rng) {
 retry:
     if (currentSample >= wantedSamples) return 0;
     // Generate sample with Halton sequence and reject if outside image extent
@@ -84,7 +83,7 @@ HaltonSampler *CreateHaltonSampler(const ParamSet &params, const Film *film,
     int nsamp = params.FindOneInt("pixelsamples", 4);
     if (getenv("PBRT_QUICK_RENDER")) nsamp = 1;
     return new HaltonSampler(xstart, xend, ystart, yend, nsamp,
-         camera->shutterOpen, camera->shutterClose, 0);
+         camera->shutterOpen, camera->shutterClose);
 }
 
 

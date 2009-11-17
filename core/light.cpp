@@ -41,9 +41,9 @@ bool VisibilityTester::Unoccluded(const Scene *scene) const {
 
 Spectrum VisibilityTester::Transmittance(const Scene *scene,
         const Renderer *renderer, const Sample *sample,
-        RNG *rng, MemoryArena &arena) const {
+        RNG &rng, MemoryArena &arena) const {
     return renderer->Transmittance(scene, RayDifferential(r), sample,
-                                   arena, rng);
+                                   rng, arena);
 }
 
 

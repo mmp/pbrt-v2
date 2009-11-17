@@ -29,8 +29,7 @@
 
 RandomSampler::RandomSampler(int xstart, int xend,
         int ystart, int yend, int ns, float sopen, float sclose)
-    : Sampler(xstart, xend, ystart, yend, ns, sopen, sclose),
-      rng(xstart + ystart * (xend-xstart)) {
+    : Sampler(xstart, xend, ystart, yend, ns, sopen, sclose) {
     xPos = xPixelStart;
     yPos = yPixelStart;
     nSamples = ns;
@@ -39,6 +38,7 @@ RandomSampler::RandomSampler(int xstart, int xend,
     lensSamples = imageSamples + 2 * nSamples;
     timeSamples = lensSamples + 2 * nSamples;
 
+    RNG rng(xstart + ystart * (xend-xstart));
     for (int i = 0; i < 5 * nSamples; ++i)
         imageSamples[i] = rng.RandomFloat();
 
@@ -62,7 +62,7 @@ Sampler *RandomSampler::GetSubSampler(int num, int count) {
 
 
 
-int RandomSampler::GetMoreSamples(Sample *sample) {
+int RandomSampler::GetMoreSamples(Sample *sample, RNG &rng) {
     if (samplePos == nSamples) {
         if (xPixelStart == xPixelEnd || yPixelStart == yPixelEnd)
             return 0;

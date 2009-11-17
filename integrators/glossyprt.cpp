@@ -73,7 +73,7 @@ void GlossyPRTIntegrator::RequestSamples(Sampler *sampler, Sample *sample, const
 
 Spectrum GlossyPRTIntegrator::Li(const Scene *scene, const Renderer *,
             const RayDifferential &ray, const Intersection &isect,
-            const Sample *sample, MemoryArena &arena) const {
+            const Sample *sample, RNG &rng, MemoryArena &arena) const {
     Spectrum L = 0.f;
     Vector wo = -ray.d;
     // Compute emitted light if ray hit an area light source
@@ -88,7 +88,7 @@ Spectrum GlossyPRTIntegrator::Li(const Scene *scene, const Renderer *,
     Spectrum *c_t = arena.Alloc<Spectrum>(SHTerms(lmax));
     if (doTransfer) {
         Spectrum *T = arena.Alloc<Spectrum>(SHTerms(lmax)*SHTerms(lmax));
-        SHComputeTransferMatrix(p, isect.rayEpsilon, scene, *sample->rng,
+        SHComputeTransferMatrix(p, isect.rayEpsilon, scene, rng,
                                 nSamples, lmax, T);
         SHMatrixVectorMultiply(T, c_in, c_t, lmax);
     }
@@ -115,7 +115,7 @@ Spectrum GlossyPRTIntegrator::Li(const Scene *scene, const Renderer *,
     for (int i = 0; i < ns; ++i) {
         Vector wi;
         float pdf;
-        Spectrum f = bsdf->Sample_f(wo, &wi, BSDFSample(*sample->rng), &pdf);
+        Spectrum f = bsdf->Sample_f(wo, &wi, BSDFSample(rng), &pdf);
         if (pdf > 0.f && !f.IsBlack() && !scene->IntersectP(Ray(p, wi))) {
             f *= fabsf(Dot(wi, n)) / (pdf * ns);
             SHEvaluate(bsdf->WorldToLocal(wi), lmax, Ylm);

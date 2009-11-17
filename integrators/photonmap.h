@@ -41,12 +41,12 @@ class PhotonIntegrator : public SurfaceIntegrator {
 public:
     // PhotonIntegrator Public Methods
     PhotonIntegrator(int ncaus, int nindir, int nLookup, int maxspecdepth,
-             int maxphotondepth, float maxdist, bool finalGather, int gatherSamples,
-             float ga);
+        int maxphotondepth, float maxdist, bool finalGather, int gatherSamples,
+        float ga);
     ~PhotonIntegrator();
     Spectrum Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect, const Sample *sample,
-        MemoryArena &arena) const;
+        RNG &rng, MemoryArena &arena) const;
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
     void Preprocess(const Scene *scene, const Camera *camera, const Renderer *renderer);
 private:

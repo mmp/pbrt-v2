@@ -95,7 +95,7 @@ void UseRadianceProbes::RequestSamples(Sampler *sampler, Sample *sample, const S
 
 Spectrum UseRadianceProbes::Li(const Scene *scene, const Renderer *renderer,
             const RayDifferential &ray, const Intersection &isect,
-            const Sample *sample, MemoryArena &arena) const {
+            const Sample *sample, RNG &rng, MemoryArena &arena) const {
     Spectrum L(0.);
     Vector wo = -ray.d;
     // Compute emitted light if ray hit an area light source
@@ -108,7 +108,7 @@ Spectrum UseRadianceProbes::Li(const Scene *scene, const Renderer *renderer,
     // Compute reflection for radiance probes integrator
     if (!includeDirectInProbes)
         L += UniformSampleAllLights(scene, renderer, arena, p, n,
-            wo, isect.rayEpsilon, bsdf, sample,
+            wo, isect.rayEpsilon, ray.time, bsdf, sample, rng,
             lightSampleOffsets, bsdfSampleOffsets);
 
     // Compute reflected lighting using radiance probes
@@ -158,7 +158,7 @@ Spectrum UseRadianceProbes::Li(const Scene *scene, const Renderer *renderer,
     // Compute diffuse reflection coefficient _Kd_ from BSDF
     const int sqrtRhoSamples = 4;
     float rhoRSamples[2*sqrtRhoSamples*sqrtRhoSamples];
-    StratifiedSample2D(rhoRSamples, sqrtRhoSamples, sqrtRhoSamples, *sample->rng);
+    StratifiedSample2D(rhoRSamples, sqrtRhoSamples, sqrtRhoSamples, rng);
     Spectrum Kd = bsdf->rho(wo, sqrtRhoSamples*sqrtRhoSamples, rhoRSamples,
         BSDF_ALL_REFLECTION) * INV_PI;
     float *Ylm = ALLOCA(float, SHTerms(lmax));

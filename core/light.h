@@ -83,7 +83,7 @@ struct VisibilityTester {
     }
     bool Unoccluded(const Scene *scene) const;
     Spectrum Transmittance(const Scene *scene, const Renderer *renderer,
-        const Sample *sample, RNG *rng, MemoryArena &arena) const;
+        const Sample *sample, RNG &rng, MemoryArena &arena) const;
     Ray r;
 };
 

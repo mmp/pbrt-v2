@@ -113,11 +113,11 @@ class VolumeIntegrator : public Integrator {
 public:
     // VolumeIntegrator Interface
     virtual Spectrum Li(const Scene *scene, const Renderer *renderer,
-        const RayDifferential &ray, const Sample *sample,
+        const RayDifferential &ray, const Sample *sample, RNG &rng,
         Spectrum *transmittance, MemoryArena &arena) const = 0;
     virtual Spectrum Transmittance(const Scene *scene,
         const Renderer *renderer, const RayDifferential &ray,
-        const Sample *sample, RNG *rng, MemoryArena &arena) const = 0;
+        const Sample *sample, RNG &rng, MemoryArena &arena) const = 0;
 };
 
 

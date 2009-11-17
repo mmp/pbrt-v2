@@ -37,10 +37,10 @@ public:
     ~SampleRenderer();
     void Render(const Scene *scene);
     Spectrum Li(const Scene *scene, const RayDifferential &ray,
-        const Sample *sample, MemoryArena &arena,
+        const Sample *sample, RNG &rng, MemoryArena &arena,
         Intersection *isect = NULL, Spectrum *T = NULL) const;
     Spectrum Transmittance(const Scene *scene, const RayDifferential &ray,
-        const Sample *sample, MemoryArena &arena, RNG *rng) const;
+        const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
     // SampleRenderer Private Data
     Sampler *sampler;

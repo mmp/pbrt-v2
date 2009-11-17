@@ -38,7 +38,7 @@ public:
     ~DirectLightingIntegrator();
     Spectrum Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const;
+        const Sample *sample, RNG &rng, MemoryArena &arena) const;
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
 private:
     // DirectLightingIntegrator Private Data

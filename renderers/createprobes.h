@@ -40,10 +40,10 @@ public:
     ~CreateRadianceProbes();
     void Render(const Scene *scene);
     Spectrum Li(const Scene *scene, const RayDifferential &ray,
-        const Sample *sample, MemoryArena &arena, Intersection *isect,
+        const Sample *sample, RNG &rng, MemoryArena &arena, Intersection *isect,
         Spectrum *T) const;
     Spectrum Transmittance(const Scene *scene, const RayDifferential &ray,
-        const Sample *sample, MemoryArena &arena, RNG *rng) const;
+        const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
     // CreateRadianceProbes Private Data
     Point pCamera;

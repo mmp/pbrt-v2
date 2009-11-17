@@ -35,11 +35,9 @@ public:
     StratifiedSampler(int xstart, int xend, int ystart, int yend,
                       int xs, int ys, bool jitter, float sopen, float sclose);
     ~StratifiedSampler();
-    int RoundSize(int size) const {
-        return size;
-    }
+    int RoundSize(int size) const { return size; }
     Sampler *GetSubSampler(int num, int count);
-    int GetMoreSamples(Sample *sample);
+    int GetMoreSamples(Sample *sample, RNG &rng);
     int MaximumSampleCount() { return xPixelSamples * yPixelSamples; }
 private:
     // StratifiedSampler Private Data

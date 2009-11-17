@@ -47,7 +47,7 @@ public:
     ~DipoleSubsurfaceIntegrator();
     Spectrum Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect, const Sample *sample,
-        MemoryArena &arena) const;
+        RNG &rng, MemoryArena &arena) const;
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
     void Preprocess(const Scene *, const Camera *, const Renderer *);
     DipoleSubsurfaceIntegrator(int mdepth, float merror, float mindist) {

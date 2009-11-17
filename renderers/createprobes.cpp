@@ -113,8 +113,8 @@ CreateRadianceProbes::~CreateRadianceProbes() {
 
 
 Spectrum CreateRadianceProbes::Li(const Scene *scene, const RayDifferential &ray,
-    const Sample *sample, MemoryArena &arena, Intersection *isect,
-    Spectrum *T) const {
+        const Sample *sample, RNG &rng, MemoryArena &arena, Intersection *isect,
+        Spectrum *T) const {
     Assert(ray.time == sample->time);
     Spectrum localT;
     if (!T) T = &localT;
@@ -123,19 +123,19 @@ Spectrum CreateRadianceProbes::Li(const Scene *scene, const RayDifferential &ray
     Assert(!ray.HasNaNs());
     Spectrum Lo = 0.f;
     if (scene->Intersect(ray, isect))
-        Lo = surfaceIntegrator->Li(scene, this, ray, *isect, sample, arena);
+        Lo = surfaceIntegrator->Li(scene, this, ray, *isect, sample, rng, arena);
     else {
         for (uint32_t i = 0; i < scene->lights.size(); ++i)
            Lo += scene->lights[i]->Le(ray);
     }
-    Spectrum Lv = volumeIntegrator->Li(scene, this, ray, sample, T, arena);
+    Spectrum Lv = volumeIntegrator->Li(scene, this, ray, sample, rng, T, arena);
     return *T * Lo + Lv;
 }
 
 
 Spectrum CreateRadianceProbes::Transmittance(const Scene *scene,
-    const RayDifferential &ray, const Sample *sample,
-    MemoryArena &arena, RNG *rng) const {
+    const RayDifferential &ray, const Sample *sample, RNG &rng,
+    MemoryArena &arena) const {
     return volumeIntegrator->Transmittance(scene, this, ray, sample, rng, arena);
 }
 

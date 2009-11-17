@@ -53,7 +53,7 @@ public:
     ~IrradianceCacheIntegrator();
     Spectrum Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const;
+        const Sample *sample, RNG &rng, MemoryArena &arena) const;
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
     void Preprocess(const Scene *, const Camera *, const Renderer *);
 private:
@@ -71,13 +71,13 @@ private:
     // IrradianceCacheIntegrator Private Methods
     Spectrum indirectLo(const Point &p, const Normal &ng,
         float pixelSpacing, const Vector &wo, float rayEpsilon,
-        BSDF *bsdf, BxDFType flags,
-        const Sample *sample, const Scene *scene, const Renderer *renderer,
+        BSDF *bsdf, BxDFType flags, RNG &rng,
+        const Scene *scene, const Renderer *renderer,
         MemoryArena &arena) const;
     bool interpolateE(const Scene *scene,
             const Point &p, const Normal &n, Spectrum *E, Vector *wi) const;
     Spectrum pathL(Ray &r, const Scene *scene, const Renderer *renderer,
-        const Sample *sample, MemoryArena &arena) const;
+        RNG &rng, MemoryArena &arena) const;
 };
 
 

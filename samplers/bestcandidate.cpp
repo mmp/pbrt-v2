@@ -38,7 +38,7 @@ Sampler *BestCandidateSampler::GetSubSampler(int num, int count) {
 }
 
 
-int BestCandidateSampler::GetMoreSamples(Sample *sample) {
+int BestCandidateSampler::GetMoreSamples(Sample *sample, RNG &rng) {
 again:
     if (tableOffset == SAMPLE_TABLE_SIZE) {
         // Advance to next best-candidate sample table position
@@ -50,9 +50,9 @@ again:
         }
 
         // Update sample shifts
-        RNG rng((xTile<<8) + (yTile<<8));
+        RNG tileRng((xTile<<8) + (yTile<<8));
         for (int i = 0; i < 3; ++i)
-            sampleOffsets[i] = rng.RandomFloat();
+            sampleOffsets[i] = tileRng.RandomFloat();
     }
     // Compute raster sample from table
 #define WRAP(x) ((x) > 1 ? ((x)-1) : (x))
@@ -74,9 +74,9 @@ again:
 
     // Compute integrator samples for best-candidate sample
     for (uint32_t i = 0; i < sample->n1D.size(); ++i)
-         LDShuffleScrambled1D(sample->n1D[i], 1, sample->oneD[i], *sample->rng);
+         LDShuffleScrambled1D(sample->n1D[i], 1, sample->oneD[i], rng);
     for (uint32_t i = 0; i < sample->n2D.size(); ++i)
-         LDShuffleScrambled2D(sample->n2D[i], 1, sample->twoD[i], *sample->rng);
+         LDShuffleScrambled2D(sample->n2D[i], 1, sample->twoD[i], rng);
     ++tableOffset;
     return 1;
 }

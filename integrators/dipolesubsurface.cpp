@@ -301,7 +301,7 @@ void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
                     ls, camera->shutterOpen, &wi, &lightPdf, &visibility);
                 if (Dot(wi, ip.n) <= 0.) continue;
                 if (Li.IsBlack() || lightPdf == 0.f) continue;
-                Li *= visibility.Transmittance(scene, renderer, NULL, &rng, arena);
+                Li *= visibility.Transmittance(scene, renderer, NULL, rng, arena);
                 if (visibility.Unoccluded(scene))
                     Elight += Li * Dot(wi, ip.n) / lightPdf;
             }
@@ -431,7 +431,7 @@ void PoissonPointTask::Run() {
 
 Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const {
+        const Sample *sample, RNG &rng, MemoryArena &arena) const {
     Spectrum L(0.);
     Vector wo = -ray.d;
     // Compute emitted light if ray hit an area light source
@@ -460,12 +460,13 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
         }
     }
     L += UniformSampleAllLights(scene, renderer, arena, p, n,
-        wo, isect.rayEpsilon, bsdf, sample, lightSampleOffsets, bsdfSampleOffsets);
+        wo, isect.rayEpsilon, ray.time, bsdf, sample, rng, lightSampleOffsets,
+        bsdfSampleOffsets);
     if (ray.depth < maxSpecularDepth) {
         // Trace rays for specular reflection and refraction
-        L += SpecularReflect(ray, bsdf, *sample->rng, isect, renderer,
+        L += SpecularReflect(ray, bsdf, rng, isect, renderer,
                              scene, sample, arena);
-        L += SpecularTransmit(ray, bsdf, *sample->rng, isect, renderer,
+        L += SpecularTransmit(ray, bsdf, rng, isect, renderer,
                               scene, sample, arena);
     }
     return L;

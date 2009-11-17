@@ -30,7 +30,7 @@
 // WhittedIntegrator Method Definitions
 Spectrum WhittedIntegrator::Li(const Scene *scene,
         const Renderer *renderer, const RayDifferential &ray,
-        const Intersection &isect, const Sample *sample,
+        const Intersection &isect, const Sample *sample, RNG &rng,
         MemoryArena &arena) const {
     Spectrum L(0.);
     // Compute emitted and reflected light at ray intersection point
@@ -52,20 +52,20 @@ Spectrum WhittedIntegrator::Li(const Scene *scene,
         VisibilityTester visibility;
         float pdf;
         Spectrum Li = scene->lights[i]->Sample_L(p, isect.rayEpsilon,
-            LightSample(*sample->rng), sample->time, &wi, &pdf, &visibility);
+            LightSample(rng), sample->time, &wi, &pdf, &visibility);
         if (Li.IsBlack() || pdf == 0.f) continue;
         Li /= pdf;
         Spectrum f = bsdf->f(wo, wi);
         if (!f.IsBlack() && visibility.Unoccluded(scene))
             L += f * Li * AbsDot(wi, n) *
                 visibility.Transmittance(scene, renderer,
-                                         sample, NULL, arena);
+                                         sample, rng, arena);
     }
     if (ray.depth + 1 < maxDepth) {
         // Trace rays for specular reflection and refraction
-        L += SpecularReflect(ray, bsdf, *sample->rng, isect, renderer,
+        L += SpecularReflect(ray, bsdf, rng, isect, renderer,
                              scene, sample, arena);
-        L += SpecularTransmit(ray, bsdf, *sample->rng, isect, renderer,
+        L += SpecularTransmit(ray, bsdf, rng, isect, renderer,
                               scene, sample, arena);
     }
     return L;

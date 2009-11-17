@@ -36,10 +36,10 @@ public:
     EmissionIntegrator(float ss) { stepSize = ss; }
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
     Spectrum Li(const Scene *scene, const Renderer *renderer,
-            const RayDifferential &ray, const Sample *sample,
+            const RayDifferential &ray, const Sample *sample, RNG &rng,
             Spectrum *transmittance, MemoryArena &arena) const;
     Spectrum Transmittance(const Scene *scene, const Renderer *,
-            const RayDifferential &ray, const Sample *sample, RNG *rng,
+            const RayDifferential &ray, const Sample *sample, RNG &rng,
             MemoryArena &arena) const;
 private:
     // EmissionIntegrator Private Data

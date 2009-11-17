@@ -50,7 +50,7 @@ public:
     }
     Spectrum Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const;
+        const Sample *sample, RNG &rng, MemoryArena &arena) const;
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
 private:
     LightSampleOffsets *lightSampleOffsets;
@@ -362,7 +362,7 @@ void MLTDirectIntegrator::RequestSamples(Sampler *sampler, Sample *sample,
 
 Spectrum MLTDirectIntegrator::Li(const Scene *scene,
         const Renderer *renderer, const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const {
+        const Sample *sample, RNG &rng, MemoryArena &arena) const {
     Spectrum L(0.f);
     // Evaluate BSDF at hit point
     BSDF *bsdf = isect.GetBSDF(ray, arena);
@@ -372,8 +372,8 @@ Spectrum MLTDirectIntegrator::Li(const Scene *scene,
     // Compute emitted light if ray hit an area light source
     L += isect.Le(wo);
     L += UniformSampleAllLights(scene, renderer, arena, p, n, wo,
-            isect.rayEpsilon, bsdf,
-            sample, lightSampleOffsets, bsdfSampleOffsets);
+            isect.rayEpsilon, ray.time, bsdf, sample, rng, lightSampleOffsets,
+            bsdfSampleOffsets);
     return L;
 }
 
@@ -388,13 +388,13 @@ void MLTDirectTask::Run() {
     RNG rng(taskNum);
     // Allocate space for samples and intersections
     int maxSamples = sampler->MaximumSampleCount();
-    Sample *samples = origSample->Duplicate(maxSamples, &rng);
+    Sample *samples = origSample->Duplicate(maxSamples);
     RayDifferential *rays = new RayDifferential[maxSamples];
     Spectrum *Ls = new Spectrum[maxSamples];
     Spectrum *Ts = new Spectrum[maxSamples];
     Intersection *isects = new Intersection[maxSamples];
     int sampleCount;
-    while ((sampleCount = sampler->GetMoreSamples(samples)) > 0) {
+    while ((sampleCount = sampler->GetMoreSamples(samples, rng)) > 0) {
         for (int i = 0; i < sampleCount; ++i) {
             // Find camera ray for _sample[i]_
             PBRT_STARTED_GENERATING_CAMERA_RAY(&samples[i]);
@@ -404,7 +404,7 @@ void MLTDirectTask::Run() {
             if (rayWeight > 0.f) {
                 if (scene->Intersect(rays[i], &isects[i]))
                     Ls[i] = rayWeight * direct->Li(scene, renderer,
-                        rays[i], isects[i], &samples[i], arena);
+                        rays[i], isects[i], &samples[i], rng, arena);
                 else {
                     for (uint32_t j = 0; j < scene->lights.size(); ++j)
                         Ls[i] += rayWeight * scene->lights[j]->Le(rays[i]);
@@ -582,7 +582,7 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
             const Light *light = scene->lights[lightNum];
             L += pathThroughput *
                  EstimateDirect(scene, renderer, arena, light, p, n, wo,
-                     isect.rayEpsilon, sample.cameraSample.time, bsdf, &rng,
+                     isect.rayEpsilon, sample.cameraSample.time, bsdf, rng,
                      lightSample, bsdfSample);
         }
 
@@ -600,14 +600,14 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
         pathThroughput *= f * AbsDot(wi, n) / pdf;
         ray = RayDifferential(p, wi, ray, isect.rayEpsilon);
         
-        //pathThroughput *= renderer->Transmittance(scene, ray, NULL, arena, sample->rng);
+        //pathThroughput *= renderer->Transmittance(scene, ray, NULL, rng, arena);
     }
     return L;
 }
 
 
 Spectrum MetropolisRenderer::Li(const Scene *scene, const RayDifferential &ray,
-    const Sample *sample, MemoryArena &arena, Intersection *isect,
+    const Sample *sample, RNG &rng, MemoryArena &arena, Intersection *isect,
     Spectrum *T) const {
 Severe("WHA MLT::Li()");
 return 0.f;
@@ -615,7 +615,7 @@ return 0.f;
 
 
 Spectrum MetropolisRenderer::Transmittance(const Scene *scene, const RayDifferential &ray,
-    const Sample *sample, MemoryArena &arena, RNG *rng) const {
+    const Sample *sample, RNG &rng, MemoryArena &arena) const {
 // FIXME
     return 1.f;
 }

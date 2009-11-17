@@ -42,7 +42,7 @@ void PathIntegrator::RequestSamples(Sampler *sampler, Sample *sample,
 
 Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &r, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const {
+        const Sample *sample, RNG &rng, MemoryArena &arena) const {
     // Declare common path integration variables
     Spectrum pathThroughput = 1., L = 0.;
     RayDifferential ray(r);
@@ -62,12 +62,12 @@ Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
         if (pathLength < SAMPLE_DEPTH)
             L += pathThroughput *
                  UniformSampleOneLight(scene, renderer, arena, p, n, wo,
-                     isectp->rayEpsilon, bsdf, sample, lightNumOffset[pathLength],
+                     isectp->rayEpsilon, ray.time, bsdf, sample, rng, lightNumOffset[pathLength],
                      &lightSampleOffsets[pathLength], &bsdfSampleOffsets[pathLength]);
         else
             L += pathThroughput *
                  UniformSampleOneLight(scene, renderer, arena, p, n, wo,
-                     isectp->rayEpsilon, bsdf, sample);
+                     isectp->rayEpsilon, ray.time, bsdf, sample, rng);
 
         // Sample BSDF to get new path direction
 
@@ -76,7 +76,7 @@ Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
         if (pathLength < SAMPLE_DEPTH)
             outgoingBSDFSample = BSDFSample(sample, pathSampleOffsets[pathLength], 0);
         else
-            outgoingBSDFSample = BSDFSample(*sample->rng);
+            outgoingBSDFSample = BSDFSample(rng);
         Vector wi;
         float pdf;
         BxDFType flags;
@@ -91,7 +91,7 @@ Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
         // Possibly terminate the path
         if (pathLength > 3) {
             float continueProbability = min(.5f, pathThroughput.y());
-            if (sample->rng->RandomFloat() > continueProbability)
+            if (rng.RandomFloat() > continueProbability)
                 break;
             pathThroughput /= continueProbability;
         }
@@ -107,7 +107,7 @@ Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
             break;
         }
         if (pathLength > 1)
-            pathThroughput *= renderer->Transmittance(scene, ray, NULL, arena, sample->rng);
+            pathThroughput *= renderer->Transmittance(scene, ray, NULL, rng, arena);
         isectp = &localIsect;
     }
     return L;

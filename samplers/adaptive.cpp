@@ -90,18 +90,18 @@ Sampler *AdaptiveSampler::GetSubSampler(int num, int count) {
 }
 
 
-int AdaptiveSampler::GetMoreSamples(Sample *samples) {
+int AdaptiveSampler::GetMoreSamples(Sample *samples, RNG &rng) {
     if (!sampleBuf)
         sampleBuf = new float[LDPixelSampleFloatsNeeded(samples, maxSamples)];
     if (supersamplePixel) {
         LDPixelSample(xPos, yPos, shutterOpen, shutterClose, maxSamples,
-                      samples, sampleBuf);
+                      samples, sampleBuf, rng);
         return maxSamples;
     }
     else {
         if (yPos == yPixelEnd) return 0;
         LDPixelSample(xPos, yPos, shutterOpen, shutterClose, minSamples,
-                      samples, sampleBuf);
+                      samples, sampleBuf, rng);
         return minSamples;
     }
 }

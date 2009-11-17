@@ -38,7 +38,7 @@ public:
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
     Spectrum Li(const Scene *scene, const Renderer *,
                 const RayDifferential &ray, const Intersection &isect,
-                const Sample *sample, MemoryArena &arena) const;
+                const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
     // UseRadianceProbes Private Methods
     const Spectrum *c_inXYZ(int lmax, int vx, int vy, int vz) const {

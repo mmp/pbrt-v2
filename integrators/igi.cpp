@@ -100,7 +100,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
             while (scene->Intersect(ray, &isect) && !alpha.IsBlack()) {
                 // Create virtual light and sample new ray for path
                 alpha *= renderer->Transmittance(scene, RayDifferential(ray), NULL,
-                                                 arena, &rng);
+                                                 rng, arena);
                 Vector wo = -ray.d;
                 BSDF *bsdf = isect.GetBSDF(ray, arena);
 
@@ -138,7 +138,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
 
 Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const {
+        const Sample *sample, RNG &rng, MemoryArena &arena) const {
     Spectrum L(0.);
     Vector wo = -ray.d;
     // Compute emitted light if ray hit an area light source
@@ -149,7 +149,7 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
     const Point &p = bsdf->dgShading.p;
     const Normal &n = bsdf->dgShading.nn;
     L += UniformSampleAllLights(scene, renderer, arena, p, n,
-                    wo, isect.rayEpsilon, bsdf, sample,
+                    wo, isect.rayEpsilon, ray.time, bsdf, sample, rng,
                     lightSampleOffsets, bsdfSampleOffsets);
     // Compute indirect illumination with virtual lights
     uint32_t lSet = min(uint32_t(sample->oneD[vlSetOffset][0] * nLightSets),
@@ -166,13 +166,13 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
         Spectrum Llight = f * G * vl.pathContrib / virtualLights[lSet].size();
         RayDifferential connectRay(p, wi, ray, isect.rayEpsilon,
             sqrtf(d2) * (1.f - vl.rayEpsilon));
-        Llight *= renderer->Transmittance(scene, connectRay, NULL, arena,
-                                          sample->rng);
+        Llight *= renderer->Transmittance(scene, connectRay, NULL, rng,
+                                          arena);
 
         // Possibly skip virtual light shadow ray with Russian roulette
         if (Llight.y() < rrThreshold) {
             float continueProbability = .1f;
-            if (sample->rng->RandomFloat() > continueProbability)
+            if (rng.RandomFloat() > continueProbability)
                 continue;
             Llight /= continueProbability;
         }
@@ -189,7 +189,7 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
             float pdf;
             BSDFSample bsdfSample = (ray.depth == 0) ?
                                     BSDFSample(sample, gatherSampleOffset, i) :
-                                    BSDFSample(*sample->rng);
+                                    BSDFSample(rng);
             Spectrum f = bsdf->Sample_f(wo, &wi, bsdfSample,
                                         &pdf, BxDFType(BSDF_ALL & ~BSDF_SPECULAR));
             if (!f.IsBlack() && pdf > 0.f) {
@@ -197,7 +197,7 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
                 float maxDist = sqrtf(AbsDot(wi, n) / gLimit);
                 RayDifferential gatherRay(p, wi, ray, isect.rayEpsilon, maxDist);
                 Intersection gatherIsect;
-                Spectrum Li = renderer->Li(scene, gatherRay, sample, arena, &gatherIsect);
+                Spectrum Li = renderer->Li(scene, gatherRay, sample, rng, arena, &gatherIsect);
                 if (Li.IsBlack()) continue;
                 float Ggather = AbsDot(wi, n) * AbsDot(-wi, gatherIsect.dg.nn) /
                     DistanceSquared(p, gatherIsect.dg.p);
@@ -210,9 +210,9 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
     if (ray.depth + 1 < maxSpecularDepth) {
         Vector wi;
         // Trace rays for specular reflection and refraction
-        L += SpecularReflect(ray, bsdf, *sample->rng, isect, renderer,
+        L += SpecularReflect(ray, bsdf, rng, isect, renderer,
                              scene, sample, arena);
-        L += SpecularTransmit(ray, bsdf, *sample->rng, isect, renderer,
+        L += SpecularTransmit(ray, bsdf, rng, isect, renderer,
                               scene, sample, arena);
     }
     return L;

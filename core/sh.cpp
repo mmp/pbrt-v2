@@ -265,7 +265,7 @@ void SHReduceRinging(Spectrum *c, int lmax, float lambda) {
 void SHProjectIncidentIndirectRadiance(const Point &p, float pEpsilon,
         float time, const Renderer *renderer, Sample *origSample,
         const Scene *scene, int lmax, RNG &rng, int ns, Spectrum *c_i) {
-    Sample *sample = origSample->Duplicate(1, &rng);
+    Sample *sample = origSample->Duplicate(1);
     MemoryArena arena;
     uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
     int nSamples = RoundUpPow2(ns);
@@ -289,7 +289,7 @@ void SHProjectIncidentIndirectRadiance(const Point &p, float pEpsilon,
         for (uint32_t j = 0; j < sample->n2D.size(); ++j)
             for (uint32_t k = 0; k < 2 * sample->n2D[j]; ++k)
                 sample->twoD[j][k] = rng.RandomFloat();
-        Li = renderer->Li(scene, ray, sample, arena);
+        Li = renderer->Li(scene, ray, sample, rng, arena);
 
         // Update SH coefficients for probe sample point
         SHEvaluate(wi, lmax, Ylm);

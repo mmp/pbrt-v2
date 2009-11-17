@@ -36,12 +36,11 @@ public:
         FreeAligned(imageSamples);
     }
     int MaximumSampleCount() { return 1; }
-    int GetMoreSamples(Sample *sample);
+    int GetMoreSamples(Sample *sample, RNG &rng);
     int RoundSize(int sz) const { return sz; }
     Sampler *GetSubSampler(int num, int count);
 private:
     // RandomSampler Private Data
-    RNG rng;
     bool jitterSamples;
     int xPos, yPos, nSamples;
     float *imageSamples, *lensSamples, *timeSamples;

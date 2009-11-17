@@ -185,7 +185,7 @@ int LDPixelSampleFloatsNeeded(const Sample *sample, int pixelSamples) {
 
 
 void LDPixelSample(int xPos, int yPos, float shutterOpen,
-        float shutterClose, int pixelSamples, Sample *samples, float *buf) {
+        float shutterClose, int pixelSamples, Sample *samples, float *buf, RNG &rng) {
     // Prepare temporary arrays for low-discrepancy camera samples
     float *imageSamples = buf; buf += 2 * pixelSamples;
     float *lensSamples = buf;  buf += 2 * pixelSamples;
@@ -208,7 +208,6 @@ void LDPixelSample(int xPos, int yPos, float shutterOpen,
     }
 
     // Generate low-discrepancy pixel samples
-    RNG &rng = *samples[0].rng;
     LDShuffleScrambled2D(1, pixelSamples, imageSamples, rng);
     LDShuffleScrambled2D(1, pixelSamples, lensSamples, rng);
     LDShuffleScrambled1D(1, pixelSamples, timeSamples, rng);

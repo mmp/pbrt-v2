@@ -41,7 +41,7 @@ public:
         return RoundUpPow2(size);
     }
     int MaximumSampleCount() { return maxSamples; }
-    int GetMoreSamples(Sample *sample);
+    int GetMoreSamples(Sample *sample, RNG &rng);
     bool ReportResults(Sample *samples, const RayDifferential *rays,
         const Spectrum *Ls, const Intersection *isects, int count);
 private:

@@ -76,7 +76,7 @@ void RenderTask::Run() {
 
     // Allocate space for samples and intersections
     int maxSamples = sampler->MaximumSampleCount();
-    Sample *samples = origSample->Duplicate(maxSamples, &rng);
+    Sample *samples = origSample->Duplicate(maxSamples);
     RayDifferential *rays = new RayDifferential[maxSamples];
     Spectrum *Ls = new Spectrum[maxSamples];
     Spectrum *Ts = new Spectrum[maxSamples];
@@ -84,7 +84,7 @@ void RenderTask::Run() {
 
     // Get samples from \use{Sampler} and update image
     int sampleCount;
-    while ((sampleCount = sampler->GetMoreSamples(samples)) > 0) {
+    while ((sampleCount = sampler->GetMoreSamples(samples, rng)) > 0) {
         // Generate camera rays and compute radiance along rays
         for (int i = 0; i < sampleCount; ++i) {
             // Find camera ray for _sample[i]_
@@ -95,7 +95,7 @@ void RenderTask::Run() {
             // Evaluate radiance along camera ray
             PBRT_STARTED_CAMERA_RAY_INTEGRATION(&rays[i], &samples[i]);
             if (rayWeight > 0.f)
-                Ls[i] = rayWeight * renderer->Li(scene, rays[i], &samples[i],
+                Ls[i] = rayWeight * renderer->Li(scene, rays[i], &samples[i], rng,
                                                  arena, &isects[i], &Ts[i]);
             else {
                 Ls[i] = 0.f;
@@ -205,7 +205,7 @@ void SampleRenderer::Render(const Scene *scene) {
 
 
 Spectrum SampleRenderer::Li(const Scene *scene,
-        const RayDifferential &ray, const Sample *sample,
+        const RayDifferential &ray, const Sample *sample, RNG &rng,
         MemoryArena &arena, Intersection *isect, Spectrum *T) const {
     Assert(ray.time == sample->time);
     Assert(!ray.HasNaNs());
@@ -216,22 +216,22 @@ Spectrum SampleRenderer::Li(const Scene *scene,
     if (!isect) isect = &localIsect;
     Spectrum Lo = 0.f;
     if (scene->Intersect(ray, isect))
-        Lo = surfaceIntegrator->Li(scene, this, ray, *isect, sample,
+        Lo = surfaceIntegrator->Li(scene, this, ray, *isect, sample, rng,
             arena);
     else {
         // Handle ray that doesn't intersect any geometry
         for (uint32_t i = 0; i < scene->lights.size(); ++i)
            Lo += scene->lights[i]->Le(ray);
     }
-    Spectrum Lv = volumeIntegrator->Li(scene, this, ray, sample, T,
+    Spectrum Lv = volumeIntegrator->Li(scene, this, ray, sample, rng, T,
         arena);
     return *T * Lo + Lv;
 }
 
 
 Spectrum SampleRenderer::Transmittance(const Scene *scene,
-        const RayDifferential &ray, const Sample *sample,
-        MemoryArena &arena, RNG *rng) const {
+        const RayDifferential &ray, const Sample *sample, RNG &rng,
+        MemoryArena &arena) const {
     return volumeIntegrator->Transmittance(scene, this, ray, sample,
         rng, arena);
 }

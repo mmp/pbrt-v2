@@ -50,16 +50,16 @@ public:
         yTile = yTileStart;
         tableOffset = 0;
       // Update sample shifts
-      RNG rng((xTile<<8) + (yTile<<8));
+      RNG tileRng((xTile<<8) + (yTile<<8));
       for (int i = 0; i < 3; ++i)
-          sampleOffsets[i] = rng.RandomFloat();
+          sampleOffsets[i] = tileRng.RandomFloat();
     }
     Sampler *GetSubSampler(int num, int count);
     int RoundSize(int size) const {
         return RoundUpPow2(size);
     }
     int MaximumSampleCount() { return 1; }
-    int GetMoreSamples(Sample *sample);
+    int GetMoreSamples(Sample *sample, RNG &rng);
 private:
     // BestCandidateSampler Private Data
     float tableWidth;

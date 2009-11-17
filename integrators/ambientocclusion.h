@@ -34,7 +34,7 @@ public:
     AmbientOcclusionIntegrator(int ns, float md) { nSamples = RoundUpPow2(ns); maxDist = md; }
     Spectrum Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const;
+        const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
     int nSamples;
     float maxDist;

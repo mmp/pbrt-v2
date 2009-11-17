@@ -31,17 +31,15 @@
 // HaltonSampler Declarations
 class HaltonSampler : public Sampler {
 public:
-    HaltonSampler(int xs, int xe, int ys, int ye, int ps, float sopen,
-        float sclose, uint32_t rngSeed);
+    HaltonSampler(int xs, int xe, int ys, int ye, int ps, float sopen, float sclose);
     int MaximumSampleCount() { return 1; }
-    int GetMoreSamples(Sample *sample);
+    int GetMoreSamples(Sample *sample, RNG &rng);
     Sampler *GetSubSampler(int num, int count);
     int RoundSize(int size) const { return size; }
 
 private:
     // HaltonSampler Private Data
     int wantedSamples, currentSample;
-    RNG rng;
 };
 
 

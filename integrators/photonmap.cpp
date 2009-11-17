@@ -425,7 +425,7 @@ void PhotonShootingTask::Run() {
                 while (scene->Intersect(photonRay, &photonIsect)) {
                     ++nIntersections;
                     // Handle photon/surface intersection
-                    alpha *= renderer->Transmittance(scene, photonRay, NULL, arena, &rng);
+                    alpha *= renderer->Transmittance(scene, photonRay, NULL, rng, arena);
                     BSDF *photonBSDF = photonIsect.GetBSDF(photonRay, arena);
                     BxDFType specularType = BxDFType(BSDF_REFLECTION |
                         BSDF_TRANSMISSION | BSDF_SPECULAR);
@@ -615,7 +615,7 @@ void ComputeRadianceTask::Run() {
 
 Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, MemoryArena &arena) const {
+        const Sample *sample, RNG &rng, MemoryArena &arena) const {
     Spectrum L(0.);
     Vector wo = -ray.d;
     // Compute emitted light if ray hit an area light source
@@ -626,11 +626,11 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
     const Point &p = bsdf->dgShading.p;
     const Normal &n = bsdf->dgShading.nn;
     L += UniformSampleAllLights(scene, renderer, arena, p, n,
-        wo, isect.rayEpsilon, bsdf, sample,
+        wo, isect.rayEpsilon, ray.time, bsdf, sample, rng,
         lightSampleOffsets, bsdfSampleOffsets);
     // Compute caustic lighting for photon map integrator
     L += LPhoton(causticMap, nCausticPaths, nLookup, arena, bsdf,
-                 *sample->rng, isect, wo, maxDistSquared);
+                 rng, isect, wo, maxDistSquared);
 
     // Compute indirect lighting for photon map integrator
     if (finalGather) {
@@ -681,8 +681,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
                     radianceMap->Lookup(gatherIsect.dg.p, proc, md2);
                     if (proc.photon != NULL)
                         Lindir = proc.photon->Lo;
-                    Lindir *= renderer->Transmittance(scene, bounceRay, NULL, arena,
-                                                      sample->rng);
+                    Lindir *= renderer->Transmittance(scene, bounceRay, NULL, rng, arena);
 
                     // Compute MIS weight for BSDF-sampled gather ray
 
@@ -729,8 +728,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
                     radianceMap->Lookup(gatherIsect.dg.p, proc, md2);
                     if (proc.photon != NULL)
                         Lindir = proc.photon->Lo;
-                    Lindir *= renderer->Transmittance(scene, bounceRay, NULL, arena,
-                                                      sample->rng);
+                    Lindir *= renderer->Transmittance(scene, bounceRay, NULL, rng, arena);
 
                     // Compute PDF for photon-sampling of direction _wi_
                     float photonPdf = 0.f;
@@ -761,13 +759,13 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
     }
     else
         L += LPhoton(indirectMap, nIndirectPaths, nLookup, arena,
-                     bsdf, *sample->rng, isect, wo, maxDistSquared);
+                     bsdf, rng, isect, wo, maxDistSquared);
     if (ray.depth+1 < maxSpecularDepth) {
         Vector wi;
         // Trace rays for specular reflection and refraction
-        L += SpecularReflect(ray, bsdf, *sample->rng, isect, renderer,
+        L += SpecularReflect(ray, bsdf, rng, isect, renderer,
                              scene, sample, arena);
-        L += SpecularTransmit(ray, bsdf, *sample->rng, isect, renderer,
+        L += SpecularTransmit(ray, bsdf, rng, isect, renderer,
                               scene, sample, arena);
     }
     return L;
