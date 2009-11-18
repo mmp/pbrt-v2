@@ -50,7 +50,7 @@ again:
         }
 
         // Update sample shifts
-        RNG tileRng((xTile<<8) + (yTile<<8));
+        RNG tileRng(xTile + (yTile<<8));
         for (int i = 0; i < 3; ++i)
             sampleOffsets[i] = tileRng.RandomFloat();
     }
