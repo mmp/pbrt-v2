@@ -43,14 +43,12 @@ struct BVHPrimitiveInfo {
 struct BVHBuildNode {
     // BVHBuildNode Public Methods
     BVHBuildNode() { children[0] = children[1] = NULL; }
-    void InitLeaf(uint32_t first, uint32_t n,
-            const BBox &b) {
+    void InitLeaf(uint32_t first, uint32_t n, const BBox &b) {
         firstPrimOffset = first;
         nPrimitives = n;
         bounds = b;
     }
-    void InitInterior(uint32_t axis, BVHBuildNode *c0,
-            BVHBuildNode *c1) {
+    void InitInterior(uint32_t axis, BVHBuildNode *c0, BVHBuildNode *c1) {
         children[0] = c0;
         children[1] = c1;
         bounds = Union(c0->bounds, c1->bounds);
@@ -59,9 +57,7 @@ struct BVHBuildNode {
     }
     BBox bounds;
     BVHBuildNode *children[2];
-    uint32_t splitAxis;
-    uint32_t firstPrimOffset;
-    uint32_t nPrimitives;
+    uint32_t splitAxis, firstPrimOffset, nPrimitives;
 };
 
 
@@ -119,7 +115,7 @@ struct LinearBVHNode {
 
 
 static inline bool IntersectP(const BBox &bounds, const Ray &ray,
-                       const Vector &invDir, const uint32_t dirIsNeg[3]) {
+        const Vector &invDir, const uint32_t dirIsNeg[3]) {
     // Check for ray intersection against $x$ and $y$ slabs
     float tmin = (bounds[  dirIsNeg[0]].x - ray.o.x) * invDir.x;
     float tmax = (bounds[1-dirIsNeg[0]].x - ray.o.x) * invDir.x;
@@ -178,8 +174,9 @@ BVHAccel::BVHAccel(const vector<Reference<Primitive> > &p,
     uint32_t totalNodes = 0;
     vector<Reference<Primitive> > orderedPrims;
     orderedPrims.reserve(primitives.size());
-    BVHBuildNode *root = recursiveBuild(buildArena, buildData,
-                                        0, primitives.size(), &totalNodes, orderedPrims);
+    BVHBuildNode *root = recursiveBuild(buildArena, buildData, 0,
+                                        primitives.size(), &totalNodes,
+                                        orderedPrims);
     primitives.swap(orderedPrims);
 
     // Compute representation of depth-first traversal of BVH tree
@@ -198,8 +195,7 @@ BBox BVHAccel::WorldBound() const {
 }
 
 
-BVHBuildNode *
-BVHAccel::recursiveBuild(MemoryArena &buildArena,
+BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
         vector<BVHPrimitiveInfo> &buildData, uint32_t start, uint32_t end,
         uint32_t *totalNodes, vector<Reference<Primitive> > &orderedPrims) {
     Assert(start != end);

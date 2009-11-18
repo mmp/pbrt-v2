@@ -76,10 +76,10 @@ struct BoundEdge {
 
 // KdTreeAccel Method Definitions
 KdTreeAccel::KdTreeAccel(const vector<Reference<Primitive> > &p,
-                         int icost, int tcost,
-                         float ebonus, int maxp, int md)
-    : isectCost(icost), traversalCost(tcost),
-      maxPrims(maxp), maxDepth(md), emptyBonus(ebonus) {
+                         int icost, int tcost, float ebonus, int maxp,
+                         int md)
+    : isectCost(icost), traversalCost(tcost), maxPrims(maxp), maxDepth(md),
+      emptyBonus(ebonus) {
     PBRT_KDTREE_STARTED_CONSTRUCTION(this, p.size());
     for (uint32_t i = 0; i < p.size(); ++i)
         p[i]->FullyRefine(primitives);
@@ -212,8 +212,8 @@ void KdTreeAccel::buildTree(int nodeNum, const BBox &nodeBounds,
             float pBelow = belowSA * invTotalSA;
             float pAbove = aboveSA * invTotalSA;
             float eb = (nAbove == 0 || nBelow == 0) ? emptyBonus : 0.f;
-            float cost = traversalCost + isectCost * (1.f - eb) *
-                         (pBelow * nBelow + pAbove * nAbove);
+            float cost = traversalCost +
+                         isectCost * (1.f - eb) * (pBelow * nBelow + pAbove * nAbove);
 
             // Update best split if this is lowest cost so far
             if (cost < bestCost)  {
@@ -269,7 +269,8 @@ bool KdTreeAccel::Intersect(const Ray &ray,
     PBRT_KDTREE_INTERSECTION_TEST(const_cast<KdTreeAccel *>(this), const_cast<Ray *>(&ray));
     // Compute initial parametric range of ray inside kd-tree extent
     float tmin, tmax;
-    if (!bounds.IntersectP(ray, &tmin, &tmax)) {
+    if (!bounds.IntersectP(ray, &tmin, &tmax))
+    {
         PBRT_KDTREE_RAY_MISSED_BOUNDS();
         return false;
     }
@@ -292,12 +293,11 @@ bool KdTreeAccel::Intersect(const Ray &ray,
 
             // Compute parametric distance along ray to split plane
             int axis = node->SplitAxis();
-            float tplane = (node->SplitPos() - ray.o[axis]) *
-                invDir[axis];
+            float tplane = (node->SplitPos() - ray.o[axis]) * invDir[axis];
 
             // Get node children pointers for ray
             const KdAccelNode *firstChild, *secondChild;
-            int belowFirst = (ray.o[axis] <= node->SplitPos()) ||
+            int belowFirst = (ray.o[axis] <  node->SplitPos()) ||
                              (ray.o[axis] == node->SplitPos() && ray.d[axis] < 0);
             if (belowFirst) {
                 firstChild = node + 1;
@@ -331,7 +331,8 @@ bool KdTreeAccel::Intersect(const Ray &ray,
                 const Reference<Primitive> &prim = primitives[node->onePrimitive];
                 // Check one primitive inside leaf node
                 PBRT_KDTREE_INTERSECTION_PRIMITIVE_TEST(const_cast<Primitive *>(prim.GetPtr()));
-                if (prim->Intersect(ray, isect)) {
+                if (prim->Intersect(ray, isect))
+                {
                     PBRT_KDTREE_INTERSECTION_HIT(const_cast<Primitive *>(prim.GetPtr()));
                     hit = true;
                 }
@@ -342,7 +343,8 @@ bool KdTreeAccel::Intersect(const Ray &ray,
                     const Reference<Primitive> &prim = primitives[prims[i]];
                     // Check one primitive inside leaf node
                     PBRT_KDTREE_INTERSECTION_PRIMITIVE_TEST(const_cast<Primitive *>(prim.GetPtr()));
-                    if (prim->Intersect(ray, isect)) {
+                    if (prim->Intersect(ray, isect))
+                    {
                         PBRT_KDTREE_INTERSECTION_HIT(const_cast<Primitive *>(prim.GetPtr()));
                         hit = true;
                     }
@@ -369,7 +371,8 @@ bool KdTreeAccel::IntersectP(const Ray &ray) const {
     PBRT_KDTREE_INTERSECTIONP_TEST(const_cast<KdTreeAccel *>(this), const_cast<Ray *>(&ray));
     // Compute initial parametric range of ray inside kd-tree extent
     float tmin, tmax;
-    if (!bounds.IntersectP(ray, &tmin, &tmax)) {
+    if (!bounds.IntersectP(ray, &tmin, &tmax))
+    {
         PBRT_KDTREE_RAY_MISSED_BOUNDS();
         return false;
     }
@@ -421,12 +424,11 @@ bool KdTreeAccel::IntersectP(const Ray &ray) const {
 
             // Compute parametric distance along ray to split plane
             int axis = node->SplitAxis();
-            float tplane = (node->SplitPos() - ray.o[axis]) *
-                invDir[axis];
+            float tplane = (node->SplitPos() - ray.o[axis]) * invDir[axis];
 
             // Get node children pointers for ray
             const KdAccelNode *firstChild, *secondChild;
-            int belowFirst = (ray.o[axis] <= node->SplitPos()) ||
+            int belowFirst = (ray.o[axis] <  node->SplitPos()) ||
                              (ray.o[axis] == node->SplitPos() && ray.d[axis] < 0);
             if (belowFirst) {
                 firstChild = node + 1;

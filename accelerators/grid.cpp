@@ -29,12 +29,8 @@
 
 // GridAccel Method Definitions
 GridAccel::GridAccel(const vector<Reference<Primitive> > &p,
-                     bool forRefined, bool refineImmediately)
-    : gridForRefined(forRefined) {
+                     bool refineImmediately) {
     PBRT_GRID_STARTED_CONSTRUCTION(this, p.size());
-    // Create reader-writeer mutex for grid
-    rwMutex = RWMutex::Create();
-
     // Initialize _primitives_ with primitives for grid
     if (refineImmediately)
         for (uint32_t i = 0; i < p.size(); ++i)
@@ -54,19 +50,19 @@ GridAccel::GridAccel(const vector<Reference<Primitive> > &p,
     float cubeRoot = 3.f * powf(float(primitives.size()), 1.f/3.f);
     float voxelsPerUnitDist = cubeRoot * invMaxWidth;
     for (int axis = 0; axis < 3; ++axis) {
-        NVoxels[axis] = Round2Int(delta[axis] * voxelsPerUnitDist);
-        NVoxels[axis] = Clamp(NVoxels[axis], 1, 64);
+        nVoxels[axis] = Round2Int(delta[axis] * voxelsPerUnitDist);
+        nVoxels[axis] = Clamp(nVoxels[axis], 1, 64);
     }
-    PBRT_GRID_BOUNDS_AND_RESOLUTION(&bounds, NVoxels);
+    PBRT_GRID_BOUNDS_AND_RESOLUTION(&bounds, nVoxels);
 
     // Compute voxel widths and allocate voxels
     for (int axis = 0; axis < 3; ++axis) {
-        Width[axis] = delta[axis] / NVoxels[axis];
-        InvWidth[axis] = (Width[axis] == 0.f) ? 0.f : 1.f / Width[axis];
+        width[axis] = delta[axis] / nVoxels[axis];
+        invWidth[axis] = (width[axis] == 0.f) ? 0.f : 1.f / width[axis];
     }
-    int nVoxels = NVoxels[0] * NVoxels[1] * NVoxels[2];
-    voxels = AllocAligned<Voxel *>(nVoxels);
-    memset(voxels, 0, nVoxels * sizeof(Voxel *));
+    int nv = nVoxels[0] * nVoxels[1] * nVoxels[2];
+    voxels = AllocAligned<Voxel *>(nv);
+    memset(voxels, 0, nv * sizeof(Voxel *));
 
     // Add primitives to grid voxels
     for (uint32_t i = 0; i < primitives.size(); ++i) {
@@ -95,6 +91,9 @@ GridAccel::GridAccel(const vector<Reference<Primitive> > &p,
                     }
                 }
     }
+
+    // Create reader-writer mutex for grid
+    rwMutex = RWMutex::Create();
     PBRT_GRID_FINISHED_CONSTRUCTION(this);
 }
 
@@ -105,21 +104,21 @@ BBox GridAccel::WorldBound() const {
 
 
 GridAccel::~GridAccel() {
-    for (int i = 0; i < NVoxels[0]*NVoxels[1]*NVoxels[2]; ++i)
+    for (int i = 0; i < nVoxels[0]*nVoxels[1]*nVoxels[2]; ++i)
         if (voxels[i]) voxels[i]->~Voxel();
     FreeAligned(voxels);
     RWMutex::Destroy(rwMutex);
 }
 
 
-bool GridAccel::Intersect(const Ray &ray,
-                          Intersection *isect) const {
+bool GridAccel::Intersect(const Ray &ray, Intersection *isect) const {
     PBRT_GRID_INTERSECTION_TEST(const_cast<GridAccel *>(this), const_cast<Ray *>(&ray));
     // Check ray against overall grid bounds
     float rayT;
     if (bounds.Inside(ray(ray.mint)))
         rayT = ray.mint;
-    else if (!bounds.IntersectP(ray, &rayT)) {
+    else if (!bounds.IntersectP(ray, &rayT))
+    {
         PBRT_GRID_RAY_MISSED_BOUNDS();
         return false;
     }
@@ -135,23 +134,21 @@ bool GridAccel::Intersect(const Ray &ray,
             // Handle ray with positive direction for voxel stepping
             NextCrossingT[axis] = rayT +
                 (voxelToPos(Pos[axis]+1, axis) - gridIntersect[axis]) / ray.d[axis];
-            DeltaT[axis] = Width[axis] / ray.d[axis];
+            DeltaT[axis] = width[axis] / ray.d[axis];
             Step[axis] = 1;
-            Out[axis] = NVoxels[axis];
+            Out[axis] = nVoxels[axis];
         }
         else {
             // Handle ray with negative direction for voxel stepping
             NextCrossingT[axis] = rayT +
                 (voxelToPos(Pos[axis], axis) - gridIntersect[axis]) / ray.d[axis];
-            DeltaT[axis] = -Width[axis] / ray.d[axis];
+            DeltaT[axis] = -width[axis] / ray.d[axis];
             Step[axis] = -1;
             Out[axis] = -1;
         }
     }
 
     // Walk ray through voxel grid
-
-    // Acquire reader mutex for grid traversal
     RWMutexLock lock(*rwMutex, READ);
     bool hitSomething = false;
     for (;;) {
@@ -181,7 +178,7 @@ bool GridAccel::Intersect(const Ray &ray,
 
 
 bool Voxel::Intersect(const Ray &ray, Intersection *isect,
-        RWMutexLock &lock) {
+                      RWMutexLock &lock) {
     // Refine primitives in voxel if needed
     if (!allCanIntersect) {
         lock.UpgradeToWrite();
@@ -195,7 +192,7 @@ bool Voxel::Intersect(const Ray &ray, Intersection *isect,
                 if (p.size() == 1)
                     primitives[i] = p[0];
                 else
-                    primitives[i] = new GridAccel(p, true, false);
+                    primitives[i] = new GridAccel(p, false);
             }
         }
         allCanIntersect = true;
@@ -207,7 +204,8 @@ bool Voxel::Intersect(const Ray &ray, Intersection *isect,
     for (uint32_t i = 0; i < primitives.size(); ++i) {
         Reference<Primitive> &prim = primitives[i];
         PBRT_GRID_RAY_PRIMITIVE_INTERSECTION_TEST(const_cast<Primitive *>(prim.GetPtr()));
-        if (prim->Intersect(ray, isect)) {
+        if (prim->Intersect(ray, isect))
+        {
         PBRT_GRID_RAY_PRIMITIVE_HIT(const_cast<Primitive *>(prim.GetPtr()));
             hitSomething = true;
         }
@@ -223,7 +221,8 @@ bool GridAccel::IntersectP(const Ray &ray) const {
     float rayT;
     if (bounds.Inside(ray(ray.mint)))
         rayT = ray.mint;
-    else if (!bounds.IntersectP(ray, &rayT)) {
+    else if (!bounds.IntersectP(ray, &rayT))
+    {
         PBRT_GRID_RAY_MISSED_BOUNDS();
         return false;
     }
@@ -239,15 +238,15 @@ bool GridAccel::IntersectP(const Ray &ray) const {
             // Handle ray with positive direction for voxel stepping
             NextCrossingT[axis] = rayT +
                 (voxelToPos(Pos[axis]+1, axis) - gridIntersect[axis]) / ray.d[axis];
-            DeltaT[axis] = Width[axis] / ray.d[axis];
+            DeltaT[axis] = width[axis] / ray.d[axis];
             Step[axis] = 1;
-            Out[axis] = NVoxels[axis];
+            Out[axis] = nVoxels[axis];
         }
         else {
             // Handle ray with negative direction for voxel stepping
             NextCrossingT[axis] = rayT +
                 (voxelToPos(Pos[axis], axis) - gridIntersect[axis]) / ray.d[axis];
-            DeltaT[axis] = -Width[axis] / ray.d[axis];
+            DeltaT[axis] = -width[axis] / ray.d[axis];
             Step[axis] = -1;
             Out[axis] = -1;
         }
@@ -293,7 +292,7 @@ bool Voxel::IntersectP(const Ray &ray, RWMutexLock &lock) {
                 if (p.size() == 1)
                     primitives[i] = p[0];
                 else
-                    primitives[i] = new GridAccel(p, true, false);
+                    primitives[i] = new GridAccel(p, false);
             }
         }
         allCanIntersect = true;
@@ -314,7 +313,7 @@ bool Voxel::IntersectP(const Ray &ray, RWMutexLock &lock) {
 GridAccel *CreateGridAccelerator(const vector<Reference<Primitive> > &prims,
         const ParamSet &ps) {
     bool refineImmediately = ps.FindOneBool("refineimmediately", false);
-    return new GridAccel(prims, false, refineImmediately);
+    return new GridAccel(prims, refineImmediately);
 }
 
 

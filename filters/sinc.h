@@ -32,8 +32,7 @@ class LanczosSincFilter : public Filter {
 public:
     // LanczosSincFilter Public Methods
     LanczosSincFilter(float xw, float yw, float t)
-        : Filter(xw, yw), tau(t) {
-    }
+        : Filter(xw, yw), tau(t) { }
     float Evaluate(float x, float y) const;
     float Sinc1D(float x) const {
         x = fabsf(x);

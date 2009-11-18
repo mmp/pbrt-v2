@@ -63,12 +63,10 @@ public:
     bool CanIntersect() const;
     void Refine(vector<Reference<Primitive> > &refined) const;
     virtual BBox WorldBound() const;
-    virtual bool Intersect(const Ray &r,
-                           Intersection *isect) const;
+    virtual bool Intersect(const Ray &r, Intersection *isect) const;
     virtual bool IntersectP(const Ray &r) const;
     GeometricPrimitive(const Reference<Shape> &s,
-                       const Reference<Material> &m,
-                       AreaLight *a);
+                       const Reference<Material> &m, AreaLight *a);
     const AreaLight *GetAreaLight() const;
     BSDF *GetBSDF(const DifferentialGeometry &dg,
                   const Transform &ObjectToWorld, MemoryArena &arena) const;
@@ -89,9 +87,7 @@ public:
     // TransformedPrimitive Public Methods
     TransformedPrimitive(Reference<Primitive> &prim,
                          const AnimatedTransform &w2p)
-        : WorldToPrimitive(w2p) {
-        primitive = prim;
-    }
+        : primitive(prim), WorldToPrimitive(w2p) { }
     bool Intersect(const Ray &r, Intersection *in) const;
     bool IntersectP(const Ray &r) const;
     const AreaLight *GetAreaLight() const { return NULL; }

@@ -157,7 +157,8 @@ void StratifiedSample2D(float *samp, int nx, int ny, RNG &rng, bool jitter) {
 }
 
 
-void LatinHypercube(float *samples, uint32_t nSamples, uint32_t nDim, RNG &rng) {
+void LatinHypercube(float *samples, uint32_t nSamples, uint32_t nDim,
+        RNG &rng) {
     // Generate LHS samples along diagonal
     float delta = 1.f / nSamples;
     for (uint32_t i = 0; i < nSamples; ++i)
@@ -174,24 +175,25 @@ void LatinHypercube(float *samples, uint32_t nSamples, uint32_t nDim, RNG &rng) 
 }
 
 
-int LDPixelSampleFloatsNeeded(const Sample *sample, int pixelSamples) {
+int LDPixelSampleFloatsNeeded(const Sample *sample, int nPixelSamples) {
     int n = 5; // 2 lens + 2 pixel + time
     for (uint32_t i = 0; i < sample->n1D.size(); ++i)
         n += sample->n1D[i];
     for (uint32_t i = 0; i < sample->n2D.size(); ++i)
         n += 2 * sample->n2D[i];
-    return pixelSamples * n;
+    return nPixelSamples * n;
 }
 
 
 void LDPixelSample(int xPos, int yPos, float shutterOpen,
-        float shutterClose, int pixelSamples, Sample *samples, float *buf, RNG &rng) {
-    // Prepare temporary arrays for low-discrepancy camera samples
-    float *imageSamples = buf; buf += 2 * pixelSamples;
-    float *lensSamples = buf;  buf += 2 * pixelSamples;
-    float *timeSamples = buf;  buf += pixelSamples;
+        float shutterClose, int nPixelSamples, Sample *samples, float *buf,
+        RNG &rng) {
+    // Prepare temporary array pointers for low-discrepancy camera samples
+    float *imageSamples = buf; buf += 2 * nPixelSamples;
+    float *lensSamples = buf;  buf += 2 * nPixelSamples;
+    float *timeSamples = buf;  buf += nPixelSamples;
 
-    // Prepare temporary arrays for low-discrepancy integrator samples
+    // Prepare temporary array pointers for low-discrepancy integrator samples
     uint32_t count1D = samples[0].n1D.size();
     uint32_t count2D = samples[0].n2D.size();
     const uint32_t *n1D = count1D > 0 ? &samples[0].n1D[0] : NULL;
@@ -200,24 +202,24 @@ void LDPixelSample(int xPos, int yPos, float shutterOpen,
     float **twoDSamples = ALLOCA(float *, count2D);
     for (uint32_t i = 0; i < count1D; ++i) {
         oneDSamples[i] = buf;
-        buf += n1D[i] * pixelSamples;
+        buf += n1D[i] * nPixelSamples;
     }
     for (uint32_t i = 0; i < count2D; ++i) {
         twoDSamples[i] = buf;
-        buf += 2 * n2D[i] * pixelSamples;
+        buf += 2 * n2D[i] * nPixelSamples;
     }
 
     // Generate low-discrepancy pixel samples
-    LDShuffleScrambled2D(1, pixelSamples, imageSamples, rng);
-    LDShuffleScrambled2D(1, pixelSamples, lensSamples, rng);
-    LDShuffleScrambled1D(1, pixelSamples, timeSamples, rng);
+    LDShuffleScrambled2D(1, nPixelSamples, imageSamples, rng);
+    LDShuffleScrambled2D(1, nPixelSamples, lensSamples, rng);
+    LDShuffleScrambled1D(1, nPixelSamples, timeSamples, rng);
     for (uint32_t i = 0; i < count1D; ++i)
-        LDShuffleScrambled1D(n1D[i], pixelSamples, oneDSamples[i], rng);
+        LDShuffleScrambled1D(n1D[i], nPixelSamples, oneDSamples[i], rng);
     for (uint32_t i = 0; i < count2D; ++i)
-        LDShuffleScrambled2D(n2D[i], pixelSamples, twoDSamples[i], rng);
+        LDShuffleScrambled2D(n2D[i], nPixelSamples, twoDSamples[i], rng);
 
     // Initialize _samples_ with computed sample values
-    for (int i = 0; i < pixelSamples; ++i) {
+    for (int i = 0; i < nPixelSamples; ++i) {
         samples[i].imageX = xPos + imageSamples[2*i];
         samples[i].imageY = yPos + imageSamples[2*i+1];
         samples[i].time = Lerp(timeSamples[i], shutterOpen, shutterClose);

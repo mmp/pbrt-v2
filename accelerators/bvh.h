@@ -38,7 +38,7 @@ class BVHAccel : public Aggregate {
 public:
     // BVHAccel Public Methods
     BVHAccel(const vector<Reference<Primitive> > &p, uint32_t maxPrims = 1,
-        const string &sm = "sah");
+             const string &sm = "sah");
     BBox WorldBound() const;
     bool CanIntersect() const { return true; }
     ~BVHAccel();

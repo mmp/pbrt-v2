@@ -35,10 +35,10 @@ LDSampler::LDSampler(int xstart, int xend, int ystart, int yend, int ps,
     yPos = yPixelStart;
     if (!IsPowerOf2(ps)) {
         Warning("Pixel samples being rounded up to power of 2");
-        pixelSamples = RoundUpPow2(ps);
+        nPixelSamples = RoundUpPow2(ps);
     }
     else
-        pixelSamples = ps;
+        nPixelSamples = ps;
     sampleBuf = NULL;
 }
 
@@ -52,21 +52,21 @@ Sampler *LDSampler::GetSubSampler(int num, int count) {
     int x0, x1, y0, y1;
     ComputeSubWindow(num, count, &x0, &x1, &y0, &y1);
     if (x0 == x1 || y0 == y1) return NULL;
-    return new LDSampler(x0, x1, y0, y1, pixelSamples, shutterOpen, shutterClose);
+    return new LDSampler(x0, x1, y0, y1, nPixelSamples, shutterOpen, shutterClose);
 }
 
 
 int LDSampler::GetMoreSamples(Sample *samples, RNG &rng) {
     if (yPos == yPixelEnd) return 0;
     if (sampleBuf == NULL)
-        sampleBuf = new float[LDPixelSampleFloatsNeeded(samples, pixelSamples)];
+        sampleBuf = new float[LDPixelSampleFloatsNeeded(samples, nPixelSamples)];
     LDPixelSample(xPos, yPos, shutterOpen, shutterClose,
-                  pixelSamples, samples, sampleBuf, rng);
+                  nPixelSamples, samples, sampleBuf, rng);
     if (++xPos == xPixelEnd) {
         xPos = xPixelStart;
         ++yPos;
     }
-    return pixelSamples;
+    return nPixelSamples;
 }
 
 

@@ -38,14 +38,12 @@ public:
               int nsamp, float sopen, float sclose);
     ~LDSampler();
     Sampler *GetSubSampler(int num, int count);
-    int RoundSize(int size) const {
-        return RoundUpPow2(size);
-    }
+    int RoundSize(int size) const { return RoundUpPow2(size); }
     int GetMoreSamples(Sample *sample, RNG &rng);
-    int MaximumSampleCount() { return pixelSamples; }
+    int MaximumSampleCount() { return nPixelSamples; }
 private:
     // LDSampler Private Data
-    int xPos, yPos, pixelSamples;
+    int xPos, yPos, nPixelSamples;
     float *sampleBuf;
 };
 

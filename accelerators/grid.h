@@ -56,8 +56,7 @@ private:
 class  GridAccel : public Aggregate {
 public:
     // GridAccel Public Methods
-    GridAccel(const vector<Reference<Primitive> > &p,
-              bool forRefined, bool refineImmediately);
+    GridAccel(const vector<Reference<Primitive> > &p, bool refineImmediately);
     BBox WorldBound() const;
     bool CanIntersect() const { return true; }
     ~GridAccel();
@@ -67,26 +66,21 @@ private:
     // GridAccel Private Methods
     int posToVoxel(const Point &P, int axis) const {
         int v = Float2Int((P[axis] - bounds.pMin[axis]) *
-                          InvWidth[axis]);
-        return Clamp(v, 0, NVoxels[axis]-1);
+                          invWidth[axis]);
+        return Clamp(v, 0, nVoxels[axis]-1);
     }
     float voxelToPos(int p, int axis) const {
-        return bounds.pMin[axis] + p * Width[axis];
-    }
-    Point voxelToPos(int x, int y, int z) const {
-        return bounds.pMin +
-            Vector(x * Width[0], y * Width[1], z * Width[2]);
+        return bounds.pMin[axis] + p * width[axis];
     }
     inline int offset(int x, int y, int z) const {
-        return z*NVoxels[0]*NVoxels[1] + y*NVoxels[0] + x;
+        return z*nVoxels[0]*nVoxels[1] + y*nVoxels[0] + x;
     }
 
     // GridAccel Private Data
-    bool gridForRefined;
     vector<Reference<Primitive> > primitives;
-    int NVoxels[3];
+    int nVoxels[3];
     BBox bounds;
-    Vector Width, InvWidth;
+    Vector width, invWidth;
     Voxel **voxels;
     MemoryArena voxelArena;
     mutable RWMutex *rwMutex;

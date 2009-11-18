@@ -59,7 +59,7 @@ again:
     sample->imageX = (xTile + sampleTable[tableOffset][0]) * tableWidth;
     sample->imageY = (yTile + sampleTable[tableOffset][1]) * tableWidth;
     sample->time  = Lerp(WRAP(sampleOffsets[0] +
-                         sampleTable[tableOffset][2]), shutterOpen, shutterClose);
+                              sampleTable[tableOffset][2]), shutterOpen, shutterClose);
     sample->lensU = WRAP(sampleOffsets[1] +
                          sampleTable[tableOffset][3]);
     sample->lensV = WRAP(sampleOffsets[2] +

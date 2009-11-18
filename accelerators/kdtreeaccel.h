@@ -35,8 +35,8 @@ class KdTreeAccel : public Aggregate {
 public:
     // KdTreeAccel Public Methods
     KdTreeAccel(const vector<Reference<Primitive> > &p,
-        int icost = 80, int scost = 1,
-        float ebonus = 0.5f, int maxp = 1, int maxDepth = -1);
+                int icost = 80, int scost = 1,  float ebonus = 0.5f, int maxp = 1,
+                int maxDepth = -1);
     BBox WorldBound() const { return bounds; }
     bool CanIntersect() const { return true; }
     ~KdTreeAccel();
@@ -49,8 +49,7 @@ private:
         BoundEdge *edges[3], uint32_t *prims0, uint32_t *prims1, int badRefines = 0);
 
     // KdTreeAccel Private Data
-    int isectCost, traversalCost;
-    int  maxPrims, maxDepth;
+    int isectCost, traversalCost, maxPrims, maxDepth;
     float emptyBonus;
     vector<Reference<Primitive> > primitives;
     KdAccelNode *nodes;

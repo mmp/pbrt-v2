@@ -169,7 +169,7 @@ void ImageFilm::Splat(const CameraSample &sample, const Spectrum &L) {
 
 
 void ImageFilm::GetSampleExtent(int *xstart, int *xend,
-                               int *ystart, int *yend) const {
+                                int *ystart, int *yend) const {
     *xstart = Floor2Int(xPixelStart + 0.5f - filter->xWidth);
     *xend   = Floor2Int(xPixelStart + 0.5f + xPixelCount  +
                         filter->xWidth);
@@ -180,7 +180,7 @@ void ImageFilm::GetSampleExtent(int *xstart, int *xend,
 
 
 void ImageFilm::GetPixelExtent(int *xstart, int *xend,
-                                int *ystart, int *yend) const {
+                               int *ystart, int *yend) const {
     *xstart = xPixelStart;
     *xend   = xPixelStart + xPixelCount;
     *ystart = yPixelStart;
@@ -219,7 +219,7 @@ void ImageFilm::WriteImage() {
 
     // Write RGB image
     ::WriteImage(filename, rgb, NULL, xPixelCount, yPixelCount,
-                   xResolution, yResolution, xPixelStart, yPixelStart);
+                 xResolution, yResolution, xPixelStart, yPixelStart);
 
     // Release temporary image memory
     delete[] rgb;
