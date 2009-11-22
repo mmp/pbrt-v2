@@ -88,7 +88,7 @@ BestCandidateSampler *CreateBestCandidateSampler(const ParamSet &params, const F
     int xstart, xend, ystart, yend;
     film->GetSampleExtent(&xstart, &xend, &ystart, &yend);
     int nsamp = params.FindOneInt("pixelsamples", 4);
-    if (getenv("PBRT_QUICK_RENDER")) nsamp = 1;
+    if (PbrtOptions.quickRender) nsamp = 1;
     return new BestCandidateSampler(xstart, xend, ystart, yend, nsamp,
          camera->shutterOpen, camera->shutterClose);
 }

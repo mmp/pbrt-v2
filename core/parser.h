@@ -26,6 +26,6 @@
 
 // core/parser.h*
 #include "pbrt.h"
-bool ParseFile(const char *filename);
+bool ParseFile(const string &filename);
 
 #endif // PBRT_CORE_PARSER_H

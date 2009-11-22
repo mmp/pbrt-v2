@@ -794,14 +794,14 @@ PhotonIntegrator *CreatePhotonMapSurfaceIntegrator(const ParamSet &params) {
     int nCaustic = params.FindOneInt("causticphotons", 20000);
     int nIndirect = params.FindOneInt("indirectphotons", 100000);
     int nUsed = params.FindOneInt("nused", 50);
-    if (getenv("PBRT_QUICK_RENDER")) nCaustic = nCaustic / 10;
-    if (getenv("PBRT_QUICK_RENDER")) nIndirect = nIndirect / 10;
-    if (getenv("PBRT_QUICK_RENDER")) nUsed = max(1, nUsed / 10);
+    if (PbrtOptions.quickRender) nCaustic = nCaustic / 10;
+    if (PbrtOptions.quickRender) nIndirect = nIndirect / 10;
+    if (PbrtOptions.quickRender) nUsed = max(1, nUsed / 10);
     int maxSpecularDepth = params.FindOneInt("maxspeculardepth", 5);
     int maxPhotonDepth = params.FindOneInt("maxphotondepth", 5);
     bool finalGather = params.FindOneBool("finalgather", true);
     int gatherSamples = params.FindOneInt("finalgathersamples", 32);
-    if (getenv("PBRT_QUICK_RENDER")) gatherSamples = max(1, gatherSamples / 4);
+    if (PbrtOptions.quickRender) gatherSamples = max(1, gatherSamples / 4);
     float maxDist = params.FindOneFloat("maxdist", .1f);
     float gatherAngle = params.FindOneFloat("gatherangle", 10.f);
     return new PhotonIntegrator(nCaustic, nIndirect,

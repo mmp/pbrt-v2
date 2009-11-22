@@ -250,7 +250,7 @@ MetropolisRenderer *CreateMetropolisRenderer(const ParamSet &params,
     int md = params.FindOneInt("maxdepth", 4);
     bool io = params.FindOneBool("indirectonly", false);
 
-    if (getenv("PBRT_QUICK_RENDER")) {
+    if (PbrtOptions.quickRender) {
         if (nSamples > 0)
             nSamples = max(1, nSamples / 4);
         if (perPixelSamples > 0)

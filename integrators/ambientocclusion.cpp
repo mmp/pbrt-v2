@@ -55,7 +55,7 @@ Spectrum AmbientOcclusionIntegrator::Li(const Scene *scene, const Renderer *rend
 AmbientOcclusionIntegrator *CreateAmbientOcclusionIntegrator(const ParamSet &params) {
     int nSamples = params.FindOneInt("nsamples", 2048);
     float maxDist = params.FindOneFloat("maxdist", INFINITY);
-    if (getenv("PBRT_QUICK_RENDER")) { nSamples = max(1, nSamples / 4); }
+    if (PbrtOptions.quickRender) { nSamples = max(1, nSamples / 4); }
     return new AmbientOcclusionIntegrator(nSamples, maxDist);
 }
 

@@ -114,7 +114,7 @@ StratifiedSampler *CreateStratifiedSampler(const ParamSet &params, const Film *f
     film->GetSampleExtent(&xstart, &xend, &ystart, &yend);
     int xsamp = params.FindOneInt("xsamples", 2);
     int ysamp = params.FindOneInt("ysamples", 2);
-    if (getenv("PBRT_QUICK_RENDER")) xsamp = ysamp = 1;
+    if (PbrtOptions.quickRender) xsamp = ysamp = 1;
     return new StratifiedSampler(xstart, xend, ystart, yend, xsamp, ysamp,
         jitter, camera->shutterOpen, camera->shutterClose);
 }

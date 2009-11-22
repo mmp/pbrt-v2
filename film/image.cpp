@@ -62,7 +62,7 @@ ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
     }
 
     // Possibly open window for image display
-    if (openWindow || getenv("PBRT_DISPLAY_WINDOW")) {
+    if (openWindow || PbrtOptions.openWindow) {
 #ifdef PBRT_HAS_LIBSDL
         SDL_Init(SDL_INIT_VIDEO);
         SDL_WM_SetCaption(filename.c_str(), filename.c_str());
@@ -300,8 +300,8 @@ ImageFilm *CreateImageFilm(const ParamSet &params, Filter *filter) {
 
     int xres = params.FindOneInt("xresolution", 640);
     int yres = params.FindOneInt("yresolution", 480);
-    if (getenv("PBRT_QUICK_RENDER")) xres = max(1, xres / 4);
-    if (getenv("PBRT_QUICK_RENDER")) yres = max(1, yres / 4);
+    if (PbrtOptions.quickRender) xres = max(1, xres / 4);
+    if (PbrtOptions.quickRender) yres = max(1, yres / 4);
     bool openwin = params.FindOneBool("display", false);
     float crop[4] = { 0, 1, 0, 1 };
     int cwi;

@@ -81,7 +81,7 @@ HaltonSampler *CreateHaltonSampler(const ParamSet &params, const Film *film,
     int xstart, xend, ystart, yend;
     film->GetSampleExtent(&xstart, &xend, &ystart, &yend);
     int nsamp = params.FindOneInt("pixelsamples", 4);
-    if (getenv("PBRT_QUICK_RENDER")) nsamp = 1;
+    if (PbrtOptions.quickRender) nsamp = 1;
     return new HaltonSampler(xstart, xend, ystart, yend, nsamp,
          camera->shutterOpen, camera->shutterClose);
 }

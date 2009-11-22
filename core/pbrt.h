@@ -86,6 +86,16 @@ class RWMutex;
 class Shape;
 class ParamSet;
 template <typename T> struct ParamSetItem;
+struct Options {
+    Options() { nCores = 0; quickRender = quiet = openWindow = false; }
+    int nCores;
+    bool quickRender;
+    bool quiet;
+    bool openWindow;
+};
+
+
+extern Options PbrtOptions;
 class TextureParams;
 class Scene;
 class Renderer;

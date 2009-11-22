@@ -219,7 +219,7 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
 
 IGIIntegrator *CreateIGISurfaceIntegrator(const ParamSet &params) {
     int nLightPaths = params.FindOneInt("nlights", 64);
-    if (getenv("PBRT_QUICK_RENDER")) nLightPaths = max(1, nLightPaths / 4);
+    if (PbrtOptions.quickRender) nLightPaths = max(1, nLightPaths / 4);
     int nLightSets = params.FindOneInt("nsets", 4);
     float minDist = params.FindOneFloat("mindist", .1f);
     float rrThresh = params.FindOneFloat("rrthreshold", .0001f);

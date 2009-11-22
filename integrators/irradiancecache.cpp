@@ -376,7 +376,7 @@ IrradianceCacheIntegrator *CreateIrradianceCacheIntegrator(const ParamSet &param
     int maxSpecularDepth = params.FindOneInt("maxspeculardepth", 5);
     int maxIndirectDepth = params.FindOneInt("maxindirectdepth", 3);
     int nSamples = params.FindOneInt("nsamples", 4096);
-    if (getenv("PBRT_QUICK_RENDER")) nSamples = max(1, nSamples / 16);
+    if (PbrtOptions.quickRender) nSamples = max(1, nSamples / 16);
     return new IrradianceCacheIntegrator(minWeight, minSpacing, maxSpacing, maxAngle,
         maxSpecularDepth, maxIndirectDepth, nSamples);
 }

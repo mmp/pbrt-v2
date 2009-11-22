@@ -52,7 +52,7 @@ AreaLight *CreateDiffuseAreaLight(const Transform &light2world, const ParamSet &
     Spectrum L = paramSet.FindOneSpectrum("L", Spectrum(1.0));
     Spectrum sc = paramSet.FindOneSpectrum("scale", Spectrum(1.0));
     int nSamples = paramSet.FindOneInt("nsamples", 1);
-    if (getenv("PBRT_QUICK_RENDER")) nSamples = max(1, nSamples / 4);
+    if (PbrtOptions.quickRender) nSamples = max(1, nSamples / 4);
     return new DiffuseAreaLight(light2world, L * sc, nSamples, shape);
 }
 

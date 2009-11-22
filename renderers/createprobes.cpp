@@ -79,7 +79,7 @@ CreateRadianceProbes::CreateRadianceProbes(int lm, float ps, const BBox &b, int 
         bool finalGather = false;
         int gatherSamples = 256;
         float ga = 10.f;
-        if (getenv("PBRT_QUICK_RENDER")) {
+        if (PbrtOptions.quickRender) {
             nindir = nindir / 10;
             nLookup = max(1, nLookup / 10);
             gatherSamples = max(1, gatherSamples / 4);

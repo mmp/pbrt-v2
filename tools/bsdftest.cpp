@@ -51,7 +51,8 @@ void Gen_UniformHemisphere(BSDF* bsdf,
 
 int main(int argc, char *argv[]) 
 {
-    pbrtInit();
+    Options opt;
+    pbrtInit(opt);
 
     // number of monte carlo estimates
     //const int estimates = 1;

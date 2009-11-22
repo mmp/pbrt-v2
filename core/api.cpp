@@ -120,6 +120,9 @@
  #endif
 using std::map;
 
+// API Global Variables
+Options PbrtOptions;
+
 // API Local Classes
 #define MAX_TRANSFORMS 2
 #define START_TRANSFORM_BITS (1 << 0)
@@ -656,7 +659,8 @@ Film *MakeFilm(const string &name,
 
 
 // API Function Definitions
-void pbrtInit() {
+void pbrtInit(const Options &opt) {
+    PbrtOptions = opt;
     // API Initialization
     if (currentApiState != STATE_UNINITIALIZED)
         Error("pbrtInit() has already been called.");

@@ -47,8 +47,10 @@ ProgressReporter::ProgressReporter(int tw, const string &title, int barLength)
     *s++ = ']';
     *s++ = ' ';
     *s++ = '\0';
-    fputs(buf, outFile);
-    fflush(outFile);
+    if (!PbrtOptions.quiet) {
+        fputs(buf, outFile);
+        fflush(outFile);
+    }
 }
 
 
@@ -60,7 +62,7 @@ ProgressReporter::~ProgressReporter() {
 
 
 void ProgressReporter::Update(int num) {
-    if (num == 0) return;
+    if (num == 0 || PbrtOptions.quiet) return;
     MutexLock lock(*mutex);
     workDone += num;
     float percentDone = float(workDone) / float(totalWork);
@@ -83,6 +85,7 @@ void ProgressReporter::Update(int num) {
 
 
 void ProgressReporter::Done() {
+    if (PbrtOptions.quiet) return;
     MutexLock lock(*mutex);
     while (plussesPrinted++ < totalPlusses)
         *curSpace++ = '+';

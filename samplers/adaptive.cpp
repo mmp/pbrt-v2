@@ -170,7 +170,7 @@ AdaptiveSampler *CreateAdaptiveSampler(const ParamSet &params, const Film *film,
     film->GetSampleExtent(&xstart, &xend, &ystart, &yend);
     int minsamp = params.FindOneInt("minsamples", 4);
     int maxsamp = params.FindOneInt("maxsamples", 32);
-    if (getenv("PBRT_QUICK_RENDER")) { minsamp = 2; maxsamp = 4; }
+    if (PbrtOptions.quickRender) { minsamp = 2; maxsamp = 4; }
     string method = params.FindOneString("method", "contrast");
     return new AdaptiveSampler(xstart, xend, ystart, yend, minsamp, maxsamp, method,
          camera->shutterOpen, camera->shutterClose);

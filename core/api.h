@@ -28,7 +28,7 @@
 #include "pbrt.h"
 
 // API Function Declarations
-void pbrtInit();
+void pbrtInit(const Options &opt);
 void pbrtCleanup();
 void pbrtIdentity();
 void pbrtTranslate(float dx, float dy, float dz);

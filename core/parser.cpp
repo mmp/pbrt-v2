@@ -26,7 +26,7 @@
 #include "pbrt.h"
 
 // Parsing Global Interface
-bool ParseFile(const char *filename) {
+bool ParseFile(const string &filename) {
     extern FILE *yyin;
     extern int yyparse(void);
     extern string current_file;
@@ -36,10 +36,10 @@ bool ParseFile(const char *filename) {
     if (getenv("PBRT_YYDEBUG") != NULL)
         yydebug = 1;
 
-    if (strcmp(filename, "-") == 0)
+    if (filename == "-")
         yyin = stdin;
     else
-        yyin = fopen(filename, "r");
+        yyin = fopen(filename.c_str(), "r");
     if (yyin != NULL) {
         current_file = filename;
         if (yyin == stdin) current_file = "<standard input>";
