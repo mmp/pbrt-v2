@@ -491,16 +491,6 @@ BSDFSample::BSDFSample(const Sample *sample,
 }
 
 
-Spectrum BSDF::Sample_f(const Vector &wo, Vector *wi, RNG &rng, BxDFType flags,
-        BxDFType *sampledType) const {
-    float pdf;
-    BSDFSample bsdfSample(rng);
-    Spectrum f = Sample_f(wo, wi, bsdfSample, &pdf, flags, sampledType);
-    if (!f.IsBlack() && pdf > 0.) f /= pdf;
-    return f;
-}
-
-
 Spectrum BSDF::Sample_f(const Vector &woW, Vector *wiW,
                         const BSDFSample &bsdfSample, float *pdf,
                         BxDFType flags, BxDFType *sampledType) const {

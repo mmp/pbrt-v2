@@ -163,12 +163,13 @@ Spectrum SpecularReflect(const RayDifferential &ray, BSDF *bsdf,
         RNG &rng, const Intersection &isect, const Renderer *renderer,
         const Scene *scene, const Sample *sample, MemoryArena &arena) {
     Vector wo = -ray.d, wi;
+    float pdf;
     const Point &p = bsdf->dgShading.p;
     const Normal &n = bsdf->dgShading.nn;
-    Spectrum f = bsdf->Sample_f(wo, &wi, rng,
-        BxDFType(BSDF_REFLECTION | BSDF_SPECULAR));
+    Spectrum f = bsdf->Sample_f(wo, &wi, BSDFSample(rng), &pdf,
+                                BxDFType(BSDF_REFLECTION | BSDF_SPECULAR));
     Spectrum L = 0.f;
-    if (!f.IsBlack() && AbsDot(wi, n) != 0.f) {
+    if (pdf > 0.f && !f.IsBlack() && AbsDot(wi, n) != 0.f) {
         // Compute ray differential _rd_ for specular reflection
         RayDifferential rd(p, wi, ray, isect.rayEpsilon);
         if (ray.hasDifferentials) {
@@ -189,7 +190,8 @@ Spectrum SpecularReflect(const RayDifferential &ray, BSDF *bsdf,
                                                      dDNdy * n);
         }
         PBRT_STARTED_SPECULAR_REFLECTION_RAY(const_cast<RayDifferential *>(&rd));
-        L = renderer->Li(scene, rd, sample, rng, arena) * f * AbsDot(wi, n);
+        Spectrum Li = renderer->Li(scene, rd, sample, rng, arena);
+        L = f * Li * AbsDot(wi, n) / pdf;
         PBRT_FINISHED_SPECULAR_REFLECTION_RAY(const_cast<RayDifferential *>(&rd));
     }
     return L;
@@ -200,12 +202,13 @@ Spectrum SpecularTransmit(const RayDifferential &ray, BSDF *bsdf,
         RNG &rng, const Intersection &isect, const Renderer *renderer,
         const Scene *scene, const Sample *sample, MemoryArena &arena) {
     Vector wo = -ray.d, wi;
+    float pdf;
     const Point &p = bsdf->dgShading.p;
     const Normal &n = bsdf->dgShading.nn;
-    Spectrum f = bsdf->Sample_f(wo, &wi, rng,
-        BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
+    Spectrum f = bsdf->Sample_f(wo, &wi, BSDFSample(rng), &pdf,
+                               BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
     Spectrum L = 0.f;
-    if (!f.IsBlack() && AbsDot(wi, n) != 0.f) {
+    if (pdf > 0.f && !f.IsBlack() && AbsDot(wi, n) != 0.f) {
         // Compute ray differential _rd_ for specular transmission
         RayDifferential rd(p, wi, ray, isect.rayEpsilon);
         if (ray.hasDifferentials) {
@@ -232,7 +235,8 @@ Spectrum SpecularTransmit(const RayDifferential &ray, BSDF *bsdf,
             rd.ryDirection = wi + eta * dwody - Vector(mu * dndy + dmudy * n);
         }
         PBRT_STARTED_SPECULAR_REFRACTION_RAY(const_cast<RayDifferential *>(&rd));
-        L = renderer->Li(scene, rd, sample, rng, arena) * f * AbsDot(wi, n);
+        Spectrum Li = renderer->Li(scene, rd, sample, rng, arena);
+        L = f * Li * AbsDot(wi, n) / pdf;
         PBRT_FINISHED_SPECULAR_REFRACTION_RAY(const_cast<RayDifferential *>(&rd));
     }
     return L;

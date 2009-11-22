@@ -135,8 +135,6 @@ struct BSDFSampleOffsets {
 class BSDF {
 public:
     // BSDF Public Methods
-    Spectrum Sample_f(const Vector &wo, Vector *wi, RNG &rng,
-        BxDFType flags = BSDF_ALL, BxDFType *sampledType = NULL) const;
     Spectrum Sample_f(const Vector &wo, Vector *wi, const BSDFSample &bsdfSample,
                       float *pdf, BxDFType flags = BSDF_ALL,
                       BxDFType *sampledType = NULL) const;
