@@ -42,7 +42,7 @@ Scene::~Scene() {
 
 
 Scene::Scene(Primitive *accel, const vector<Light *> &lts,
-        VolumeRegion *vr) {
+             VolumeRegion *vr) {
     lights = lts;
     aggregate = accel;
     volumeRegion = vr;

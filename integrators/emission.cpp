@@ -54,7 +54,8 @@ Spectrum EmissionIntegrator::Transmittance(const Scene *scene,
 
 Spectrum EmissionIntegrator::Li(const Scene *scene,
         const Renderer *renderer, const RayDifferential &ray,
-        const Sample *sample, RNG &rng, Spectrum *T, MemoryArena &arena) const {
+        const Sample *sample, RNG &rng, Spectrum *T,
+        MemoryArena &arena) const {
     VolumeRegion *vr = scene->volumeRegion;
     Assert(sample != NULL);
     float t0, t1;

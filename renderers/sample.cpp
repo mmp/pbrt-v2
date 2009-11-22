@@ -38,9 +38,11 @@
 class RenderTask : public Task {
 public:
     // RenderTask Public Methods
-    RenderTask(const Scene *sc, const SampleRenderer *ren, Camera *c,
-        Sampler *ms, Sample *sam, int tn, int tc, ProgressReporter &pr)
-      : reporter(pr) {
+    RenderTask(const Scene *sc, SampleRenderer *ren, Camera *c, Sampler *ms,
+        ProgressReporter &pr,
+               Sample *sam, int tn, int tc)
+      : reporter(pr)
+    {
         scene = sc; renderer = ren; camera = c; mainSampler = ms;
         origSample = sam; taskNum = tn; taskCount = tc;
     }
@@ -63,12 +65,12 @@ void RenderTask::Run() {
     PBRT_STARTED_RENDERTASK(taskNum);
     // Get sub-_Sampler_ for _RenderTask_
     Sampler *sampler = mainSampler->GetSubSampler(taskNum, taskCount);
-    if (!sampler) {
+    if (!sampler)
+    {
         reporter.Update();
         PBRT_FINISHED_RENDERTASK(taskNum);
         return;
     }
-    
 
     // Declare local variables used for rendering loop
     MemoryArena arena;
@@ -122,9 +124,10 @@ void RenderTask::Run() {
         }
 
         // Report sample results to _Sampler_, add contributions to image
-        if (sampler->ReportResults(samples, rays, Ls,
-            isects, sampleCount)) {
-            for (int i = 0; i < sampleCount; ++i) {
+        if (sampler->ReportResults(samples, rays, Ls, isects, sampleCount))
+        {
+            for (int i = 0; i < sampleCount; ++i)
+            {
                 PBRT_STARTED_ADDING_IMAGE_SAMPLE(&samples[i], &rays[i], &Ls[i], &Ts[i]);
                 camera->film->AddSample(samples[i], Ls[i]);
                 PBRT_FINISHED_ADDING_IMAGE_SAMPLE();
@@ -190,8 +193,8 @@ void SampleRenderer::Render(const Scene *scene) {
     vector<Task *> renderTasks;
     for (int i = 0; i < nTasks; ++i)
         renderTasks.push_back(new RenderTask(scene, this, camera, sampler,
-                                             sample, nTasks-1-i, nTasks,
-                                             reporter));
+                                             reporter,
+                                             sample, nTasks-1-i, nTasks));
     EnqueueTasks(renderTasks);
     WaitForAllTasks();
     for (uint32_t i = 0; i < renderTasks.size(); ++i)
@@ -216,15 +219,15 @@ Spectrum SampleRenderer::Li(const Scene *scene,
     if (!isect) isect = &localIsect;
     Spectrum Lo = 0.f;
     if (scene->Intersect(ray, isect))
-        Lo = surfaceIntegrator->Li(scene, this, ray, *isect, sample, rng,
-            arena);
+        Lo = surfaceIntegrator->Li(scene, this, ray, *isect, sample,
+                                   rng, arena);
     else {
         // Handle ray that doesn't intersect any geometry
         for (uint32_t i = 0; i < scene->lights.size(); ++i)
            Lo += scene->lights[i]->Le(ray);
     }
-    Spectrum Lv = volumeIntegrator->Li(scene, this, ray, sample, rng, T,
-        arena);
+    Spectrum Lv = volumeIntegrator->Li(scene, this, ray, sample, rng,
+                                       T, arena);
     return *T * Lo + Lv;
 }
 
@@ -233,7 +236,7 @@ Spectrum SampleRenderer::Transmittance(const Scene *scene,
         const RayDifferential &ray, const Sample *sample, RNG &rng,
         MemoryArena &arena) const {
     return volumeIntegrator->Transmittance(scene, this, ray, sample,
-        rng, arena);
+                                           rng, arena);
 }
 
 

@@ -430,9 +430,10 @@ void MLTDirectTask::Run() {
             PBRT_FINISHED_CAMERA_RAY_INTEGRATION(&rays[i], &samples[i], &Ls[i]);
         }
         // Report sample results to _Sampler_, add contributions to image
-        if (sampler->ReportResults(samples, rays, Ls,
-            isects, sampleCount)) {
-            for (int i = 0; i < sampleCount; ++i) {
+        if (sampler->ReportResults(samples, rays, Ls, isects, sampleCount))
+        {
+            for (int i = 0; i < sampleCount; ++i)
+            {
                 PBRT_STARTED_ADDING_IMAGE_SAMPLE(&samples[i], &rays[i], &Ls[i], &Ts[i]);
                 camera->film->AddSample(samples[i], Ls[i]);
                 PBRT_FINISHED_ADDING_IMAGE_SAMPLE();

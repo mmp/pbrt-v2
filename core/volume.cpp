@@ -274,7 +274,7 @@ void SubsurfaceFromDiffuse(const Spectrum &Kd, float meanPathLength,
     for (int i = 0; i < 3; ++i) {
        // Compute $\alpha'$ for RGB component, compute scattering properties
        float alphap = RdToAlphap(rgb[i], A);
-       float sigma_tr = 1.f / meanPathLength; // l_d
+       float sigma_tr = 1.f / meanPathLength;
        float sigma_prime_t = sigma_tr / sqrtf(3.f * 1.f - alphap);
        sigma_prime_s_rgb[i] = alphap * sigma_prime_t;
        sigma_a_rgb[i] = sigma_prime_t - sigma_prime_s_rgb[i];
