@@ -24,68 +24,19 @@
 
 // integrators/dipolesubsurface.cpp*
 #include "integrators/dipolesubsurface.h"
-#include "shapes/sphere.h"
 #include "scene.h"
 #include "montecarlo.h"
 #include "sampler.h"
-#include "octree.h"
-#include "camera.h"
-#include "probes.h"
-#include "parallel.h"
-#include "octree.h"
 #include "progressreporter.h"
 #include "intersection.h"
 #include "paramset.h"
 #include "reflection.h"
+#include "octree.h"
+#include "camera.h"
+#include "floatfile.h"
 struct DiffusionReflectance;
 
 // DipoleSubsurfaceIntegrator Local Declarations
-class PoissonPointTask : public Task {
-public:
-    PoissonPointTask(const Scene *sc, const Point &org, float ti, int tn,
-        float msd, int mf, RWMutex &m, int &rf, int &mrf,
-        int &tpt, int &trt, int &npa, GeometricPrimitive &sph,
-        Octree<IrradiancePoint> &oct, vector<IrradiancePoint> &ips,
-        ProgressReporter &pr)
-        : taskNum(tn), scene(sc), origin(org), time(ti),
-          minSampleDist(msd), maxFails(mf), mutex(m),
-          repeatedFails(rf), maxRepeatedFails(mrf), totalPathsTraced(tpt),
-          totalRaysTraced(trt), numPointsAdded(npa), sphere(sph),
-          octree(oct), irradiancePoints(ips), prog(pr) { }
-    void Run();
-
-    int taskNum;
-    const Scene *scene;
-    Point origin;
-    float time;
-    float minSampleDist;
-    int maxFails;
-
-    RWMutex &mutex;
-    int &repeatedFails, &maxRepeatedFails;
-    int &totalPathsTraced, &totalRaysTraced, &numPointsAdded;
-    GeometricPrimitive &sphere;
-    Octree<IrradiancePoint> &octree;
-    vector<IrradiancePoint> &irradiancePoints;
-    ProgressReporter &prog;
-};
-
-
-struct PoissonCheck {
-    PoissonCheck(float md, const Point &pt)
-        { maxDist2 = md * md; failed = false; p = pt; }
-    float maxDist2;
-    bool failed;
-    Point p;
-    bool operator()(const IrradiancePoint &ip) {
-        if (DistanceSquared(ip.p, p) < maxDist2) {
-            failed = true; return false;
-        }
-        return true;
-    }
-};
-
-
 struct SubsurfaceOctreeNode {
     // SubsurfaceOctreeNode Methods
     SubsurfaceOctreeNode() {
@@ -95,7 +46,7 @@ struct SubsurfaceOctreeNode {
             ips[i] = NULL;
     }
     void Insert(const BBox &nodeBound, IrradiancePoint *ip,
-            MemoryArena &arena) {
+                MemoryArena &arena) {
         Point pMid = .5f * nodeBound.pMin + .5f * nodeBound.pMax;
         if (isLeaf) {
             // Add _IrradiancePoint_ to leaf octree node
@@ -184,8 +135,8 @@ struct SubsurfaceOctreeNode {
 
 struct DiffusionReflectance {
     // DiffusionReflectance Public Methods
-    DiffusionReflectance(const Spectrum &sigma_a,
-            const Spectrum &sigmap_s, float eta) {
+    DiffusionReflectance(const Spectrum &sigma_a, const Spectrum &sigmap_s,
+                         float eta) {
         A = (1.f + Fdr(eta)) / (1.f - Fdr(eta));
         sigmap_t = sigma_a + sigmap_s;
         sigma_tr = Sqrt(3.f * sigma_a * sigmap_t);
@@ -237,51 +188,36 @@ void DipoleSubsurfaceIntegrator::RequestSamples(Sampler *sampler, Sample *sample
 void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
         const Camera *camera, const Renderer *renderer) {
     if (scene->lights.size() == 0) return;
-    // Declare shared variables for Poisson point generation
+    vector<SurfacePoint> pts;
+    // Get _SurfacePoint_s for translucent objects in scene
+    if (filename != "") {
+        // Initialize _SurfacePoint_s from file
+        vector<float> fpts;
+        if (ReadFloatFile(filename.c_str(), &fpts)) {
+            if ((fpts.size() % 8) != 0)
+                Error("Excess values (%d) in points file \"%s\"", int(fpts.size() % 8),
+                      filename.c_str());
+            for (u_int i = 0; i < fpts.size(); i += 8)
+                pts.push_back(SurfacePoint(Point(fpts[i], fpts[i+1], fpts[i+2]),
+                                           Normal(fpts[i+3], fpts[i+4], fpts[i+5]),
+                                           fpts[i+6], fpts[i+7]));
+        }
+    }
+    if (pts.size() == 0) {
+        Point pCamera = camera->CameraToWorld(camera->shutterOpen,
+                                              Point(0, 0, 0));
+        FindPoissonPointDistribution(pCamera, camera->shutterOpen,
+                                     minSampleDist, scene, &pts);
+    }
 
-    // Create scene bounding sphere to catch rays that leave the scene
-    Point sceneCenter;
-    float sceneRadius;
-    scene->WorldBound().BoundingSphere(&sceneCenter, &sceneRadius);
-    Transform ObjectToWorld(Translate(sceneCenter - Point(0,0,0)));
-    Transform WorldToObject(Inverse(ObjectToWorld));
-    Reference<Shape> sph = new Sphere(&ObjectToWorld, &WorldToObject,
-        true, sceneRadius, -sceneRadius, sceneRadius, 360.f);
-    Reference<Material> nullMaterial = Reference<Material>(NULL);
-    GeometricPrimitive sphere(sph, nullMaterial, NULL);
-    int maxFails = 2000, repeatedFails = 0, maxRepeatedFails = 0;
-    if (getenv("PBRT_QUICK_RENDER")) maxFails = max(10, maxFails / 10);
-    int totalPathsTraced = 0, totalRaysTraced = 0, numPointsAdded = 0;
-    BBox octBounds = scene->WorldBound();
-    octBounds.Expand(.001f * powf(octBounds.Volume(), 1.f/3.f));
-    Octree<IrradiancePoint> pointOctree(octBounds);
-    ProgressReporter prog(maxFails, "Depositing samples");
-    // Launch tasks to trace rays to find Poisson points
-    PBRT_SUBSURFACE_STARTED_RAYS_FOR_POINTS();
-    vector<Task *> tasks;
-    RWMutex *mutex = RWMutex::Create();
-    int nTasks = NumSystemCores();
-    Point origin = camera->CameraToWorld(camera->shutterOpen,
-                                         Point(0, 0, 0));
-    for (int i = 0; i < nTasks; ++i)
-        tasks.push_back(new PoissonPointTask(scene, origin, camera->shutterOpen, i,
-            minSampleDist, maxFails, *mutex, repeatedFails, maxRepeatedFails,
-            totalPathsTraced, totalRaysTraced, numPointsAdded, sphere, pointOctree,
-            irradiancePoints, prog));
-    EnqueueTasks(tasks);
-    WaitForAllTasks();
-    for (uint32_t i = 0; i < tasks.size(); ++i)
-        delete tasks[i];
-    RWMutex::Destroy(mutex);
-    prog.Done();
-    PBRT_SUBSURFACE_FINISHED_RAYS_FOR_POINTS(totalRaysTraced, numPointsAdded);
     // Compute irradiance values at sample points
     RNG rng;
     MemoryArena arena;
     PBRT_SUBSURFACE_STARTED_COMPUTING_IRRADIANCE_VALUES();
-    ProgressReporter progress(irradiancePoints.size(), "Computing Irradiances");
-    for (uint32_t i = 0; i < irradiancePoints.size(); ++i) {
-        IrradiancePoint &ip = irradiancePoints[i];
+    ProgressReporter progress(pts.size(), "Computing Irradiances");
+    for (uint32_t i = 0; i < pts.size(); ++i) {
+        SurfacePoint &sp = pts[i];
+        Spectrum E(0.f);
         for (uint32_t j = 0; j < scene->lights.size(); ++j) {
             // Add irradiance from light at point
             const Light *light = scene->lights[j];
@@ -297,17 +233,21 @@ void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
                 Vector wi;
                 float lightPdf;
                 VisibilityTester visibility;
-                Spectrum Li = light->Sample_L(ip.p, ip.rayEpsilon,
+                Spectrum Li = light->Sample_L(sp.p, sp.rayEpsilon,
                     ls, camera->shutterOpen, &wi, &lightPdf, &visibility);
-                if (Dot(wi, ip.n) <= 0.) continue;
+                if (Dot(wi, sp.n) <= 0.) continue;
                 if (Li.IsBlack() || lightPdf == 0.f) continue;
                 Li *= visibility.Transmittance(scene, renderer, NULL, rng, arena);
                 if (visibility.Unoccluded(scene))
-                    Elight += Li * Dot(wi, ip.n) / lightPdf;
+                    Elight += Li * AbsDot(wi, sp.n) / lightPdf;
             }
-            ip.E += Elight / nSamples;
+            E += Elight / nSamples;
         }
-        PBRT_SUBSURFACE_COMPUTED_IRRADIANCE_AT_POINT(&ip);
+        if (E.y() > 0.f)
+        {
+            irradiancePoints.push_back(IrradiancePoint(sp, E));
+            PBRT_SUBSURFACE_COMPUTED_IRRADIANCE_AT_POINT(&sp, &E);
+        }
         arena.FreeAll();
         progress.Update();
     }
@@ -319,113 +259,8 @@ void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
     for (uint32_t i = 0; i < irradiancePoints.size(); ++i)
         octreeBounds = Union(octreeBounds, irradiancePoints[i].p);
     for (uint32_t i = 0; i < irradiancePoints.size(); ++i)
-        if (irradiancePoints[i].E.y() > 0.f)
-            octree->Insert(octreeBounds, &irradiancePoints[i], octreeArena);
+        octree->Insert(octreeBounds, &irradiancePoints[i], octreeArena);
     octree->InitHierarchy();
-}
-
-
-void PoissonPointTask::Run() {
-    // Declare common variables for _PoissonPointTask::Run()_
-    RNG rng(37 * taskNum);
-    MemoryArena arena;
-    vector<IrradiancePoint> candidates;
-    while (true) {
-        int pathsTraced, raysTraced = 0;
-        for (pathsTraced = 0; pathsTraced < 20000; ++pathsTraced) {
-            // Follow ray path and attempt to deposit candidate sample points
-            Vector dir = UniformSampleSphere(rng.RandomFloat(), rng.RandomFloat());
-            Ray ray(origin, dir, 0.f, INFINITY, time);
-            while (ray.depth < 30) {
-                // Find ray intersection with scene geometry or bounding sphere
-                ++raysTraced;
-                Intersection isect;
-                bool hitOnSphere = false;
-                if (!scene->Intersect(ray, &isect)) {
-                    if (!sphere.Intersect(ray, &isect))
-                        break;
-                    hitOnSphere = true;
-                }
-                DifferentialGeometry &hitGeometry = isect.dg;
-                hitGeometry.nn = Faceforward(hitGeometry.nn, -ray.d);
-
-                // Store candidate sample point at ray intersection if appropriate
-                if (!hitOnSphere && ray.depth >= 3 &&
-                    isect.GetBSSRDF(RayDifferential(ray), arena) != NULL) {
-                    IrradiancePoint ip;
-                    ip.p = hitGeometry.p;
-                    ip.n = hitGeometry.nn;
-                    ip.area = M_PI * minSampleDist * minSampleDist;
-                    ip.rayEpsilon = isect.rayEpsilon;
-                    candidates.push_back(ip);
-                }
-
-                // Generate random ray from intersection point
-                Vector dir = UniformSampleSphere(rng.RandomFloat(), rng.RandomFloat());
-                dir = Faceforward(dir, hitGeometry.nn);
-                ray = Ray(hitGeometry.p, dir, ray, isect.rayEpsilon);
-            }
-            arena.FreeAll();
-        }
-        // Make first pass through candidate points with reader lock
-        vector<bool> candidateRejected;
-        candidateRejected.reserve(candidates.size());
-        RWMutexLock lock(mutex, READ);
-        for (uint32_t i = 0; i < candidates.size(); ++i) {
-            IrradiancePoint &ip = candidates[i];
-            PoissonCheck check(minSampleDist, ip.p);
-            octree.Lookup(ip.p, check);
-            candidateRejected.push_back(check.failed);
-        }
-
-        // Make second pass through points with writer lock and update octree
-        lock.UpgradeToWrite();
-        if (repeatedFails >= maxFails)
-            return;
-        totalPathsTraced += pathsTraced;
-        totalRaysTraced += raysTraced;
-        int oldMaxRepeatedFails = maxRepeatedFails;
-        for (uint32_t i = 0; i < candidates.size(); ++i) {
-            if (candidateRejected[i]) {
-                // Update for rejected candidate point
-                maxRepeatedFails = max(maxRepeatedFails, ++repeatedFails);
-                if (repeatedFails >= maxFails)
-                    return;
-            }
-            else {
-                // Recheck candidate point and possibly add to octree
-                IrradiancePoint &ip = candidates[i];
-                PoissonCheck check(minSampleDist, ip.p);
-                octree.Lookup(ip.p, check);
-                if (check.failed) {
-                    // Update for rejected candidate point
-                    maxRepeatedFails = max(maxRepeatedFails, ++repeatedFails);
-                    if (repeatedFails >= maxFails)
-                        return;
-                }
-                else {
-                    ++numPointsAdded;
-                    repeatedFails = 0;
-                    Vector delta(minSampleDist, minSampleDist, minSampleDist);
-                    octree.Add(ip, BBox(ip.p-delta, ip.p+delta));
-                    PBRT_SUBSURFACE_ADDED_POINT_TO_OCTREE(&ip, minSampleDist);
-                    irradiancePoints.push_back(ip);
-                }
-            }
-        }
-
-        // Stop following paths if not finding new points
-        if (repeatedFails > oldMaxRepeatedFails) {
-            int delta = repeatedFails - oldMaxRepeatedFails;
-            prog.Update(delta);
-        }
-        if (totalPathsTraced > 50000 && numPointsAdded == 0) {
-            Warning("There don't seem to be any objects with BSSRDFs "
-                    "in this scene.  Giving up.");
-            return;
-        }
-        candidates.erase(candidates.begin(), candidates.end());
-    }
 }
 
 
@@ -464,10 +299,8 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
         bsdfSampleOffsets);
     if (ray.depth < maxSpecularDepth) {
         // Trace rays for specular reflection and refraction
-        L += SpecularReflect(ray, bsdf, rng, isect, renderer,
-                             scene, sample, arena);
-        L += SpecularTransmit(ray, bsdf, rng, isect, renderer,
-                              scene, sample, arena);
+        L += SpecularReflect(ray, bsdf, rng, isect, renderer, scene, sample, arena);
+        L += SpecularTransmit(ray, bsdf, rng, isect, renderer, scene, sample, arena);
     }
     return L;
 }
@@ -510,8 +343,9 @@ DipoleSubsurfaceIntegrator *CreateDipoleSubsurfaceIntegrator(const ParamSet &par
     int maxDepth = params.FindOneInt("maxdepth", 5);
     float maxError = params.FindOneFloat("maxerror", .05f);
     float minDist = params.FindOneFloat("minsampledistance", .25f);
-    if (getenv("PBRT_QUICK_RENDER")) { maxError *= 4.f; minDist *= 4.f; }
-    return new DipoleSubsurfaceIntegrator(maxDepth, maxError, minDist);
+    string pointsfile = params.FindOneString("pointsfile", "");
+    if (PbrtOptions.quickRender) { maxError *= 4.f; minDist *= 4.f; }
+    return new DipoleSubsurfaceIntegrator(maxDepth, maxError, minDist, pointsfile);
 }
 
 

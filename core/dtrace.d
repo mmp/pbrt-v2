@@ -152,8 +152,8 @@ probe photon_map_finished_lookup(const struct DifferentialGeometry *, int nFound
 
 probe subsurface_started_rays_for_points();
 probe subsurface_finished_rays_for_points(int totalRaysTraced, int numPointsAdded);
-probe subsurface_added_point_to_octree(const struct IrradiancePoint *, float minSampleDist);
-probe subsurface_computed_irradiance_at_point(const struct IrradiancePoint *);
+probe subsurface_added_point_to_octree(const struct SurfacePoint *, float minSampleDist);
+probe subsurface_computed_irradiance_at_point(const struct SurfacePoint *, const void *E);
 probe subsurface_added_interior_contribution(const struct SubsurfaceOctreeNode *node);
 probe subsurface_added_point_contribution(const struct IrradiancePoint *node);
 probe subsurface_started_computing_irradiance_values();

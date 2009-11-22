@@ -82,6 +82,7 @@
 #include "renderers/createprobes.h"
 #include "renderers/metropolis.h"
 #include "renderers/sample.h"
+#include "renderers/surfacepoints.h"
 #include "samplers/adaptive.h"
 #include "samplers/bestcandidate.h"
 #include "samplers/halton.h"
@@ -1207,6 +1208,11 @@ Renderer *RenderOptions::MakeRenderer() const {
     }
     else if (RendererName == "aggregatetest") {
         renderer = CreateAggregateTestRenderer(RendererParams, primitives);
+        RendererParams.ReportUnused();
+    }
+    else if (RendererName == "surfacepoints") {
+        Point pCamera = camera->CameraToWorld(camera->shutterOpen, Point(0, 0, 0));
+        renderer = CreateSurfacePointsRenderer(RendererParams, pCamera, camera->shutterOpen);
         RendererParams.ReportUnused();
     }
     else {

@@ -28,10 +28,15 @@
 #include "pbrt.h"
 #include "integrator.h"
 #include "kdtree.h"
+#include "renderers/surfacepoints.h"
 struct SubsurfaceOctreeNode;
 
 // DipoleSubsurfaceIntegrator Helper Declarations
 struct IrradiancePoint {
+    IrradiancePoint() { }
+    IrradiancePoint(const SurfacePoint &sp, const Spectrum &ee)
+        : p(sp.p), n(sp.n), E(ee), area(sp.area),
+          rayEpsilon(sp.rayEpsilon) { }
     Point p;
     Normal n;
     Spectrum E;
@@ -44,22 +49,25 @@ struct IrradiancePoint {
 class DipoleSubsurfaceIntegrator : public SurfaceIntegrator {
 public:
     // DipoleSubsurfaceIntegrator Public Methods
+    DipoleSubsurfaceIntegrator(int mdepth, float merror, float mindist,
+            const string &fn) {
+        maxSpecularDepth = mdepth;
+        maxError = merror;
+        minSampleDist = mindist;
+        filename = fn;
+        octree = NULL;
+    }
     ~DipoleSubsurfaceIntegrator();
     Spectrum Li(const Scene *scene, const Renderer *renderer,
         const RayDifferential &ray, const Intersection &isect, const Sample *sample,
         RNG &rng, MemoryArena &arena) const;
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
     void Preprocess(const Scene *, const Camera *, const Renderer *);
-    DipoleSubsurfaceIntegrator(int mdepth, float merror, float mindist) {
-        maxSpecularDepth = mdepth;
-        maxError = merror;
-        minSampleDist = mindist;
-        octree = NULL;
-    }
 private:
     // DipoleSubsurfaceIntegrator Private Data
     int maxSpecularDepth;
     float maxError, minSampleDist;
+    string filename;
     vector<IrradiancePoint> irradiancePoints;
     BBox octreeBounds;
     SubsurfaceOctreeNode *octree;
