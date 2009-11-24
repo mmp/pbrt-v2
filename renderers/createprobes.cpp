@@ -24,9 +24,6 @@
 
 // renderers/createprobes.cpp*
 #include "renderers/createprobes.h"
-#include "integrators/photonmap.h"
-#include "integrators/directlighting.h"
-#include "integrators/emission.h"
 #include "shapes/sphere.h"
 #include "sh.h"
 #include "parallel.h"
@@ -34,6 +31,8 @@
 #include "progressreporter.h"
 #include "camera.h"
 #include "intersection.h"
+#include "integrator.h"
+#include "volume.h"
 #include "paramset.h"
 #include "montecarlo.h"
 
@@ -61,8 +60,9 @@ private:
 
 
 // CreateRadianceProbes Method Definitions
-CreateRadianceProbes::CreateRadianceProbes(int lm, float ps, const BBox &b, int md,
-        int nindir, bool id, bool ii, float t, const Point &pcam, const string &fn) {
+CreateRadianceProbes::CreateRadianceProbes(SurfaceIntegrator *surf,
+        VolumeIntegrator *vol, const Camera *cam, int lm, float ps, const BBox &b,
+        int nindir, bool id, bool ii, float t, const string &fn) {
     lmax = lm;
     probeSpacing = ps;
     bbox = b;
@@ -71,44 +71,15 @@ CreateRadianceProbes::CreateRadianceProbes(int lm, float ps, const BBox &b, int 
     includeIndirectInProbes = ii;
     time = t;
     nIndirSamples = nindir;
-    // Create surface and volume integrators for _CreateRadianceProbes_
-    if (includeIndirectInProbes) {
-        int ncaus = 0, nindir = 400000;
-        int nLookup = 100, maxphotondepth = 2;
-        float maxdist = .5f;
-        bool finalGather = false;
-        int gatherSamples = 256;
-        float ga = 10.f;
-        if (PbrtOptions.quickRender) {
-            nindir = nindir / 10;
-            nLookup = max(1, nLookup / 10);
-            gatherSamples = max(1, gatherSamples / 4);
-        }
-        surfaceIntegrator = new PhotonIntegrator(ncaus, nindir, nLookup, md,
-            maxphotondepth, maxdist, finalGather, gatherSamples, ga);
-        volumeIntegrator = new EmissionIntegrator(1.f);
-    }
-    else {
-        if (!includeDirectInProbes)
-            Warning("Radiance probes will be including neither direct nor "
-                    "indirect light?!");
-        surfaceIntegrator = NULL;
-        volumeIntegrator = NULL;
-    }
-    origSample = NULL;
-    nProbes[0] = nProbes[1] = nProbes[2] = -1;
-    c_in = NULL;
-    pCamera = pcam;
+    surfaceIntegrator = surf;
+    volumeIntegrator = vol;
+    camera = cam;
 }
 
 
 CreateRadianceProbes::~CreateRadianceProbes() {
     delete surfaceIntegrator;
     delete volumeIntegrator;
-    delete origSample;
-    for (int i = 0; i < nProbes[0] * nProbes[1] * nProbes[2]; ++i)
-        delete[] c_in[i];
-    delete[] c_in;
 }
 
 
@@ -134,8 +105,8 @@ Spectrum CreateRadianceProbes::Li(const Scene *scene, const RayDifferential &ray
 
 
 Spectrum CreateRadianceProbes::Transmittance(const Scene *scene,
-    const RayDifferential &ray, const Sample *sample, RNG &rng,
-    MemoryArena &arena) const {
+        const RayDifferential &ray, const Sample *sample, RNG &rng,
+        MemoryArena &arena) const {
     return volumeIntegrator->Transmittance(scene, this, ray, sample, rng, arena);
 }
 
@@ -144,25 +115,20 @@ void CreateRadianceProbes::Render(const Scene *scene) {
     // Compute scene bounds and initialize probe integrators
     if (bbox.pMin.x > bbox.pMax.x)
         bbox = scene->WorldBound();
-    if (surfaceIntegrator && volumeIntegrator) {
-        // This will be trouble if one of the integrators needs a Camera
-        // pointer for its preprocess method...  Currently that's only the
-        // irradiance cache.  Apologies if this bites you and you find this
-        // comment after debugging. :-p
-        surfaceIntegrator->Preprocess(scene, NULL, this);
-        volumeIntegrator->Preprocess(scene, NULL, this);
-        origSample = new Sample(NULL, surfaceIntegrator, volumeIntegrator,
-                                scene);
-    }
+    surfaceIntegrator->Preprocess(scene, camera, this);
+    volumeIntegrator->Preprocess(scene, camera, this);
+    Sample *origSample = new Sample(NULL, surfaceIntegrator, volumeIntegrator,
+                                    scene);
 
     // Compute sampling rate in each dimension
     Vector delta = bbox.pMax - bbox.pMin;
+    int nProbes[3];
     for (int i = 0; i < 3; ++i)
         nProbes[i] = max(1, Ceil2Int(delta[i] / probeSpacing));
 
     // Allocate SH coefficient vector pointers for sample points
     int count = nProbes[0] * nProbes[1] * nProbes[2];
-    c_in = new Spectrum *[count];
+    Spectrum **c_in = new Spectrum *[count];
     for (int i = 0; i < count; ++i)
         c_in[i] = new Spectrum[SHTerms(lmax)];
 
@@ -181,6 +147,8 @@ void CreateRadianceProbes::Render(const Scene *scene) {
     vector<Point> surfacePoints;
     uint32_t nPoints = 32768, maxDepth = 32;
     surfacePoints.reserve(nPoints + maxDepth);
+    Point pCamera = camera->CameraToWorld(camera->shutterOpen,
+                                          Point(0, 0, 0));
     surfacePoints.push_back(pCamera);
     RNG rng;
     while (surfacePoints.size() < nPoints) {
@@ -242,6 +210,10 @@ void CreateRadianceProbes::Render(const Scene *scene) {
         }
         fclose(f);
     }
+    for (int i = 0; i < nProbes[0] * nProbes[1] * nProbes[2]; ++i)
+        delete[] c_in[i];
+    delete[] c_in;
+    delete origSample;
 }
 
 
@@ -297,6 +269,7 @@ void CreateRadProbeTask::Run() {
                                   p - surfacePoints[lastVisibleOffset],
                                   1e-4f, 1.f, time))) {
             uint32_t j;
+            // See if point is visible to any element of _surfacePoints_
             for (j = 0; j < surfacePoints.size(); ++j) {
                 if (!scene->IntersectP(Ray(surfacePoints[j], p - surfacePoints[j],
                                            1e-4f, 1.f, time))) {
@@ -337,13 +310,13 @@ void CreateRadProbeTask::Run() {
 }
 
 
-CreateRadianceProbes *CreateRadianceProbesRenderer(const Point &pCamera,
+CreateRadianceProbes *CreateRadianceProbesRenderer(const Camera *camera,
+        SurfaceIntegrator *surf, VolumeIntegrator *vol,
         const ParamSet &params) {
     bool includeDirect = params.FindOneBool("directlighting", true);
     bool includeIndirect = params.FindOneBool("indirectlighting", true);
     int lmax = params.FindOneInt("lmax", 4);
     int nindir = params.FindOneInt("indirectsamples", 512);
-    int maxDepth = params.FindOneInt("maxdepth", 5);
     int nbbox;
     BBox bounds;
     const float *b = params.FindFloat("bounds", &nbbox);
@@ -355,8 +328,8 @@ CreateRadianceProbes *CreateRadianceProbesRenderer(const Point &pCamera,
     float time = params.FindOneFloat("time", 0.f);
     string filename = params.FindOneString("filename", "probes.out");
 
-    return new CreateRadianceProbes(lmax, probeSpacing, bounds, maxDepth,
-        nindir, includeDirect, includeIndirect, time, pCamera, filename);
+    return new CreateRadianceProbes(surf, vol, camera, lmax, probeSpacing,
+        bounds, nindir, includeDirect, includeIndirect, time, filename);
 }
 
 
