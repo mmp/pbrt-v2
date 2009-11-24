@@ -58,8 +58,9 @@ public:
     virtual Spectrum Sample_L(const Scene *scene, const LightSample &ls,
                               float u1, float u2, float time, Ray *ray,
                               Normal *Ns, float *pdf) const = 0;
-    virtual void SHProject(const Point &p, float pEpsilon, int lmax, const Scene *scene,
-        bool computeLightVisibility, float time, RNG &rng, Spectrum *coeffs) const;
+    virtual void SHProject(const Point &p, float pEpsilon, int lmax,
+        const Scene *scene, bool computeLightVisibility, float time,
+        RNG &rng, Spectrum *coeffs) const;
 
     // Light Public Data
     const int nSamples;

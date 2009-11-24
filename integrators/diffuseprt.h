@@ -34,17 +34,15 @@ public:
     // DiffusePRTIntegrator Public Methods
     DiffusePRTIntegrator(int lm, int ns);
     ~DiffusePRTIntegrator();
-    void Preprocess(const Scene *scene, const Camera *camera,
-        const Renderer *renderer);
+    void Preprocess(const Scene *scene, const Camera *camera, const Renderer *renderer);
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
     Spectrum Li(const Scene *scene, const Renderer *,
                 const RayDifferential &ray, const Intersection &isect,
                 const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
     // DiffusePRTIntegrator Private Data
-    int lmax;
+    const int lmax, nSamples;
     Spectrum *c_in;
-    int nSamples;
 };
 
 

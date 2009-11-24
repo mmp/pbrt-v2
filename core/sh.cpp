@@ -91,8 +91,8 @@ static void legendrep(float x, int lmax, float *out) {
 
 static float fact(float v);
 static inline float K(int l, int m) {
-    return sqrtf((2. * l + 1.)/(4. * M_PI) *
-                 fact(l - fabsf(m))/fact(l + fabsf(m)));
+    return sqrtf((2. * l + 1.) / (4. * M_PI) *
+                 fact(l - fabsf(m)) / fact(l + fabsf(m)));
 }
 
 
@@ -122,18 +122,18 @@ static void sinCosIndexed(float s, float c, int n,
 }
 
 
-static void toZYZ(const Matrix4x4 &m, float *z1, float *y, float *z2) {
+static void toZYZ(const Matrix4x4 &m, float *alpha, float *beta, float *gamma) {
 #define M(a, b) (m.m[a][b])
 
     float sy = sqrtf(M(2,1)*M(2,1) + M(2,0)*M(2,0));
     if (sy > 16*FLT_EPSILON) {
-        *z1 = -atan2f(M(1,2), -M(0,2));
-        *y  = -atan2f(sy, M(2,2));
-        *z2 = -atan2f(M(2,1), M(2,0));
+        *gamma = -atan2f(M(1,2), -M(0,2));
+        *beta  = -atan2f(sy, M(2,2));
+        *alpha = -atan2f(M(2,1), M(2,0));
     } else {
-        *z1 =  0;
-        *y  = -atan2f(sy, M(2,2));
-        *z2 = -atan2f(-M(1,0), M(1,1));
+        *gamma =  0;
+        *beta  = -atan2f(sy, M(2,2));
+        *alpha = -atan2f(-M(1,0), M(1,1));
     }
 #undef M
 }
@@ -244,21 +244,12 @@ void SHProjectIncidentDirectRadiance(const Point &p, float pEpsilon,
     Spectrum *c = arena.Alloc<Spectrum>(SHTerms(lmax));
     for (uint32_t i = 0; i < scene->lights.size(); ++i) {
         Light *light = scene->lights[i];
-        light->SHProject(p, pEpsilon, lmax, scene,
-                         computeLightVis, time, rng, c);
+        light->SHProject(p, pEpsilon, lmax, scene, computeLightVis, time,
+                         rng, c);
         for (int j = 0; j < SHTerms(lmax); ++j)
             c_d[j] += c[j];
     }
     SHReduceRinging(c_d, lmax);
-}
-
-
-void SHReduceRinging(Spectrum *c, int lmax, float lambda) {
-    for (int l = 0; l <= lmax; ++l) {
-        float scale = 1.f / (1.f + lambda * l * l * (l + 1) * (l + 1));
-        for (int m = -l; m <= l; ++m)
-            c[SHIndex(l, m)] *= scale;
-    }
 }
 
 
@@ -301,26 +292,33 @@ void SHProjectIncidentIndirectRadiance(const Point &p, float pEpsilon,
 }
 
 
-void SHRotate(const Spectrum *c_in, Spectrum *c_out,
-        const Matrix4x4 &m, int lmax, MemoryArena &arena) {
-    float z1, y, z2;
-    toZYZ(m, &z1, &y, &z2);
+void SHReduceRinging(Spectrum *c, int lmax, float lambda) {
+    for (int l = 0; l <= lmax; ++l) {
+        float scale = 1.f / (1.f + lambda * l * l * (l + 1) * (l + 1));
+        for (int m = -l; m <= l; ++m)
+            c[SHIndex(l, m)] *= scale;
+    }
+}
 
+
+void SHRotate(const Spectrum *c_in, Spectrum *c_out, const Matrix4x4 &m,
+              int lmax, MemoryArena &arena) {
+    float alpha, beta, gamma;
+    toZYZ(m, &alpha, &beta, &gamma);
     Spectrum *work = arena.Alloc<Spectrum>(SHTerms(lmax));
-    SHRotateZ(c_in, c_out, z1, lmax);
+    SHRotateZ(c_in, c_out, gamma, lmax);
     SHRotateXPlus(c_out, work, lmax);
-    SHRotateZ(work, c_out, y, lmax);
+    SHRotateZ(work, c_out, beta, lmax);
     SHRotateXMinus(c_out, work, lmax);
-    SHRotateZ(work, c_out, z2, lmax);
+    SHRotateZ(work, c_out, alpha, lmax);
 }
 
 
 void SHRotateZ(const Spectrum *c_in, Spectrum *c_out, float alpha,
-        int lmax) {
+               int lmax) {
     Assert(c_in != c_out);
     c_out[0] = c_in[0];
-    if (lmax == 0)
-        return;
+    if (lmax == 0) return;
     // Precompute sine and cosine terms for $z$-axis SH rotation
     float *ct = ALLOCA(float, lmax+1);
     float *st = ALLOCA(float, lmax+1);
@@ -340,8 +338,7 @@ void SHRotateZ(const Spectrum *c_in, Spectrum *c_out, float alpha,
 }
 
 
-void SHConvolveCosTheta(int lmax, const Spectrum *c_in,
-        Spectrum *c_out) {
+void SHConvolveCosTheta(int lmax, const Spectrum *c_in, Spectrum *c_out) {
     static const float c_costheta[18] = { 0.8862268925, 1.0233267546,
         0.4954159260, 0.0000000000, -0.1107783690, 0.0000000000,
         0.0499271341, 0.0000000000, -0.0285469331, 0.0000000000,
@@ -350,10 +347,8 @@ void SHConvolveCosTheta(int lmax, const Spectrum *c_in,
     for (int l = 0; l <= lmax; ++l)
         for (int m = -l; m <= l; ++m) {
             int o = SHIndex(l, m);
-            if (l < 18)
-                c_out[o] = lambda(l) * c_in[o] * c_costheta[l];
-            else
-                c_out[o] = 0.f;
+            if (l < 18) c_out[o] = lambda(l) * c_in[o] * c_costheta[l];
+            else        c_out[o] = 0.f;
         }
 }
 

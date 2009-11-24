@@ -85,8 +85,7 @@ void Light::SHProject(const Point &p, float pEpsilon, int lmax,
         LightSample lightSample(u[0], u[1], VanDerCorput(i, scramble1D));
         Vector wi;
         VisibilityTester vis;
-        Spectrum Li = Sample_L(p, pEpsilon, lightSample, time,
-                               &wi, &pdf, &vis);
+        Spectrum Li = Sample_L(p, pEpsilon, lightSample, time, &wi, &pdf, &vis);
         if (!Li.IsBlack() && pdf > 0.f &&
             (!computeLightVisibility || vis.Unoccluded(scene))) {
             // Add light sample contribution to MC estimate of SH coefficients

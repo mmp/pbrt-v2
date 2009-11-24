@@ -118,9 +118,7 @@ Spectrum UseRadianceProbes::Li(const Scene *scene, const Renderer *renderer,
     float voxx = (offset.x * nProbes[0]) - 0.5f;
     float voxy = (offset.y * nProbes[1]) - 0.5f;
     float voxz = (offset.z * nProbes[2]) - 0.5f;
-    int vx = Floor2Int(voxx);
-    int vy = Floor2Int(voxy);
-    int vz = Floor2Int(voxz);
+    int vx = Floor2Int(voxx), vy = Floor2Int(voxy), vz = Floor2Int(voxz);
     float dx = voxx - vx, dy = voxy - vy, dz = voxz - vz;
 
     // Get radiance probe coefficients around lookup point
@@ -135,18 +133,15 @@ Spectrum UseRadianceProbes::Li(const Scene *scene, const Renderer *renderer,
 
     // Compute incident radiance from radiance probe coefficients
     Spectrum *c_inp = arena.Alloc<Spectrum>(SHTerms(lmax));
-    for (int l = 0; l <= lmax; ++l) {
-        for (int m = -l; m <= l; ++m) {
-            // Do trilinear interpolation to compute SH coefficients at point
-            int o = SHIndex(l, m);
-            Spectrum c00 = Lerp(dx, b000[o], b100[o]);
-            Spectrum c10 = Lerp(dx, b010[o], b110[o]);
-            Spectrum c01 = Lerp(dx, b001[o], b101[o]);
-            Spectrum c11 = Lerp(dx, b011[o], b111[o]);
-            Spectrum c0 = Lerp(dy, c00, c10);
-            Spectrum c1 = Lerp(dy, c01, c11);
-            c_inp[o] = Lerp(dz, c0, c1);
-        }
+    for (int i = 0; i < SHTerms(lmax); ++i) {
+        // Do trilinear interpolation to compute SH coefficients at point
+        Spectrum c00 = Lerp(dx, b000[i], b100[i]);
+        Spectrum c10 = Lerp(dx, b010[i], b110[i]);
+        Spectrum c01 = Lerp(dx, b001[i], b101[i]);
+        Spectrum c11 = Lerp(dx, b011[i], b111[i]);
+        Spectrum c0 = Lerp(dy, c00, c10);
+        Spectrum c1 = Lerp(dy, c01, c11);
+        c_inp[i] = Lerp(dz, c0, c1);
     }
 
     // Convolve incident radiance to compute irradiance function

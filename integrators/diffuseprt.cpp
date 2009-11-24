@@ -33,9 +33,8 @@
 #include "montecarlo.h"
 
 // DiffusePRTIntegrator Method Definitions
-DiffusePRTIntegrator::DiffusePRTIntegrator(int lm, int ns) {
-    lmax = lm;
-    nSamples = RoundUpPow2(ns);
+DiffusePRTIntegrator::DiffusePRTIntegrator(int lm, int ns)
+    : lmax(lm), nSamples(RoundUpPow2(ns)) {
     c_in = new Spectrum[SHTerms(lmax)];
 }
 
@@ -52,7 +51,7 @@ void DiffusePRTIntegrator::Preprocess(const Scene *scene,
     RNG rng;
     MemoryArena arena;
     SHProjectIncidentDirectRadiance(p, 0.f, camera->shutterOpen, arena,
-        scene, false, lmax, rng, c_in);
+                                    scene, false, lmax, rng, c_in);
 }
 
 

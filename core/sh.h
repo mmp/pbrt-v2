@@ -41,46 +41,47 @@ inline int SHIndex(int l, int m) {
 
 
 void SHEvaluate(const Vector &v, int lmax, float *out);
+void SHWriteImage(const char *filename, const Spectrum *c, int lmax, int yres);
 template <typename Func>
 void SHProjectCube(Func func, const Point &p, int res,
-        int lmax, Spectrum *coeffs) {
+                   int lmax, Spectrum *coeffs) {
     float *Ylm = ALLOCA(float, SHTerms(lmax));
-    for (int i = 0; i < res; ++i) {
-        float u = -1.f + 2.f * (float(i) + 0.5f) / float(res);
-        for (int j = 0; j < res; ++j) {
-            float v = -1.f + 2.f * (float(j) + 0.5f) / float(res);
+    for (int u = 0; u < res; ++u) {
+        float fu = -1.f + 2.f * (float(u) + 0.5f) / float(res);
+        for (int v = 0; v < res; ++v) {
+            float fv = -1.f + 2.f * (float(v) + 0.5f) / float(res);
             // Incorporate resuls from $+z$ face to coefficients
-            Vector w(u, v, 1);
+            Vector w(fu, fv, 1);
             SHEvaluate(Normalize(w), lmax, Ylm);
-            Spectrum f = func(i, j, p, w);
-            float dA = 1.f / powf(Dot(w, w), 1.5f);
+            Spectrum f = func(u, v, p, w);
+            float dA = 1.f / powf(Dot(w, w), 3.f/2.f);
             for (int k = 0; k < SHTerms(lmax); ++k)
                 coeffs[k] += f * Ylm[k] * dA * (4.f / (res * res));
 
             // Incorporate results from other faces to coefficients
-            w = Vector(u, v, -1);
+            w = Vector(fu, fv, -1);
             SHEvaluate(Normalize(w), lmax, Ylm);
-            f = func(i, j, p, w);
+            f = func(u, v, p, w);
             for (int k = 0; k < SHTerms(lmax); ++k)
                 coeffs[k] += f * Ylm[k] * dA * (4.f / (res * res));
-            w = Vector(u, 1, v);
+            w = Vector(fu, 1, fv);
             SHEvaluate(Normalize(w), lmax, Ylm);
-            f = func(i, j, p, w);
+            f = func(u, v, p, w);
             for (int k = 0; k < SHTerms(lmax); ++k)
                 coeffs[k] += f * Ylm[k] * dA * (4.f / (res * res));
-            w = Vector(u, -1, v);
+            w = Vector(fu, -1, fv);
             SHEvaluate(Normalize(w), lmax, Ylm);
-            f = func(i, j, p, w);
+            f = func(u, v, p, w);
             for (int k = 0; k < SHTerms(lmax); ++k)
                 coeffs[k] += f * Ylm[k] * dA * (4.f / (res * res));
-            w = Vector(1, u, v);
+            w = Vector(1, fu, fv);
             SHEvaluate(Normalize(w), lmax, Ylm);
-            f = func(i, j, p, w);
+            f = func(u, v, p, w);
             for (int k = 0; k < SHTerms(lmax); ++k)
                 coeffs[k] += f * Ylm[k] * dA * (4.f / (res * res));
-            w = Vector(-1, u, v);
+            w = Vector(-1, fu, fv);
             SHEvaluate(Normalize(w), lmax, Ylm);
-            f = func(i, j, p, w);
+            f = func(u, v, p, w);
             for (int k = 0; k < SHTerms(lmax); ++k)
                 coeffs[k] += f * Ylm[k] * dA * (4.f / (res * res));
         }
@@ -88,24 +89,21 @@ void SHProjectCube(Func func, const Point &p, int res,
 }
 
 
-void SHWriteImage(const char *filename, const Spectrum *c, int lmax, int yres);
 void SHProjectIncidentDirectRadiance(const Point &p, float pEpsilon, float time,
     MemoryArena &arena, const Scene *scene, bool computeLightVisibility,
     int lmax, RNG &rng, Spectrum *c_d);
-void SHReduceRinging(Spectrum *c, int lmax, float lambda = .005f);
 void SHProjectIncidentIndirectRadiance(const Point &p, float pEpsilon,
     float time, const Renderer *renderer, Sample *origSample,
     const Scene *scene, int lmax, RNG &rng, int nSamples, Spectrum *c_i);
-void SHRotate(const Spectrum *c_in, Spectrum *c_out,
-    const Matrix4x4 &m, int lmax, MemoryArena &arena);
+void SHReduceRinging(Spectrum *c, int lmax, float lambda = .005f);
+void SHRotate(const Spectrum *c_in, Spectrum *c_out, const Matrix4x4 &m,
+              int lmax, MemoryArena &arena);
 void SHRotateZ(const Spectrum *c_in, Spectrum *c_out, float alpha, int lmax);
 void SHRotateXMinus(const Spectrum *c_in, Spectrum *c_out, int lmax);
 void SHRotateXPlus(const Spectrum *c_in, Spectrum *c_out, int lmax);
 //void SHSwapYZ(const Spectrum *c_in, Spectrum *c_out, int lmax);
-void SHConvolveCosTheta(int lmax, const Spectrum *c_in,
-    Spectrum *c_out);
-void SHConvolvePhong(int lmax, float n, const Spectrum *c_in,
-    Spectrum *c_out);
+void SHConvolveCosTheta(int lmax, const Spectrum *c_in, Spectrum *c_out);
+void SHConvolvePhong(int lmax, float n, const Spectrum *c_in, Spectrum *c_out);
 void SHComputeDiffuseTransfer(const Point &p, const Normal &n, float rayEpsilon,
     const Scene *scene, RNG &rng, int nSamples, int lmax, Spectrum *c_transfer);
 void SHComputeBSDFMatrix(const Spectrum &Kd, const Spectrum &Ks,

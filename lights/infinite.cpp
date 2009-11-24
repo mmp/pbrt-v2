@@ -33,10 +33,8 @@
 struct InfiniteAreaCube {
     // InfiniteAreaCube Public Methods
     InfiniteAreaCube(const InfiniteAreaLight *l, const Scene *s,
-                     float t, bool cv, float pe) {
-        light = l; scene = s; time = t;
-        computeVis = cv; pEpsilon = pe;
-    }
+                     float t, bool cv, float pe)
+        : light(l), scene(s), time(t), pEpsilon(pe), computeVis(cv) { }
     Spectrum operator()(int, int, const Point &p, const Vector &w) {
         Ray ray(p, w, pEpsilon, INFINITY, time);
         if (!computeVis || !scene->IntersectP(ray))
@@ -119,6 +117,7 @@ Spectrum InfiniteAreaLight::Le(const RayDifferential &r) const {
 void InfiniteAreaLight::SHProject(const Point &p, float pEpsilon,
         int lmax, const Scene *scene, bool computeLightVis,
         float time, RNG &rng, Spectrum *coeffs) const {
+    // Project _InfiniteAreaLight_ to SH using Monte Carlo if visibility needed
     if (computeLightVis) {
         Light::SHProject(p, pEpsilon, lmax, scene, computeLightVis,
                          time, rng, coeffs);
@@ -153,14 +152,12 @@ void InfiniteAreaLight::SHProject(const Point &p, float pEpsilon,
                                   sintheta[theta] * sinphi[phi],
                                   costheta[theta]);
                 w = Normalize(LightToWorld(w));
-                if (!computeLightVis || !scene->IntersectP(Ray(p, w, pEpsilon))) {
-                    Spectrum Le = Spectrum(radianceMap->Texel(0, phi, theta),
-                                           SPECTRUM_ILLUMINANT);
-                    SHEvaluate(w, lmax, Ylm);
-                    for (int i = 0; i < SHTerms(lmax); ++i)
-                        coeffs[i] += Le * Ylm[i] * sintheta[theta] *
-                            (M_PI / ntheta) * (2.f * M_PI / nphi);
-                }
+                Spectrum Le = Spectrum(radianceMap->Texel(0, phi, theta),
+                                       SPECTRUM_ILLUMINANT);
+                SHEvaluate(w, lmax, Ylm);
+                for (int i = 0; i < SHTerms(lmax); ++i)
+                    coeffs[i] += Le * Ylm[i] * sintheta[theta] *
+                        (M_PI / ntheta) * (2.f * M_PI / nphi);
             }
         }
 
