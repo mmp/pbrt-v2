@@ -155,10 +155,10 @@ public:
                       sn.z * v.x + tn.z * v.y + nn.z * v.z);
     }
     Spectrum f(const Vector &woW, const Vector &wiW, BxDFType flags = BSDF_ALL) const;
-    Spectrum rho(int nSamples, const float *samples1,
-                 const float *samples2, BxDFType flags = BSDF_ALL) const;
-    Spectrum rho(const Vector &wo, int nSamples, const float *samples,
-                 BxDFType flags = BSDF_ALL) const;
+    Spectrum rho(RNG &rng, BxDFType flags = BSDF_ALL,
+                 int sqrtSamples = 6) const;
+    Spectrum rho(const Vector &wo, RNG &rng, BxDFType flags = BSDF_ALL,
+                 int sqrtSamples = 6) const;
 
     // BSDF Public Data
     const DifferentialGeometry dgShading;
@@ -218,8 +218,7 @@ public:
     Spectrum rho(const Vector &w, int nSamples, const float *samples) const {
         return brdf->rho(otherHemisphere(w), nSamples, samples);
     }
-    Spectrum rho(int nSamples, const float *samples1,
-                 const float *samples2) const {
+    Spectrum rho(int nSamples, const float *samples1, const float *samples2) const {
         return brdf->rho(nSamples, samples1, samples2);
     }
     float Pdf(const Vector &wo, const Vector &wi) const;

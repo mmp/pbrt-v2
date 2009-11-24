@@ -225,15 +225,8 @@ Spectrum LPhoton(KdTree<Photon> *map, int nPaths, int nLookup,
                     Lt += (k / (nPaths * maxDistSquared)) * photons[i].photon->alpha;
                 }
             }
-            const int sqrtRhoSamples = 4;
-            float rhoRSamples[2*sqrtRhoSamples*sqrtRhoSamples];
-            StratifiedSample2D(rhoRSamples, sqrtRhoSamples, sqrtRhoSamples, rng);
-            float rhoTSamples[2*sqrtRhoSamples*sqrtRhoSamples];
-            StratifiedSample2D(rhoTSamples, sqrtRhoSamples, sqrtRhoSamples, rng);
-            L += Lr * bsdf->rho(wo, sqrtRhoSamples*sqrtRhoSamples, rhoRSamples,
-                                BSDF_ALL_REFLECTION) * INV_PI +
-                 Lt * bsdf->rho(wo, sqrtRhoSamples*sqrtRhoSamples, rhoTSamples,
-                                BSDF_ALL_TRANSMISSION) * INV_PI;
+            L += Lr * bsdf->rho(wo, rng, BSDF_ALL_REFLECTION) * INV_PI +
+                 Lt * bsdf->rho(wo, rng, BSDF_ALL_TRANSMISSION) * INV_PI;
         }
         PBRT_PHOTON_MAP_FINISHED_LOOKUP(const_cast<DifferentialGeometry *>(&isect.dg),
             proc.nFound, proc.nLookup, &L);
@@ -462,23 +455,8 @@ void PhotonShootingTask::Run() {
                             Normal n = photonIsect.dg.nn;
                             n = Faceforward(n, -photonRay.d);
                             localRadiancePhotons.push_back(RadiancePhoton(photonIsect.dg.p, n));
-
-                            // Generate random samples for computing reflectance and transmittance
-                            const int sqrtRhoSamples = 4;
-                            float rhoRSamples1[2*sqrtRhoSamples*sqrtRhoSamples];
-                            float rhoRSamples2[2*sqrtRhoSamples*sqrtRhoSamples];
-                            StratifiedSample2D(rhoRSamples1, sqrtRhoSamples, sqrtRhoSamples, rng);
-                            StratifiedSample2D(rhoRSamples2, sqrtRhoSamples, sqrtRhoSamples, rng);
-                            float rhoTSamples1[2*sqrtRhoSamples*sqrtRhoSamples];
-                            float rhoTSamples2[2*sqrtRhoSamples*sqrtRhoSamples];
-                            StratifiedSample2D(rhoTSamples1, sqrtRhoSamples, sqrtRhoSamples, rng);
-                            StratifiedSample2D(rhoTSamples2, sqrtRhoSamples, sqrtRhoSamples, rng);
-                            Spectrum rho_r = photonBSDF->rho(sqrtRhoSamples * sqrtRhoSamples,
-                                rhoRSamples1, rhoRSamples2, BSDF_ALL_REFLECTION);
-                            localRpReflectances.push_back(rho_r);
-                            Spectrum rho_t = photonBSDF->rho(sqrtRhoSamples * sqrtRhoSamples,
-                                rhoTSamples1, rhoTSamples2, BSDF_ALL_TRANSMISSION);
-                            localRpTransmittances.push_back(rho_t);
+                            localRpReflectances.push_back(photonBSDF->rho(rng, BSDF_ALL_REFLECTION));
+                            localRpTransmittances.push_back(photonBSDF->rho(rng, BSDF_ALL_TRANSMISSION));
                         }
                     }
                     if ((int)nIntersections >= integrator->maxPhotonDepth) break;

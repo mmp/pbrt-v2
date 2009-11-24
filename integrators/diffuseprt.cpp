@@ -76,20 +76,14 @@ Spectrum DiffusePRTIntegrator::Li(const Scene *scene, const Renderer *,
     // Project diffuse transfer function at point to SH
     Spectrum *c_transfer = arena.Alloc<Spectrum>(SHTerms(lmax));
     SHComputeDiffuseTransfer(p, Faceforward(n, wo), isect.rayEpsilon,
-        scene, rng, nSamples, lmax, c_transfer);
+                             scene, rng, nSamples, lmax, c_transfer);
 
     // Compute integral of product of incident radiance and transfer function
-    Spectrum LT = 0.f;
+    Spectrum Kd = bsdf->rho(wo, rng, BSDF_ALL_REFLECTION) * INV_PI;
+    Spectrum Lo = 0.f;
     for (int i = 0; i < SHTerms(lmax); ++i)
-        LT += c_in[i] * c_transfer[i];
-
-    // Compute reflectance at point for diffuse transfer
-    const int sqrtRhoSamples = 6;
-    float rhoRSamples[2*sqrtRhoSamples*sqrtRhoSamples];
-    StratifiedSample2D(rhoRSamples, sqrtRhoSamples, sqrtRhoSamples, rng);
-    Spectrum Kd = bsdf->rho(wo, sqrtRhoSamples*sqrtRhoSamples, rhoRSamples,
-        BSDF_ALL_REFLECTION) * INV_PI;
-    return L + Kd * LT.Clamp();
+        Lo += c_in[i] * c_transfer[i];
+    return L + Kd * Lo.Clamp();
 }
 
 

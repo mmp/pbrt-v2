@@ -149,20 +149,13 @@ Spectrum UseRadianceProbes::Li(const Scene *scene, const Renderer *renderer,
     SHConvolveCosTheta(lmax, c_inp, c_E);
 
     // Evaluate irradiance function and accumulate reflection
-
-    // Compute diffuse reflection coefficient _Kd_ from BSDF
-    const int sqrtRhoSamples = 4;
-    float rhoRSamples[2*sqrtRhoSamples*sqrtRhoSamples];
-    StratifiedSample2D(rhoRSamples, sqrtRhoSamples, sqrtRhoSamples, rng);
-    Spectrum Kd = bsdf->rho(wo, sqrtRhoSamples*sqrtRhoSamples, rhoRSamples,
-        BSDF_ALL_REFLECTION) * INV_PI;
+    Spectrum rho = bsdf->rho(wo, rng, BSDF_ALL_REFLECTION);
     float *Ylm = ALLOCA(float, SHTerms(lmax));
     SHEvaluate(Vector(Faceforward(n, wo)), lmax, Ylm);
     Spectrum E = 0.f;
-    for (int l = 0; l <= lmax; ++l)
-        for (int m = -l; m <= l; ++m)
-            E += c_E[SHIndex(l, m)] * Ylm[SHIndex(l, m)];
-    L += Kd * E.Clamp();
+    for (int i = 0; i < SHTerms(lmax); ++i)
+        E += c_E[i] * Ylm[i];
+    L += rho * INV_PI * E.Clamp();
     return L;
 }
 

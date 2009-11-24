@@ -583,22 +583,30 @@ Spectrum BSDF::f(const Vector &woW, const Vector &wiW,
 }
 
 
-Spectrum BSDF::rho(int nSamples, const float *samples1,
-    const float *samples2, BxDFType flags) const {
+Spectrum BSDF::rho(RNG &rng, BxDFType flags, int sqrtSamples) const {
+    int nSamples = sqrtSamples * sqrtSamples;
+    float *s1 = ALLOCA(float, 2 * nSamples);
+    StratifiedSample2D(s1, sqrtSamples, sqrtSamples, rng);
+    float *s2 = ALLOCA(float, 2 * nSamples);
+    StratifiedSample2D(s2, sqrtSamples, sqrtSamples, rng);
+
     Spectrum ret(0.);
     for (int i = 0; i < nBxDFs; ++i)
         if (bxdfs[i]->MatchesFlags(flags))
-            ret += bxdfs[i]->rho(nSamples, samples1, samples2);
+            ret += bxdfs[i]->rho(nSamples, s1, s2);
     return ret;
 }
 
 
-Spectrum BSDF::rho(const Vector &wo, int nSamples,
-        const float *samples, BxDFType flags) const {
+Spectrum BSDF::rho(const Vector &wo, RNG &rng, BxDFType flags,
+                   int sqrtSamples) const {
+    int nSamples = sqrtSamples * sqrtSamples;
+    float *s1 = ALLOCA(float, 2 * nSamples);
+    StratifiedSample2D(s1, sqrtSamples, sqrtSamples, rng);
     Spectrum ret(0.);
     for (int i = 0; i < nBxDFs; ++i)
         if (bxdfs[i]->MatchesFlags(flags))
-            ret += bxdfs[i]->rho(wo, nSamples, samples);
+            ret += bxdfs[i]->rho(wo, nSamples, s1);
     return ret;
 }
 

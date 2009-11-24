@@ -105,11 +105,7 @@ void IGIIntegrator::Preprocess(const Scene *scene,
                 BSDF *bsdf = isect.GetBSDF(ray, arena);
 
                 // Create virtual light at ray intersection point
-                const int sqrtRhoSamples = 6;
-                float rhoSamples[2*sqrtRhoSamples*sqrtRhoSamples];
-                StratifiedSample2D(rhoSamples, sqrtRhoSamples, sqrtRhoSamples, rng);
-                Spectrum contrib = alpha * bsdf->rho(wo,
-                    sqrtRhoSamples*sqrtRhoSamples, rhoSamples) / M_PI;
+                Spectrum contrib = alpha * bsdf->rho(wo, rng) / M_PI;
                 virtualLights[s].push_back(VirtualLight(isect.dg.p, isect.dg.nn, contrib,
                     isect.rayEpsilon));
 
