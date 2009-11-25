@@ -89,23 +89,33 @@ static void legendrep(float x, int lmax, float *out) {
 }
 
 
-static float fact(float v);
+static inline float fact(float v);
+static inline float divfact(int a, int b);
 static inline float K(int l, int m) {
-    return sqrtf((2. * l + 1.) / (4. * M_PI) *
-                 fact(l - fabsf(m)) / fact(l + fabsf(m)));
+    return sqrtf((2.f * l + 1.f) * INV_FOURPI * divfact(l, m));
+}
+
+
+static inline float divfact(int a, int b) {
+    if (b == 0) return 1.f;
+    float fa = a, fb = fabsf(b);
+    float v = 1.f;
+    for (float x = fa-fb+1.f; x <= fa+fb; x += 1.f)
+        v *= x;
+    return 1.f / v;
 }
 
 
 // n!! = 1 if n==0 or 1, otherwise n * (n-2)!!
 static float dfact(float v) {
     if (v <= 1.f) return 1.f;
-    return v * dfact(v-2);
+    return v * dfact(v - 2.f);
 }
 
 
 static inline float fact(float v) {
     if (v <= 1.f) return 1.f;
-    return v * fact(v-1);
+    return v * fact(v - 1.f);
 }
 
 
