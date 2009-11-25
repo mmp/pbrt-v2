@@ -388,11 +388,44 @@ void SHComputeDiffuseTransfer(const Point &p, const Normal &n,
 }
 
 
+void SHComputeTransferMatrix(const Point &p, float rayEpsilon,
+        const Scene *scene, RNG &rng, int nSamples, int lmax,
+        Spectrum *T) {
+    for (int i = 0; i < SHTerms(lmax)*SHTerms(lmax); ++i)
+        T[i] = 0.f;
+    uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
+    float *Ylm = ALLOCA(float, SHTerms(lmax));
+    for (int i = 0; i < nSamples; ++i) {
+        // Compute Monte Carlo estimate of $i$th sample for transfer matrix
+        float u[2];
+        Sample02(i, scramble, u);
+        Vector w = UniformSampleSphere(u[0], u[1]);
+        float pdf = UniformSpherePdf();
+        if (!scene->IntersectP(Ray(p, w, rayEpsilon))) {
+            // Update transfer matrix for unoccluded direction
+            SHEvaluate(w, lmax, Ylm);
+            for (int j = 0; j < SHTerms(lmax); ++j)
+                for (int k = 0; k < SHTerms(lmax); ++k)
+                    T[j*SHTerms(lmax)+k] += (Ylm[j] * Ylm[k]) / (pdf * nSamples);
+        }
+    }
+}
+
+
 void SHComputeBSDFMatrix(const Spectrum &Kd, const Spectrum &Ks,
-        float roughness, RNG &rng,
-        int nSamples, int lmax, Spectrum *B) {
+        float roughness, RNG &rng, int nSamples, int lmax, Spectrum *B) {
     for (int i = 0; i < SHTerms(lmax)*SHTerms(lmax); ++i)
         B[i] = 0.f;
+    // Create _BSDF_ for computing BSDF transfer matrix
+    MemoryArena arena;
+    DifferentialGeometry dg(Point(0,0,0), Vector(1,0,0), Vector(0,1,0),
+         Normal(0,0,0), Normal(0,0,0), 0, 0, NULL);
+    BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dg, Normal(0,0,1));
+    bsdf->Add(BSDF_ALLOC(arena, Lambertian)(Spectrum(Kd)));
+    Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
+    bsdf->Add(BSDF_ALLOC(arena, Microfacet)(Ks, fresnel,
+                                            BSDF_ALLOC(arena, Blinn)(1.f / roughness)));
+
     // Precompute directions $\w{}$ and SH values for directions
     float *Ylm = new float[SHTerms(lmax) * nSamples];
     Vector *w = new Vector[nSamples];
@@ -403,16 +436,6 @@ void SHComputeBSDFMatrix(const Spectrum &Kd, const Spectrum &Ks,
         w[i] = UniformSampleSphere(u[0], u[1]);
         SHEvaluate(w[i], lmax, &Ylm[SHTerms(lmax)*i]);
     }
-
-    // Create _BSDF_ for computing BSDF transfer matrix
-    MemoryArena arena;
-    DifferentialGeometry dg(Point(0,0,0), Vector(1,0,0), Vector(0,1,0),
-         Normal(0,0,0), Normal(0,0,0), 0, 0, NULL);
-    BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dg, Normal(0,0,1));
-    bsdf->Add(BSDF_ALLOC(arena, Lambertian)(Spectrum(Kd)));
-    Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
-    bsdf->Add(BSDF_ALLOC(arena, Microfacet)(Ks, fresnel,
-                                            BSDF_ALLOC(arena, Blinn)(1.f / roughness)));
 
     // Compute double spherical integral for BSDF matrix
     for (int osamp = 0; osamp < nSamples; ++osamp) {
@@ -426,8 +449,8 @@ void SHComputeBSDFMatrix(const Spectrum &Kd, const Spectrum &Ks,
                 f *= fabsf(CosTheta(wi)) / (pdf * nSamples * nSamples);
                 for (int i = 0; i < SHTerms(lmax); ++i)
                     for (int j = 0; j < SHTerms(lmax); ++j)
-                        B[i*SHTerms(lmax)+j] += f *
-                            Ylm[isamp*SHTerms(lmax)+j] * Ylm[osamp*SHTerms(lmax)+i];
+                        B[i*SHTerms(lmax)+j] += f * Ylm[isamp*SHTerms(lmax)+j] *
+                                                Ylm[osamp*SHTerms(lmax)+i];
             }
         }
     }
@@ -435,29 +458,6 @@ void SHComputeBSDFMatrix(const Spectrum &Kd, const Spectrum &Ks,
     // Free memory allocated for SH matrix computation
     delete[] w;
     delete[] Ylm;
-}
-
-
-void SHComputeTransferMatrix(const Point &p,
-        float rayEpsilon, const Scene *scene, RNG &rng, int nSamples,
-        int lmax, Spectrum *T) {
-    for (int i = 0; i < SHTerms(lmax)*SHTerms(lmax); ++i)
-        T[i] = 0.f;
-    uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
-    float *Ylm = ALLOCA(float, SHTerms(lmax));
-    for (int i = 0; i < nSamples; ++i) {
-        float u[2];
-        Sample02(i, scramble, u);
-        Vector w = UniformSampleSphere(u[0], u[1]);
-        float pdf = UniformSpherePdf();
-        if (!scene->IntersectP(Ray(p, w, rayEpsilon))) {
-            // Update transfer matrix for unoccluded direction
-            SHEvaluate(w, lmax, Ylm);
-            for (int j = 0; j < SHTerms(lmax); ++j)
-                for (int k = 0; k < SHTerms(lmax); ++k)
-                    T[j*SHTerms(lmax)+k] += (Ylm[j] * Ylm[k]) / (pdf * nSamples);
-        }
-    }
 }
 
 

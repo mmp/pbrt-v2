@@ -32,8 +32,12 @@
 class GlossyPRTIntegrator : public SurfaceIntegrator {
 public:
     // GlossyPRTIntegrator Public Methods
-    GlossyPRTIntegrator(const Spectrum &kd, const Spectrum &ks, float roughness,
-        int lm, int ns, bool dt);
+    GlossyPRTIntegrator(const Spectrum &kd, const Spectrum &ks,
+                        float rough, int lm, int ns)
+        : Kd(kd), Ks(ks), roughness(rough), lmax(lm),
+          nSamples(RoundUpPow2(ns)) {
+        c_in = B = NULL;
+    }
     ~GlossyPRTIntegrator();
     void Preprocess(const Scene *scene, const Camera *camera, const Renderer *renderer);
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
@@ -42,11 +46,9 @@ public:
                 const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
     // GlossyPRTIntegrator Private Data
-    Spectrum Kd, Ks;
-    float roughness;
-    int lmax;
-    int nSamples;
-    bool doTransfer;
+    const Spectrum Kd, Ks;
+    const float roughness;
+    const int lmax, nSamples;
     Spectrum *c_in;
     Spectrum *B;
 };

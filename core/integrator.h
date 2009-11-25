@@ -41,10 +41,10 @@ public:
     // Integrator Interface
     virtual ~Integrator();
     virtual void Preprocess(const Scene *scene, const Camera *camera,
-        const Renderer *renderer) {
+                            const Renderer *renderer) {
     }
     virtual void RequestSamples(Sampler *sampler, Sample *sample,
-        const Scene *scene) {
+                                const Scene *scene) {
     }
 };
 

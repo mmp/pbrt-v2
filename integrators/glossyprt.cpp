@@ -32,18 +32,6 @@
 #include "paramset.h"
 
 // GlossyPRTIntegrator Method Definitions
-GlossyPRTIntegrator::GlossyPRTIntegrator(const Spectrum &kd,
-        const Spectrum &ks, float rough, int lm, int ns, bool dt) {
-    Kd = kd;
-    Ks = ks;
-    roughness = rough;
-    lmax = lm;
-    nSamples = RoundUpPow2(ns);
-    doTransfer = dt;
-    c_in = B = NULL;
-}
-
-
 GlossyPRTIntegrator::~GlossyPRTIntegrator() {
     delete[] c_in;
     delete[] B;
@@ -72,8 +60,8 @@ void GlossyPRTIntegrator::RequestSamples(Sampler *sampler, Sample *sample, const
 
 
 Spectrum GlossyPRTIntegrator::Li(const Scene *scene, const Renderer *,
-            const RayDifferential &ray, const Intersection &isect,
-            const Sample *sample, RNG &rng, MemoryArena &arena) const {
+        const RayDifferential &ray, const Intersection &isect,
+        const Sample *sample, RNG &rng, MemoryArena &arena) const {
     Spectrum L = 0.f;
     Vector wo = -ray.d;
     // Compute emitted light if ray hit an area light source
@@ -86,16 +74,10 @@ Spectrum GlossyPRTIntegrator::Li(const Scene *scene, const Renderer *,
 
     // Compute SH radiance transfer matrix at point and SH coefficients
     Spectrum *c_t = arena.Alloc<Spectrum>(SHTerms(lmax));
-    if (doTransfer) {
-        Spectrum *T = arena.Alloc<Spectrum>(SHTerms(lmax)*SHTerms(lmax));
-        SHComputeTransferMatrix(p, isect.rayEpsilon, scene, rng,
-                                nSamples, lmax, T);
-        SHMatrixVectorMultiply(T, c_in, c_t, lmax);
-    }
-    else {
-        for (int i = 0; i < SHTerms(lmax); ++i)
-            c_t[i] = c_in[i];
-    }
+    Spectrum *T = arena.Alloc<Spectrum>(SHTerms(lmax)*SHTerms(lmax));
+    SHComputeTransferMatrix(p, isect.rayEpsilon, scene, rng, nSamples,
+                            lmax, T);
+    SHMatrixVectorMultiply(T, c_in, c_t, lmax);
 
     // Rotate incident SH lighting to local coordinate frame
     Vector r1 = bsdf->LocalToWorld(Vector(1,0,0));
@@ -148,11 +130,10 @@ Spectrum GlossyPRTIntegrator::Li(const Scene *scene, const Renderer *,
 GlossyPRTIntegrator *CreateGlossyPRTIntegratorSurfaceIntegrator(const ParamSet &params) {
     int lmax = params.FindOneInt("lmax", 4);
     int ns = params.FindOneInt("nsamples", 4096);
-    bool dt = params.FindOneBool("dotransfer", true);
     Spectrum Kd = params.FindOneSpectrum("Kd", Spectrum(0.5f));
     Spectrum Ks = params.FindOneSpectrum("Ks", Spectrum(0.25f));
     float roughness = params.FindOneFloat("roughness", 10.f);
-    return new GlossyPRTIntegrator(Kd, Ks, roughness, lmax, ns, dt);
+    return new GlossyPRTIntegrator(Kd, Ks, roughness, lmax, ns);
 }
 
 

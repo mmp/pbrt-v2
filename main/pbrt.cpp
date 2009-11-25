@@ -41,8 +41,15 @@ int main(int argc, char *argv[]) {
         if (!strcmp(argv[i], "--ncores")) options.nCores = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--quick")) options.quickRender = true;
         else if (!strcmp(argv[i], "--quiet")) options.quiet = true;
+#ifdef PBRT_HAS_LIBSDL
+        else if (!strcmp(argv[i], "--window")) options.openWindow = true;
+#endif
         else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
-            printf("usage: pbrt [--ncores n] [--quick] [--quiet] [--help] <filename.pbrt> ...\n");
+            printf("usage: pbrt [--ncores n] [--quick] [--quiet] "
+#ifdef PBRT_HAS_LIBSDL
+                   "[--window] "
+#endif
+                   "[--help] <filename.pbrt> ...\n");
             return 0;
         }
         else filenames.push_back(argv[i]);

@@ -179,7 +179,7 @@ bool Triangle::Intersect(const Ray &ray, float *tHit, float *rayEpsilon,
                                tu, tv, this);
     *tHit = t;
     *rayEpsilon = 1e-4f * *tHit;
- PBRT_RAY_TRIANGLE_INTERSECTION_HIT(const_cast<Ray *>(&ray), t);
+    PBRT_RAY_TRIANGLE_INTERSECTION_HIT(const_cast<Ray *>(&ray), t);
     return true;
 }
 
@@ -216,7 +216,7 @@ bool Triangle::IntersectP(const Ray &ray) const {
     float t = Dot(e2, s2) * invDivisor;
     if (t < ray.mint || t > ray.maxt)
         return false;
- PBRT_RAY_TRIANGLE_INTERSECTIONP_HIT(const_cast<Ray *>(&ray), t);
+    PBRT_RAY_TRIANGLE_INTERSECTIONP_HIT(const_cast<Ray *>(&ray), t);
     return true;
 }
 

@@ -106,11 +106,11 @@ void SHConvolveCosTheta(int lmax, const Spectrum *c_in, Spectrum *c_out);
 void SHConvolvePhong(int lmax, float n, const Spectrum *c_in, Spectrum *c_out);
 void SHComputeDiffuseTransfer(const Point &p, const Normal &n, float rayEpsilon,
     const Scene *scene, RNG &rng, int nSamples, int lmax, Spectrum *c_transfer);
-void SHComputeBSDFMatrix(const Spectrum &Kd, const Spectrum &Ks,
-    float roughness, RNG &rng, int nSamples, int lmax, Spectrum *B);
 void SHComputeTransferMatrix(const Point &p, float rayEpsilon,
     const Scene *scene, RNG &rng, int nSamples, int lmax, Spectrum *T);
+void SHComputeBSDFMatrix(const Spectrum &Kd, const Spectrum &Ks,
+    float roughness, RNG &rng, int nSamples, int lmax, Spectrum *B);
 void SHMatrixVectorMultiply(const Spectrum *M, const Spectrum *v,
-    Spectrum *vout, int lmax);
+                            Spectrum *vout, int lmax);
 
 #endif // PBRT_CORE_SH_H
