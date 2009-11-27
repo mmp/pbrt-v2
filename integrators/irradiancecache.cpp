@@ -80,9 +80,8 @@ struct IrradProcess {
     Vector GetAverageDirection() const { return wAvg; }
     Point p;
     Normal n;
-    float minWeight, cosMaxSampleAngleDifference;
+    float minWeight, cosMaxSampleAngleDifference, sumWt;
     int nFound;
-    float sumWt;
     Spectrum E;
     Vector wAvg;
 };
@@ -224,10 +223,10 @@ Spectrum IrradianceCacheIntegrator::Li(const Scene *scene,
 
 
 Spectrum IrradianceCacheIntegrator::indirectLo(const Point &p,
-        const Normal &ng, float pixelSpacing,
-        const Vector &wo, float rayEpsilon, BSDF *bsdf, BxDFType flags,
-        RNG &rng, const Scene *scene,
-        const Renderer *renderer, MemoryArena &arena) const {
+        const Normal &ng, float pixelSpacing, const Vector &wo,
+        float rayEpsilon, BSDF *bsdf, BxDFType flags, RNG &rng,
+        const Scene *scene, const Renderer *renderer,
+        MemoryArena &arena) const {
     if (bsdf->NumComponents(flags) == 0)
         return Spectrum(0.);
     Spectrum E;
@@ -236,10 +235,9 @@ Spectrum IrradianceCacheIntegrator::indirectLo(const Point &p,
     if (!interpolateE(scene, p, ng, &E, &wi)) {
         // Compute irradiance at current point
         PBRT_IRRADIANCE_CACHE_STARTED_COMPUTING_IRRADIANCE(const_cast<Point *>(&p), const_cast<Normal *>(&ng));
-        uint32_t scramble[2] = { rng.RandomUInt(),
-                                 rng.RandomUInt() };
+        uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
         float minHitDistance = INFINITY;
-        Vector weightedPrimaryDir(0,0,0);
+        Vector wAvg(0,0,0);
         Spectrum LiSum = 0.f;
         for (int i = 0; i < nSamples; ++i) {
             // Sample direction for irradiance estimate ray
@@ -253,10 +251,9 @@ Spectrum IrradianceCacheIntegrator::indirectLo(const Point &p,
             PBRT_IRRADIANCE_CACHE_STARTED_RAY(&r);
             Spectrum L = pathL(r, scene, renderer, rng, arena);
             LiSum += L;
-            weightedPrimaryDir += r.d * L.y();
-            float dist = r.maxt * r.d.Length();
-            minHitDistance = min(minHitDistance, dist);
-            PBRT_IRRADIANCE_CACHE_FINISHED_RAY(&r, dist, &L);
+            wAvg += r.d * L.y();
+            minHitDistance = min(minHitDistance, r.maxt);
+            PBRT_IRRADIANCE_CACHE_FINISHED_RAY(&r, r.maxt, &L);
         }
         E = (M_PI / float(nSamples)) * LiSum;
         PBRT_IRRADIANCE_CACHE_FINISHED_COMPUTING_IRRADIANCE(const_cast<Point *>(&p), const_cast<Normal *>(&ng));
@@ -266,15 +263,17 @@ Spectrum IrradianceCacheIntegrator::indirectLo(const Point &p,
         // Compute irradiance sample's contribution extent and bounding box
         float maxDist = maxSamplePixelSpacing * pixelSpacing;
         float minDist = minSamplePixelSpacing * pixelSpacing;
-        float contribExtent = min(max(minDist, minHitDistance / 2.f), maxDist);
+        float contribExtent = Clamp(minHitDistance / 2.f, minDist, maxDist);
         BBox sampleExtent(p);
         sampleExtent.Expand(contribExtent);
-        PBRT_IRRADIANCE_CACHE_ADDED_NEW_SAMPLE(const_cast<Point *>(&p), const_cast<Normal *>(&ng), contribExtent, &E, &weightedPrimaryDir, pixelSpacing);
-        IrradianceSample *sample = new IrradianceSample(E, p, ng,
-            weightedPrimaryDir, contribExtent);
+        PBRT_IRRADIANCE_CACHE_ADDED_NEW_SAMPLE(const_cast<Point *>(&p), const_cast<Normal *>(&ng), contribExtent, &E, &wAvg, pixelSpacing);
+
+        // Allocate _IrradianceSample_, get write lock, add to octree
+        IrradianceSample *sample = new IrradianceSample(E, p, ng, wAvg,
+                                                        contribExtent);
         RWMutexLock lock(*mutex, WRITE);
         octree->Add(sample, sampleExtent);
-        wi = weightedPrimaryDir;
+        wi = wAvg;
     }
 
     // Compute reflected radiance due to irradiance and BSDF

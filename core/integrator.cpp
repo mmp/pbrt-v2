@@ -35,11 +35,10 @@ Integrator::~Integrator() {
 
 
 // Integrator Utility Functions
-Spectrum UniformSampleAllLights(const Scene *scene,
-        const Renderer *renderer, MemoryArena &arena, const Point &p,
-        const Normal &n, const Vector &wo, float rayEpsilon, float time,
-        BSDF *bsdf, const Sample *sample, RNG &rng,
-        const LightSampleOffsets *lightSampleOffsets,
+Spectrum UniformSampleAllLights(const Scene *scene, const Renderer *renderer,
+        MemoryArena &arena, const Point &p, const Normal &n, const Vector &wo,
+        float rayEpsilon, float time, BSDF *bsdf, const Sample *sample,
+        RNG &rng, const LightSampleOffsets *lightSampleOffsets,
         const BSDFSampleOffsets *bsdfSampleOffsets) {
     Spectrum L(0.);
     for (uint32_t i = 0; i < scene->lights.size(); ++i) {

@@ -152,7 +152,7 @@ void CreateRadianceProbes::Render(const Scene *scene) {
     surfacePoints.push_back(pCamera);
     RNG rng;
     while (surfacePoints.size() < nPoints) {
-        // Generate random path from eye and deposit surface points
+        // Generate random path from camera and deposit surface points
         Point pray = pCamera;
         Vector dir = UniformSampleSphere(rng.RandomFloat(), rng.RandomFloat());
         float rayEpsilon = 0.f;

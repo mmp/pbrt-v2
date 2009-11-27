@@ -52,11 +52,9 @@ public:
         const Sample *sample, RNG &rng, MemoryArena &arena) const;
     void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
     void Preprocess(const Scene *, const Camera *, const Renderer *);
-    IGIIntegrator(uint32_t nl, uint32_t ns, float mind, float rrt, int maxd,
-            float gl, int ng) {
+    IGIIntegrator(uint32_t nl, uint32_t ns, float rrt, int maxd, float gl, int ng) {
         nLightPaths = RoundUpPow2(nl);
         nLightSets = RoundUpPow2(ns);
-        minDist2 = mind * mind;
         rrThreshold = rrt;
         maxSpecularDepth = maxd;
         virtualLights.resize(nLightSets);
@@ -72,11 +70,13 @@ private:
     LightSampleOffsets *lightSampleOffsets;
     BSDFSampleOffsets *bsdfSampleOffsets;
     uint32_t nLightPaths, nLightSets;
-    vector<vector<VirtualLight> > virtualLights;
-    int maxSpecularDepth, nGatherSamples;
-    float minDist2, rrThreshold, gLimit;
+    float gLimit;
+    int nGatherSamples;
+    float rrThreshold;
+    int maxSpecularDepth;
     int vlSetOffset;
     BSDFSampleOffsets gatherSampleOffset;
+    vector<vector<VirtualLight> > virtualLights;
 };
 
 

@@ -69,11 +69,9 @@ private:
     mutable Octree<IrradianceSample *> *octree;
 
     // IrradianceCacheIntegrator Private Methods
-    Spectrum indirectLo(const Point &p, const Normal &ng,
-        float pixelSpacing, const Vector &wo, float rayEpsilon,
-        BSDF *bsdf, BxDFType flags, RNG &rng,
-        const Scene *scene, const Renderer *renderer,
-        MemoryArena &arena) const;
+    Spectrum indirectLo(const Point &p, const Normal &ng, float pixelSpacing,
+        const Vector &wo, float rayEpsilon,BSDF *bsdf, BxDFType flags, RNG &rng,
+        const Scene *scene, const Renderer *renderer, MemoryArena &arena) const;
     bool interpolateE(const Scene *scene,
             const Point &p, const Normal &n, Spectrum *E, Vector *wi) const;
     Spectrum pathL(Ray &r, const Scene *scene, const Renderer *renderer,
