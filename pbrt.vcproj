@@ -529,7 +529,7 @@
 				>
 			</File>
 			<File
-				RelativePath="renderers\sample.cpp"
+				RelativePath="renderers\samplerrenderer.cpp"
 				>
 			</File>
 			<File
@@ -1015,7 +1015,7 @@
 				>
 			</File>
 			<File
-				RelativePath="renderers\sample.h"
+				RelativePath="renderers\samplerrenderer.h"
 				>
 			</File>
 			<File

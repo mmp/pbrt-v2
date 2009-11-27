@@ -81,7 +81,7 @@
 #include "renderers/aggregatetest.h"
 #include "renderers/createprobes.h"
 #include "renderers/metropolis.h"
-#include "renderers/sample.h"
+#include "renderers/samplerrenderer.h"
 #include "renderers/surfacepoints.h"
 #include "samplers/adaptive.h"
 #include "samplers/bestcandidate.h"
@@ -1235,7 +1235,7 @@ Renderer *RenderOptions::MakeRenderer() const {
         VolumeIntegrator *volumeIntegrator = MakeVolumeIntegrator(VolIntegratorName,
             VolIntegratorParams);
         if (!volumeIntegrator) Severe("Unable to create volume integrator.");
-        renderer = new SampleRenderer(sampler, camera, surfaceIntegrator,
+        renderer = new SamplerRenderer(sampler, camera, surfaceIntegrator,
             volumeIntegrator);
     }
     return renderer;

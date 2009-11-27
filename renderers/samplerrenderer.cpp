@@ -22,9 +22,8 @@
  */
 
 
-// renderers/sample.cpp*
-#include "renderers/sample.h"
-#include "parallel.h"
+// renderers/samplerrenderer.cpp*
+#include "renderers/samplerrenderer.h"
 #include "scene.h"
 #include "film.h"
 #include "volume.h"
@@ -34,36 +33,10 @@
 #include "camera.h"
 #include "intersection.h"
 
-// RenderTask Declarations
-class RenderTask : public Task {
-public:
-    // RenderTask Public Methods
-    RenderTask(const Scene *sc, SampleRenderer *ren, Camera *c, Sampler *ms,
-        ProgressReporter &pr,
-               Sample *sam, int tn, int tc)
-      : reporter(pr)
-    {
-        scene = sc; renderer = ren; camera = c; mainSampler = ms;
-        origSample = sam; taskNum = tn; taskCount = tc;
-    }
-    void Run();
-private:
-    // RenderTask Private Data
-    const Scene *scene;
-    Camera *camera;
-    const SampleRenderer *renderer;
-    Sampler *mainSampler;
-    Sample *origSample;
-    int taskNum, taskCount;
-    ProgressReporter &reporter;
-};
-
-
-
-// RenderTask Definitions
-void RenderTask::Run() {
+// SamplerRendererTask Definitions
+void SamplerRendererTask::Run() {
     PBRT_STARTED_RENDERTASK(taskNum);
-    // Get sub-_Sampler_ for _RenderTask_
+    // Get sub-_Sampler_ for _SamplerRendererTask_
     Sampler *sampler = mainSampler->GetSubSampler(taskNum, taskCount);
     if (!sampler)
     {
@@ -138,7 +111,7 @@ void RenderTask::Run() {
         arena.FreeAll();
     }
 
-    // Clean up after \use{RenderTask} is done with its image region
+    // Clean up after \use{SamplerRendererTask} is done with its image region
     camera->film->UpdateDisplay(sampler->xPixelStart,
         sampler->yPixelStart, sampler->xPixelEnd+1, sampler->yPixelEnd+1);
     delete sampler;
@@ -153,8 +126,8 @@ void RenderTask::Run() {
 
 
 
-// SampleRenderer Method Definitions
-SampleRenderer::SampleRenderer(Sampler *s, Camera *c,
+// SamplerRenderer Method Definitions
+SamplerRenderer::SamplerRenderer(Sampler *s, Camera *c,
         SurfaceIntegrator *si, VolumeIntegrator *vi) {
     sampler = s;
     camera = c;
@@ -163,7 +136,7 @@ SampleRenderer::SampleRenderer(Sampler *s, Camera *c,
 }
 
 
-SampleRenderer::~SampleRenderer() {
+SamplerRenderer::~SamplerRenderer() {
     delete sampler;
     delete camera;
     delete surfaceIntegrator;
@@ -171,7 +144,7 @@ SampleRenderer::~SampleRenderer() {
 }
 
 
-void SampleRenderer::Render(const Scene *scene) {
+void SamplerRenderer::Render(const Scene *scene) {
     PBRT_FINISHED_PARSING();
     // Allow integrators to do pre-processing for the scene
     PBRT_STARTED_PREPROCESSING();
@@ -183,16 +156,16 @@ void SampleRenderer::Render(const Scene *scene) {
     Sample *sample = new Sample(sampler, surfaceIntegrator,
                                 volumeIntegrator, scene);
 
-    // Create and launch _RenderTask_s for rendering image
+    // Create and launch _SamplerRendererTask_s for rendering image
 
-    // Compute number of _RenderTask_s to create for rendering
+    // Compute number of _SamplerRendererTask_s to create for rendering
     int nPixels = camera->film->xResolution * camera->film->yResolution;
     int nTasks = max(32 * NumSystemCores(), nPixels / (16*16));
     nTasks = RoundUpPow2(nTasks);
     ProgressReporter reporter(nTasks, "Rendering");
     vector<Task *> renderTasks;
     for (int i = 0; i < nTasks; ++i)
-        renderTasks.push_back(new RenderTask(scene, this, camera, sampler,
+        renderTasks.push_back(new SamplerRendererTask(scene, this, camera, sampler,
                                              reporter,
                                              sample, nTasks-1-i, nTasks));
     EnqueueTasks(renderTasks);
@@ -207,7 +180,7 @@ void SampleRenderer::Render(const Scene *scene) {
 }
 
 
-Spectrum SampleRenderer::Li(const Scene *scene,
+Spectrum SamplerRenderer::Li(const Scene *scene,
         const RayDifferential &ray, const Sample *sample, RNG &rng,
         MemoryArena &arena, Intersection *isect, Spectrum *T) const {
     Assert(ray.time == sample->time);
@@ -232,7 +205,7 @@ Spectrum SampleRenderer::Li(const Scene *scene,
 }
 
 
-Spectrum SampleRenderer::Transmittance(const Scene *scene,
+Spectrum SamplerRenderer::Transmittance(const Scene *scene,
         const RayDifferential &ray, const Sample *sample, RNG &rng,
         MemoryArena &arena) const {
     return volumeIntegrator->Transmittance(scene, this, ray, sample,

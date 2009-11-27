@@ -21,20 +21,21 @@
 
  */
 
-#ifndef PBRT_RENDERERS_SAMPLE_H
-#define PBRT_RENDERERS_SAMPLE_H
+#ifndef PBRT_RENDERERS_SAMPLERRENDERER_H
+#define PBRT_RENDERERS_SAMPLERRENDERER_H
 
-// renderers/sample.h*
+// renderers/samplerrenderer.h*
 #include "pbrt.h"
 #include "renderer.h"
+#include "parallel.h"
 
-// SampleRenderer Declarations
-class SampleRenderer : public Renderer {
+// SamplerRenderer Declarations
+class SamplerRenderer : public Renderer {
 public:
-    // SampleRenderer Public Methods
-    SampleRenderer(Sampler *s, Camera *c, SurfaceIntegrator *si,
+    // SamplerRenderer Public Methods
+    SamplerRenderer(Sampler *s, Camera *c, SurfaceIntegrator *si,
         VolumeIntegrator *vi);
-    ~SampleRenderer();
+    ~SamplerRenderer();
     void Render(const Scene *scene);
     Spectrum Li(const Scene *scene, const RayDifferential &ray,
         const Sample *sample, RNG &rng, MemoryArena &arena,
@@ -42,7 +43,7 @@ public:
     Spectrum Transmittance(const Scene *scene, const RayDifferential &ray,
         const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
-    // SampleRenderer Private Data
+    // SamplerRenderer Private Data
     Sampler *sampler;
     Camera *camera;
     SurfaceIntegrator *surfaceIntegrator;
@@ -51,4 +52,30 @@ private:
 
 
 
-#endif // PBRT_RENDERERS_SAMPLE_H
+// SamplerRendererTask Declarations
+class SamplerRendererTask : public Task {
+public:
+    // SamplerRendererTask Public Methods
+    SamplerRendererTask(const Scene *sc, Renderer *ren, Camera *c, Sampler *ms,
+        ProgressReporter &pr,
+               Sample *sam, int tn, int tc)
+      : reporter(pr)
+    {
+        scene = sc; renderer = ren; camera = c; mainSampler = ms;
+        origSample = sam; taskNum = tn; taskCount = tc;
+    }
+    void Run();
+private:
+    // SamplerRendererTask Private Data
+    const Scene *scene;
+    const Renderer *renderer;
+    Camera *camera;
+    Sampler *mainSampler;
+    ProgressReporter &reporter;
+    Sample *origSample;
+    int taskNum, taskCount;
+};
+
+
+
+#endif // PBRT_RENDERERS_SAMPLERRENDERER_H
