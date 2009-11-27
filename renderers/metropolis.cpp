@@ -24,6 +24,7 @@
 
 // renderers/metropolis.cpp*
 #include "renderers/metropolis.h"
+#include "renderers/samplerrenderer.h"
 #include "scene.h"
 #include "spectrum.h"
 #include "camera.h"
@@ -36,55 +37,9 @@
 #include "intersection.h"
 #include "paramset.h"
 #include "samplers/lowdiscrepancy.h"
+#include "integrators/directlighting.h"
 
 // Metropolis Local Declarations
-class MLTDirectIntegrator : public SurfaceIntegrator {
-public:
-    MLTDirectIntegrator() {
-        lightSampleOffsets = NULL;
-        bsdfSampleOffsets = NULL;
-    }
-    ~MLTDirectIntegrator() {
-        delete[] lightSampleOffsets;
-        delete[] bsdfSampleOffsets;
-    }
-    Spectrum Li(const Scene *scene, const Renderer *renderer,
-        const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, RNG &rng, MemoryArena &arena) const;
-    void RequestSamples(Sampler *sampler, Sample *sample, const Scene *scene);
-private:
-    LightSampleOffsets *lightSampleOffsets;
-    BSDFSampleOffsets *bsdfSampleOffsets;
-};
-
-
-class MLTDirectTask : public Task {
-public:
-    MLTDirectTask(const Scene *sc, const Camera *c, const Renderer *ren,
-        const MLTDirectIntegrator *di, Sampler *s, Sample *sa,
-        int n, int nt, ProgressReporter &prog) : progress(prog) {
-        scene = sc;
-        camera = c;
-        renderer = ren;
-        direct = di;
-        mainSampler = s;
-        origSample = sa;
-        taskNum = n;
-        taskCount = nt;
-    }
-    void Run();
-
-    const Scene *scene;
-    const Camera *camera;
-    const Renderer *renderer;
-    const MLTDirectIntegrator *direct;
-    Sampler *mainSampler;
-    Sample *origSample;
-    int taskNum, taskCount;
-    ProgressReporter &progress;
-};
-
-
 inline float I(const Spectrum &L, const MLTSample &sample) {
     return L.y();
 }
@@ -96,7 +51,7 @@ public:
         int xx0, int xx1, int yy0, int yy1, float tt0, float tt1,
         float bb, float lsp, const MLTSample &is, bool id, int mr,
         int md, const Scene *sc, const Camera *c, const Renderer *renderer,
-        volatile float *nSamplesFinished);
+        volatile float *nSamplesFinished, Mutex *filmMutex);
     void Run();
 
 private:
@@ -114,6 +69,7 @@ private:
     int maxConsecutiveRejects;
     int maxDepth;
     volatile float *nSamplesFinished;
+    Mutex *filmMutex;
 };
 
 
@@ -205,7 +161,7 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
 // Metropolis Method Definitions
 MetropolisRenderer::MetropolisRenderer(int ts, int perPixelSamples,
     int nboot, int dps, float lsp, bool dds, int mr, int md,
-    bool io, Camera *c) {
+    Camera *c) {
     camera = c;
     if (perPixelSamples > 0) {
         int x0, x1, y0, y1;
@@ -228,13 +184,14 @@ MetropolisRenderer::MetropolisRenderer(int ts, int perPixelSamples,
     doDirectSeparately = dds;
     maxDepth = md;
     maxConsecutiveRejects = mr;
-    indirectOnly = io;
     nSamplesFinished = 0.f;
+    directLighting = new DirectLightingIntegrator(SAMPLE_ALL_UNIFORM, maxDepth);
 }
 
 
 MetropolisRenderer::~MetropolisRenderer() {
     delete camera;
+    delete directLighting;
 }
 
 
@@ -248,7 +205,6 @@ MetropolisRenderer *CreateMetropolisRenderer(const ParamSet &params,
     bool doDirectSeparately = params.FindOneBool("dodirectseparately", true);
     int mr = params.FindOneInt("maxconsecutiverejects", 512);
     int md = params.FindOneInt("maxdepth", 4);
-    bool io = params.FindOneBool("indirectonly", false);
 
     if (PbrtOptions.quickRender) {
         if (nSamples > 0)
@@ -261,7 +217,7 @@ MetropolisRenderer *CreateMetropolisRenderer(const ParamSet &params,
 
     return new MetropolisRenderer(nSamples, perPixelSamples, nBootstrap,
         directPixelSamples, largeStepProbability, doDirectSeparately,
-        mr, md, io, camera);
+        mr, md, camera);
 }
 
 
@@ -272,19 +228,18 @@ void MetropolisRenderer::Render(const Scene *scene) {
     float t0 = camera->shutterOpen;
     float t1 = camera->shutterClose;
 
-    if (!indirectOnly && doDirectSeparately) {
+    if (doDirectSeparately) {
         // Compute direct lighting before Metropolis light transport
         LDSampler sampler(x0, x1, y0, y1, directPixelSamples, t0, t1);
-        MLTDirectIntegrator directLighting;
-        Sample *sample = new Sample(&sampler, &directLighting, NULL, scene);
+        Sample *sample = new Sample(&sampler, directLighting, NULL, scene);
         vector<Task *> directTasks;
         int nDirectTasks = max(32 * NumSystemCores(),
                          (camera->film->xResolution * camera->film->yResolution) / (16*16));
         nDirectTasks = RoundUpPow2(nDirectTasks);
         ProgressReporter directProgress(nDirectTasks, "Direct Lighting");
         for (int i = 0; i < nDirectTasks; ++i)
-            directTasks.push_back(new MLTDirectTask(scene, camera, this, &directLighting,
-                &sampler, sample, i, nDirectTasks, directProgress));
+            directTasks.push_back(new SamplerRendererTask(scene, this, camera,
+                &sampler, directProgress, sample, i, nDirectTasks));
         std::reverse(directTasks.begin(), directTasks.end());
         EnqueueTasks(directTasks);
         WaitForAllTasks();
@@ -299,7 +254,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
     vector<float> bootstrapSamples;
     float sumContrib = 0.f;
     bootstrapSamples.reserve(nBootstrap);
-    bool ignoreDirect = doDirectSeparately || indirectOnly;
+    bool ignoreDirect = doDirectSeparately;
     MLTSample sample(maxDepth);
     for (int i = 0; i < nBootstrap; ++i) {
         // Compute contribution for random sample for MLT bootstrapping
@@ -330,11 +285,12 @@ void MetropolisRenderer::Render(const Scene *scene) {
         nSamples = (nSamples / nTasks) * nTasks;
         ProgressReporter progress(nTasks, "Metropolis");
         vector<Task *> tasks;
+        Mutex *filmMutex = Mutex::Create();
         for (int i = 0; i < nTasks; ++i)
             tasks.push_back(new MLTTask(progress, i, int(nSamples/nTasks), nSamples,
                 nPixels, x0, x1, y0, y1, t0, t1, b, largeStepProbability, initialSample,
                 ignoreDirect, maxConsecutiveRejects, maxDepth, scene, camera, this,
-                &nSamplesFinished));
+                &nSamplesFinished, filmMutex));
         EnqueueTasks(tasks);
         WaitForAllTasks();
         for (uint32_t i = 0; i < tasks.size(); ++i)
@@ -345,122 +301,11 @@ void MetropolisRenderer::Render(const Scene *scene) {
 }
 
 
-void MLTDirectIntegrator::RequestSamples(Sampler *sampler, Sample *sample,
-        const Scene *scene) {
-    uint32_t nLights = scene->lights.size();
-    lightSampleOffsets = new LightSampleOffsets[nLights];
-    bsdfSampleOffsets = new BSDFSampleOffsets[nLights];
-    for (uint32_t i = 0; i < nLights; ++i) {
-        const Light *light = scene->lights[i];
-        int nSamples = light->nSamples;
-        if (sampler) nSamples = sampler->RoundSize(nSamples);
-        lightSampleOffsets[i] = LightSampleOffsets(nSamples, sample);
-        bsdfSampleOffsets[i] = BSDFSampleOffsets(nSamples, sample);
-    }
-}
-
-
-Spectrum MLTDirectIntegrator::Li(const Scene *scene,
-        const Renderer *renderer, const RayDifferential &ray, const Intersection &isect,
-        const Sample *sample, RNG &rng, MemoryArena &arena) const {
-    Spectrum L(0.f);
-    // Evaluate BSDF at hit point
-    BSDF *bsdf = isect.GetBSDF(ray, arena);
-    Vector wo = -ray.d;
-    const Point &p = bsdf->dgShading.p;
-    const Normal &n = bsdf->dgShading.nn;
-    // Compute emitted light if ray hit an area light source
-    L += isect.Le(wo);
-    L += UniformSampleAllLights(scene, renderer, arena, p, n, wo,
-            isect.rayEpsilon, ray.time, bsdf, sample, rng, lightSampleOffsets,
-            bsdfSampleOffsets);
-    return L;
-}
-
-
-void MLTDirectTask::Run() {
-    Sampler *sampler = mainSampler->GetSubSampler(taskNum, taskCount);
-    if (!sampler) {
-        progress.Update();
-        return;
-    }
-    MemoryArena arena;
-    RNG rng(taskNum);
-    // Allocate space for samples and intersections
-    int maxSamples = sampler->MaximumSampleCount();
-    Sample *samples = origSample->Duplicate(maxSamples);
-    RayDifferential *rays = new RayDifferential[maxSamples];
-    Spectrum *Ls = new Spectrum[maxSamples];
-    Spectrum *Ts = new Spectrum[maxSamples];
-    Intersection *isects = new Intersection[maxSamples];
-    int sampleCount;
-    while ((sampleCount = sampler->GetMoreSamples(samples, rng)) > 0) {
-        for (int i = 0; i < sampleCount; ++i) {
-            // Find camera ray for _sample[i]_
-            PBRT_STARTED_GENERATING_CAMERA_RAY(&samples[i]);
-            float rayWeight = camera->GenerateRayDifferential(samples[i], &rays[i]);
-            PBRT_FINISHED_GENERATING_CAMERA_RAY(&samples[i], &rays[i], rayWeight);
-            Ls[i] = 0.f;
-            if (rayWeight > 0.f) {
-                if (scene->Intersect(rays[i], &isects[i]))
-                    Ls[i] = rayWeight * direct->Li(scene, renderer,
-                        rays[i], isects[i], &samples[i], rng, arena);
-                else {
-                    for (uint32_t j = 0; j < scene->lights.size(); ++j)
-                        Ls[i] += rayWeight * scene->lights[j]->Le(rays[i]);
-                }
-            }
-            Ts[i] = 1.f;
-            // Issue warning if unexpected radiance value returned
-            if (Ls[i].HasNaNs()) {
-                Error("Not-a-number radiance value returned "
-                      "for image sample.  Setting to black.");
-                Ls[i] = Spectrum(0.f);
-            }
-            else if (Ls[i].y() < -1e-5) {
-                Error("Negative luminance value, %f, returned"
-                      "for image sample.  Setting to black.", Ls[i].y());
-                Ls[i] = Spectrum(0.f);
-            }
-            else if (isinf(Ls[i].y())) {
-                Error("Infinite luminance value returned"
-                      "for image sample.  Setting to black.");
-                Ls[i] = Spectrum(0.f);
-            }
-            PBRT_FINISHED_CAMERA_RAY_INTEGRATION(&rays[i], &samples[i], &Ls[i]);
-        }
-        // Report sample results to _Sampler_, add contributions to image
-        if (sampler->ReportResults(samples, rays, Ls, isects, sampleCount))
-        {
-            for (int i = 0; i < sampleCount; ++i)
-            {
-                PBRT_STARTED_ADDING_IMAGE_SAMPLE(&samples[i], &rays[i], &Ls[i], &Ts[i]);
-                camera->film->AddSample(samples[i], Ls[i]);
-                PBRT_FINISHED_ADDING_IMAGE_SAMPLE();
-            }
-        }
-
-        // Free \use{MemoryArena} memory from computing image sample values
-        arena.FreeAll();
-    }
-    camera->film->UpdateDisplay(sampler->xPixelStart,
-        sampler->yPixelStart, sampler->xPixelEnd+1, sampler->yPixelEnd+1);
-    delete sampler;
-    delete[] samples;
-    delete[] rays;
-    delete[] Ls;
-    delete[] Ts;
-    delete[] isects;
-    progress.Update();
-    PBRT_FINISHED_RENDERTASK(taskNum);
-}
-
-
 MLTTask::MLTTask(ProgressReporter &prog, int tn, int ns, int64_t ts, int np,
     int xx0, int xx1, int yy0, int yy1, float tt0, float tt1,
     float bb, float lsp, const MLTSample &is, bool id, int mr,
     int md, const Scene *sc, const Camera *c, const Renderer *ren,
-    volatile float *nfinished)
+    volatile float *nfinished, Mutex *fm)
     : progress(prog), initialSample(is) {
     taskNum = tn;
     nSamples = ns;
@@ -481,6 +326,7 @@ MLTTask::MLTTask(ProgressReporter &prog, int tn, int ns, int64_t ts, int np,
     camera = c;
     renderer = ren;
     nSamplesFinished = nfinished;
+    filmMutex = fm;
 }
 
 
@@ -542,7 +388,12 @@ void MLTTask::Run() {
     }
     // Update display for recently computed Metropolis samples
     float nf = AtomicAdd(nSamplesFinished, nSamples);
-    camera->film->UpdateDisplay(x0, y0, x1, y1, float(totalSamples)/nf);
+    float splatScale = float(totalSamples)/nf;
+    camera->film->UpdateDisplay(x0, y0, x1, y1, splatScale);
+    if ((taskNum % 32) == 0) {
+        MutexLock lock(*filmMutex);
+        camera->film->WriteImage(splatScale);
+    }
     progress.Update();
     PBRT_MLT_FINISHED_MLT_TASK(this);
 }
@@ -555,19 +406,27 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
     RayDifferential ray;
     float cameraWeight = camera->GenerateRayDifferential(sample.cameraSample, &ray);
     Spectrum pathThroughput = cameraWeight, L = 0.;
-    bool specularBounce = false;
+    bool specularBounce = false, allSpecular = true;
     for (int pathLength = 0; pathLength < maxDepth; ++pathLength) {
         // Find next intersection in Metropolis light path
         Intersection isect;
         if (!scene->Intersect(ray, &isect)) {
-            bool includeLe = (specularBounce && pathLength >= 1) ||
-                             (!ignoreDirect && pathLength == 0);
+            bool includeLe = ignoreDirect ?
+        (specularBounce && !allSpecular)
+        :
+        (pathLength == 0 || specularBounce);
             if (includeLe)
                 for (uint32_t i = 0; i < scene->lights.size(); ++i)
                    L += pathThroughput * scene->lights[i]->Le(ray);
             break;
         }
-        if (specularBounce)
+        if (ignoreDirect ?
+        (specularBounce && !allSpecular)
+        : (specularBounce || pathLength == 0)
+        )
+        //!(ignoreDirect && allSpecular) ||
+        //    (ignoreDirect && !allSpecular && specularBounce) ||
+        //    (!ignoreDirect && specularBounce))
             L += pathThroughput * isect.Le(-ray.d);
         BSDF *bsdf = isect.GetBSDF(ray, arena);
         const Point &p = bsdf->dgShading.p;
@@ -598,6 +457,7 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
         if (f.IsBlack() || pdf == 0.)
             break;
         specularBounce = (flags & BSDF_SPECULAR) != 0;
+        allSpecular &= specularBounce;
         pathThroughput *= f * AbsDot(wi, n) / pdf;
         ray = RayDifferential(p, wi, ray, isect.rayEpsilon);
         
@@ -608,10 +468,22 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
 
 
 Spectrum MetropolisRenderer::Li(const Scene *scene, const RayDifferential &ray,
-    const Sample *sample, RNG &rng, MemoryArena &arena, Intersection *isect,
-    Spectrum *T) const {
-Severe("WHA MLT::Li()");
-return 0.f;
+        const Sample *sample, RNG &rng, MemoryArena &arena, Intersection *isect,
+        Spectrum *T) const {
+    Spectrum localT;
+    if (!T) T = &localT;
+    Intersection localIsect;
+    if (!isect) isect = &localIsect;
+    Spectrum Lo = 0.f;
+    if (scene->Intersect(ray, isect))
+        Lo = directLighting->Li(scene, this, ray, *isect, sample,
+                                rng, arena);
+    else {
+        // Handle ray that doesn't intersect any geometry
+        for (uint32_t i = 0; i < scene->lights.size(); ++i)
+           Lo += scene->lights[i]->Le(ray);
+    }
+    return Lo;
 }
 
 
