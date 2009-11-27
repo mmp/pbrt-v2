@@ -188,7 +188,7 @@ void ImageFilm::GetPixelExtent(int *xstart, int *xend,
 }
 
 
-void ImageFilm::WriteImage() {
+void ImageFilm::WriteImage(float splatScale) {
     // Convert image to RGB and compute final pixel values
     int nPix = xPixelCount * yPixelCount;
     float *rgb = new float[3*nPix];
@@ -210,9 +210,9 @@ void ImageFilm::WriteImage() {
             // Add splat value at pixel
             float splatRGB[3];
             XYZToRGB((*pixels)(x,y).splatXYZ, splatRGB);
-            rgb[3*offset  ] += splatRGB[0];
-            rgb[3*offset+1] += splatRGB[1];
-            rgb[3*offset+2] += splatRGB[2];
+            rgb[3*offset  ] += splatScale * splatRGB[0];
+            rgb[3*offset+1] += splatScale * splatRGB[1];
+            rgb[3*offset+2] += splatScale * splatRGB[2];
             ++offset;
         }
     }

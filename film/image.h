@@ -49,7 +49,7 @@ public:
     void Splat(const CameraSample &sample, const Spectrum &L);
     void GetSampleExtent(int *xstart, int *xend, int *ystart, int *yend) const;
     void GetPixelExtent(int *xstart, int *xend, int *ystart, int *yend) const;
-    void WriteImage();
+    void WriteImage(float splatScale);
     void UpdateDisplay(int x0, int y0, int x1, int y1, float splatScale);
 private:
     // ImageFilm Private Data
