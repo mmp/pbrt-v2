@@ -191,13 +191,15 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
                 float maxDist = sqrtf(AbsDot(wi, n) / gLimit);
                 RayDifferential gatherRay(p, wi, ray, isect.rayEpsilon, maxDist);
                 Intersection gatherIsect;
-                Spectrum Li = renderer->Li(scene, gatherRay, sample, rng, arena, &gatherIsect);
+                Spectrum Li = renderer->Li(scene, gatherRay, sample, rng, arena,
+                                           &gatherIsect);
                 if (Li.IsBlack()) continue;
                 float Ggather = AbsDot(wi, n) * AbsDot(-wi, gatherIsect.dg.nn) /
                     DistanceSquared(p, gatherIsect.dg.p);
-                if (Ggather - gLimit > 0.f && !isinf(Ggather))
-                    L += f * Li * ((Ggather - gLimit) / Ggather * AbsDot(wi, n) /
-                        (nSamples * pdf));
+                if (Ggather - gLimit > 0.f && !isinf(Ggather)) {
+                    float gs  = (Ggather - gLimit) / Ggather * AbsDot(-wi, gatherIsect.dg.nn);
+                    L += f * Li * (AbsDot(wi, n) * gs / (nSamples * pdf));
+                }
             }
         }
     }
