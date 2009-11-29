@@ -443,19 +443,24 @@ void PhotonShootingTask::Run() {
                         // Deposit photon at surface
                         Photon photon(photonIsect.dg.p, alpha, wo);
                         bool depositedPhoton = false;
-                        if (nIntersections == 1 && !indirectDone) {
-                            PBRT_PHOTON_MAP_DEPOSITED_DIRECT_PHOTON(&photonIsect.dg, &alpha, &wo);
-                            depositedPhoton = true;
-                            localDirectPhotons.push_back(photon);
-                        }
-                        else {
-                            // Deposit either caustic or indirect photon
-                            if (specularPath && !causticDone) {
+                        if (specularPath && nIntersections > 1) {
+                            if (!causticDone) {
                                 PBRT_PHOTON_MAP_DEPOSITED_CAUSTIC_PHOTON(&photonIsect.dg, &alpha, &wo);
                                 depositedPhoton = true;
                                 localCausticPhotons.push_back(photon);
                             }
-                            else if (!specularPath && !indirectDone) {
+                        }
+                        else {
+                            // Deposit either direct or indirect photon
+                            // stop depositing direct photons once indirectDone is true; don't
+                            // want to waste memory storing too many if we're going a long time
+                            // trying to get enough caustic photons desposited.
+                            if (nIntersections == 1 && !indirectDone) {
+                                PBRT_PHOTON_MAP_DEPOSITED_DIRECT_PHOTON(&photonIsect.dg, &alpha, &wo);
+                                depositedPhoton = true;
+                                localDirectPhotons.push_back(photon);
+                            }
+                            else if (nIntersections > 1 && !indirectDone) {
                                 PBRT_PHOTON_MAP_DEPOSITED_INDIRECT_PHOTON(&photonIsect.dg, &alpha, &wo);
                                 depositedPhoton = true;
                                 localIndirectPhotons.push_back(photon);
