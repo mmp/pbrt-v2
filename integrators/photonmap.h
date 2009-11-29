@@ -54,8 +54,7 @@ private:
     friend class PhotonShootingTask;
 
     // PhotonIntegrator Private Data
-    uint32_t nCausticPhotonsWanted, nIndirectPhotonsWanted;
-    uint32_t nLookup;
+    uint32_t nCausticPhotonsWanted, nIndirectPhotonsWanted, nLookup;
     float maxDistSquared;
     int maxSpecularDepth, maxPhotonDepth;
     bool finalGather;
