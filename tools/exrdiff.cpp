@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
                mse / (4. * r1[0] * r1[1]));
         if (outfile)
             WriteEXR(outfile, diffImage, r1[0], r1[1]);
+        return 1;
     }
 
     return 0;
