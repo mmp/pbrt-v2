@@ -196,8 +196,9 @@ BBox BVHAccel::WorldBound() const {
 
 
 BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
-        vector<BVHPrimitiveInfo> &buildData, uint32_t start, uint32_t end,
-        uint32_t *totalNodes, vector<Reference<Primitive> > &orderedPrims) {
+        vector<BVHPrimitiveInfo> &buildData, uint32_t start,
+        uint32_t end, uint32_t *totalNodes,
+        vector<Reference<Primitive> > &orderedPrims) {
     Assert(start != end);
     (*totalNodes)++;
     BVHBuildNode *node = buildArena.Alloc<BVHBuildNode>();

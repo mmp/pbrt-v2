@@ -243,7 +243,8 @@ Point BRDFRemap(const Vector &wo, const Vector &wi) {
 }
 
 
-Spectrum IrregIsotropicBRDF::f(const Vector &wo, const Vector &wi) const {
+Spectrum IrregIsotropicBRDF::f(const Vector &wo,
+                               const Vector &wi) const {
     Point m = BRDFRemap(wo, wi);
     float lastMaxDist2 = .001f;
     while (true) {
@@ -258,7 +259,8 @@ Spectrum IrregIsotropicBRDF::f(const Vector &wo, const Vector &wi) const {
 }
 
 
-Spectrum RegularHalfangleBRDF::f(const Vector &wo, const Vector &wi) const {
+Spectrum RegularHalfangleBRDF::f(const Vector &wo,
+                                 const Vector &wi) const {
     // Compute $\wh$ and transform $\wi$ to halfangle coordinate system
     Vector wh = Normalize(wi + wo);
     float whTheta = SphericalTheta(wh);
@@ -383,7 +385,8 @@ void Anisotropic::Sample_f(const Vector &wo, Vector *wi,
     float anisotropic_pdf = 0.f;
     if (ds > 0.f && Dot(wo, wh) > 0.f) {
         float e = (ex * wh.x * wh.x + ey * wh.y * wh.y) / ds;
-        float d = sqrtf((ex+1.f) * (ey+1.f)) * INV_TWOPI * powf(costhetah, e);
+        float d = sqrtf((ex+1.f) * (ey+1.f)) * INV_TWOPI *
+                  powf(costhetah, e);
         anisotropic_pdf = d / (4.f * Dot(wo, wh));
     }
     *pdf = anisotropic_pdf;
@@ -411,7 +414,8 @@ float Anisotropic::Pdf(const Vector &wo, const Vector &wi) const {
     float anisotropic_pdf = 0.f;
     if (ds > 0.f && Dot(wo, wh) > 0.f) {
         float e = (ex * wh.x * wh.x + ey * wh.y * wh.y) / ds;
-        float d = sqrtf((ex+1.f) * (ey+1.f)) * INV_TWOPI * powf(costhetah, e);
+        float d = sqrtf((ex+1.f) * (ey+1.f)) * INV_TWOPI *
+                  powf(costhetah, e);
         anisotropic_pdf = d / (4.f * Dot(wo, wh));
     }
     return anisotropic_pdf;
@@ -482,12 +486,12 @@ BSDFSampleOffsets::BSDFSampleOffsets(int count, Sample *sample) {
 
 
 BSDFSample::BSDFSample(const Sample *sample,
-                       const BSDFSampleOffsets &offsets, uint32_t num) {
-    Assert(num < sample->n2D[offsets.dirOffset]);
-    Assert(num < sample->n1D[offsets.componentOffset]);
-    uDir[0] = sample->twoD[offsets.dirOffset][2*num];
-    uDir[1] = sample->twoD[offsets.dirOffset][2*num+1];
-    uComponent = sample->oneD[offsets.componentOffset][num];
+                       const BSDFSampleOffsets &offsets, uint32_t n) {
+    Assert(n < sample->n2D[offsets.dirOffset]);
+    Assert(n < sample->n1D[offsets.componentOffset]);
+    uDir[0] = sample->twoD[offsets.dirOffset][2*n];
+    uDir[1] = sample->twoD[offsets.dirOffset][2*n+1];
+    uComponent = sample->oneD[offsets.componentOffset][n];
 }
 
 
@@ -558,7 +562,8 @@ float BSDF::Pdf(const Vector &woW, const Vector &wiW,
 }
 
 
-BSDF::BSDF(const DifferentialGeometry &dg, const Normal &ngeom, float e)
+BSDF::BSDF(const DifferentialGeometry &dg, const Normal &ngeom,
+           float e)
     : dgShading(dg), eta(e) {
     ng = ngeom;
     nn = dgShading.nn;

@@ -293,7 +293,7 @@ T MIPMap<T>::Lookup(float s, float t, float ds0, float dt0,
     PBRT_MIPMAP_EWA_FILTER(const_cast<MIPMap<T> *>(this), s, t, ds0, ds1, dt0, dt1, minorLength, majorLength, lod, nLevels);
     float d = lod - ilod;
     T val = (1.f - d) * EWA(ilod,   s, t, ds0, dt0, ds1, dt1) +
-            d         * EWA(ilod+1, s, t, ds0, dt0, ds1, dt1);
+                   d  * EWA(ilod+1, s, t, ds0, dt0, ds1, dt1);
     PBRT_FINISHED_EWA_TEXTURE_LOOKUP();
     return val;
 }

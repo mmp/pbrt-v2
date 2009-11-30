@@ -82,7 +82,8 @@ void IGIIntegrator::Preprocess(const Scene *scene, const Camera *camera,
 
             // Choose light source to trace virtual light path from
             float lightPdf;
-            int ln = lightDistribution->SampleDiscrete(lightNum[sampOffset], &lightPdf);
+            int ln = lightDistribution->SampleDiscrete(lightNum[sampOffset],
+                                                       &lightPdf);
             Light *light = scene->lights[ln];
 
             // Sample ray leaving light source for virtual light path
@@ -197,7 +198,8 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
                 float Ggather = AbsDot(wi, n) * AbsDot(-wi, gatherIsect.dg.nn) /
                     DistanceSquared(p, gatherIsect.dg.p);
                 if (Ggather - gLimit > 0.f && !isinf(Ggather)) {
-                    float gs  = (Ggather - gLimit) / Ggather * AbsDot(-wi, gatherIsect.dg.nn);
+                    float gs  = (Ggather - gLimit) / Ggather *
+                                AbsDot(-wi, gatherIsect.dg.nn);
                     L += f * Li * (AbsDot(wi, n) * gs / (nSamples * pdf));
                 }
             }

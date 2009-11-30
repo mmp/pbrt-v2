@@ -124,7 +124,7 @@ KdTreeAccel::KdTreeAccel(const vector<Reference<Primitive> > &p,
 
 
 void KdAccelNode::initLeaf(uint32_t *primNums, int np,
-        MemoryArena &arena) {
+                           MemoryArena &arena) {
     flags = 3;
     nPrims |= (np << 2);
     // Store primitive ids for leaf node

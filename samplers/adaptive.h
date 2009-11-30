@@ -53,7 +53,8 @@ private:
     int xPos, yPos;
     int minSamples, maxSamples;
     float *sampleBuf;
-    enum AdaptiveTest { ADAPTIVE_COMPARE_SHAPE_ID, ADAPTIVE_CONTRAST_THRESHOLD };
+    enum AdaptiveTest { ADAPTIVE_COMPARE_SHAPE_ID,
+                        ADAPTIVE_CONTRAST_THRESHOLD };
     AdaptiveTest method;
     bool supersamplePixel;
 };

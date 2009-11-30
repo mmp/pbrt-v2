@@ -49,7 +49,7 @@ Camera::Camera(const AnimatedTransform &cam2world,
 
 
 float Camera::GenerateRayDifferential(const CameraSample &sample,
-      RayDifferential *rd) const {
+                                      RayDifferential *rd) const {
     float wt = GenerateRay(sample, rd);
     // Find ray after shifting one pixel in the $x$ direction
     CameraSample sshift = sample;

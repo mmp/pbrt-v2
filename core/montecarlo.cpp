@@ -136,7 +136,8 @@ static const int primes[] = {
 
 
 // Sampling Function Definitions
-void StratifiedSample1D(float *samp, int nSamples, RNG &rng, bool jitter) {
+void StratifiedSample1D(float *samp, int nSamples, RNG &rng,
+                        bool jitter) {
     float invTot = 1.f / nSamples;
     for (int i = 0;  i < nSamples; ++i) {
         float delta = jitter ? rng.RandomFloat() : 0.5f;
@@ -145,7 +146,8 @@ void StratifiedSample1D(float *samp, int nSamples, RNG &rng, bool jitter) {
 }
 
 
-void StratifiedSample2D(float *samp, int nx, int ny, RNG &rng, bool jitter) {
+void StratifiedSample2D(float *samp, int nx, int ny, RNG &rng,
+                        bool jitter) {
     float dx = 1.f / nx, dy = 1.f / ny;
     for (int y = 0; y < ny; ++y)
         for (int x = 0; x < nx; ++x) {
@@ -158,7 +160,7 @@ void StratifiedSample2D(float *samp, int nx, int ny, RNG &rng, bool jitter) {
 
 
 void LatinHypercube(float *samples, uint32_t nSamples, uint32_t nDim,
-        RNG &rng) {
+                    RNG &rng) {
     // Generate LHS samples along diagonal
     float delta = 1.f / nSamples;
     for (uint32_t i = 0; i < nSamples; ++i)
@@ -186,8 +188,8 @@ int LDPixelSampleFloatsNeeded(const Sample *sample, int nPixelSamples) {
 
 
 void LDPixelSample(int xPos, int yPos, float shutterOpen,
-        float shutterClose, int nPixelSamples, Sample *samples, float *buf,
-        RNG &rng) {
+        float shutterClose, int nPixelSamples, Sample *samples,
+        float *buf, RNG &rng) {
     // Prepare temporary array pointers for low-discrepancy camera samples
     float *imageSamples = buf; buf += 2 * nPixelSamples;
     float *lensSamples = buf;  buf += 2 * nPixelSamples;

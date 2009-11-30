@@ -32,8 +32,8 @@ Shape::~Shape() {
 
 Shape::Shape(const Transform *o2w, const Transform *w2o, bool ro)
     : ObjectToWorld(o2w), WorldToObject(w2o), ReverseOrientation(ro),
-    TransformSwapsHandedness(o2w->SwapsHandedness()),
-    shapeId(nextshapeId++) {
+      TransformSwapsHandedness(o2w->SwapsHandedness()),
+      shapeId(nextshapeId++) {
     // Update shape creation statistics
     PBRT_CREATED_SHAPE(this);
 }
@@ -55,8 +55,8 @@ void Shape::Refine(vector<Reference<Shape> > &refined) const {
 }
 
 
-bool Shape::Intersect(const Ray &ray, float *tHit,
-        float *rayEpsilon, DifferentialGeometry *dg) const {
+bool Shape::Intersect(const Ray &ray, float *tHit, float *rayEpsilon,
+                      DifferentialGeometry *dg) const {
     Severe("Unimplemented Shape::Intersect() method called");
     return false;
 }

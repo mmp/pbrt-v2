@@ -137,7 +137,7 @@ BSDF *MeasuredMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     if (regularHalfangleData)
         bsdf->Add(BSDF_ALLOC(arena, RegularHalfangleBRDF)
             (regularHalfangleData, nThetaH, nThetaD, nPhiD));
-    else
+    else if (thetaPhiData)
         bsdf->Add(BSDF_ALLOC(arena, IrregIsotropicBRDF)(thetaPhiData));
     return bsdf;
 }

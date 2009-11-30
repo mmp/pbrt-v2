@@ -348,7 +348,8 @@ void SHRotateZ(const Spectrum *c_in, Spectrum *c_out, float alpha,
 }
 
 
-void SHConvolveCosTheta(int lmax, const Spectrum *c_in, Spectrum *c_out) {
+void SHConvolveCosTheta(int lmax, const Spectrum *c_in,
+                        Spectrum *c_out) {
     static const float c_costheta[18] = { 0.8862268925, 1.0233267546,
         0.4954159260, 0.0000000000, -0.1107783690, 0.0000000000,
         0.0499271341, 0.0000000000, -0.0285469331, 0.0000000000,

@@ -309,7 +309,7 @@ Transform Perspective(float fov, float n, float f) {
 
 // AnimatedTransform Method Definitions
 void AnimatedTransform::Decompose(const Matrix4x4 &m, Vector *T,
-        Quaternion *Rquat, Matrix4x4 *S) {
+                                  Quaternion *Rquat, Matrix4x4 *S) {
     // Extract transformation _T_ from transformation matrix
     T->x = m.m[0][3];
     T->y = m.m[1][3];
@@ -351,8 +351,7 @@ void AnimatedTransform::Decompose(const Matrix4x4 &m, Vector *T,
 }
 
 
-void AnimatedTransform::Interpolate(float time,
-        Transform *t) const {
+void AnimatedTransform::Interpolate(float time, Transform *t) const {
     // Handle boundary conditions for matrix interpolation
     if (!actuallyAnimated || time <= startTime) {
         *t = *startTransform;
@@ -381,7 +380,7 @@ void AnimatedTransform::Interpolate(float time,
 
 
 BBox AnimatedTransform::MotionBounds(const BBox &b,
-        bool useInverse) const {
+                                     bool useInverse) const {
     if (!actuallyAnimated) return Inverse(*startTransform)(b);
     BBox ret;
     const int nSteps = 128;

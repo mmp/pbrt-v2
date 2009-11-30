@@ -57,8 +57,7 @@ InfiniteAreaLight::~InfiniteAreaLight() {
 
 
 InfiniteAreaLight::InfiniteAreaLight(const Transform &light2world,
-                                     const Spectrum &L, int ns,
-                                     const string &texmap)
+        const Spectrum &L, int ns, const string &texmap)
     : Light(light2world, ns) {
     int width = 0, height = 0;
     RGBSpectrum *texels = NULL;
@@ -101,8 +100,9 @@ Spectrum InfiniteAreaLight::Power(const Scene *scene) const {
     Point worldCenter;
     float worldRadius;
     scene->WorldBound().BoundingSphere(&worldCenter, &worldRadius);
-    return Spectrum(radianceMap->Lookup(.5f, .5f, .5f), SPECTRUM_ILLUMINANT) *
-           M_PI * worldRadius * worldRadius;
+    return M_PI * worldRadius * worldRadius *
+        Spectrum(radianceMap->Lookup(.5f, .5f, .5f), SPECTRUM_ILLUMINANT);
+
 }
 
 

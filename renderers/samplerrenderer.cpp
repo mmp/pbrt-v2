@@ -165,9 +165,9 @@ void SamplerRenderer::Render(const Scene *scene) {
     ProgressReporter reporter(nTasks, "Rendering");
     vector<Task *> renderTasks;
     for (int i = 0; i < nTasks; ++i)
-        renderTasks.push_back(new SamplerRendererTask(scene, this, camera, sampler,
-                                             reporter,
-                                             sample, nTasks-1-i, nTasks));
+        renderTasks.push_back(new SamplerRendererTask(scene, this, camera,
+                                  reporter,
+                                    sampler, sample, nTasks-1-i, nTasks));
     EnqueueTasks(renderTasks);
     WaitForAllTasks();
     for (uint32_t i = 0; i < renderTasks.size(); ++i)

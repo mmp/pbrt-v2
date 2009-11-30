@@ -59,7 +59,8 @@ Sampler *LDSampler::GetSubSampler(int num, int count) {
 int LDSampler::GetMoreSamples(Sample *samples, RNG &rng) {
     if (yPos == yPixelEnd) return 0;
     if (sampleBuf == NULL)
-        sampleBuf = new float[LDPixelSampleFloatsNeeded(samples, nPixelSamples)];
+        sampleBuf = new float[LDPixelSampleFloatsNeeded(samples,
+                                                        nPixelSamples)];
     LDPixelSample(xPos, yPos, shutterOpen, shutterClose,
                   nPixelSamples, samples, sampleBuf, rng);
     if (++xPos == xPixelEnd) {

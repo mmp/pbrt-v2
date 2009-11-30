@@ -78,10 +78,11 @@ ImageTexture<Tmemory, Treturn>::GetTexture(const string &filename,
 
 
 template <typename Tmemory, typename Treturn>
-    std::map<TexInfo, MIPMap<Tmemory> *> ImageTexture<Tmemory, Treturn>::textures;
-template <typename Tmemory, typename Treturn>
-Treturn
-ImageTexture<Tmemory, Treturn>::Evaluate(const DifferentialGeometry &dg) const {
+    std::map<TexInfo,
+             MIPMap<Tmemory> *> ImageTexture<Tmemory, Treturn>::textures;
+template <typename Tmemory, typename Treturn> Treturn
+ImageTexture<Tmemory,
+             Treturn>::Evaluate(const DifferentialGeometry &dg) const {
     float s, t, dsdx, dtdx, dsdy, dtdy;
     mapping->Map(dg, &s, &t, &dsdx, &dtdx, &dsdy, &dtdy);
     Tmemory mem = mipmap->Lookup(s, t, dsdx, dtdx, dsdy, dtdy);

@@ -62,7 +62,8 @@ public:
     Treturn Evaluate(const DifferentialGeometry &) const;
     ~ImageTexture();
     static void ClearCache() {
-        typename std::map<TexInfo, MIPMap<Tmemory> *>::iterator iter = textures.begin();
+        typename std::map<TexInfo, MIPMap<Tmemory> *>::iterator iter;
+        iter = textures.begin();
         while (iter != textures.end()) {
             delete iter->second;
             ++iter;

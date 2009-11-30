@@ -32,8 +32,8 @@ class VolumeGridDensity : public DensityRegion {
 public:
     // VolumeGridDensity Public Methods
     VolumeGridDensity(const Spectrum &sa, const Spectrum &ss, float gg,
-                      const Spectrum &emit, const BBox &e, const Transform &v2w,
-                      int x, int y, int z, const float *d)
+            const Spectrum &emit, const BBox &e, const Transform &v2w,
+            int x, int y, int z, const float *d)
         : DensityRegion(sa, ss, gg, emit, v2w), nx(x), ny(y), nz(z), extent(e) {
         density = new float[nx*ny*nz];
         memcpy(density, d, nx*ny*nz*sizeof(float));

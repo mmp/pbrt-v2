@@ -195,8 +195,8 @@ Spectrum IrradianceCacheIntegrator::Li(const Scene *scene,
     L += isect.Le(wo);
     // Compute direct lighting for irradiance cache
     L += UniformSampleAllLights(scene, renderer, arena, p, n, wo,
-                                isect.rayEpsilon, ray.time, bsdf, sample, rng,
-                                lightSampleOffsets, bsdfSampleOffsets);
+             isect.rayEpsilon, ray.time, bsdf, sample, rng,
+             lightSampleOffsets, bsdfSampleOffsets);
 
     // Compute indirect lighting for irradiance cache
     if (ray.depth + 1 < maxSpecularDepth) {
@@ -283,7 +283,8 @@ Spectrum IrradianceCacheIntegrator::indirectLo(const Point &p,
 
 
 bool IrradianceCacheIntegrator::interpolateE(const Scene *scene,
-        const Point &p, const Normal &n, Spectrum *E, Vector *wi) const {
+        const Point &p, const Normal &n, Spectrum *E,
+        Vector *wi) const {
     if (!octree) return false;
     PBRT_IRRADIANCE_CACHE_STARTED_INTERPOLATION(const_cast<Point *>(&p), const_cast<Normal *>(&n));
     IrradProcess proc(p, n, minWeight, cosMaxSampleAngleDifference);

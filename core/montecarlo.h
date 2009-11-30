@@ -112,7 +112,8 @@ struct Distribution2D {
     // Distribution2D Public Methods
     Distribution2D(const float *data, int nu, int nv);
     ~Distribution2D();
-    void SampleContinuous(float u0, float u1, float uv[2], float *pdf) const {
+    void SampleContinuous(float u0, float u1, float uv[2],
+                          float *pdf) const {
         float pdfs[2];
         uv[1] = pMarginal->SampleContinuous(u1, &pdfs[1]);
         int v = Clamp(Float2Int(uv[1] * pMarginal->count), 0,
@@ -266,8 +267,8 @@ LarcherPillichshammer2(uint32_t n, uint32_t scramble) {
 }
 
 
-inline void LDShuffleScrambled1D(int nSamples, int nPixel, float *samples,
-        RNG &rng) {
+inline void LDShuffleScrambled1D(int nSamples, int nPixel,
+                                 float *samples, RNG &rng) {
     uint32_t scramble = rng.RandomUInt();
     for (int i = 0; i < nSamples * nPixel; ++i)
         samples[i] = VanDerCorput(i, scramble);
@@ -277,8 +278,8 @@ inline void LDShuffleScrambled1D(int nSamples, int nPixel, float *samples,
 }
 
 
-inline void LDShuffleScrambled2D(int nSamples, int nPixel, float *samples,
-        RNG &rng) {
+inline void LDShuffleScrambled2D(int nSamples, int nPixel,
+                                 float *samples, RNG &rng) {
     uint32_t scramble[2] = { rng.RandomUInt(), rng.RandomUInt() };
     for (int i = 0; i < nSamples * nPixel; ++i)
         Sample02(i, scramble, &samples[2*i]);

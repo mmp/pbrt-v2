@@ -75,7 +75,8 @@ Spectrum PathIntegrator::Li(const Scene *scene, const Renderer *renderer,
         // Get _outgoingBSDFSample_ for sampling new path direction
         BSDFSample outgoingBSDFSample;
         if (bounces < SAMPLE_DEPTH)
-            outgoingBSDFSample = BSDFSample(sample, pathSampleOffsets[bounces], 0);
+            outgoingBSDFSample = BSDFSample(sample, pathSampleOffsets[bounces],
+                                            0);
         else
             outgoingBSDFSample = BSDFSample(rng);
         Vector wi;

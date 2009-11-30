@@ -60,12 +60,12 @@ LightSampleOffsets::LightSampleOffsets(int count, Sample *sample) {
 
 
 LightSample::LightSample(const Sample *sample,
-                         const LightSampleOffsets &offsets, uint32_t num) {
-    Assert(num < sample->n2D[offsets.posOffset]);
-    Assert(num < sample->n1D[offsets.componentOffset]);
-    uPos[0] = sample->twoD[offsets.posOffset][2*num];
-    uPos[1] = sample->twoD[offsets.posOffset][2*num+1];
-    uComponent = sample->oneD[offsets.componentOffset][num];
+        const LightSampleOffsets &offsets, uint32_t n) {
+    Assert(n < sample->n2D[offsets.posOffset]);
+    Assert(n < sample->n1D[offsets.componentOffset]);
+    uPos[0] = sample->twoD[offsets.posOffset][2*n];
+    uPos[1] = sample->twoD[offsets.posOffset][2*n+1];
+    uComponent = sample->oneD[offsets.componentOffset][n];
 }
 
 

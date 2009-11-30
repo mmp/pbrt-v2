@@ -32,8 +32,10 @@
 class PlasticMaterial : public Material {
 public:
     // PlasticMaterial Public Methods
-    PlasticMaterial(Reference<Texture<Spectrum> > kd, Reference<Texture<Spectrum> > ks,
-            Reference<Texture<float> > rough, Reference<Texture<float> > bump)
+    PlasticMaterial(Reference<Texture<Spectrum> > kd,
+                    Reference<Texture<Spectrum> > ks,
+                    Reference<Texture<float> > rough,
+                    Reference<Texture<float> > bump)
         : Kd(kd), Ks(ks), roughness(rough), bumpMap(bump) {
     }
     BSDF *GetBSDF(const DifferentialGeometry &dgGeom,

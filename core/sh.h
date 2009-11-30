@@ -43,8 +43,8 @@ inline int SHIndex(int l, int m) {
 void SHEvaluate(const Vector &v, int lmax, float *out);
 void SHWriteImage(const char *filename, const Spectrum *c, int lmax, int yres);
 template <typename Func>
-void SHProjectCube(Func func, const Point &p, int res,
-                   int lmax, Spectrum *coeffs) {
+void SHProjectCube(Func func, const Point &p, int res, int lmax,
+                   Spectrum *coeffs) {
     float *Ylm = ALLOCA(float, SHTerms(lmax));
     for (int u = 0; u < res; ++u) {
         float fu = -1.f + 2.f * (float(u) + 0.5f) / float(res);

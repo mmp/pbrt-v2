@@ -90,7 +90,7 @@ RGBSpectrum SampledSpectrum::ToRGBSpectrum() const {
 
 
 SampledSpectrum SampledSpectrum::FromRGB(const float rgb[3],
-        SpectrumType type) {
+                                         SpectrumType type) {
     SampledSpectrum r;
     if (type == SPECTRUM_REFLECTANCE) {
         // Convert reflectance spectrum to RGB
@@ -176,10 +176,10 @@ SampledSpectrum SampledSpectrum::FromRGB(const float rgb[3],
 }
 
 
-SampledSpectrum::SampledSpectrum(const RGBSpectrum &r, SpectrumType type) {
+SampledSpectrum::SampledSpectrum(const RGBSpectrum &r, SpectrumType t) {
     float rgb[3];
     r.ToRGB(rgb);
-    *this = SampledSpectrum::FromRGB(rgb, type);
+    *this = SampledSpectrum::FromRGB(rgb, t);
 }
 
 
@@ -196,7 +196,7 @@ void Blackbody(const float *wl, int n, float temp, float *vals) {
 
 
 float InterpolateSpectrumSamples(const float *lambda, const float *vals,
-        int n, float l) {
+                                 int n, float l) {
     for (int i = 0; i < n-1; ++i) Assert(lambda[i+1] > lambda[i]);
     if (l <= lambda[0])   return vals[0];
     if (l >= lambda[n-1]) return vals[n-1];

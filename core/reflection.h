@@ -140,8 +140,7 @@ public:
                       BxDFType *sampledType = NULL) const;
     float Pdf(const Vector &wo, const Vector &wi,
               BxDFType flags = BSDF_ALL) const;
-    BSDF(const DifferentialGeometry &dgs,
-         const Normal &ngeom,
+    BSDF(const DifferentialGeometry &dgs, const Normal &ngeom,
          float eta = 1.f);
     inline void Add(BxDF *bxdf);
     int NumComponents() const { return nBxDFs; }
@@ -189,8 +188,8 @@ public:
         return (type & flags) == type;
     }
     virtual Spectrum f(const Vector &wo, const Vector &wi) const = 0;
-    virtual Spectrum Sample_f(const Vector &wo, Vector *wi, float u1, float u2,
-        float *pdf) const;
+    virtual Spectrum Sample_f(const Vector &wo, Vector *wi,
+                              float u1, float u2, float *pdf) const;
     virtual Spectrum rho(const Vector &wo, int nSamples,
                          const float *samples) const;
     virtual Spectrum rho(int nSamples, const float *samples1,
@@ -474,14 +473,15 @@ private:
 class RegularHalfangleBRDF : public BxDF {
 public:
     // RegularHalfangleBRDF Public Methods
-    RegularHalfangleBRDF(const float *d, uint32_t nth, uint32_t ntd, uint32_t npd)
+    RegularHalfangleBRDF(const float *d, uint32_t nth, uint32_t ntd,
+                         uint32_t npd)
         : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), brdf(d),
           nThetaH(nth), nThetaD(ntd), nPhiD(npd) { }
     Spectrum f(const Vector &wo, const Vector &wi) const;
 private:
     // RegularHalfangleBRDF Private Data
     const float *brdf;
-    uint32_t nThetaH, nThetaD, nPhiD;
+    const uint32_t nThetaH, nThetaD, nPhiD;
 };
 
 

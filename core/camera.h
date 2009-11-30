@@ -36,7 +36,8 @@ public:
     Camera(const AnimatedTransform &cam2world, float sopen, float sclose,
            Film *film);
     virtual ~Camera();
-    virtual float GenerateRay(const CameraSample &sample, Ray *ray) const = 0;
+    virtual float GenerateRay(const CameraSample &sample,
+                              Ray *ray) const = 0;
     virtual float GenerateRayDifferential(const CameraSample &sample, RayDifferential *rd) const;
 
     // Camera Public Data

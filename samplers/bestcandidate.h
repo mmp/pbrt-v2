@@ -41,7 +41,8 @@ public:
     BestCandidateSampler(int xstart, int xend, int ystart, int yend,
                          int nPixelSamples, float sopen, float sclose)
         : Sampler(xstart, xend, ystart, yend, nPixelSamples, sopen, sclose) {
-        tableWidth = (float)SQRT_SAMPLE_TABLE_SIZE / (float)sqrtf(nPixelSamples);
+        tableWidth = (float)SQRT_SAMPLE_TABLE_SIZE /
+                     (float)sqrtf(nPixelSamples);
         xTileStart = Floor2Int(xstart / tableWidth);
         xTileEnd = Floor2Int(xend / tableWidth);
         yTileStart = Floor2Int(ystart / tableWidth);

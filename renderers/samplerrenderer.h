@@ -56,9 +56,9 @@ private:
 class SamplerRendererTask : public Task {
 public:
     // SamplerRendererTask Public Methods
-    SamplerRendererTask(const Scene *sc, Renderer *ren, Camera *c, Sampler *ms,
-        ProgressReporter &pr,
-               Sample *sam, int tn, int tc)
+    SamplerRendererTask(const Scene *sc, Renderer *ren, Camera *c,
+                      ProgressReporter &pr,
+                        Sampler *ms, Sample *sam, int tn, int tc)
       : reporter(pr)
     {
         scene = sc; renderer = ren; camera = c; mainSampler = ms;

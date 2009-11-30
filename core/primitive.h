@@ -71,7 +71,7 @@ public:
     BSDF *GetBSDF(const DifferentialGeometry &dg,
                   const Transform &ObjectToWorld, MemoryArena &arena) const;
     BSSRDF *GetBSSRDF(const DifferentialGeometry &dg,
-                  const Transform &ObjectToWorld, MemoryArena &arena) const;
+                      const Transform &ObjectToWorld, MemoryArena &arena) const;
 private:
     // GeometricPrimitive Private Data
     Reference<Shape> shape;

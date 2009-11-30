@@ -92,7 +92,8 @@ Sampler *AdaptiveSampler::GetSubSampler(int num, int count) {
 
 int AdaptiveSampler::GetMoreSamples(Sample *samples, RNG &rng) {
     if (!sampleBuf)
-        sampleBuf = new float[LDPixelSampleFloatsNeeded(samples, maxSamples)];
+        sampleBuf = new float[LDPixelSampleFloatsNeeded(samples,
+                                                        maxSamples)];
     if (supersamplePixel) {
         LDPixelSample(xPos, yPos, shutterOpen, shutterClose, maxSamples,
                       samples, sampleBuf, rng);

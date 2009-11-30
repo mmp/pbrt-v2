@@ -50,7 +50,7 @@ class DipoleSubsurfaceIntegrator : public SurfaceIntegrator {
 public:
     // DipoleSubsurfaceIntegrator Public Methods
     DipoleSubsurfaceIntegrator(int mdepth, float merror, float mindist,
-            const string &fn) {
+                               const string &fn) {
         maxSpecularDepth = mdepth;
         maxError = merror;
         minSampleDist = mindist;

@@ -36,9 +36,7 @@ public:
         : x(xx), y(yy), z(zz) {
         Assert(!HasNaNs());
     }
-    bool HasNaNs() const {
-        return isnan(x) || isnan(y) || isnan(z);
-    }
+    bool HasNaNs() const { return isnan(x) || isnan(y) || isnan(z); }
     explicit Vector(const Point &p);
 #ifndef NDEBUG
     // The default versions of these are fine for release builds; for debug
@@ -77,9 +75,7 @@ public:
     bool operator==(const Vector &v) const {
         return x == v.x && y == v.y && z == v.z;
     }
-    Vector operator*(float f) const {
-        return Vector(f*x, f*y, f*z);
-    }
+    Vector operator*(float f) const { return Vector(f*x, f*y, f*z); }
     
     Vector &operator*=(float f) {
         Assert(!isnan(f));
@@ -98,9 +94,7 @@ public:
         x *= inv; y *= inv; z *= inv;
         return *this;
     }
-    Vector operator-() const {
-        return Vector(-x, -y, -z);
-    }
+    Vector operator-() const { return Vector(-x, -y, -z); }
     float operator[](int i) const {
         Assert(i >= 0 && i <= 2);
         return (&x)[i];
@@ -409,8 +403,7 @@ public:
                       (p.z - pMin.z) / (pMax.z - pMin.z));
     }
     void BoundingSphere(Point *c, float *rad) const;
-    bool IntersectP(const Ray &ray, float *hitt0 = NULL,
-                    float *hitt1 = NULL) const;
+    bool IntersectP(const Ray &ray, float *hitt0 = NULL, float *hitt1 = NULL) const;
 
     // BBox Public Data
     Point pMin, pMax;
@@ -425,12 +418,7 @@ inline Vector::Vector(const Point &p)
 }
 
 
-inline Vector operator*(float f, const Vector &v) {
-    Assert(!v.HasNaNs());
-    return v*f;
-}
-
-
+inline Vector operator*(float f, const Vector &v) { return v*f; }
 inline float Dot(const Vector &v1, const Vector &v2) {
     Assert(!v1.HasNaNs() && !v2.HasNaNs());
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
@@ -467,12 +455,7 @@ inline Vector Cross(const Normal &v1, const Vector &v2) {
 }
 
 
-inline Vector Normalize(const Vector &v) {
-    Assert(!v.HasNaNs());
-    return v / v.Length();
-}
-
-
+inline Vector Normalize(const Vector &v) { return v / v.Length(); }
 inline void CoordinateSystem(const Vector &v1, Vector *v2, Vector *v3) {
     if (fabsf(v1.x) > fabsf(v1.y)) {
         float invLen = 1.f / sqrtf(v1.x*v1.x + v1.z*v1.z);

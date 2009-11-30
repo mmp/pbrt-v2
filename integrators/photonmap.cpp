@@ -117,7 +117,8 @@ private:
 struct PhotonProcess {
     // PhotonProcess Public Methods
     PhotonProcess(uint32_t mp, ClosePhoton *buf);
-    void operator()(const Point &p, const Photon &photon, float dist2, float &maxDistSquared);
+    void operator()(const Point &p, const Photon &photon, float dist2,
+                    float &maxDistSquared);
     ClosePhoton *photons;
     uint32_t nLookup, nFound;
 };
@@ -174,8 +175,8 @@ inline bool unsuccessful(uint32_t needed, uint32_t found, uint32_t shot) {
 }
 
 
-inline void PhotonProcess::operator()(const Point &p, const Photon &photon,
-        float distSquared, float &maxDistSquared) {
+inline void PhotonProcess::operator()(const Point &p,
+        const Photon &photon, float distSquared, float &maxDistSquared) {
     if (nFound < nLookup) {
         // Add photon to unordered array of photons
         photons[nFound++] = ClosePhoton(&photon, distSquared);

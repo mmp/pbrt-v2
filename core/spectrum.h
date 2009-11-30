@@ -53,7 +53,7 @@ inline void RGBToXYZ(const float rgb[3], float xyz[3]) {
 enum SpectrumType { SPECTRUM_REFLECTANCE, SPECTRUM_ILLUMINANT };
 extern void Blackbody(const float *wl, int n, float temp, float *vals);
 extern float InterpolateSpectrumSamples(const float *lambda, const float *vals,
-    int n, float l);
+                                        int n, float l);
 
 // Spectral Data Declarations
 static const int nCIESamples = 471;
@@ -409,7 +409,7 @@ public:
         return YWeight[0] * c[0] + YWeight[1] * c[1] + YWeight[2] * c[2];
     }
     static RGBSpectrum FromSampled(const float *lambda, const float *v,
-            int n) {
+                                   int n) {
         // Sort samples if unordered, use sorted for returned spectrum
         if (!SpectrumSamplesSorted(lambda, v, n)) {
             vector<float> slambda(&lambda[0], &lambda[n]);

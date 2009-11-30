@@ -70,9 +70,9 @@ float DistantLight::Pdf(const Point &, const Vector &) const {
 }
 
 
-Spectrum DistantLight::Sample_L(const Scene *scene, const LightSample &ls,
-        float u1, float u2, float time, Ray *ray, Normal *Ns,
-        float *pdf) const {
+Spectrum DistantLight::Sample_L(const Scene *scene,
+        const LightSample &ls, float u1, float u2, float time,
+        Ray *ray, Normal *Ns, float *pdf) const {
     // Choose point on disk oriented toward infinite light direction
     Point worldCenter;
     float worldRadius;
@@ -84,7 +84,8 @@ Spectrum DistantLight::Sample_L(const Scene *scene, const LightSample &ls,
     Point Pdisk = worldCenter + worldRadius * (d1 * v1 + d2 * v2);
 
     // Set ray origin and direction for infinite light ray
-    *ray = Ray(Pdisk + worldRadius * lightDir, -lightDir, 0.f, INFINITY, time);
+    *ray = Ray(Pdisk + worldRadius * lightDir, -lightDir, 0.f, INFINITY,
+               time);
     *pdf = 1.f / (M_PI * worldRadius * worldRadius);
     return L;
 }
