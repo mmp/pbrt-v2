@@ -35,6 +35,7 @@
 #include "parallel.h"
 #include "probes.h"
 #include "intersection.h"
+#include "montecarlo.h"
 #include "samplers/lowdiscrepancy.h"
 #include "integrators/directlighting.h"
 
@@ -50,7 +51,8 @@ public:
         int xx0, int xx1, int yy0, int yy1, float tt0, float tt1,
         float bb, float lsp, const MLTSample &is, bool id, int mr,
         int md, const Scene *sc, const Camera *c, const Renderer *renderer,
-        volatile float *nSamplesFinished, Mutex *filmMutex);
+        volatile float *nSamplesFinished, Mutex *filmMutex,
+        Distribution1D *lightDistribution);
     void Run();
 
 private:
@@ -69,6 +71,7 @@ private:
     int maxDepth;
     volatile float *nSamplesFinished;
     Mutex *filmMutex;
+    Distribution1D *lightDistribution;
 };
 
 
@@ -157,7 +160,8 @@ static void SmallStep(RNG &rng, MLTSample *sample, int maxDepth,
 
 static Spectrum L(const Scene *scene, const Renderer *renderer,
     const Camera *camera, MemoryArena &arena,
-    RNG &rng, int maxDepth, bool ignoreDirect, const MLTSample &sample);
+    RNG &rng, int maxDepth, bool ignoreDirect, const MLTSample &sample,
+    const Distribution1D *lightDistribution);
 
 // Metropolis Method Definitions
 MetropolisRenderer::MetropolisRenderer(int ts, int perPixelSamples,
@@ -228,6 +232,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
     int nPixels = (x1-x0) * (y1-y0);
     float t0 = camera->shutterOpen;
     float t1 = camera->shutterClose;
+    Distribution1D *lightDistribution = ComputeLightSamplingCDF(scene);
 
     if (doDirectSeparately) {
         // Compute direct lighting before Metropolis light transport
@@ -260,7 +265,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
         // Compute contribution for random sample for MLT bootstrapping
         LargeStep(rng, &sample, maxDepth, x0, x1, y0, y1, t0, t1);
         float contrib = I(L(scene, this, camera, arena, rng, maxDepth,
-                            doDirectSeparately, sample), sample);
+                            doDirectSeparately, sample, lightDistribution), sample);
         sumContrib += contrib;
         bootstrapSamples.push_back(contrib);
         arena.FreeAll();
@@ -292,7 +297,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
             tasks.push_back(new MLTTask(progress, i, int(nSamples/nTasks), nSamples,
                 nPixels, x0, x1, y0, y1, t0, t1, b, largeStepProbability, initialSample,
                 doDirectSeparately, maxConsecutiveRejects, maxDepth, scene, camera, this,
-                &nSamplesFinished, filmMutex));
+                &nSamplesFinished, filmMutex, lightDistribution));
         EnqueueTasks(tasks);
         WaitForAllTasks();
         for (uint32_t i = 0; i < tasks.size(); ++i)
@@ -307,7 +312,7 @@ MLTTask::MLTTask(ProgressReporter &prog, int tn, int ns, int64_t ts, int np,
     int xx0, int xx1, int yy0, int yy1, float tt0, float tt1,
     float bb, float lsp, const MLTSample &is, bool id, int mr,
     int md, const Scene *sc, const Camera *c, const Renderer *ren,
-    volatile float *nfinished, Mutex *fm)
+    volatile float *nfinished, Mutex *fm, Distribution1D *ld)
     : progress(prog), initialSample(is) {
     taskNum = tn;
     nSamples = ns;
@@ -329,6 +334,7 @@ MLTTask::MLTTask(ProgressReporter &prog, int tn, int ns, int64_t ts, int np,
     renderer = ren;
     nSamplesFinished = nfinished;
     filmMutex = fm;
+    lightDistribution = ld;
 }
 
 
@@ -342,7 +348,7 @@ void MLTTask::Run() {
     uint32_t currentSample = 0, proposedSample = 1;
     mltSamples[currentSample] = initialSample;
     sampleLs[currentSample] = L(scene, renderer, camera, arena, rng, maxDepth,
-                                ignoreDirect, mltSamples[currentSample]);
+                                ignoreDirect, mltSamples[currentSample], lightDistribution);
     int consecutiveRejects = 0;
     for (int sampleNum = 0; sampleNum < nSamples; ++sampleNum) {
         // Compute proposed mutation to current sample
@@ -357,7 +363,7 @@ void MLTTask::Run() {
 
         // Compute contribution of proposed sample and acceptance probability
         sampleLs[proposedSample] = L(scene, renderer, camera, arena, rng, maxDepth,
-                                     ignoreDirect, mltSamples[proposedSample]);
+                                     ignoreDirect, mltSamples[proposedSample], lightDistribution);
         float currentI = I(sampleLs[currentSample], mltSamples[currentSample]);
         float proposedI = I(sampleLs[proposedSample], mltSamples[proposedSample]);
         float a = min(1.f, proposedI / currentI);
@@ -405,7 +411,7 @@ void MLTTask::Run() {
 
 static Spectrum L(const Scene *scene, const Renderer *renderer,
         const Camera *camera, MemoryArena &arena, RNG &rng, int maxDepth,
-        bool ignoreDirect, const MLTSample &sample) {
+        bool ignoreDirect, const MLTSample &sample, const Distribution1D *lightDistribution) {
     // Generate camera ray from Metropolis sample
     RayDifferential ray;
     float cameraWeight = camera->GenerateRayDifferential(sample.cameraSample,
@@ -432,17 +438,17 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
         Vector wo = -ray.d;
         const PathSample &ps = sample.pathSamples[pathLength];
         // Sample direct illumination for Metropolis path vertex
-        if (!ignoreDirect || pathLength > 0) {
+        if ((!ignoreDirect || !allSpecular) && scene->lights.size() > 0) {
             LightSample lightSample(ps.lightDir0, ps.lightDir1, ps.lightNum0);
             BSDFSample bsdfSample(ps.bsdfLightDir0, ps.bsdfLightDir1,
                                   ps.bsdfLightComponent);
-            uint32_t lightNum = Floor2Int(ps.lightNum1 * scene->lights.size());
-            lightNum = min(lightNum, (uint32_t)(scene->lights.size()-1));
+            float lightPdf;
+            uint32_t lightNum = lightDistribution->SampleDiscrete(ps.lightNum1, &lightPdf);
             const Light *light = scene->lights[lightNum];
             L += pathThroughput *
                  EstimateDirect(scene, renderer, arena, light, p, n, wo,
                      isect.rayEpsilon, sample.cameraSample.time, bsdf, rng,
-                     lightSample, bsdfSample);
+                     lightSample, bsdfSample) / lightPdf;
         }
 
         // Sample direction for outgoing Metropolis path direction
