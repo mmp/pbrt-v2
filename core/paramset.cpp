@@ -146,6 +146,11 @@ void ParamSet::AddSampledSpectrumFiles(const string &name, const char **names,
     EraseSpectrum(name);
     Spectrum *s = new Spectrum[nItems];
     for (int i = 0; i < nItems; ++i) {
+        if (cachedSpectra.find(names[i]) != cachedSpectra.end()) {
+            s[i] = cachedSpectra[names[i]];
+            continue;
+        }
+
         vector<float> vals;
         if (!ReadFloatFile(names[i], &vals)) {
             Warning("Unable to read SPD file \"%s\".  Using black distribution.",
@@ -164,6 +169,7 @@ void ParamSet::AddSampledSpectrumFiles(const string &name, const char **names,
             }
             s[i] = Spectrum::FromSampled(&wls[0], &v[0], wls.size());
         }
+        cachedSpectra[names[i]] = s[i];
     }
 
     spectra.push_back(new ParamSetItem<Spectrum>(name, s, nItems));
@@ -171,6 +177,7 @@ void ParamSet::AddSampledSpectrumFiles(const string &name, const char **names,
 }
 
 
+map<string, Spectrum> ParamSet::cachedSpectra;
 void ParamSet::AddString(const string &name, const string *data, int nItems) {
     EraseString(name);
     ADD_PARAM_TYPE(string, strings);

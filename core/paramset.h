@@ -95,6 +95,7 @@ private:
     vector<Reference<ParamSetItem<Spectrum> > > spectra;
     vector<Reference<ParamSetItem<string> > > strings;
     vector<Reference<ParamSetItem<string> > > textures;
+    static map<string, Spectrum> cachedSpectra;
 };
 
 
