@@ -456,7 +456,7 @@ void PhotonShootingTask::Run() {
                             // stop depositing direct photons once indirectDone is true; don't
                             // want to waste memory storing too many if we're going a long time
                             // trying to get enough caustic photons desposited.
-                            if (nIntersections == 1 && !indirectDone) {
+                            if (nIntersections == 1 && !indirectDone && integrator->finalGather) {
                                 PBRT_PHOTON_MAP_DEPOSITED_DIRECT_PHOTON(&photonIsect.dg, &alpha, &wo);
                                 depositedPhoton = true;
                                 localDirectPhotons.push_back(photon);
