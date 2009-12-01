@@ -240,9 +240,8 @@ Point Sphere::Sample(const Point &p, float u1, float u2,
     Point ps;
     Ray r(p, UniformSampleCone(u1, u2, cosThetaMax, wcX, wcY, wc), 1e-3f);
     if (!Intersect(r, &thit, &rayEpsilon, &dgSphere))
-        ps = Pcenter - radius * wc;
-    else
-        ps = r(thit);
+        thit = Dot(Pcenter - p, Normalize(r.d));
+    ps = r(thit);
     *ns = Normal(Normalize(ps - Pcenter));
     if (ReverseOrientation) *ns *= -1.f;
     return ps;
