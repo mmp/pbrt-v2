@@ -631,7 +631,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
                  rng, isect, wo, maxDistSquared);
 
     // Compute indirect lighting for photon map integrator
-    if (finalGather) {
+    if (finalGather && indirectMap != NULL) {
     #if 1
         // Do one-bounce final gather for photon map
         BxDFType nonSpecular = BxDFType(BSDF_REFLECTION |
