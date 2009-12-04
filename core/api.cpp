@@ -326,7 +326,7 @@ Reference<Shape> MakeShape(const string &name,
                                    paramSet);
     else if (name == "trianglemesh")
         s = CreateTriangleMeshShape(object2world, world2object, reverseOrientation,
-                                    paramSet);
+                                    paramSet, &graphicsState.floatTextures);
     else if (name == "heightfield")
         s = CreateHeightfieldShape(object2world, world2object, reverseOrientation,
                                    paramSet);

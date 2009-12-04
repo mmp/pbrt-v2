@@ -26,6 +26,8 @@
 
 // shapes/trianglemesh.h*
 #include "shape.h"
+#include <map>
+using std::map;
 
 // TriangleMesh Declarations
 class TriangleMesh : public Shape {
@@ -33,8 +35,8 @@ public:
     // TriangleMesh Public Methods
     TriangleMesh(const Transform *o2w, const Transform *w2o, bool ro,
                  int ntris, int nverts, const int *vptr,
-                 const Point *P, const Normal *N,
-                 const Vector *S, const float *uv);
+                 const Point *P, const Normal *N, const Vector *S,
+                 const float *uv, const Reference<Texture<float> > &atex);
     ~TriangleMesh();
     BBox ObjectBound() const;
     BBox WorldBound() const;
@@ -50,6 +52,7 @@ protected:
     Normal *n;
     Vector *s;
     float *uvs;
+    Reference<Texture<float> > alphaTexture;
 };
 
 
@@ -96,6 +99,7 @@ private:
 
 
 TriangleMesh *CreateTriangleMeshShape(const Transform *o2w, const Transform *w2o,
-        bool reverseOrientation, const ParamSet &params);
+    bool reverseOrientation, const ParamSet &params,
+    map<string, Reference<Texture<float> > > *floatTextures = NULL);
 
 #endif // PBRT_SHAPES_TRIANGLEMESH_H

@@ -24,14 +24,17 @@
 
 // shapes/trianglemesh.cpp*
 #include "shapes/trianglemesh.h"
+#include "texture.h"
+#include "textures/constant.h"
 #include "paramset.h"
 #include "montecarlo.h"
 
 // TriangleMesh Method Definitions
 TriangleMesh::TriangleMesh(const Transform *o2w, const Transform *w2o,
         bool ro, int nt, int nv, const int *vi, const Point *P,
-        const Normal *N, const Vector *S, const float *uv)
-    : Shape(o2w, w2o, ro) {
+        const Normal *N, const Vector *S, const float *uv,
+        const Reference<Texture<float> > &atex)
+    : Shape(o2w, w2o, ro), alphaTexture(atex) {
     ntris = nt;
     nverts = nv;
     vertexIndex = new int[3 * ntris];
@@ -146,8 +149,6 @@ bool Triangle::Intersect(const Ray &ray, float *tHit, float *rayEpsilon,
     if (t < ray.mint || t > ray.maxt)
         return false;
 
-    // Fill in _DifferentialGeometry_ from triangle hit
-
     // Compute triangle partial derivatives
     Vector dpdu, dpdv;
     float uvs[3][2];
@@ -174,6 +175,17 @@ bool Triangle::Intersect(const Ray &ray, float *tHit, float *rayEpsilon,
     float b0 = 1 - b1 - b2;
     float tu = b0*uvs[0][0] + b1*uvs[1][0] + b2*uvs[2][0];
     float tv = b0*uvs[0][1] + b1*uvs[1][1] + b2*uvs[2][1];
+
+    // Test intersection against alpha texture, if present
+    if (mesh->alphaTexture) {
+        DifferentialGeometry dgLocal(ray(t), dpdu, dpdv,
+                                     Normal(0,0,0), Normal(0,0,0),
+                                     tu, tv, this);
+        if (mesh->alphaTexture->Evaluate(dgLocal) == 0.f)
+            return false;
+    }
+
+    // Fill in _DifferentialGeometry_ from triangle hit
     *dg = DifferentialGeometry(ray(t), dpdu, dpdv,
                                Normal(0,0,0), Normal(0,0,0),
                                tu, tv, this);
@@ -216,6 +228,21 @@ bool Triangle::IntersectP(const Ray &ray) const {
     float t = Dot(e2, s2) * invDivisor;
     if (t < ray.mint || t > ray.maxt)
         return false;
+
+    // Test shadow ray intersection against alpha texture, if present
+    if (mesh->alphaTexture) {
+        float uvs[3][2];
+        GetUVs(uvs);
+        // Interpolate $(u,v)$ triangle parametric coordinates
+        float b0 = 1 - b1 - b2;
+        float tu = b0*uvs[0][0] + b1*uvs[1][0] + b2*uvs[2][0];
+        float tv = b0*uvs[0][1] + b1*uvs[1][1] + b2*uvs[2][1];
+        DifferentialGeometry dgLocal(ray(t), Vector(0,0,0), Vector(0,0,0),
+                                     Normal(0,0,0), Normal(0,0,0),
+                                     tu, tv, this);
+        if (mesh->alphaTexture->Evaluate(dgLocal) == 0.f)
+            return false;
+    }
     PBRT_RAY_TRIANGLE_INTERSECTIONP_HIT(const_cast<Ray *>(&ray), t);
     return true;
 }
@@ -303,7 +330,8 @@ void Triangle::GetShadingGeometry(const Transform &obj2world,
 
 
 TriangleMesh *CreateTriangleMeshShape(const Transform *o2w, const Transform *w2o,
-        bool reverseOrientation, const ParamSet &params) {
+        bool reverseOrientation, const ParamSet &params,
+        map<string, Reference<Texture<float> > > *floatTextures) {
     int nvi, npi, nuvi, nsi, nni;
     const int *vi = params.FindInt("indices", &nvi);
     const Point *P = params.FindPoint("P", &npi);
@@ -357,8 +385,20 @@ TriangleMesh *CreateTriangleMeshShape(const Transform *o2w, const Transform *w2o
                 vi[i], npi);
             return NULL;
         }
+
+    Reference<Texture<float> > alphaTex = NULL;
+    string alphaTexName = params.FindTexture("alpha");
+    if (alphaTexName != "") {
+        if (floatTextures->find(alphaTexName) != floatTextures->end())
+            alphaTex = (*floatTextures)[alphaTexName];
+        else
+            Error("Couldn't find float texture \"%s\" for \"alpha\" parameter",
+                  alphaTexName.c_str());
+    }
+    else if (params.FindOneFloat("alpha", 1.f) == 0.f)
+        alphaTex = new ConstantTexture<float>(0.f);
     return new TriangleMesh(o2w, w2o, reverseOrientation, nvi/3, npi, vi, P,
-        N, S, uvs);
+        N, S, uvs, alphaTex);
 }
 
 
