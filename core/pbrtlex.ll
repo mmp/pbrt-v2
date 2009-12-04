@@ -96,7 +96,7 @@ void include_pop() {
 
 %}
 %option nounput
-WHITESPACE [ \t\0xa]+
+WHITESPACE [ \t\r]+
 NUMBER [-+]?([0-9]+|(([0-9]+\.[0-9]*)|(\.[0-9]+)))([eE][-+]?[0-9]+)?
 IDENT [a-zA-Z_][a-zA-Z_0-9]*
 %x STR COMMENT INCL INCL_FILE
@@ -194,7 +194,7 @@ WorldEnd                { return WORLDEND; }
 <STR>. {add_string_char(yytext[0]);}
 <STR>\n {Error("Unterminated string!");}
 
-. { Error( "Illegal character: %c",yytext[0] ); }
+. { Error( "Illegal character: %c (0x%x)", yytext[0], int(yytext[0])); }
 %%
 int yywrap() {
     if (includeStack.size() == 0) return 1;
