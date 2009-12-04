@@ -119,7 +119,7 @@ struct SubsurfaceOctreeNode {
         }
     }
     Spectrum Mo(const BBox &nodeBound, const Point &p, const DiffusionReflectance &Rd,
-        float maxError);
+                float maxError);
 
     // SubsurfaceOctreeNode Public Data
     Point p;
