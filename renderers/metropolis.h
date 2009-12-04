@@ -27,6 +27,7 @@
 // renderers/metropolis.h*
 #include "pbrt.h"
 #include "renderer.h"
+#include "mipmap.h"
 struct MLTSample;
 class DirectLightingIntegrator;
 
@@ -37,7 +38,7 @@ public:
     MetropolisRenderer(int totalSamples, int perPixelSamples,
         int nBootstrap, int directPixelSamples, float largeStepProbability,
         bool doDirectSeparately, int maxConsecutiveRejects, int maxDepth,
-        Camera *camera);
+        Camera *camera, const string &normalizationFile);
     ~MetropolisRenderer();
     void Render(const Scene *scene);
     Spectrum Li(const Scene *scene, const RayDifferential &ray,
@@ -55,6 +56,7 @@ private:
     bool doDirectSeparately;
     mutable volatile float nSamplesFinished;
     DirectLightingIntegrator *directLighting;
+    MIPMap<float> *normalizationMap;
 };
 
 

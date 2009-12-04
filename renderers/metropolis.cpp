@@ -26,6 +26,7 @@
 #include "renderers/metropolis.h"
 #include "renderers/samplerrenderer.h"
 #include "scene.h"
+#include "imageio.h"
 #include "spectrum.h"
 #include "camera.h"
 #include "film.h"
@@ -52,7 +53,7 @@ public:
         float bb, float lsp, const MLTSample &is, bool id, int mr,
         int md, const Scene *sc, const Camera *c, const Renderer *renderer,
         volatile float *nSamplesFinished, Mutex *filmMutex,
-        Distribution1D *lightDistribution);
+        Distribution1D *lightDistribution, MIPMap<float> *nmap);
     void Run();
 
 private:
@@ -72,6 +73,7 @@ private:
     volatile float *nSamplesFinished;
     Mutex *filmMutex;
     Distribution1D *lightDistribution;
+    MIPMap<float> *normalizationMap;
 };
 
 
@@ -86,16 +88,21 @@ struct PathSample {
 
 
 struct MLTSample {
-    MLTSample(int maxDepth) { pathSamples.resize(maxDepth); }
+    MLTSample(int maxDepth) { n = 1.f; pathSamples.resize(maxDepth); }
+    float n;
     CameraSample cameraSample;
     vector<PathSample> pathSamples;
 };
 
 
 static void LargeStep(RNG &rng, MLTSample *sample, int maxDepth,
-        int x0, int x1, int y0, int y1, float t0, float t1) {
-    sample->cameraSample.imageX = Lerp(rng.RandomFloat(), x0, x1);
-    sample->cameraSample.imageY = Lerp(rng.RandomFloat(), y0, y1);
+        int x0, int x1, int y0, int y1, float t0, float t1,
+        MIPMap<float> *normalizationMap) {
+    float xs = rng.RandomFloat(), ys = rng.RandomFloat();
+    sample->n = normalizationMap ? 100.f * max(1e-2f, normalizationMap->Lookup(xs, ys, 0.f)) : 1.f;
+
+    sample->cameraSample.imageX = Lerp(xs, x0, x1);
+    sample->cameraSample.imageY = Lerp(ys, y0, y1);
     sample->cameraSample.time = Lerp(rng.RandomFloat(), t0, t1);
     sample->cameraSample.lensU = rng.RandomFloat();
     sample->cameraSample.lensV = rng.RandomFloat();
@@ -135,9 +142,22 @@ static inline void mutate(RNG &rng, float *v, float min = 0.f, float max = 1.f) 
 
 
 static void SmallStep(RNG &rng, MLTSample *sample, int maxDepth,
-        int x0, int x1, int y0, int y1, float t0, float t1) {
+        int x0, int x1, int y0, int y1, float t0, float t1,
+        MIPMap<float> *normalizationMap) {
     mutate(rng, &sample->cameraSample.imageX, x0, x1);
     mutate(rng, &sample->cameraSample.imageY, y0, y1);
+
+    if (normalizationMap) {
+        float xs = (sample->cameraSample.imageX - x0) / (x1-x0);
+        float ys = (sample->cameraSample.imageY - y0) / (y1-y0);
+        float width = 0.f;
+        sample->n = 100.f * max(1e-2f, normalizationMap->Lookup(xs, ys, width));
+    }
+    else
+        sample->n = 1.f;
+
+//sample->n = 2.f;
+
     mutate(rng, &sample->cameraSample.time, t0, t1);
     mutate(rng, &sample->cameraSample.lensU);
     mutate(rng, &sample->cameraSample.lensV);
@@ -166,7 +186,7 @@ static Spectrum L(const Scene *scene, const Renderer *renderer,
 // Metropolis Method Definitions
 MetropolisRenderer::MetropolisRenderer(int ts, int perPixelSamples,
     int nboot, int dps, float lsp, bool dds, int mr, int md,
-    Camera *c) {
+    Camera *c, const string &normalizationFile) {
     camera = c;
     if (perPixelSamples > 0) {
         int x0, x1, y0, y1;
@@ -191,12 +211,25 @@ MetropolisRenderer::MetropolisRenderer(int ts, int perPixelSamples,
     maxConsecutiveRejects = mr;
     nSamplesFinished = 0.f;
     directLighting = new DirectLightingIntegrator(SAMPLE_ALL_UNIFORM, maxDepth);
+    normalizationMap = NULL;
+    if (normalizationFile != "") {
+        int width, height;
+        RGBSpectrum *nmap = ReadImage(normalizationFile, &width, &height);
+        if (nmap) {
+            float *ymap = new float[width*height];
+            for (int i = 0; i < width*height; ++i)
+                ymap[i] = nmap[i].y();
+            normalizationMap = new MIPMap<float>(width, height, ymap, true,
+                                                 1.0, TEXTURE_CLAMP);
+        }
+    }
 }
 
 
 MetropolisRenderer::~MetropolisRenderer() {
     delete camera;
     delete directLighting;
+    delete normalizationMap;
 }
 
 
@@ -210,6 +243,7 @@ MetropolisRenderer *CreateMetropolisRenderer(const ParamSet &params,
     bool doDirectSeparately = params.FindOneBool("dodirectseparately", true);
     int mr = params.FindOneInt("maxconsecutiverejects", 512);
     int md = params.FindOneInt("maxdepth", 4);
+    string normFile = params.FindOneString("normalizationfile", "");
 
     if (PbrtOptions.quickRender) {
         if (nSamples > 0)
@@ -222,14 +256,15 @@ MetropolisRenderer *CreateMetropolisRenderer(const ParamSet &params,
 
     return new MetropolisRenderer(nSamples, perPixelSamples, nBootstrap,
         directPixelSamples, largeStepProbability, doDirectSeparately,
-        mr, md, camera);
+        mr, md, camera, normFile);
 }
 
 
 void MetropolisRenderer::Render(const Scene *scene) {
     int x0, x1, y0, y1;
     camera->film->GetPixelExtent(&x0, &x1, &y0, &y1);
-    int nPixels = (x1-x0) * (y1-y0);
+    int xres = x1 - x0, yres = y1 - y0;
+    int nPixels = xres * yres;
     float t0 = camera->shutterOpen;
     float t1 = camera->shutterClose;
     Distribution1D *lightDistribution = ComputeLightSamplingCDF(scene);
@@ -263,9 +298,10 @@ void MetropolisRenderer::Render(const Scene *scene) {
     MLTSample sample(maxDepth);
     for (int i = 0; i < nBootstrap; ++i) {
         // Compute contribution for random sample for MLT bootstrapping
-        LargeStep(rng, &sample, maxDepth, x0, x1, y0, y1, t0, t1);
+        LargeStep(rng, &sample, maxDepth, x0, x1, y0, y1, t0, t1, normalizationMap);
         float contrib = I(L(scene, this, camera, arena, rng, maxDepth,
-                            doDirectSeparately, sample, lightDistribution), sample);
+                            doDirectSeparately, sample, lightDistribution),
+                          sample);
         sumContrib += contrib;
         bootstrapSamples.push_back(contrib);
         arena.FreeAll();
@@ -278,7 +314,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
     sumContrib = 0.f;
     MLTSample initialSample(maxDepth);
     for (int i = 0; i < nBootstrap; ++i) {
-        LargeStep(rng, &initialSample, maxDepth, x0, x1, y0, y1, t0, t1);
+        LargeStep(rng, &initialSample, maxDepth, x0, x1, y0, y1, t0, t1, normalizationMap);
         sumContrib += bootstrapSamples[i];
         if (contribOffset < sumContrib)
             break;
@@ -297,7 +333,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
             tasks.push_back(new MLTTask(progress, i, int(nSamples/nTasks), nSamples,
                 nPixels, x0, x1, y0, y1, t0, t1, b, largeStepProbability, initialSample,
                 doDirectSeparately, maxConsecutiveRejects, maxDepth, scene, camera, this,
-                &nSamplesFinished, filmMutex, lightDistribution));
+                &nSamplesFinished, filmMutex, lightDistribution, normalizationMap));
         EnqueueTasks(tasks);
         WaitForAllTasks();
         for (uint32_t i = 0; i < tasks.size(); ++i)
@@ -312,7 +348,8 @@ MLTTask::MLTTask(ProgressReporter &prog, int tn, int ns, int64_t ts, int np,
     int xx0, int xx1, int yy0, int yy1, float tt0, float tt1,
     float bb, float lsp, const MLTSample &is, bool id, int mr,
     int md, const Scene *sc, const Camera *c, const Renderer *ren,
-    volatile float *nfinished, Mutex *fm, Distribution1D *ld)
+    volatile float *nfinished, Mutex *fm, Distribution1D *ld,
+    MIPMap<float> *nmap)
     : progress(prog), initialSample(is) {
     taskNum = tn;
     nSamples = ns;
@@ -335,6 +372,7 @@ MLTTask::MLTTask(ProgressReporter &prog, int tn, int ns, int64_t ts, int np,
     nSamplesFinished = nfinished;
     filmMutex = fm;
     lightDistribution = ld;
+    normalizationMap = nmap;
 }
 
 
@@ -356,17 +394,17 @@ void MLTTask::Run() {
         mltSamples[proposedSample] = mltSamples[currentSample];
         if (largeStep)
             LargeStep(rng, &mltSamples[proposedSample], maxDepth,
-                      x0, x1, y0, y1, t0, t1);
+                      x0, x1, y0, y1, t0, t1, normalizationMap);
         else
             SmallStep(rng, &mltSamples[proposedSample], maxDepth,
-                      x0, x1, y0, y1, t0, t1);
+                      x0, x1, y0, y1, t0, t1, normalizationMap);
 
         // Compute contribution of proposed sample and acceptance probability
         sampleLs[proposedSample] = L(scene, renderer, camera, arena, rng, maxDepth,
                                      ignoreDirect, mltSamples[proposedSample], lightDistribution);
         float currentI = I(sampleLs[currentSample], mltSamples[currentSample]);
         float proposedI = I(sampleLs[proposedSample], mltSamples[proposedSample]);
-        float a = min(1.f, proposedI / currentI);
+        float a = min(1.f, (proposedI / currentI));
         float currentWeight = (1.f - a) /
                               (currentI / b + largeStepProbability) *
                               float(nPixels) / float(totalSamples);

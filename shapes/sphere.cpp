@@ -76,7 +76,7 @@ bool Sphere::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
 
     // Compute sphere hit position and $\phi$
     phit = ray(thit);
-    if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5 * radius;
+    if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5f * radius;
     phi = atan2f(phit.y, phit.x);
     if (phi < 0.) phi += 2.f*M_PI;
 
@@ -87,7 +87,7 @@ bool Sphere::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
         thit = t1;
         // Compute sphere hit position and $\phi$
         phit = ray(thit);
-        if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5 * radius;
+        if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5f * radius;
         phi = atan2f(phit.y, phit.x);
         if (phi < 0.) phi += 2.f*M_PI;
         if (phit.z < zmin || phit.z > zmax || phi > phiMax)
@@ -175,7 +175,7 @@ bool Sphere::IntersectP(const Ray &r) const {
 
     // Compute sphere hit position and $\phi$
     phit = ray(thit);
-    if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5 * radius;
+    if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5f * radius;
     phi = atan2f(phit.y, phit.x);
     if (phi < 0.) phi += 2.f*M_PI;
 
@@ -186,7 +186,7 @@ bool Sphere::IntersectP(const Ray &r) const {
         thit = t1;
         // Compute sphere hit position and $\phi$
         phit = ray(thit);
-        if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5 * radius;
+        if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5f * radius;
         phi = atan2f(phit.y, phit.x);
         if (phi < 0.) phi += 2.f*M_PI;
         if (phit.z < zmin || phit.z > zmax || phi > phiMax)
