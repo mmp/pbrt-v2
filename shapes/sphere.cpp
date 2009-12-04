@@ -81,7 +81,8 @@ bool Sphere::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
     if (phi < 0.) phi += 2.f*M_PI;
 
     // Test sphere intersection against clipping parameters
-    if (phit.z < zmin || phit.z > zmax || phi > phiMax) {
+    if ((zmin > -radius && phit.z < zmin) ||
+        (zmax <  radius && phit.z > zmax) || phi > phiMax) {
         if (thit == t1) return false;
         if (t1 > ray.maxt) return false;
         thit = t1;
@@ -90,7 +91,8 @@ bool Sphere::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
         if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5f * radius;
         phi = atan2f(phit.y, phit.x);
         if (phi < 0.) phi += 2.f*M_PI;
-        if (phit.z < zmin || phit.z > zmax || phi > phiMax)
+        if ((zmin > -radius && phit.z < zmin) ||
+            (zmax <  radius && phit.z > zmax) || phi > phiMax)
             return false;
     }
 
@@ -180,7 +182,8 @@ bool Sphere::IntersectP(const Ray &r) const {
     if (phi < 0.) phi += 2.f*M_PI;
 
     // Test sphere intersection against clipping parameters
-    if (phit.z < zmin || phit.z > zmax || phi > phiMax) {
+    if ((zmin > -radius && phit.z < zmin) ||
+        (zmax <  radius && phit.z > zmax) || phi > phiMax) {
         if (thit == t1) return false;
         if (t1 > ray.maxt) return false;
         thit = t1;
@@ -189,7 +192,8 @@ bool Sphere::IntersectP(const Ray &r) const {
         if (phit.x == 0.f && phit.y == 0.f) phit.x = 1e-5f * radius;
         phi = atan2f(phit.y, phit.x);
         if (phi < 0.) phi += 2.f*M_PI;
-        if (phit.z < zmin || phit.z > zmax || phi > phiMax)
+        if ((zmin > -radius && phit.z < zmin) ||
+            (zmax <  radius && phit.z > zmax) || phi > phiMax)
             return false;
     }
     return true;
