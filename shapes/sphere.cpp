@@ -98,7 +98,7 @@ bool Sphere::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
 
     // Find parametric representation of sphere hit
     float u = phi / phiMax;
-    float theta = acosf(phit.z / radius);
+    float theta = acosf(Clamp(phit.z / radius, -1.f, 1.f));
     float v = (theta - thetaMin) / (thetaMax - thetaMin);
 
     // Compute sphere $\dpdu$ and $\dpdv$
