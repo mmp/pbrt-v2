@@ -133,7 +133,15 @@ ShapeSet::~ShapeSet() {
 Point ShapeSet::Sample(const Point &p, const LightSample &ls,
                        Normal *Ns) const {
     int sn = areaDistribution->SampleDiscrete(ls.uComponent, NULL);
-    return shapes[sn]->Sample(p, ls.uPos[0], ls.uPos[1], Ns);
+    Point pt = shapes[sn]->Sample(p, ls.uPos[0], ls.uPos[1], Ns);
+    // Find closest intersection of ray with shapes in _ShapeSet_
+    Ray r(p, pt-p, 1e-3f, INFINITY);
+    float rayEps, thit = 1.f;
+    DifferentialGeometry dg;
+    for (uint32_t i = 0; i < shapes.size(); ++i)
+        shapes[i]->Intersect(r, &thit, &rayEps, &dg);
+    *Ns = dg.nn;
+    return r(thit);
 }
 
 
