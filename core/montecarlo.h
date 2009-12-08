@@ -213,7 +213,7 @@ private:
 inline float VanDerCorput(uint32_t n, uint32_t scramble = 0);
 inline float Sobol2(uint32_t n, uint32_t scramble = 0);
 inline float LarcherPillichshammer2(uint32_t n, uint32_t scramble = 0);
-inline void Sample02(uint32_t n, uint32_t scramble[2], float sample[2]);
+inline void Sample02(uint32_t n, const uint32_t scramble[2], float sample[2]);
 int LDPixelSampleFloatsNeeded(const Sample *sample, int nPixelSamples);
 void LDPixelSample(int xPos, int yPos, float shutterOpen,
     float shutterClose, int nPixelSamples, Sample *samples, float *buf, RNG &rng);
@@ -234,7 +234,7 @@ inline float PowerHeuristic(int nf, float fPdf, int ng, float gPdf) {
 
 
 // Sampling Inline Functions
-inline void Sample02(uint32_t n, uint32_t scramble[2], float sample[2]) {
+inline void Sample02(uint32_t n, const uint32_t scramble[2], float sample[2]) {
     sample[0] = VanDerCorput(n, scramble[0]);
     sample[1] = Sobol2(n, scramble[1]);
 }
