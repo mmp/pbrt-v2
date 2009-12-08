@@ -35,7 +35,7 @@ class DirectLightingIntegrator;
 class MetropolisRenderer : public Renderer {
 public:
     // MetropolisRenderer Public Methods
-    MetropolisRenderer(int totalSamples, int perPixelSamples,
+    MetropolisRenderer(int perPixelSamples,
         int nBootstrap, int directPixelSamples, float largeStepProbability,
         bool doDirectSeparately, int maxConsecutiveRejects, int maxDepth,
         Camera *camera, const string &normalizationFile);
@@ -50,13 +50,13 @@ private:
     // MetropolisRenderer Private Data
     Camera *camera;
     float largeStepProbability;
-    mutable uint64_t nSamples;
-    int directPixelSamples, nBootstrap;
-    int maxConsecutiveRejects, maxDepth;
-    bool doDirectSeparately;
-    mutable volatile float nSamplesFinished;
+    uint32_t largeStepsPerPixel;
+    uint64_t nSamples;
+    uint32_t nDirectPixelSamples, nBootstrap, nPixelSamples;
+    uint32_t maxConsecutiveRejects, maxDepth;
     DirectLightingIntegrator *directLighting;
     MIPMap<float> *normalizationMap;
+    AtomicInt32 nTasksFinished;
 };
 
 
