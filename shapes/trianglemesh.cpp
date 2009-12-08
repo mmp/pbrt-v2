@@ -231,13 +231,33 @@ bool Triangle::IntersectP(const Ray &ray) const {
 
     // Test shadow ray intersection against alpha texture, if present
     if (mesh->alphaTexture) {
+        // Compute triangle partial derivatives
+        Vector dpdu, dpdv;
         float uvs[3][2];
         GetUVs(uvs);
+
+        // Compute deltas for triangle partial derivatives
+        float du1 = uvs[0][0] - uvs[2][0];
+        float du2 = uvs[1][0] - uvs[2][0];
+        float dv1 = uvs[0][1] - uvs[2][1];
+        float dv2 = uvs[1][1] - uvs[2][1];
+        Vector dp1 = p1 - p3, dp2 = p2 - p3;
+        float determinant = du1 * dv2 - dv1 * du2;
+        if (determinant == 0.f) {
+            // Handle zero determinant for triangle partial derivative matrix
+            CoordinateSystem(Normalize(Cross(e2, e1)), &dpdu, &dpdv);
+        }
+        else {
+            float invdet = 1.f / determinant;
+            dpdu = ( dv2 * dp1 - dv1 * dp2) * invdet;
+            dpdv = (-du2 * dp1 + du1 * dp2) * invdet;
+        }
+
         // Interpolate $(u,v)$ triangle parametric coordinates
         float b0 = 1 - b1 - b2;
         float tu = b0*uvs[0][0] + b1*uvs[1][0] + b2*uvs[2][0];
         float tv = b0*uvs[0][1] + b1*uvs[1][1] + b2*uvs[2][1];
-        DifferentialGeometry dgLocal(ray(t), Vector(0,0,0), Vector(0,0,0),
+        DifferentialGeometry dgLocal(ray(t), dpdu, dpdv,
                                      Normal(0,0,0), Normal(0,0,0),
                                      tu, tv, this);
         if (mesh->alphaTexture->Evaluate(dgLocal) == 0.f)

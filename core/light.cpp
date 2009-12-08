@@ -137,10 +137,11 @@ Point ShapeSet::Sample(const Point &p, const LightSample &ls,
     // Find closest intersection of ray with shapes in _ShapeSet_
     Ray r(p, pt-p, 1e-3f, INFINITY);
     float rayEps, thit = 1.f;
+    bool anyHit = false;
     DifferentialGeometry dg;
     for (uint32_t i = 0; i < shapes.size(); ++i)
-        shapes[i]->Intersect(r, &thit, &rayEps, &dg);
-    *Ns = dg.nn;
+        anyHit |= shapes[i]->Intersect(r, &thit, &rayEps, &dg);
+    if (anyHit) *Ns = dg.nn;
     return r(thit);
 }
 
