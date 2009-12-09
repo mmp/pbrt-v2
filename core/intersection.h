@@ -47,10 +47,6 @@ struct Intersection {
     Transform WorldToObject, ObjectToWorld;
     uint32_t shapeId, primitiveId;
     float rayEpsilon;
-private:
-    // Intersection Private Methods
-    Intersection(const Intersection &);
-    Intersection &operator=(const Intersection &);
 };
 
 
