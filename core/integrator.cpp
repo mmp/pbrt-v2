@@ -107,7 +107,7 @@ Spectrum UniformSampleOneLight(const Scene *scene,
 Spectrum EstimateDirect(const Scene *scene, const Renderer *renderer,
         MemoryArena &arena, const Light *light, const Point &p,
         const Normal &n, const Vector &wo, float rayEpsilon, float time,
-        BSDF *bsdf, RNG &rng, const LightSample &lightSample,
+        const BSDF *bsdf, RNG &rng, const LightSample &lightSample,
         const BSDFSample &bsdfSample) {
     Spectrum Ld(0.);
     // Sample light source with multiple importance sampling
