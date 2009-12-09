@@ -38,7 +38,7 @@ public:
     MetropolisRenderer(int perPixelSamples,
         int nBootstrap, int directPixelSamples, float largeStepProbability,
         bool doDirectSeparately, int maxConsecutiveRejects, int maxDepth,
-        Camera *camera, const string &normalizationFile);
+        Camera *camera);
     ~MetropolisRenderer();
     void Render(const Scene *scene);
     Spectrum Li(const Scene *scene, const RayDifferential &ray,
@@ -55,7 +55,6 @@ private:
     uint32_t nDirectPixelSamples, nBootstrap, nPixelSamples;
     uint32_t maxConsecutiveRejects, maxDepth;
     DirectLightingIntegrator *directLighting;
-    MIPMap<float> *normalizationMap;
     AtomicInt32 nTasksFinished;
 };
 
