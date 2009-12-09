@@ -73,12 +73,16 @@ inline float SinTheta(const Vector &w) {
 
 
 inline float CosPhi(const Vector &w) {
-    return w.x / SinTheta(w);
+    float sintheta = SinTheta(w);
+    if (sintheta == 0.f) return 1.f;
+    return Clamp(w.x / sintheta, -1.f, 1.f);
 }
 
 
 inline float SinPhi(const Vector &w) {
-    return w.y / SinTheta(w);
+    float sintheta = SinTheta(w);
+    if (sintheta == 0.f) return 0.f;
+    return Clamp(w.y / sintheta, -1.f, 1.f);
 }
 
 
