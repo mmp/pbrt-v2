@@ -69,9 +69,7 @@ struct Distribution1D {
         // Find surrounding CDF segments and _offset_
         float *ptr = std::lower_bound(cdf, cdf+count+1, u);
         int offset = max(0, int(ptr-cdf-1));
-
-        // Compute PDF for sampled offset
-        if (pdf) *pdf = func[offset] / funcInt;
+        if (pdf) *pdf = func[offset] / (funcInt * count);
         return offset;
     }
 private:
