@@ -190,7 +190,7 @@ bool Triangle::Intersect(const Ray &ray, float *tHit, float *rayEpsilon,
                                Normal(0,0,0), Normal(0,0,0),
                                tu, tv, this);
     *tHit = t;
-    *rayEpsilon = 1e-4f * *tHit;
+    *rayEpsilon = 1e-3f * *tHit;
     PBRT_RAY_TRIANGLE_INTERSECTION_HIT(const_cast<Ray *>(&ray), t);
     return true;
 }
