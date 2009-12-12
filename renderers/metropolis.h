@@ -38,7 +38,7 @@ public:
     MetropolisRenderer(int perPixelSamples,
         int nBootstrap, int directPixelSamples, float largeStepProbability,
         bool doDirectSeparately, int maxConsecutiveRejects, int maxDepth,
-        Camera *camera);
+        Camera *camera, bool doBidirectional);
     ~MetropolisRenderer();
     void Render(const Scene *scene);
     Spectrum Li(const Scene *scene, const RayDifferential &ray,
@@ -49,13 +49,14 @@ public:
 private:
     // MetropolisRenderer Private Data
     Camera *camera;
+    bool bidirectional;
     float largeStepProbability;
     uint32_t largeStepsPerPixel;
-    uint64_t nSamples;
     uint32_t nDirectPixelSamples, nBootstrap, nPixelSamples;
     uint32_t maxConsecutiveRejects, maxDepth;
     DirectLightingIntegrator *directLighting;
     AtomicInt32 nTasksFinished;
+    friend class MLTTask;
 };
 
 
