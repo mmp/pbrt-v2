@@ -65,6 +65,7 @@ using std::sort;
 #define uint64_t unsigned __int64
 #pragma warning (disable : 4305) // double constant assigned to float
 #pragma warning (disable : 4244) // int -> float conversion
+#pragma warning (disable : 4267) // size_t -> unsigned int conversion
 #endif // WIN32
 #ifdef WIN32
 #define isnan _isnan

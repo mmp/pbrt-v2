@@ -61,6 +61,9 @@ inline int32_t AtomicAdd(AtomicInt32 *v, int32_t delta) {
     PBRT_ATOMIC_MEMORY_OP();
 #ifdef WIN32
     // Do atomic add with MSVC inline assembly
+#if (PBRT_POINTER_SIZE == 8)
+    return InterlockedAdd(v, delta);
+#else
     int32_t result;
     _ReadWriteBarrier();
     __asm {
@@ -71,6 +74,7 @@ inline int32_t AtomicAdd(AtomicInt32 *v, int32_t delta) {
     }
     _ReadWriteBarrier();
     return result + delta;
+#endif
 #elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
     return OSAtomicAdd32Barrier(delta, v);
 #else
