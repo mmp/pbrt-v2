@@ -535,15 +535,14 @@ void PhotonShootingTask::Run() {
                                        localIndirectPhotons.end());
             if (indirectPhotons.size() >= integrator->nIndirectPhotonsWanted)
                 indirectDone = true;
+            nDirectPaths += blockSize;
+            for (uint32_t i = 0; i < localDirectPhotons.size(); ++i)
+                directPhotons.push_back(localDirectPhotons[i]);
+            localDirectPhotons.erase(localDirectPhotons.begin(),
+                                     localDirectPhotons.end());
         }
 
         // Merge direct, caustic, and radiance photons into shared array
-        nDirectPaths += blockSize;
-        for (uint32_t i = 0; i < localDirectPhotons.size(); ++i)
-            directPhotons.push_back(localDirectPhotons[i]);
-        localDirectPhotons.erase(localDirectPhotons.begin(),
-                                 localDirectPhotons.end());
-        
         if (!causticDone) {
             integrator->nCausticPaths += blockSize;
             for (uint32_t i = 0; i < localCausticPhotons.size(); ++i)
