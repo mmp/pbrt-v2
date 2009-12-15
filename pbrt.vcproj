@@ -12,6 +12,9 @@
 		<Platform
 			Name="Win32"
 		/>
+		<Platform
+			Name="x64"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
@@ -118,7 +121,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories=".;core;win32;win32\IlmImf;win32\half;win32\iex;win32\IlmThread;win32\Imath;win32\zlib"
-				PreprocessorDefinitions="PBRT_POINTER_SIZE=4;PBRT_STATS_NONE;WIN32;_CRT_SECURE_NO_WARNINGS;PBRT_HAS_OPENEXR"
+				PreprocessorDefinitions="NDEBUG;PBRT_POINTER_SIZE=4;PBRT_STATS_NONE;WIN32;_CRT_SECURE_NO_WARNINGS;PBRT_HAS_OPENEXR"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -144,6 +147,159 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories=".;core;win32;win32\IlmImf;win32\half;win32\iex;win32\IlmThread;win32\Imath;win32\zlib"
+				PreprocessorDefinitions="PBRT_POINTER_SIZE=8;PBRT_HAS_64_BIT_ATOMICS;PBRT_STATS_NONE;WIN32;_CRT_SECURE_NO_WARNINGS;PBRT_HAS_OPENEXR"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="IlmImf.lib half.lib Iex.lib IlmThread.lib Imath.lib zlib.lib"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="win64\lib"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories=".;core;win32;win32\IlmImf;win32\half;win32\iex;win32\IlmThread;win32\Imath;win32\zlib"
+				PreprocessorDefinitions="NDEBUG;PBRT_POINTER_SIZE=8;PBRT_HAS_64_BIT_ATOMICS;PBRT_STATS_NONE;WIN32;_CRT_SECURE_NO_WARNINGS;PBRT_HAS_OPENEXR"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="IlmImf.lib half.lib Iex.lib IlmThread.lib Imath.lib zlib.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="win64\lib"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -529,11 +685,11 @@
 				>
 			</File>
 			<File
-				RelativePath="renderers\samplerrenderer.cpp"
+				RelativePath="core\sampler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="core\sampler.cpp"
+				RelativePath="renderers\samplerrenderer.cpp"
 				>
 			</File>
 			<File
@@ -1015,11 +1171,11 @@
 				>
 			</File>
 			<File
-				RelativePath="renderers\samplerrenderer.h"
+				RelativePath="core\sampler.h"
 				>
 			</File>
 			<File
-				RelativePath="core\sampler.h"
+				RelativePath="renderers\samplerrenderer.h"
 				>
 			</File>
 			<File
@@ -1160,6 +1316,26 @@
 					Outputs="core\pbrtlex.cpp"
 				/>
 			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|x64"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Flexing core\pbrtlex.ll"
+					CommandLine="c:\cygwin\bin\flex -o core\pbrtlex.cpp core\pbrtlex.ll&#x0D;&#x0A;"
+					Outputs="core\pbrtlex.cpp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|x64"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Flexing core\pbrtlex.ll"
+					CommandLine="c:\cygwin\bin\flex -o core\pbrtlex.cpp core\pbrtlex.ll&#x0D;&#x0A;"
+					Outputs="core\pbrtlex.cpp"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="core\pbrtparse.yy"
@@ -1176,6 +1352,26 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Running bison"
+					CommandLine="c:\cygwin\bin\bison -d -v -t -o core\pbrtparse.cpp core\pbrtparse.yy&#x0D;&#x0A;"
+					Outputs="core\pbrtparse.cpp;core\pbrtparse.hh"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|x64"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Running bison"
+					CommandLine="c:\cygwin\bin\bison -d -v -t -o core\pbrtparse.cpp core\pbrtparse.yy&#x0D;&#x0A;"
+					Outputs="core\pbrtparse.cpp;core\pbrtparse.hh"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|x64"
 				>
 				<Tool
 					Name="VCCustomBuildTool"
