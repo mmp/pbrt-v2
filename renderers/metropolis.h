@@ -32,6 +32,8 @@ struct MLTSample;
 class DirectLightingIntegrator;
 
 // Metropolis Declarations
+struct PathVertex;
+
 class MetropolisRenderer : public Renderer {
 public:
     // MetropolisRenderer Public Methods
@@ -47,6 +49,13 @@ public:
     Spectrum Transmittance(const Scene *scene, const RayDifferential &ray,
         const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
+    // MetropolisRenderer Private Methods
+    void SampleIL(const MLTSample &sample, const Scene *scene,
+        MemoryArena &arena, const Camera *camera,
+        const Distribution1D *lightDistribution, vector<PathVertex> &eyePath,
+        vector<PathVertex> &lightPath, RNG &rng, bool ignoreDirect,
+        Spectrum *L, float *I) const;
+
     // MetropolisRenderer Private Data
     Camera *camera;
     bool bidirectional;

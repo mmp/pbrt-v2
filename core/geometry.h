@@ -337,6 +337,12 @@ public:
            (hasDifferentials && (rxOrigin.HasNaNs() || ryOrigin.HasNaNs() ||
                                  rxDirection.HasNaNs() || ryDirection.HasNaNs()));
     }
+    void ScaleDifferentials(float s) {
+        rxOrigin = o + (rxOrigin - o) * s;
+        ryOrigin = o + (ryOrigin - o) * s;
+        rxDirection = d + (rxDirection - d) * s;
+        ryDirection = d + (ryDirection - d) * s;
+    }
 
     // RayDifferential Public Data
     bool hasDifferentials;

@@ -41,7 +41,6 @@
 #include "integrators/directlighting.h"
 
 // Metropolis Local Declarations
-struct PathVertex;
 inline float I(const Spectrum &L, const MLTSample &sample,
                const vector<PathVertex> *eyePath,
                const vector<PathVertex> *lightPath);
@@ -214,11 +213,6 @@ struct PathVertex {
 };
 
 
-static void SampleIL(const MLTSample &sample, const Scene *scene,
-    MemoryArena &arena, const Camera *camera, const Renderer *renderer,
-    const Distribution1D *lightDistribution, vector<PathVertex> &eyePath,
-    vector<PathVertex> &lightPath, RNG &rng, bool ignoreDirect,
-    bool bidirectional, Spectrum *L, float *I);
 static uint32_t GeneratePath(const RayDifferential &r, const Spectrum &alpha,
     const Scene *scene, MemoryArena &arena, const vector<PathSample> &sample,
     vector<PathVertex> &path, RayDifferential *escapedRay,
@@ -340,8 +334,8 @@ void MetropolisRenderer::Render(const Scene *scene) {
             LargeStep(rng, &sample, maxDepth, x, y, t0, t1, bidirectional);
             Spectrum L;
             float I;
-            SampleIL(sample, scene, arena, camera, this, lightDistribution, eyePath,
-                     lightPath, rng, directLighting != NULL, bidirectional,
+            SampleIL(sample, scene, arena, camera, lightDistribution, eyePath,
+                     lightPath, rng, directLighting != NULL,
                      &L, &I);
 
             // Compute contribution for random sample for MLT bootstrapping
@@ -455,9 +449,9 @@ void MLTTask::Run() {
     uint32_t progressCounter = progressUpdateFrequency;
 
     // Compute _L[current]_ for initial sample
-    SampleIL(initialSample, scene, arena[current], camera, renderer,
+    renderer->SampleIL(initialSample, scene, arena[current], camera,
              lightDistribution, eyePath, lightPath,
-             rng, ignoreDirect, renderer->bidirectional, &L[current], &I[current]);
+             rng, ignoreDirect, &L[current], &I[current]);
 
     // Compute randomly permuted table of pixel indices for large steps
     vector<int> largeStepPixelNum;
@@ -480,9 +474,9 @@ void MLTTask::Run() {
                       x0, x1, y0, y1, t0, t1, renderer->bidirectional);
 
         // Compute contribution of proposed sample
-        SampleIL(samples[proposed], scene, arena[proposed], camera, renderer,
+        renderer->SampleIL(samples[proposed], scene, arena[proposed], camera,
                  lightDistribution, eyePath, lightPath,
-                 rng, ignoreDirect, renderer->bidirectional, &L[proposed], &I[proposed]);
+                 rng, ignoreDirect, &L[proposed], &I[proposed]);
 
         // Compute acceptance probability for proposed sample
         float a = min(1.f, I[proposed] / I[current]);
@@ -532,13 +526,14 @@ void MLTTask::Run() {
 }
 
 
-static void SampleIL(const MLTSample &sample, const Scene *scene,
-        MemoryArena &arena, const Camera *camera, const Renderer *renderer,
+void MetropolisRenderer::SampleIL(const MLTSample &sample, const Scene *scene,
+        MemoryArena &arena, const Camera *camera,
         const Distribution1D *lightDistribution, vector<PathVertex> &eyePath,
         vector<PathVertex> &lightPath, RNG &rng, bool ignoreDirect,
-        bool bidirectional, Spectrum *L, float *I) {
+        Spectrum *L, float *I) const {
     RayDifferential eyeRay;
     float eyeWt = camera->GenerateRayDifferential(sample.cameraSample, &eyeRay);
+    eyeRay.ScaleDifferentials(1.f / sqrtf(nPixelSamples));
     RayDifferential escapedRay;
     Spectrum escapedAlpha;
     uint32_t eyeLength = GeneratePath(eyeRay, eyeWt, scene, arena,
@@ -567,7 +562,7 @@ static void SampleIL(const MLTSample &sample, const Scene *scene,
             lightWt *= AbsDot(Normalize(Nl), lightRay.d) / (lightPdf * lightRayPdf);
             lightLength = GeneratePath(RayDifferential(lightRay), lightWt, scene, arena,
                sample.lightPathSamples, lightPath, NULL, NULL, ignoreDirect);
-            *L = ::L(scene, renderer, eyePath, eyeLength, lightPath, lightLength,
+            *L = ::L(scene, this, eyePath, eyeLength, lightPath, lightLength,
                      arena, rng, ignoreDirect, sample.lightingSamples,
                      sample.cameraSample.time,
                      lightDistribution, escapedRay, escapedAlpha);
@@ -575,7 +570,7 @@ static void SampleIL(const MLTSample &sample, const Scene *scene,
         }
     }
     else {
-        *L = ::L(scene, renderer, eyePath, eyeLength, arena, rng, ignoreDirect,
+        *L = ::L(scene, this, eyePath, eyeLength, arena, rng, ignoreDirect,
                 sample.lightingSamples, sample.cameraSample.time,
                 lightDistribution, escapedRay, escapedAlpha);
         *I = ::I(*L, sample, &eyePath, NULL);
