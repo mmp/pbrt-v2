@@ -35,7 +35,7 @@
 AdaptiveSampler::AdaptiveSampler(int xstart, int xend,
                      int ystart, int yend, int mins, int maxs, const string &m,
                      float sopen, float sclose)
-    : Sampler(xstart, xend, ystart, yend, RoundUpPow2(maxSamples),
+    : Sampler(xstart, xend, ystart, yend, RoundUpPow2(max(mins, maxs)),
               sopen, sclose) {
     xPos = xPixelStart;
     yPos = yPixelStart;
