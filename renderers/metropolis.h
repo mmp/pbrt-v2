@@ -30,6 +30,7 @@
 #include "mipmap.h"
 struct MLTSample;
 class DirectLightingIntegrator;
+struct LightingSample;
 
 // Metropolis Declarations
 struct PathVertex;
@@ -37,32 +38,42 @@ struct PathVertex;
 class MetropolisRenderer : public Renderer {
 public:
     // MetropolisRenderer Public Methods
-    MetropolisRenderer(int perPixelSamples,
-        int nBootstrap, int directPixelSamples, float largeStepProbability,
+    MetropolisRenderer(int perPixelSamples, int nBootstrap,
+        int directPixelSamples, float largeStepProbability,
         bool doDirectSeparately, int maxConsecutiveRejects, int maxDepth,
         Camera *camera, bool doBidirectional);
     ~MetropolisRenderer();
     void Render(const Scene *scene);
     Spectrum Li(const Scene *scene, const RayDifferential &ray,
-        const Sample *sample, RNG &rng, MemoryArena &arena, Intersection *isect = NULL,
-        Spectrum *T = NULL) const;
+        const Sample *sample, RNG &rng, MemoryArena &arena,
+        Intersection *isect = NULL, Spectrum *T = NULL) const;
     Spectrum Transmittance(const Scene *scene, const RayDifferential &ray,
         const Sample *sample, RNG &rng, MemoryArena &arena) const;
 private:
     // MetropolisRenderer Private Methods
-    void SampleIL(const MLTSample &sample, const Scene *scene,
+    Spectrum PathL(const MLTSample &sample, const Scene *scene,
         MemoryArena &arena, const Camera *camera,
-        const Distribution1D *lightDistribution, vector<PathVertex> &eyePath,
-        vector<PathVertex> &lightPath, RNG &rng, bool ignoreDirect,
-        Spectrum *L, float *I) const;
+        const Distribution1D *lightDistribution, PathVertex *cameraPath,
+        PathVertex *lightPath, RNG &rng) const;
+    Spectrum Lpath(const Scene *scene,
+        const PathVertex *path, int pathLength,
+        MemoryArena &arena, RNG &rng,
+        const vector<LightingSample> &samples,
+        float time, const Distribution1D *lightDistribution,
+        const RayDifferential &escapedRay, const Spectrum &escapedAlpha) const;
+    Spectrum Lbidir(const Scene *scene,
+        const PathVertex *cameraPath, int cameraPathLength,
+        const PathVertex *lightPath, int lightPathLength,
+        MemoryArena &arena, RNG &rng,
+        const vector<LightingSample> &samples, float time,
+        const Distribution1D *lightDistribution,
+        const RayDifferential &escapedRay, const Spectrum &escapedAlpha) const;
 
     // MetropolisRenderer Private Data
     Camera *camera;
     bool bidirectional;
-    float largeStepProbability;
-    uint32_t largeStepsPerPixel;
-    uint32_t nDirectPixelSamples, nBootstrap, nPixelSamples;
-    uint32_t maxConsecutiveRejects, maxDepth;
+    uint32_t nDirectPixelSamples, nPixelSamples, maxDepth;
+    uint32_t largeStepsPerPixel, nBootstrap, maxConsecutiveRejects;
     DirectLightingIntegrator *directLighting;
     AtomicInt32 nTasksFinished;
     friend class MLTTask;
