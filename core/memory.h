@@ -124,6 +124,9 @@ public:
     void FreeAll() {
         curBlockPos = 0;
         while (usedBlocks.size()) {
+    #ifndef NDEBUG
+            memset(usedBlocks.back(), 0xfa, blockSize);
+    #endif
             availableBlocks.push_back(usedBlocks.back());
             usedBlocks.pop_back();
         }
