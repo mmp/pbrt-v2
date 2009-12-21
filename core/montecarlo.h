@@ -246,14 +246,14 @@ inline float VanDerCorput(uint32_t n, uint32_t scramble) {
     n = ((n & 0x33333333) << 2) | ((n & 0xcccccccc) >> 2);
     n = ((n & 0x55555555) << 1) | ((n & 0xaaaaaaaa) >> 1);
     n ^= scramble;
-    return (float)n / (float)0x100000000LL;
+    return ((n>>8) & 0xffffff) / float(1 << 24);
 }
 
 
 inline float Sobol2(uint32_t n, uint32_t scramble) {
     for (uint32_t v = 1 << 31; n != 0; n >>= 1, v ^= v >> 1)
         if (n & 0x1) scramble ^= v;
-    return (float)scramble / (float)0x100000000LL;
+    return ((scramble>>8) & 0xffffff) / float(1 << 24);
 }
 
 
@@ -261,7 +261,7 @@ inline float
 LarcherPillichshammer2(uint32_t n, uint32_t scramble) {
     for (uint32_t v = 1 << 31; n != 0; n >>= 1, v |= v >> 1)
         if (n & 0x1) scramble ^= v;
-    return (float)scramble / (float)0x100000000LL;
+    return ((scramble>>8) & 0xffffff) / float(1 << 24);
 }
 
 
