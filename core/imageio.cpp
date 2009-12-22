@@ -486,6 +486,7 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
               "(type=%i pxsize=%i abits=%i)", header.imageType,
               imageSpec.pixelDepth,
               imageSpec.attributeBits);
+        fclose(file);
         return NULL;
     }
 
@@ -508,6 +509,7 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
     if (fread(srcBuf, 1, size, file) != (uint32_t)size) {
         Error("Premature end-of-file when reading TGA image \"%s\"", name.c_str());
         free(srcBuf);
+        fclose(file);
         return NULL;
     }
 
@@ -531,6 +533,7 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
             }
     }
     free(srcBuf);
+    fclose(file);
     return ret;
 }
 
