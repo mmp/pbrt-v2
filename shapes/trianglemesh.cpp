@@ -316,8 +316,13 @@ void Triangle::GetShadingGeometry(const Transform &obj2world,
                                           b[1] * mesh->s[v[1]] +
                                           b[2] * mesh->s[v[2]]));
     else   ss = Normalize(dg.dpdu);
-    ts = Normalize(Cross(ss, ns));
-    ss = Cross(ts, ns);
+    ts = Cross(ss, ns);
+    if (ts.LengthSquared() > 0.f) {
+        ts = Normalize(ts);
+        ss = Cross(ts, ns);
+    }
+    else
+        CoordinateSystem((Vector)ns, &ss, &ts);
     Normal dndu, dndv;
 
     // Compute $\dndu$ and $\dndv$ for triangle shading geometry
