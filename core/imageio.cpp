@@ -231,15 +231,8 @@ typedef struct {
     uchar           entrySize; // Number of bits in a color map entry (16/24/32).
 } tga_colormapspec_t;
 
-// Image specification flags:
-#define ISF_SCREEN_ORIGIN_UPPER 0x1 // Upper left-hand corner screen origin.
-// Data interleaving:
-#define ISF_INTERLEAVE_TWOWAY   0x2 // Two-way (even/odd) interleaving.
-#define ISF_INTERLEAVE_FOURWAY  0x4 // Four-way interleaving.
-
 // Image specification.
 typedef struct {
-    uchar           flags;
     int16_t         xOrigin; // X coordinate of lower left corner.
     int16_t         yOrigin; // Y coordinate of lower left corner.
     int16_t         width; // Width of the image in pixels.
@@ -382,24 +375,12 @@ static void writeImageSpec(int16_t xOrigin, int16_t yOrigin,
 
 static void readImageSpec(tga_imagespec_t* dst, FILE* file)
 {
-    uchar               bits;
-
     dst->xOrigin = readShort(file);
     dst->yOrigin = readShort(file);
     dst->width = readShort(file);
     dst->height = readShort(file);
     dst->pixelDepth = readByte(file);
-    bits = readByte(file);
-
-    /**
-     * attributeBits:4; // Attribute bits associated with each pixel.
-     * reserved:1; // A reserved bit; must be 0.
-     * screenOrigin:1; // Location of screen origin; must be 0.
-     * dataInterleave:2; // TGA_INTERLEAVE_*
-     */
-    dst->flags = 0 | ((bits & 6)? ISF_SCREEN_ORIGIN_UPPER : 0) |
-        ((bits & 7)? ISF_INTERLEAVE_TWOWAY : (bits & 8)? ISF_INTERLEAVE_FOURWAY : 0);
-    dst->attributeBits = (bits & 0xf);
+    dst->attributeBits = readByte(file);
 }
 
 
@@ -475,8 +456,9 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
     readColorMapSpec(&colorMapSpec, file);
     readImageSpec(&imageSpec, file);
 
-    if ((imageSpec.attributeBits != 8 && imageSpec.attributeBits != 0) ||
-        (imageSpec.flags & ISF_SCREEN_ORIGIN_UPPER) ||
+    if (((imageSpec.attributeBits & 0xf) != 8 &&  // num attribute bits
+         (imageSpec.attributeBits & 0xf) != 0) ||
+        ((imageSpec.attributeBits & 0xc0) != 0) || // no interleaving
         (header.imageType == 2 &&
           (imageSpec.pixelDepth != 32 && imageSpec.pixelDepth != 24)) ||
         (header.imageType == 3 &&
@@ -518,8 +500,8 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
     src = srcBuf;
     RGBSpectrum *ret = new RGBSpectrum[*width * *height];
     RGBSpectrum *dst = ret;
-    for(y = *height - 1; y >= 0; y--)
-        for(x = 0; x < *width; x++) {
+    for (y = *height - 1; y >= 0; y--)
+        for (x = 0; x < *width; x++) {
             if (pixbytes == 1)
                 *dst++ = RGBSpectrum((*src++) / 255.f);
             else {
@@ -531,6 +513,19 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
                 if (pixbytes == 4)
                     ++src;
             }
+    }
+
+    bool flipH = ((imageSpec.attributeBits & 0x10) == 0x10);
+    bool flipV = ((imageSpec.attributeBits & 0x20) == 0x20);
+    if (flipH) {
+        for (y = 0; y < *height; ++y)
+            for (x = 0; x < *width / 2; ++x)
+                swap(ret[y * *width + x], ret[y * *width + (*width - 1 - x)]);
+    }
+    if (flipV) {
+        for (y = 0; y < *height/2; ++y)
+            for (x = 0; x < *width; ++x)
+                swap(ret[y * *width + x], ret[(*height - 1 - y) * *width + x]);
     }
     free(srcBuf);
     fclose(file);
