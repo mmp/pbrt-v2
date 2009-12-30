@@ -290,13 +290,13 @@ void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
 
 
 ImageFilm *CreateImageFilm(const ParamSet &params, Filter *filter) {
-    string filename = params.FindOneString("filename",
-#ifdef PBRT_NO_OPENEXR
-        "pbrt.tga"
+    string filename = params.FindOneString("filename", PbrtOptions.imageFile);
+    if (filename == "")
+#ifdef PBRT_HAS_OPENEXR
+        filename = "pbrt.exr";
 #else
-        "pbrt.exr"
+        filename = "pbrt.tga";
 #endif
-                  );
 
     int xres = params.FindOneInt("xresolution", 640);
     int yres = params.FindOneInt("yresolution", 480);
@@ -313,8 +313,7 @@ ImageFilm *CreateImageFilm(const ParamSet &params, Filter *filter) {
         crop[3] = Clamp(max(cr[2], cr[3]), 0., 1.);
     }
 
-    return new ImageFilm(xres, yres, filter, crop,
-        filename, openwin);
+    return new ImageFilm(xres, yres, filter, crop, filename, openwin);
 }
 
 

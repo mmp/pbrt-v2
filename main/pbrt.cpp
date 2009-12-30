@@ -39,13 +39,14 @@ int main(int argc, char *argv[]) {
     // Process command-line arguments
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], "--ncores")) options.nCores = atoi(argv[++i]);
+        else if (!strcmp(argv[i], "--outfile")) options.imageFile = argv[++i];
         else if (!strcmp(argv[i], "--quick")) options.quickRender = true;
         else if (!strcmp(argv[i], "--quiet")) options.quiet = true;
 #ifdef PBRT_HAS_LIBSDL
         else if (!strcmp(argv[i], "--window")) options.openWindow = true;
 #endif
         else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
-            printf("usage: pbrt [--ncores n] [--quick] [--quiet] "
+            printf("usage: pbrt [--ncores n] [--outfile filename] [--quick] [--quiet] "
 #ifdef PBRT_HAS_LIBSDL
                    "[--window] "
 #endif
@@ -57,9 +58,9 @@ int main(int argc, char *argv[]) {
 
     // Print welcome banner
     if (!options.quiet) {
-        printf("pbrt version %s of %s at %s [Using %d core(s)]\n",
+        printf("pbrt version %s of %s at %s [Detected %d core(s)]\n",
                PBRT_VERSION, __DATE__, __TIME__, NumSystemCores());
-        printf("Copyright (c)1998-2009 Matt Pharr and Greg Humphreys.\n");
+        printf("Copyright (c)1998-2010 Matt Pharr and Greg Humphreys.\n");
         printf("The source code to pbrt (but *not* the book contents) is covered by the GNU GPL.\n");
         printf("See the file COPYING.txt for the conditions of the license.\n");
         fflush(stdout);

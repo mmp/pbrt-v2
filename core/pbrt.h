@@ -88,11 +88,12 @@ class Shape;
 class ParamSet;
 template <typename T> struct ParamSetItem;
 struct Options {
-    Options() { nCores = 0; quickRender = quiet = openWindow = false; }
+    Options() { nCores = 0; quickRender = quiet = openWindow = false; imageFile = ""; }
     int nCores;
     bool quickRender;
     bool quiet;
     bool openWindow;
+    string imageFile;
 };
 
 
