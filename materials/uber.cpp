@@ -51,9 +51,10 @@ BSDF *UberMaterial::GetBSDF(const DifferentialGeometry &dgGeom, const Differenti
         bsdf->Add(diff);
     }
 
+    float e = eta->Evaluate(dgs);
     Spectrum ks = op * Ks->Evaluate(dgs).Clamp();
     if (!ks.IsBlack()) {
-        Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
+        Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(e, 1.f);
         float rough = roughness->Evaluate(dgs);
         BxDF *spec = BSDF_ALLOC(arena, Microfacet)(ks, fresnel, BSDF_ALLOC(arena, Blinn)(1.f / rough));
         bsdf->Add(spec);
@@ -61,7 +62,7 @@ BSDF *UberMaterial::GetBSDF(const DifferentialGeometry &dgGeom, const Differenti
 
     Spectrum kr = op * Kr->Evaluate(dgs).Clamp();
     if (!kr.IsBlack()) {
-        Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
+        Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(e, 1.f);
         bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(kr, fresnel));
     }
 
@@ -75,9 +76,10 @@ UberMaterial *CreateUberMaterial(const Transform &xform,
     Reference<Texture<Spectrum> > Ks = mp.GetSpectrumTexture("Ks", Spectrum(1.f));
     Reference<Texture<Spectrum> > Kr = mp.GetSpectrumTexture("Kr", Spectrum(0.f));
     Reference<Texture<float> > roughness = mp.GetFloatTexture("roughness", .1f);
+    Reference<Texture<float> > eta = mp.GetFloatTexture("index", 1.5f);
     Reference<Texture<Spectrum> > opacity = mp.GetSpectrumTexture("opacity", 1.f);
     Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
-    return new UberMaterial(Kd, Ks, Kr, roughness, opacity, bumpMap);
+    return new UberMaterial(Kd, Ks, Kr, roughness, opacity, eta, bumpMap);
 }
 
 
