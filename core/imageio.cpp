@@ -61,10 +61,8 @@ RGBSpectrum *ReadImage(const string &name, int *width, int *height) {
 }
 
 
-void WriteImage(const string &name, float *pixels,
-        float *alpha, int xRes, int yRes,
-        int totalXRes, int totalYRes,
-        int xOffset, int yOffset) {
+void WriteImage(const string &name, float *pixels, float *alpha, int xRes,
+                int yRes, int totalXRes, int totalYRes, int xOffset, int yOffset) {
     if (name.size() >= 5) {
         uint32_t suffixOffset = name.size() - 4;
 #ifdef PBRT_HAS_OPENEXR
@@ -127,6 +125,7 @@ static RGBSpectrum *ReadImageEXR(const string &name, int *width, int *height) {
         ret[i] = RGBSpectrum::FromRGB(frgb);
     }
     delete[] rgb;
+    Info("Read EXR image %s (%d x %d)", name.c_str(), *width, *height);
     return ret;
     } catch (const std::exception &e) {
         Error("Unable to read image file \"%s\": %s", name.c_str(),
@@ -529,6 +528,7 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
     }
     free(srcBuf);
     fclose(file);
+    Info("Read TGA image %s (%d x %d)", name.c_str(), *width, *height);
     return ret;
 }
 
