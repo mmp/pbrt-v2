@@ -94,7 +94,7 @@ static void LargeStep(RNG &rng, MLTSample *sample, int maxDepth,
         ls.lightSample.uPos[1] = rng.RandomFloat();
     }
     if (bidirectional) {
-        // Mutate bidirectional light ray and light path samples
+        // Apply large step to bidirectional light samples
         sample->lightNumSample = rng.RandomFloat();
         for (int i = 0; i < 5; ++i)
             sample->lightRaySamples[i] = rng.RandomFloat();
@@ -110,14 +110,13 @@ static void LargeStep(RNG &rng, MLTSample *sample, int maxDepth,
 }
 
 
-static inline void mutate(RNG &rng, float *v, float a = 0.f,
-                          float b = 1.f);
-static inline void mutate(RNG &rng, float *v, float min, float max) {
+static inline void mutate(RNG &rng, float *v, float min = 0.f,
+                          float max = 1.f) {
     if (min == max) { *v = min; return; }
     Assert(min < max);
-    float s1 = 1.f / 1024.f, s2 = 1.f / 64.f;
-    static const float negLogRatio = -logf(s2/s1);
-    float delta = (max - min) * s2 * expf(negLogRatio * rng.RandomFloat());
+    float a = 1.f / 1024.f, b = 1.f / 64.f;
+    static const float logRatio = -logf(b/a);
+    float delta = (max - min) * b * expf(logRatio * rng.RandomFloat());
     if (rng.RandomFloat() < 0.5f) {
         *v += delta;
         if (*v > max) *v = min + (*v - max);
@@ -179,6 +178,7 @@ struct PathVertex {
     Vector wPrev, wNext;
     BSDF *bsdf;
     bool specularBounce;
+    int nSpecularComponents;
     Spectrum alpha;
 };
 
@@ -192,9 +192,9 @@ class MLTTask : public Task {
 public:
     MLTTask(ProgressReporter &prog, uint32_t pfreq, uint32_t taskNum,
         float dx, float dy, int xx0, int xx1, int yy0, int yy1, float tt0, float tt1,
-        float bb, const MLTSample &is, bool id,
-        const Scene *sc, const Camera *c, MetropolisRenderer *renderer,
-        Mutex *filmMutex, Distribution1D *lightDistribution);
+        float bb, const MLTSample &is, const Scene *sc, const Camera *c,
+        MetropolisRenderer *renderer, Mutex *filmMutex,
+        Distribution1D *lightDistribution);
     void Run();
 
 private:
@@ -205,7 +205,6 @@ private:
     int x0, x1, y0, y1;
     float t0, t1;
     float b;
-    bool directIsSeparate;
     const MLTSample &initialSample;
     const Scene *scene;
     const Camera *camera;
@@ -227,7 +226,8 @@ static uint32_t GeneratePath(const RayDifferential &r,
     uint32_t length = 0;
     for (; length < samples.size(); ++length) {
         // Try to generate next vertex of ray path
-        if (!scene->Intersect(ray, &path[length].isect)) {
+        PathVertex &v = path[length];
+        if (!scene->Intersect(ray, &v.isect)) {
             // Handle ray that leaves the scene during path generation
             if (escapedAlpha) *escapedAlpha = alpha;
             if (escapedRay)   *escapedRay = ray;
@@ -235,20 +235,20 @@ static uint32_t GeneratePath(const RayDifferential &r,
         }
 
         // Record information for current path vertex
-        PathVertex &v = path[length];
         v.alpha = alpha;
         BSDF *bsdf = v.isect.GetBSDF(ray, arena);
         v.bsdf = bsdf;
         v.wPrev = -ray.d;
 
         // Sample direction for outgoing Metropolis path direction
-        Vector wo = -ray.d;
         float pdf;
         BxDFType flags;
-        Spectrum f = bsdf->Sample_f(wo, &v.wNext, samples[length].bsdfSample,
+        Spectrum f = bsdf->Sample_f(-ray.d, &v.wNext, samples[length].bsdfSample,
                                     &pdf, BSDF_ALL, &flags);
-        if (f.IsBlack() || pdf == 0.f) break;
         v.specularBounce = (flags & BSDF_SPECULAR) != 0;
+        v.nSpecularComponents = bsdf->NumComponents(BxDFType(BSDF_SPECULAR |
+                                         BSDF_REFLECTION | BSDF_TRANSMISSION));
+        if (f.IsBlack() || pdf == 0.f) return length+1;
 
         // Terminate path with RR or prepare for finding next vertex
         const Point &p = bsdf->dgShading.p;
@@ -280,9 +280,9 @@ Spectrum MetropolisRenderer::PathL(const MLTSample &sample,
     uint32_t cameraLength = GeneratePath(cameraRay, cameraWt, scene, arena,
         sample.cameraPathSamples, cameraPath, &escapedRay, &escapedAlpha);
     if (!bidirectional) {
-        // Compute radiance along paths using path tracing
-        return Lpath(scene, cameraPath, cameraLength, arena, rng,
-                     sample.lightingSamples, sample.cameraSample.time,
+        // Compute radiance along path using path tracing
+        return Lpath(scene, cameraPath, cameraLength, arena,
+                     sample.lightingSamples, rng, sample.cameraSample.time,
                      lightDistribution, escapedRay, escapedAlpha);
     }
     else {
@@ -301,9 +301,9 @@ Spectrum MetropolisRenderer::PathL(const MLTSample &sample,
             sample.lightRaySamples[4], sample.cameraSample.time,  &lightRay,
             &Nl, &lightRayPdf);
         if (lightWt.IsBlack() || lightRayPdf == 0.f) {
-            // Compute radiance along paths using path tracing
-            return Lpath(scene, cameraPath, cameraLength, arena, rng,
-                         sample.lightingSamples, sample.cameraSample.time,
+            // Compute radiance along path using path tracing
+            return Lpath(scene, cameraPath, cameraLength, arena,
+                         sample.lightingSamples, rng, sample.cameraSample.time,
                          lightDistribution, escapedRay, escapedAlpha);
         }
         else {
@@ -312,8 +312,8 @@ Spectrum MetropolisRenderer::PathL(const MLTSample &sample,
             uint32_t lightLength = GeneratePath(RayDifferential(lightRay), lightWt,
                 scene, arena, sample.lightPathSamples, lightPath, NULL, NULL);
             return Lbidir(scene, cameraPath, cameraLength, lightPath, lightLength,
-                          arena, rng, sample.lightingSamples, sample.cameraSample.time,
-                          lightDistribution, escapedRay, escapedAlpha);
+                arena, sample.lightingSamples, rng, sample.cameraSample.time,
+                lightDistribution, escapedRay, escapedAlpha);
         }
     }
 }
@@ -321,23 +321,24 @@ Spectrum MetropolisRenderer::PathL(const MLTSample &sample,
 
 Spectrum MetropolisRenderer::Lpath(const Scene *scene,
         const PathVertex *cameraPath, int cameraPathLength,
-        MemoryArena &arena, RNG &rng, const vector<LightingSample> &samples,
-        float time, const Distribution1D *lightDistribution,
+        MemoryArena &arena, const vector<LightingSample> &samples,
+        RNG &rng, float time, const Distribution1D *lightDistribution,
         const RayDifferential &eRay, const Spectrum &eAlpha) const {
     Spectrum L = 0.;
     bool previousSpecular = true, allSpecular = true;
     for (int i = 0; i < cameraPathLength; ++i) {
+        // Initialize basic variables for camera path vertex
         const PathVertex &vc = cameraPath[i];
         const Point &pc = vc.bsdf->dgShading.p;
         const Normal &nc = vc.bsdf->dgShading.nn;
+
         // Add emitted light from vertex if appropriate
-        bool directIsSeparate = (directLighting != NULL);
-        if (previousSpecular && (!directIsSeparate || !allSpecular))
+        if (previousSpecular && (directLighting == NULL || !allSpecular))
             L += vc.alpha * vc.isect.Le(vc.wPrev);
 
         // Compute direct illumination for Metropolis path vertex
         Spectrum Ld(0.f);
-        if (!directIsSeparate || !allSpecular) {
+        if (directLighting == NULL || !allSpecular) {
             // Choose light and call _EstimateDirect()_ for Metropolis vertex
             const LightingSample &ls = samples[i];
             float lightPdf;
@@ -347,7 +348,8 @@ Spectrum MetropolisRenderer::Lpath(const Scene *scene,
             Ld = vc.alpha *
                  EstimateDirect(scene, this, arena, light, pc, nc, vc.wPrev,
                                 vc.isect.rayEpsilon, time, vc.bsdf, rng,
-                                ls.lightSample, ls.bsdfSample) / lightPdf;
+                                ls.lightSample, ls.bsdfSample,
+                                BxDFType(BSDF_ALL & ~BSDF_SPECULAR)) / lightPdf;
         }
         previousSpecular = vc.specularBounce;
         allSpecular &= previousSpecular;
@@ -365,26 +367,34 @@ Spectrum MetropolisRenderer::Lpath(const Scene *scene,
 Spectrum MetropolisRenderer::Lbidir(const Scene *scene,
         const PathVertex *cameraPath, int cameraPathLength,
         const PathVertex *lightPath, int lightPathLength,
-        MemoryArena &arena, RNG &rng, const vector<LightingSample> &samples,
-        float time, const Distribution1D *lightDistribution,
+        MemoryArena &arena, const vector<LightingSample> &samples,
+        RNG &rng, float time, const Distribution1D *lightDistribution,
         const RayDifferential &eRay, const Spectrum &eAlpha) const {
     Spectrum L = 0.;
     bool previousSpecular = true, allSpecular = true;
-    int nCameraSpecular = 0;
+    // Compute number of specular vertices for each path length
+    int nVerts = cameraPathLength + lightPathLength + 2;
+    int *nSpecularVertices = ALLOCA(int, nVerts);
+    memset(nSpecularVertices, 0, nVerts * sizeof(int));
+    for (int i = 0; i < cameraPathLength; ++i)
+        for (int j = 0; j < lightPathLength; ++j)
+            if (cameraPath[i].specularBounce || lightPath[j].specularBounce)
+                ++nSpecularVertices[i+j+2];
     for (int i = 0; i < cameraPathLength; ++i) {
-        // Compute reflected light at camera path vertex
+        // Initialize basic variables for camera path vertex
         const PathVertex &vc = cameraPath[i];
         const Point &pc = vc.bsdf->dgShading.p;
         const Normal &nc = vc.bsdf->dgShading.nn;
 
+        // Compute reflected light at camera path vertex
+
         // Add emitted light from vertex if appropriate
-        bool directIsSeparate = (directLighting != NULL);
-        if (previousSpecular && (!directIsSeparate || !allSpecular))
+        if (previousSpecular && (directLighting == NULL || !allSpecular))
             L += vc.alpha * vc.isect.Le(vc.wPrev);
 
         // Compute direct illumination for Metropolis path vertex
         Spectrum Ld(0.f);
-        if (!directIsSeparate || !allSpecular) {
+        if (directLighting == NULL || !allSpecular) {
             // Choose light and call _EstimateDirect()_ for Metropolis vertex
             const LightingSample &ls = samples[i];
             float lightPdf;
@@ -394,32 +404,30 @@ Spectrum MetropolisRenderer::Lbidir(const Scene *scene,
             Ld = vc.alpha *
                  EstimateDirect(scene, this, arena, light, pc, nc, vc.wPrev,
                                 vc.isect.rayEpsilon, time, vc.bsdf, rng,
-                                ls.lightSample, ls.bsdfSample) / lightPdf;
+                                ls.lightSample, ls.bsdfSample,
+                                BxDFType(BSDF_ALL & ~BSDF_SPECULAR)) / lightPdf;
         }
         previousSpecular = vc.specularBounce;
         allSpecular &= previousSpecular;
-        L += Ld / (i + 1);
-        if (vc.specularBounce) ++nCameraSpecular;
-        else {
+        L += Ld / (i + 1 - nSpecularVertices[i+1]);
+        if (!vc.specularBounce) {
             // Loop over light path vertices and connect to camera vertex
-            int nLightSpecular = 0;
             for (int j = 0; j < lightPathLength; ++j) {
                 const PathVertex &vl = lightPath[j];
                 const Point &pl = vl.bsdf->dgShading.p;
                 const Normal &nl = vl.bsdf->dgShading.nn;
-                if (vl.specularBounce) ++nLightSpecular;
-                else {
+                if (!vl.specularBounce) {
                     // Compute contribution between camera and light vertices
                     Vector w = Normalize(pl - pc);
-                    Spectrum fc = vc.bsdf->f(vc.wPrev, w);
-                    Spectrum fl = vl.bsdf->f(-w, vl.wPrev);
+                    Spectrum fc = vc.bsdf->f(vc.wPrev, w) * (1 + vc.nSpecularComponents);
+                    Spectrum fl = vl.bsdf->f(-w, vl.wPrev) * (1 + vl.nSpecularComponents);
                     if (fc.IsBlack() || fl.IsBlack()) continue;
-                    float G = AbsDot(nc, w) * AbsDot(nl, w) / DistanceSquared(pl, pc);
                     Ray r(pc, pl - pc, 1e-3f, .999f, time);
                     if (!scene->IntersectP(r)) {
                         // Compute weight for bidirectional path, _pathWt_
-                        float pathWt = i + j + 2 - nCameraSpecular - nLightSpecular;
-                        L += (vc.alpha * fc * G * fl * vl.alpha) / pathWt;
+                        float pathWt = 1.f / (i + j + 2 - nSpecularVertices[i+j+2]);
+                        float G = AbsDot(nc, w) * AbsDot(nl, w) / DistanceSquared(pl, pc);
+                        L += (vc.alpha * fc * G * fl * vl.alpha) * pathWt;
                     }
                 }
             }
@@ -444,7 +452,6 @@ MetropolisRenderer::MetropolisRenderer(int perPixelSamples,
     largeStepsPerPixel = max(1u, RoundUpPow2(largeStepProbability * nPixelSamples));
     if (largeStepsPerPixel >= nPixelSamples) largeStepsPerPixel /= 2;
     Assert(largeStepsPerPixel >= 1 && largeStepsPerPixel < nPixelSamples);
-    Assert(IsPowerOf2(largeStepsPerPixel));
     if ((nPixelSamples % largeStepsPerPixel) != 0) {
         int origPixelSamples = nPixelSamples;
         nPixelSamples += largeStepsPerPixel - (nPixelSamples % largeStepsPerPixel);
@@ -518,15 +525,16 @@ void MetropolisRenderer::Render(const Scene *scene) {
                 delete directTasks[i];
             delete sample;
             directProgress.Done();
+            camera->film->WriteImage();
         }
         // Take initial set of samples to compute $b$
         RNG rng(0);
         MemoryArena arena;
-        vector<float> bootstrapSamples;
+        vector<float> bootstrapI;
         vector<PathVertex> cameraPath(maxDepth, PathVertex());
         vector<PathVertex> lightPath(maxDepth, PathVertex());
-        float sumContrib = 0.f;
-        bootstrapSamples.reserve(nBootstrap);
+        float sumI = 0.f;
+        bootstrapI.reserve(nBootstrap);
         MLTSample sample(maxDepth);
         for (uint32_t i = 0; i < nBootstrap; ++i) {
             // Generate random sample and path radiance for MLT bootstrapping
@@ -538,32 +546,32 @@ void MetropolisRenderer::Render(const Scene *scene) {
 
             // Compute contribution for random sample for MLT bootstrapping
             float I = ::I(L);
-            sumContrib += I;
-            bootstrapSamples.push_back(I);
+            sumI += I;
+            bootstrapI.push_back(I);
             arena.FreeAll();
         }
-        float b = sumContrib / nBootstrap;
+        float b = sumI / nBootstrap;
+        Info("MLT computed b = %f", b);
 
         // Select initial sample from bootstrap samples
-        float contribOffset = rng.RandomFloat() * sumContrib;
+        float contribOffset = rng.RandomFloat() * sumI;
         rng.Seed(0);
-        sumContrib = 0.f;
+        sumI = 0.f;
         MLTSample initialSample(maxDepth);
         for (uint32_t i = 0; i < nBootstrap; ++i) {
             float x = Lerp(rng.RandomFloat(), x0, x1);
             float y = Lerp(rng.RandomFloat(), y0, y1);
             LargeStep(rng, &initialSample, maxDepth, x, y, t0, t1,
                       bidirectional);
-            sumContrib += bootstrapSamples[i];
-            if (contribOffset < sumContrib)
+            sumI += bootstrapI[i];
+            if (sumI > contribOffset)
                 break;
         }
 
         // Launch tasks to generate Metropolis samples
         uint32_t nTasks = largeStepsPerPixel;
         uint32_t largeStepRate = nPixelSamples / largeStepsPerPixel;
-        fprintf(stderr, "n tasks %d, large step rate %d - %d\n", nTasks,
-                                 largeStepRate, nTasks * largeStepRate);
+        Info("MLT running %d tasks, large step rate %d", nTasks, largeStepRate);
         ProgressReporter progress(nTasks * largeStepRate, "Metropolis");
         vector<Task *> tasks;
         Mutex *filmMutex = Mutex::Create();
@@ -575,8 +583,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
             Sample02(i, scramble, d);
             tasks.push_back(new MLTTask(progress, pfreq, i,
                 d[0], d[1], x0, x1, y0, y1, t0, t1, b, initialSample,
-                directLighting != NULL, scene, camera, this,
-                filmMutex, lightDistribution));
+                scene, camera, this, filmMutex, lightDistribution));
         }
         EnqueueTasks(tasks);
         WaitForAllTasks();
@@ -596,7 +603,7 @@ inline float I(const Spectrum &L) {
 
 MLTTask::MLTTask(ProgressReporter &prog, uint32_t pfreq, uint32_t tn,
         float ddx, float ddy, int xx0, int xx1, int yy0, int yy1, float tt0, float tt1,
-        float bb, const MLTSample &is, bool id, const Scene *sc, const Camera *c,
+        float bb, const MLTSample &is, const Scene *sc, const Camera *c,
         MetropolisRenderer *ren, Mutex *fm, Distribution1D *ld)
     : progress(prog), initialSample(is) {
     progressUpdateFrequency = pfreq;
@@ -611,7 +618,6 @@ MLTTask::MLTTask(ProgressReporter &prog, uint32_t pfreq, uint32_t tn,
     t1 = tt1;
     currentPixelSample = 0;
     b = bb;
-    directIsSeparate = id;
     scene = sc;
     camera = c;
     renderer = ren;
@@ -628,20 +634,14 @@ void MLTTask::Run() {
     uint32_t largeStepRate = nPixelSamples / renderer->largeStepsPerPixel;
     Assert(largeStepRate > 1);
     uint64_t nTaskSamples = uint64_t(nPixels) * uint64_t(largeStepRate);
+    uint32_t consecutiveRejects = 0;
+    uint32_t progressCounter = progressUpdateFrequency;
+
+    // Declare variables for storing and computing MLT samples
+    MemoryArena arena;
     RNG rng(taskNum);
-    uint32_t pixelNumOffset = 0;
-    
     vector<PathVertex> cameraPath(renderer->maxDepth, PathVertex());
     vector<PathVertex> lightPath(renderer->maxDepth, PathVertex());
-    
-    uint32_t consecutiveRejects = 0;
-    float largeStepProbability = float(renderer->largeStepsPerPixel) /
-                                 float(nPixelSamples);
-    uint32_t progressCounter = progressUpdateFrequency;
-    
-
-    // Declare variables to store current and proposed MLT samples
-    MemoryArena arena;
     vector<MLTSample> samples(2, MLTSample(renderer->maxDepth));
     Spectrum L[2];
     float I[2];
@@ -655,7 +655,9 @@ void MLTTask::Run() {
     arena.FreeAll();
 
     // Compute randomly permuted table of pixel indices for large steps
+    uint32_t pixelNumOffset = 0;
     vector<int> largeStepPixelNum;
+    largeStepPixelNum.reserve(nPixels);
     for (uint32_t i = 0; i < nPixels; ++i) largeStepPixelNum.push_back(i);
     Shuffle(&largeStepPixelNum[0], nPixels, 1, rng);
     for (uint64_t s = 0; s < nTaskSamples; ++s) {
@@ -681,20 +683,22 @@ void MLTTask::Run() {
 
         // Compute acceptance probability for proposed sample
         float a = min(1.f, I[proposed] / I[current]);
-        float currentWeight = (1.f - a) /
-                              (I[current] / b + largeStepProbability) /
-                              float(nPixelSamples);
-        float proposedWeight = (a + (largeStep ? 1.f : 0.f)) /
-                               (I[proposed] / b + largeStepProbability) /
-                               float(nPixelSamples);
 
         // Splat current and proposed samples to _Film_
-        if (currentWeight > 0.f && I[current] > 0.f)
+        if (I[current] > 0.f) {
+            if (!isinf(1.f / I[current])) {
+            Spectrum contrib =  (b / nPixelSamples) * L[current] / I[current];
             camera->film->Splat(samples[current].cameraSample,
-                                L[current] * currentWeight);
-        if (proposedWeight > 0.f && I[proposed] > 0.f)
+                                (1.f - a) * contrib);
+        }
+        }
+        if (I[proposed] > 0.f) {
+            if (!isinf(1.f / I[proposed])) {
+            Spectrum contrib =  (b / nPixelSamples) * L[proposed] / I[proposed];
             camera->film->Splat(samples[proposed].cameraSample,
-                                L[proposed] * proposedWeight);
+                                a * contrib);
+        }
+        }
 
         // Randomly accept proposed path mutation (or not)
         if (consecutiveRejects >= renderer->maxConsecutiveRejects ||
