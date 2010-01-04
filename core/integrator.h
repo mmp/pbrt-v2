@@ -72,7 +72,8 @@ Spectrum UniformSampleOneLight(const Scene *scene, const Renderer *renderer,
 Spectrum EstimateDirect(const Scene *scene, const Renderer *renderer,
     MemoryArena &arena, const Light *light, const Point &p,
     const Normal &n, const Vector &wo, float rayEpsilon, float time, const BSDF *bsdf,
-    RNG &rng, const LightSample &lightSample, const BSDFSample &bsdfSample);
+    RNG &rng, const LightSample &lightSample, const BSDFSample &bsdfSample,
+    BxDFType flags);
 Spectrum SpecularReflect(const RayDifferential &ray, BSDF *bsdf, RNG &rng,
     const Intersection &isect, const Renderer *renderer, const Scene *scene,
     const Sample *sample, MemoryArena &arena);
