@@ -71,6 +71,8 @@ int main(int argc, char *argv[])
         if (diffImage) diffImage[i] = fabsf(im1[i] - im2[i]);
 	if (im1[i] == 0 && im2[i] == 0) 
 	    continue;
+        if ((i % 4) == 0) // alpha channel
+            continue;
 
         sum1 += im1[i];
         sum2 += im2[i];
@@ -79,18 +81,18 @@ int main(int argc, char *argv[])
 	if (d > .005) ++smallDiff;
 	if (d > .05) ++bigDiff;
     }
-    double avg1 = sum1 / (r1[0] * r1[1]);
-    double avg2 = sum2 / (r1[0] * r1[1]);
+    double avg1 = sum1 / (3. * r1[0] * r1[1]);
+    double avg2 = sum2 / (3. * r1[0] * r1[1]);
     double avgDelta = (avg1-avg2) / std::min(avg1, avg2);
     if (bigDiff > 0 || smallDiff > 0 || fabs(avgDelta) > 1e-4) {
 	printf("%s %s\n\tImages differ: %d big (%.2f%%), %d small (%.2f%%)\n"
                "\tavg 1 = %g, avg2 = %g (%f%% delta)\n"
                "\tMSE = %g\n",
                imageFile1, imageFile2,
-               bigDiff, 100.f * float(bigDiff) / (4 * r1[0] * r1[1]),
-               smallDiff, 100.f * float(smallDiff) / (4 * r1[0] * r1[1]),
+               bigDiff, 100.f * float(bigDiff) / (3 * r1[0] * r1[1]),
+               smallDiff, 100.f * float(smallDiff) / (3 * r1[0] * r1[1]),
                avg1, avg2, 100. * avgDelta,
-               mse / (4. * r1[0] * r1[1]));
+               mse / (3. * r1[0] * r1[1]));
         if (outfile)
             WriteEXR(outfile, diffImage, r1[0], r1[1]);
         return 1;

@@ -178,6 +178,8 @@ BVHAccel::BVHAccel(const vector<Reference<Primitive> > &p,
                                         primitives.size(), &totalNodes,
                                         orderedPrims);
     primitives.swap(orderedPrims);
+        Info("BVH created with %d nodes for %d primitives (%.2f MB)", totalNodes,
+             (int)primitives.size(), float(totalNodes * sizeof(LinearBVHNode))/(1024.f*1024.f));
 
     // Compute representation of depth-first traversal of BVH tree
     nodes = AllocAligned<LinearBVHNode>(totalNodes);
