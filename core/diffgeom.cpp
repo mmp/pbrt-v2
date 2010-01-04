@@ -55,9 +55,11 @@ void DifferentialGeometry::ComputeDifferentials(
         float d = -Dot(nn, Vector(p.x, p.y, p.z));
         Vector rxv(ray.rxOrigin.x, ray.rxOrigin.y, ray.rxOrigin.z);
         float tx = -(Dot(nn, rxv) + d) / Dot(nn, ray.rxDirection);
+        if (isnan(tx)) goto fail;
         Point px = ray.rxOrigin + tx * ray.rxDirection;
         Vector ryv(ray.ryOrigin.x, ray.ryOrigin.y, ray.ryOrigin.z);
         float ty = -(Dot(nn, ryv) + d) / Dot(nn, ray.ryDirection);
+        if (isnan(ty)) goto fail;
         Point py = ray.ryOrigin + ty * ray.ryDirection;
         dpdx = px - p;
         dpdy = py - p;
@@ -87,13 +89,14 @@ void DifferentialGeometry::ComputeDifferentials(
         By[0] = py[axes[0]] - p[axes[0]];
         By[1] = py[axes[1]] - p[axes[1]];
         if (!SolveLinearSystem2x2(A, Bx, &dudx, &dvdx)) {
-            dudx = 1.; dvdx = 0.;
+            dudx = 0.; dvdx = 0.;
         }
         if (!SolveLinearSystem2x2(A, By, &dudy, &dvdy)) {
-            dudy = 0.; dvdy = 1.;
+            dudy = 0.; dvdy = 0.;
         }
     }
     else {
+fail:
         dudx = dvdx = 0.;
         dudy = dvdy = 0.;
         dpdx = dpdy = Vector(0,0,0);

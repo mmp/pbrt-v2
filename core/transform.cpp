@@ -30,11 +30,12 @@
 bool SolveLinearSystem2x2(const float A[2][2],
         const float B[2], float *x0, float *x1) {
     float det = A[0][0]*A[1][1] - A[0][1]*A[1][0];
-    if (fabsf(det) < 1e-5f)
+    if (fabsf(det) < 1e-10f)
         return false;
-    float invDet = 1.0f/det;
-    *x0 = (A[1][1]*B[0] - A[0][1]*B[1]) * invDet;
-    *x1 = (A[0][0]*B[1] - A[1][0]*B[0]) * invDet;
+    *x0 = (A[1][1]*B[0] - A[0][1]*B[1]) / det;
+    *x1 = (A[0][0]*B[1] - A[1][0]*B[0]) / det;
+    if (isnan(*x0) || isnan(*x1))
+        return false;
     return true;
 }
 
