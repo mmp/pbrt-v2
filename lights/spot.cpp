@@ -1,6 +1,6 @@
 
 /*
-    pbrt source code Copyright(c) 1998-2009 Matt Pharr and Greg Humphreys.
+    pbrt source code Copyright(c) 1998-2010 Matt Pharr and Greg Humphreys.
 
     This file is part of pbrt.
 
