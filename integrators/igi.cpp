@@ -98,7 +98,9 @@ void IGIIntegrator::Preprocess(const Scene *scene, const Camera *camera,
             if (pdf == 0.f || alpha.IsBlack()) continue;
             alpha /= pdf * lightPdf;
             Intersection isect;
-            while (scene->Intersect(ray, &isect) && !alpha.IsBlack()) {
+            int depth = 0;
+            while (scene->Intersect(ray, &isect) && !alpha.IsBlack() &&
+                   depth < maxLightDepth) {
                 // Create virtual light and sample new ray for path
                 alpha *= renderer->Transmittance(scene, RayDifferential(ray), NULL,
                                                  rng, arena);
@@ -125,6 +127,7 @@ void IGIIntegrator::Preprocess(const Scene *scene, const Camera *camera,
                     break;
                 alpha *= contribScale / rrProb;
                 ray = RayDifferential(isect.dg.p, wi, ray, isect.rayEpsilon);
+                ++depth;
             }
             arena.FreeAll();
         }

@@ -57,6 +57,7 @@ public:
         nLightSets = RoundUpPow2(ns);
         rrThreshold = rrt;
         maxSpecularDepth = maxd;
+        maxLightDepth = maxd;
         virtualLights.resize(nLightSets);
         gLimit = gl;
         nGatherSamples = ng;
@@ -73,7 +74,7 @@ private:
     float gLimit;
     int nGatherSamples;
     float rrThreshold;
-    int maxSpecularDepth;
+    int maxSpecularDepth, maxLightDepth;
     int vlSetOffset;
     BSDFSampleOffsets gatherSampleOffset;
     vector<vector<VirtualLight> > virtualLights;
