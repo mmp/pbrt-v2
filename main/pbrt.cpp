@@ -42,6 +42,7 @@ int main(int argc, char *argv[]) {
         else if (!strcmp(argv[i], "--outfile")) options.imageFile = argv[++i];
         else if (!strcmp(argv[i], "--quick")) options.quickRender = true;
         else if (!strcmp(argv[i], "--quiet")) options.quiet = true;
+        else if (!strcmp(argv[i], "--verbose")) options.verbose = true;
 #ifdef PBRT_HAS_LIBSDL
         else if (!strcmp(argv[i], "--window")) options.openWindow = true;
 #endif
@@ -50,7 +51,7 @@ int main(int argc, char *argv[]) {
 #ifdef PBRT_HAS_LIBSDL
                    "[--window] "
 #endif
-                   "[--help] <filename.pbrt> ...\n");
+                   "[--verbose] [--help] <filename.pbrt> ...\n");
             return 0;
         }
         else filenames.push_back(argv[i]);

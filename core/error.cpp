@@ -80,6 +80,7 @@ static void processError(const char *format, va_list args,
 
 
 void Info(const char *format, ...) {
+    if (!PbrtOptions.verbose || PbrtOptions.quiet) return;
     va_list args;
     va_start(args, format);
     processError(format, args, "Notice", PBRT_ERROR_CONTINUE);
@@ -88,6 +89,7 @@ void Info(const char *format, ...) {
 
 
 void Warning(const char *format, ...) {
+    if (PbrtOptions.quiet) return;
     va_list args;
     va_start(args, format);
     processError(format, args, "Warning", PBRT_ERROR_CONTINUE);
