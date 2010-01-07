@@ -508,23 +508,25 @@ void MetropolisRenderer::Render(const Scene *scene) {
 
         if (directLighting != NULL) {
             // Compute direct lighting before Metropolis light transport
-            LDSampler sampler(x0, x1, y0, y1, nDirectPixelSamples, t0, t1);
-            Sample *sample = new Sample(&sampler, directLighting, NULL, scene);
-            vector<Task *> directTasks;
-            int nDirectTasks = max(32 * NumSystemCores(),
-                             (camera->film->xResolution * camera->film->yResolution) / (16*16));
-            nDirectTasks = RoundUpPow2(nDirectTasks);
-            ProgressReporter directProgress(nDirectTasks, "Direct Lighting");
-            for (int i = 0; i < nDirectTasks; ++i)
-                directTasks.push_back(new SamplerRendererTask(scene, this, camera, directProgress,
-                    &sampler, sample, i, nDirectTasks));
-            std::reverse(directTasks.begin(), directTasks.end());
-            EnqueueTasks(directTasks);
-            WaitForAllTasks();
-            for (uint32_t i = 0; i < directTasks.size(); ++i)
-                delete directTasks[i];
-            delete sample;
-            directProgress.Done();
+            if (nDirectPixelSamples > 0) {
+                LDSampler sampler(x0, x1, y0, y1, nDirectPixelSamples, t0, t1);
+                Sample *sample = new Sample(&sampler, directLighting, NULL, scene);
+                vector<Task *> directTasks;
+                int nDirectTasks = max(32 * NumSystemCores(),
+                                 (camera->film->xResolution * camera->film->yResolution) / (16*16));
+                nDirectTasks = RoundUpPow2(nDirectTasks);
+                ProgressReporter directProgress(nDirectTasks, "Direct Lighting");
+                for (int i = 0; i < nDirectTasks; ++i)
+                    directTasks.push_back(new SamplerRendererTask(scene, this, camera, directProgress,
+                        &sampler, sample, i, nDirectTasks));
+                std::reverse(directTasks.begin(), directTasks.end());
+                EnqueueTasks(directTasks);
+                WaitForAllTasks();
+                for (uint32_t i = 0; i < directTasks.size(); ++i)
+                    delete directTasks[i];
+                delete sample;
+                directProgress.Done();
+            }
             camera->film->WriteImage();
         }
         // Take initial set of samples to compute $b$
