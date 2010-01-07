@@ -27,7 +27,7 @@
 // renderers/metropolis.h*
 #include "pbrt.h"
 #include "renderer.h"
-#include "mipmap.h"
+#include "parallel.h"
 struct MLTSample;
 class DirectLightingIntegrator;
 struct LightingSample;
