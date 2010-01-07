@@ -132,7 +132,7 @@ GlossyPRTIntegrator *CreateGlossyPRTIntegratorSurfaceIntegrator(const ParamSet &
     int ns = params.FindOneInt("nsamples", 4096);
     Spectrum Kd = params.FindOneSpectrum("Kd", Spectrum(0.5f));
     Spectrum Ks = params.FindOneSpectrum("Ks", Spectrum(0.25f));
-    float roughness = params.FindOneFloat("roughness", 10.f);
+    float roughness = params.FindOneFloat("roughness", 0.1f);
     return new GlossyPRTIntegrator(Kd, Ks, roughness, lmax, ns);
 }
 
