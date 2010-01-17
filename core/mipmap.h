@@ -278,7 +278,7 @@ T MIPMap<T>::Lookup(float s, float t, float ds0, float dt0,
     float minorLength = sqrtf(ds1*ds1 + dt1*dt1);
 
     // Clamp ellipse eccentricity if too large
-    if (minorLength * maxAnisotropy < majorLength) {
+    if (minorLength * maxAnisotropy < majorLength && minorLength > 0.f) {
         float scale = majorLength / (minorLength * maxAnisotropy);
         ds1 *= scale;
         dt1 *= scale;
