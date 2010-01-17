@@ -7,11 +7,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <tiffio.h>
+#include <assert.h>
 #include <ImfInputFile.h>
 #include <ImfChannelList.h>
 #include <ImfFrameBuffer.h>
 #include <half.h>
 #include <algorithm>
+
+using std::min;
+using std::max;
 
 using namespace Imf;
 using namespace Imath;
@@ -23,15 +27,110 @@ static void usage() {
   fprintf( stderr, "usage: exrtotiff [options] <input.exr> <output.tiff>\n" );
   fprintf( stderr, "Supported options:\n");
   fprintf( stderr, "\t-scale scale\n" );
+  fprintf( stderr, "\t-bloom\n" );
+  fprintf( stderr, "\t-bloomscale scale [default: 0.1]\n" );
+  fprintf( stderr, "\t-bloomradius radius [default: 0.01]\n" );
+  fprintf( stderr, "\t-tonemap\n" );
+  fprintf( stderr, "\t-repeatpix [count]\n" );
   fprintf( stderr, "\t-gamma gamma\n" );
   fprintf( stderr, "\t-bg bg-grey color\n");
   exit(1);
+}
+
+void reinhard(float *d, int xRes, int yRes) {
+    const float yw[3] = { 0.212671f, 0.715160f, 0.072169f };
+    // Compute world adaptation luminance, _Ywa_
+    float Ywa = 0.;
+    for (int i = 0; i < xRes * yRes; ++i) {
+        float y = yw[0] * d[3*i] + yw[1] * d[3*i+1] + yw[2] * d[3*i+2];
+//CO        if ((i % 1000) == 1) fprintf(stderr, "%f,%f,%f -> %f\n",
+//CO                                     d[3*i], d[3*i+1], d[3*i+2], y);
+        if (y > 1e-4f) Ywa += logf(y);
+    }
+    Ywa = expf(Ywa / (xRes * yRes));
+//CO    Ywa /= 683.f;
+//CO    fprintf(stderr, "YWA = %f\n", Ywa);
+    float invY2 = 1.f / (Ywa * Ywa);
+//CO    float invY2 = 1.f / (maxY * maxY);
+
+    for (int i = 0; i < xRes * yRes; ++i) {
+        float y = yw[0] * d[3*i] + yw[1] * d[3*i+1] + yw[2] * d[3*i+2];
+
+        float s = (1.f + y * invY2) / (1.f + y);
+//CO        if ((i % 1000) == 1) fprintf(stderr, "%f %f -> %f\n", y, invY2, s);
+        d[3*i] *= s;
+        d[3*i+1] *= s;
+        d[3*i+2] *= s;
+    }
+}
+
+inline float Lerp(float t, float a, float b) {
+    return (1.f - t) * a + t * b;
+}
+
+void bloom(float *rgb, int xResolution, int yResolution, float bloomRadius,
+           float bloomWeight) { 
+    int nPix = xResolution * yResolution;
+    // Possibly apply bloom effect to image
+    if (bloomRadius > 0.f && bloomWeight > 0.f) {
+        // Compute image-space extent of bloom effect
+        int bloomSupport = int(ceilf(bloomRadius *
+                                     max(xResolution, yResolution)));
+        int bloomWidth = bloomSupport / 2;
+        // Initialize bloom filter table
+        float *bloomFilter = new float[bloomWidth * bloomWidth];
+        for (int i = 0; i < bloomWidth * bloomWidth; ++i) {
+            float dist = sqrtf(float(i)) / float(bloomWidth);
+            bloomFilter[i] = powf(max(0.f, 1.f - dist), 4.f);
+        }
+        // Apply bloom filter to image pixels
+        float *bloomImage = new float[3*nPix];
+        for (int y = 0; y < yResolution; ++y) {
+            for (int x = 0; x < xResolution; ++x) {
+                // Compute bloom for pixel _(x,y)_
+                // Compute extent of pixels contributing bloom
+                int x0 = max(0, x - bloomWidth);
+                int x1 = min(x + bloomWidth, xResolution - 1);
+                int y0 = max(0, y - bloomWidth);
+                int y1 = min(y + bloomWidth, yResolution - 1);
+                int offset = y * xResolution + x;
+                float sumWt = 0.;
+                for (int by = y0; by <= y1; ++by)
+                    for (int bx = x0; bx <= x1; ++bx) {
+                        // Accumulate bloom from pixel $(bx,by)$
+                        int dx = x - bx, dy = y - by;
+                        if (dx == 0 && dy == 0) continue;
+                        int dist2 = dx*dx + dy*dy;
+                        if (dist2 < bloomWidth * bloomWidth) {
+                            int bloomOffset = bx + by * xResolution;
+                            float wt = bloomFilter[dist2];
+                            sumWt += wt;
+                            for (int j = 0; j < 3; ++j)
+                                bloomImage[3*offset+j] += wt * rgb[3*bloomOffset+j];
+                        }
+                    }
+                bloomImage[3*offset  ] /= sumWt;
+                bloomImage[3*offset+1] /= sumWt;
+                bloomImage[3*offset+2] /= sumWt;
+            }
+        }
+        // Mix bloom effect into each pixel
+        for (int i = 0; i < 3 * nPix; ++i)
+            rgb[i] = Lerp(bloomWeight, rgb[i], bloomImage[i]);
+        // Free memory allocated for bloom effect
+        delete[] bloomFilter;
+        delete[] bloomImage;
+    }
 }
 
 int main(int argc, char *argv[]) 
 {
     float scale = 1.f, gamma = 2.2f;
     float bggray = -1.f;
+    bool tonemap = false, bloom = false;
+    float bloomRadius = .01f, bloomScale = .1f;
+    int repeat = 1;
+    float rp = 1;
 
     int argNum = 1;
     while (argNum < argc && argv[argNum][0] == '-') {
@@ -42,7 +141,11 @@ int main(int argc, char *argv[])
 	var = atof(argv[argNum+1]); \
 	++argNum; \
       }
-        if (0) ;
+        if (!strcmp(argv[argNum], "-tonemap")) tonemap = true;
+        else if (!strcmp(argv[argNum], "-bloom")) bloom = true;
+        ARG("bloomscale", bloomScale)
+        ARG("bloomradius", bloomRadius)
+        ARG("repeatpix", rp)
 	ARG("scale", scale)
 	ARG("gamma", gamma)
 	ARG("bg", bggray)
@@ -52,6 +155,7 @@ int main(int argc, char *argv[])
 
     }
     if (argNum + 2 > argc) usage();
+    repeat = int(rp);
 
     char *inFile = argv[argNum], *outFile = argv[argNum+1]; 	  
     float *rgba;
@@ -59,12 +163,27 @@ int main(int argc, char *argv[])
     bool hasAlpha;
 
     if (ReadEXR(inFile, rgba, xRes, yRes, hasAlpha)) {
+        if (repeat > 1) {
+            assert(hasAlpha != 0);
+            float *rscale = new float[4 * repeat * xRes * repeat * yRes];
+            float *rsp = rscale;
+            for (int y = 0; y < repeat * yRes; ++y) {
+                int yy = y / repeat;
+                for (int x = 0; x < repeat * xRes; ++x) {
+                    int xx = x / repeat;
+                    for (int c = 0; c < 4; ++c) 
+                        *rsp++ = rgba[4 * (yy * xRes + xx) + c];
+                }
+            }
+            xRes *= repeat;
+            yRes *= repeat;
+            rgba = rscale;
+        }
+
 	float *rgb = new float[xRes*yRes*3];
 	for (int i = 0; i < xRes*yRes; ++i) {
 	    for (int j = 0; j < 3; ++j) {
 		rgb[3*i+j] = scale * rgba[4*i+j];
-//CO		if (rgba[4*i+3] != 0.f)
-//CO		    rgb[3*i+j] /= rgba[4*i+3];
 		if (bggray > 0)
 		    rgb[3*i+j] = rgba[4*i+3] * rgb[3*i+j] + (1.f - rgba[4*i+3]) * bggray;
 	    }
@@ -72,14 +191,22 @@ int main(int argc, char *argv[])
 		rgba[4*i+3] = 1.f;
 	}
 
+        if (bloom)   ::bloom(rgb, xRes, yRes, bloomRadius, bloomScale);
+        if (tonemap) reinhard(rgb, xRes, yRes);
+
 	for (int i = 0; i < xRes*yRes; ++i) {
+            float m = 0.f;
 	    for (int j = 0; j < 3; ++j) {
 		rgba[4*i+j] = 255.f * powf(std::max(0.f, rgb[3*i+j]), 1.f / gamma);
-                if (rgba[4*i+j] < 0.f) rgba[4*i+j] = 0.f;
-                if (rgba[4*i+j] > 255.f) rgba[4*i+j] = 255.f;
-//CO		if (rgba[4*i+3] != 0.f)
-//CO		    rgba[4*i+j] /= rgba[4*i+3];
-	    }
+                m = std::max(m, rgba[4*i+j]);
+            }
+            if (m > 255.f) {
+                for (int j = 0; j < 3; ++j)
+                    rgba[4*i+j] = 255.f * (rgba[4*i+j] / m);
+            }
+//CO                if (rgba[4*i+j] < 0.f) rgba[4*i+j] = 0.f;
+//CO                if (rgba[4*i+j] > 255.f) rgba[4*i+j] = 255.f;
+
 	    rgba[4*i+3] *= 255.f;
 	}
 
