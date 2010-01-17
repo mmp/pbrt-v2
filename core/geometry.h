@@ -197,7 +197,7 @@ public:
     }
 
     // Point Public Data
-    float x,y,z;
+    float x, y, z;
 };
 
 

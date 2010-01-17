@@ -211,8 +211,10 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
     if (ray.depth + 1 < maxSpecularDepth) {
         Vector wi;
         // Trace rays for specular reflection and refraction
-        L += SpecularReflect(ray, bsdf, rng, isect, renderer, scene, sample, arena);
-        L += SpecularTransmit(ray, bsdf, rng, isect, renderer, scene, sample, arena);
+        L += SpecularReflect(ray, bsdf, rng, isect, renderer, scene, sample,
+                             arena);
+        L += SpecularTransmit(ray, bsdf, rng, isect, renderer, scene, sample,
+                              arena);
     }
     return L;
 }

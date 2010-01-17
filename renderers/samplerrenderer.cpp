@@ -147,7 +147,7 @@ SamplerRenderer::~SamplerRenderer() {
 
 void SamplerRenderer::Render(const Scene *scene) {
     PBRT_FINISHED_PARSING();
-    // Allow integrators to do pre-processing for the scene
+    // Allow integrators to do preprocessing for the scene
     PBRT_STARTED_PREPROCESSING();
     surfaceIntegrator->Preprocess(scene, camera, this);
     volumeIntegrator->Preprocess(scene, camera, this);

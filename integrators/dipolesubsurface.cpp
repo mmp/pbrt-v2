@@ -299,8 +299,10 @@ Spectrum DipoleSubsurfaceIntegrator::Li(const Scene *scene, const Renderer *rend
         bsdfSampleOffsets);
     if (ray.depth < maxSpecularDepth) {
         // Trace rays for specular reflection and refraction
-        L += SpecularReflect(ray, bsdf, rng, isect, renderer, scene, sample, arena);
-        L += SpecularTransmit(ray, bsdf, rng, isect, renderer, scene, sample, arena);
+        L += SpecularReflect(ray, bsdf, rng, isect, renderer, scene, sample,
+                             arena);
+        L += SpecularTransmit(ray, bsdf, rng, isect, renderer, scene, sample,
+                              arena);
     }
     return L;
 }

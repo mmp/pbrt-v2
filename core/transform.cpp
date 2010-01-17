@@ -311,7 +311,7 @@ Transform Perspective(float fov, float n, float f) {
 // AnimatedTransform Method Definitions
 void AnimatedTransform::Decompose(const Matrix4x4 &m, Vector *T,
                                   Quaternion *Rquat, Matrix4x4 *S) {
-    // Extract transformation _T_ from transformation matrix
+    // Extract translation _T_ from transformation matrix
     T->x = m.m[0][3];
     T->y = m.m[1][3];
     T->z = m.m[2][3];

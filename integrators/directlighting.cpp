@@ -100,8 +100,10 @@ Spectrum DirectLightingIntegrator::Li(const Scene *scene,
     if (ray.depth + 1 < maxDepth) {
         Vector wi;
         // Trace rays for specular reflection and refraction
-        L += SpecularReflect(ray, bsdf, rng, isect, renderer, scene, sample, arena);
-        L += SpecularTransmit(ray, bsdf, rng, isect, renderer, scene, sample, arena);
+        L += SpecularReflect(ray, bsdf, rng, isect, renderer, scene, sample,
+                             arena);
+        L += SpecularTransmit(ray, bsdf, rng, isect, renderer, scene, sample,
+                              arena);
     }
     return L;
 }

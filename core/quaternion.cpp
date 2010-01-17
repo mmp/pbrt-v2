@@ -84,10 +84,10 @@ Quaternion::Quaternion(const Transform &t) {
 
 
 Quaternion Slerp(float t, const Quaternion &q1,
-        const Quaternion &q2) {
+                 const Quaternion &q2) {
     float cosTheta = Dot(q1, q2);
     if (cosTheta > .9995f)
-        return Normalize(q1 + t * (q2 - q1));
+        return Normalize((1.f - t) * q1 + t * q2);
     else {
         float theta = acosf(Clamp(cosTheta, -1.f, 1.f));
         float thetap = theta * t;
