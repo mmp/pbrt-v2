@@ -124,6 +124,7 @@ struct Distribution2D {
                        pConditionalV[0]->count-1);
         int iv = Clamp(Float2Int(v * pMarginal->count), 0,
                        pMarginal->count-1);
+        if (pConditionalV[iv]->funcInt * pMarginal->funcInt == 0.f) return 0.f;
         return (pConditionalV[iv]->func[iu] * pMarginal->func[iv]) /
                (pConditionalV[iv]->funcInt * pMarginal->funcInt);
     }
