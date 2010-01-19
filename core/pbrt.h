@@ -67,6 +67,10 @@ using std::sort;
 #pragma warning (disable : 4244) // int -> float conversion
 #pragma warning (disable : 4267) // size_t -> unsigned int conversion
 #endif // WIN32
+
+#ifdef __linux__
+#include <stdint.h>
+#endif // __linux__
 #ifdef WIN32
 #define isnan _isnan
 #define isinf(f) (!_finite((f)))
