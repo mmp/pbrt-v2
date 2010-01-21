@@ -156,6 +156,10 @@ void ImageFilm::AddSample(const CameraSample &sample,
 
 
 void ImageFilm::Splat(const CameraSample &sample, const Spectrum &L) {
+    if (L.HasNaNs()) {
+        Warning("ImageFilm ignoring splatted spectrum with NaN values");
+        return;
+    }
     float xyz[3];
     L.ToXYZ(xyz);
     int x = Floor2Int(sample.imageX), y = Floor2Int(sample.imageY);
