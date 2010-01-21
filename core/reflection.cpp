@@ -498,10 +498,12 @@ BSDFSample::BSDFSample(const Sample *sample,
 Spectrum BSDF::Sample_f(const Vector &woW, Vector *wiW,
                         const BSDFSample &bsdfSample, float *pdf,
                         BxDFType flags, BxDFType *sampledType) const {
+    PBRT_STARTED_BSDF_SAMPLE();
     // Choose which _BxDF_ to sample
     int matchingComps = NumComponents(flags);
     if (matchingComps == 0) {
         *pdf = 0.f;
+        PBRT_FINISHED_BSDF_SAMPLE();
         return Spectrum(0.f);
     }
     int which = min(Floor2Int(bsdfSample.uComponent * matchingComps),
@@ -521,7 +523,11 @@ Spectrum BSDF::Sample_f(const Vector &woW, Vector *wiW,
     *pdf = 0.f;
     Spectrum f = bxdf->Sample_f(wo, &wi, bsdfSample.uDir[0],
                                 bsdfSample.uDir[1], pdf);
-    if (*pdf == 0.f) return 0.f;
+    if (*pdf == 0.f)
+    {
+        PBRT_FINISHED_BSDF_SAMPLE();
+        return 0.f;
+    }
     if (sampledType) *sampledType = bxdf->type;
     *wiW = LocalToWorld(wi);
 
@@ -543,6 +549,7 @@ Spectrum BSDF::Sample_f(const Vector &woW, Vector *wiW,
             if (bxdfs[i]->MatchesFlags(flags))
                 f += bxdfs[i]->f(wo, wi);
     }
+        PBRT_FINISHED_BSDF_SAMPLE();
     return f;
 }
 
@@ -550,6 +557,7 @@ Spectrum BSDF::Sample_f(const Vector &woW, Vector *wiW,
 float BSDF::Pdf(const Vector &woW, const Vector &wiW,
         BxDFType flags) const {
     if (nBxDFs == 0.) return 0.;
+    PBRT_STARTED_BSDF_PDF();
     Vector wo = WorldToLocal(woW), wi = WorldToLocal(wiW);
     float pdf = 0.f;
     int matchingComps = 0;
@@ -558,7 +566,9 @@ float BSDF::Pdf(const Vector &woW, const Vector &wiW,
             ++matchingComps;
             pdf += bxdfs[i]->Pdf(wo, wi);
         }
-    return matchingComps > 0 ? pdf / matchingComps : 0.f;
+    float v = matchingComps > 0 ? pdf / matchingComps : 0.f;
+    PBRT_FINISHED_BSDF_PDF();
+    return v;
 }
 
 
@@ -575,6 +585,7 @@ BSDF::BSDF(const DifferentialGeometry &dg, const Normal &ngeom,
 
 Spectrum BSDF::f(const Vector &woW, const Vector &wiW,
                  BxDFType flags) const {
+    PBRT_STARTED_BSDF_EVAL();
     Vector wi = WorldToLocal(wiW), wo = WorldToLocal(woW);
     if (Dot(wiW, ng) * Dot(woW, ng) > 0) // ignore BTDFs
         flags = BxDFType(flags & ~BSDF_TRANSMISSION);
@@ -584,6 +595,7 @@ Spectrum BSDF::f(const Vector &woW, const Vector &wiW,
     for (int i = 0; i < nBxDFs; ++i)
         if (bxdfs[i]->MatchesFlags(flags))
             f += bxdfs[i]->f(wo, wi);
+    PBRT_FINISHED_BSDF_EVAL();
     return f;
 }
 

@@ -49,7 +49,10 @@ void RNG::Seed(uint32_t seed) const {
 /* generates a random number on [0,1)-real-interval */
 float RNG::RandomFloat() const
 {
-    return (RandomUInt() & 0xffffff) / float(1 << 24);
+    PBRT_RNG_STARTED_RANDOM_FLOAT();
+    float v = (RandomUInt() & 0xffffff) / float(1 << 24);
+    PBRT_RNG_FINISHED_RANDOM_FLOAT();
+    return v;
 }
 
 
@@ -62,6 +65,7 @@ unsigned long RNG::RandomUInt() const
     /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
     if (mti >= N) { /* generate N words at one time */
+        PBRT_RNG_STARTED_TABLEGEN();
         int kk;
 
         if (mti == N+1)   /* if Seed() has not been called, */
@@ -79,6 +83,7 @@ unsigned long RNG::RandomUInt() const
         mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
 
         mti = 0;
+        PBRT_RNG_FINISHED_TABLEGEN();
     }
 
     y = mt[mti++];

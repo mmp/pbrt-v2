@@ -187,6 +187,7 @@ InfiniteAreaLight *CreateInfiniteLight(const Transform &light2world,
 Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
         const LightSample &ls, float time, Vector *wi, float *pdf,
         VisibilityTester *visibility) const {
+    PBRT_INFINITE_LIGHT_STARTED_SAMPLEL();
     // Find $(u,v)$ sample coordinates in infinite light texture
     float uv[2], mapPdf;
     distribution->SampleContinuous(ls.uPos[0], ls.uPos[1], uv, &mapPdf);
@@ -204,23 +205,29 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
 
     // Return radiance value for infinite light direction
     visibility->SetRay(p, pEpsilon, *wi, time);
-    return Spectrum(radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
+    Spectrum Ls = Spectrum(radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
+    PBRT_INFINITE_LIGHT_FINISHED_SAMPLEL();
+    return Ls;
 }
 
 
 float InfiniteAreaLight::Pdf(const Point &, const Vector &w) const {
+    PBRT_INFINITE_LIGHT_STARTED_PDF();
     Vector wi = WorldToLight(w);
     float theta = SphericalTheta(wi), phi = SphericalPhi(wi);
     float sintheta = sinf(theta);
     if (sintheta == 0.f) return 0.f;
-    return distribution->Pdf(phi * INV_TWOPI, theta * INV_PI) /
+    float p = distribution->Pdf(phi * INV_TWOPI, theta * INV_PI) /
            (2.f * M_PI * M_PI * sintheta);
+    PBRT_INFINITE_LIGHT_FINISHED_PDF();
+    return p;
 }
 
 
 Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
         const LightSample &ls, float u1, float u2, float time,
         Ray *ray, Normal *Ns, float *pdf) const {
+    PBRT_INFINITE_LIGHT_STARTED_SAMPLEL();
     // Compute direction for infinite light sample ray
 
     // Find $(u,v)$ sample coordinates in infinite light texture
@@ -249,7 +256,9 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     float areaPdf = 1.f / (M_PI * worldRadius * worldRadius);
     *pdf = directionPdf * areaPdf;
     if (sintheta == 0.f) *pdf = 0.f;
-    return Spectrum(radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
+    Spectrum Ls = (radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
+    PBRT_INFINITE_LIGHT_FINISHED_SAMPLEL();
+    return Ls;
 }
 
 

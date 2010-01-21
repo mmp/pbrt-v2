@@ -26,6 +26,7 @@
 
 // core/rng.h*
 #include "pbrt.h"
+#include "probes.h"
 
 // Random Number Declarations
 class RNG {

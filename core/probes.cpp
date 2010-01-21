@@ -287,7 +287,7 @@ void PBRT_CREATED_TRIANGLE(Triangle *) {
 }
 
 
-void PBRT_STARTED_GENERATING_CAMERA_RAY(const Sample *) {
+void PBRT_STARTED_GENERATING_CAMERA_RAY(const CameraSample *) {
     ++cameraRays;
 }
 

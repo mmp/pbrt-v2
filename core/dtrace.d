@@ -39,8 +39,8 @@ probe finished_preprocessing();
 probe started_task(const struct Task *);
 probe finished_task(const struct Task *);
 
-probe started_generating_camera_ray(const struct Sample *);
-probe finished_generating_camera_ray(const struct Sample *, const struct RayDifferential *, float weight);
+probe started_generating_camera_ray(const struct CameraSample *);
+probe finished_generating_camera_ray(const struct CameraSample *, const struct RayDifferential *, float weight);
 
 probe sample_outside_image_extent(const struct CameraSample *);
 
@@ -165,6 +165,47 @@ probe mlt_accepted_mutation(float a, const struct MLTSample *current, const stru
 probe mlt_rejected_mutation(float a, const struct MLTSample *current, const struct MLTSample *proposed);
 probe mlt_started_mlt_task(struct MLTTask *);
 probe mlt_finished_mlt_task(struct MLTTask *);
+probe mlt_started_rendering();
+probe mlt_finished_rendering();
+probe mlt_started_directlighting();
+probe mlt_finished_directlighting();
+probe mlt_started_bootstrapping(int count);
+probe mlt_finished_bootstrapping(float b);
+probe mlt_started_mutation();
+probe mlt_finished_mutation();
+probe mlt_started_sample_splat();
+probe mlt_finished_sample_splat();
+probe mlt_started_generate_path();
+probe mlt_finished_generate_path();
+probe mlt_started_lpath();
+probe mlt_finished_lpath();
+probe mlt_started_lbidir();
+probe mlt_finished_lbidir();
+probe mlt_started_task_init();
+probe mlt_finished_task_init();
+probe mlt_started_display_update();
+probe mlt_finished_display_update();
+probe mlt_started_sample_light_for_bidir();
+probe mlt_finished_sample_light_for_bidir();
+probe mlt_started_estimate_direct();
+probe mlt_finished_estimate_direct();
+
+probe rng_started_random_float();
+probe rng_finished_random_float();
+probe rng_finished_tablegen();
+probe rng_started_tablegen();
+probe started_bsdf_eval();
+probe finished_bsdf_eval();
+probe started_bsdf_sample();
+probe finished_bsdf_sample();
+probe started_bsdf_pdf();
+probe finished_bsdf_pdf();
+probe area_light_started_samplel();
+probe area_light_finished_samplel();
+probe infinite_light_started_samplel();
+probe infinite_light_finished_samplel();
+probe infinite_light_started_pdf();
+probe infinite_light_finished_pdf();
 };
 
 

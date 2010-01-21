@@ -284,8 +284,13 @@ T MIPMap<T>::Lookup(float s, float t, float ds0, float dt0,
         dt1 *= scale;
         minorLength *= scale;
     }
-    if (minorLength == 0.f)
-       return triangle(0, s, t);
+    if (minorLength == 0.f) {
+        PBRT_FINISHED_EWA_TEXTURE_LOOKUP();
+        PBRT_STARTED_TRILINEAR_TEXTURE_LOOKUP(s, t);
+        T val = triangle(0, s, t);
+        PBRT_FINISHED_TRILINEAR_TEXTURE_LOOKUP();
+        return val;
+    }
 
     // Choose level of detail for EWA lookup and perform EWA filtering
     float lod = max(0.f, nLevels - 1.f + Log2(minorLength));
