@@ -37,6 +37,8 @@ static void WriteImageTGA(const string &name, float *pixels,
         int totalXRes, int totalYRes,
         int xOffset, int yOffset);
 static RGBSpectrum *ReadImageTGA(const string &name, int *w, int *h);
+static bool WriteImagePFM(const string &filename, const float *rgb, int xres, int yres);
+static RGBSpectrum *ReadImagePFM(const string &filename, int *xres, int *yres);
 
 // ImageIO Function Definitions
 RGBSpectrum *ReadImage(const string &name, int *width, int *height) {
@@ -46,11 +48,13 @@ RGBSpectrum *ReadImage(const string &name, int *width, int *height) {
         if (!strcmp(name.c_str() + suffixOffset, ".exr") ||
             !strcmp(name.c_str() + suffixOffset, ".EXR"))
              return ReadImageEXR(name, width, height);
-        else
 #endif // PBRT_HAS_OPENEXR
-              if (!strcmp(name.c_str() + suffixOffset, ".tga") ||
-                 !strcmp(name.c_str() + suffixOffset, ".TGA"))
-             return ReadImageTGA(name, width, height);
+        if (!strcmp(name.c_str() + suffixOffset, ".tga") ||
+            !strcmp(name.c_str() + suffixOffset, ".TGA"))
+            return ReadImageTGA(name, width, height);
+        if (!strcmp(name.c_str() + suffixOffset, ".pfm") ||
+            !strcmp(name.c_str() + suffixOffset, ".PFM"))
+            return ReadImagePFM(name, width, height);
     }
     Error("Can't determine image file type from suffix of filename \"%s\"",
           name.c_str());
@@ -72,13 +76,17 @@ void WriteImage(const string &name, float *pixels, float *alpha, int xRes,
                            totalYRes, xOffset, yOffset);
              return;
         }
-        else
 #endif // PBRT_HAS_OPENEXR
-             if (!strcmp(name.c_str() + suffixOffset, ".tga") ||
-                 !strcmp(name.c_str() + suffixOffset, ".TGA")) {
-             WriteImageTGA(name, pixels, alpha, xRes, yRes, totalXRes,
-                           totalYRes, xOffset, yOffset);
-             return;
+        if (!strcmp(name.c_str() + suffixOffset, ".tga") ||
+            !strcmp(name.c_str() + suffixOffset, ".TGA")) {
+            WriteImageTGA(name, pixels, alpha, xRes, yRes, totalXRes,
+                          totalYRes, xOffset, yOffset);
+            return;
+        }
+        if (!strcmp(name.c_str() + suffixOffset, ".pfm") ||
+            !strcmp(name.c_str() + suffixOffset, ".PFM")) {
+            WriteImagePFM(name, pixels, xRes, yRes);
+            return;
         }
     }
     Error("Can't determine image file type from suffix of filename \"%s\"",
@@ -530,6 +538,193 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
     fclose(file);
     Info("Read TGA image %s (%d x %d)", name.c_str(), *width, *height);
     return ret;
+}
+
+
+
+// PFM Function Definitions
+/*
+ * PFM reader/writer code courtesy Jiawan "Kevin" Chen (http://people.csail.mit.edu/jiawen/)
+ */
+
+static bool hostLittleEndian =
+#if defined(__LITTLE_ENDIAN__)
+true
+#elif defined(__BIG_ENDIAN__)
+false
+#elif defined(WIN32)
+true
+#else
+#error "Can't detect machine endian-ness at compile-time."
+#endif
+    ;
+
+#define BUFFER_SIZE 80
+
+static inline int isWhitespace( char c )
+{
+    return c == ' ' || c == '\n' || c == '\t';
+}
+
+
+
+// reads a "word" from the fp and puts it into buffer
+// and adds a null terminator
+// i.e. it keeps reading until a whitespace is reached
+// returns the number of characters read
+// *not* including the whitespace
+// return -1 on an error
+static int readWord(FILE* fp, char* buffer, int bufferLength) {
+    int n;
+    char c;
+
+    if (bufferLength < 1)
+        return -1;
+
+    n = 0;
+    c = fgetc( fp );
+    while( c != EOF && !isWhitespace( c ) && n < bufferLength ) {
+        buffer[ n ] = c;
+        ++n;
+        c = fgetc( fp );
+    }
+
+    if( n < bufferLength ) {
+        buffer[ n ] = '\0';
+        return n;
+    }
+
+    return -1;
+}
+
+
+
+static RGBSpectrum *ReadImagePFM(const string &filename, int *xres, int *yres) {
+    float *data = NULL;
+    RGBSpectrum *rgb = NULL;
+    char buffer[ BUFFER_SIZE ];
+    unsigned int nFloats;
+    int nChannels, width, height;
+    float scale;
+    bool fileLittleEndian;
+
+    FILE *fp = fopen(filename.c_str(), "rb");
+    if (!fp)
+        goto fail;
+
+    // read either "Pf" or "PF"
+    if (readWord( fp, buffer, BUFFER_SIZE ) == -1)
+        goto fail;
+
+    if (strcmp( buffer, "Pf" ) == 0)
+        nChannels = 1;
+    else if (strcmp( buffer, "PF" ) == 0)
+        nChannels = 3;
+    else
+        goto fail;
+
+    // read the rest of the header
+    // read width
+    if (readWord( fp, buffer, BUFFER_SIZE ) == -1)
+        goto fail;
+    width = atoi( buffer );
+    *xres = width;
+
+    // read height
+    if (readWord( fp, buffer, BUFFER_SIZE ) == -1)
+        goto fail;
+    height = atoi( buffer );
+    *yres = height;
+
+    // read scale
+    if (readWord( fp, buffer, BUFFER_SIZE ) == -1)
+        goto fail;
+    sscanf( buffer, "%f", &scale );
+
+    // read the data
+    nFloats = nChannels * width * height;
+    data = new float[nFloats];
+    if (fread(data, sizeof( float ), nFloats, fp ) != nFloats)
+        goto fail;
+
+    // apply endian conversian and scale if appropriate
+    fileLittleEndian = (scale < 0.f);
+    if (hostLittleEndian ^ fileLittleEndian) {
+        uint8_t bytes[4];
+        for (unsigned int i = 0; i < nFloats; ++i) {
+            memcpy(bytes, &data[i], 4);
+            swap(bytes[0], bytes[3]);
+            swap(bytes[1], bytes[2]);
+            memcpy(&data[i], bytes, 4);
+        }
+    }
+    if (fabsf(scale) != 1.f)
+        for (unsigned int i = 0; i < nFloats; ++i)
+            data[i] *= fabsf(scale);
+
+    // create RGBs...
+    rgb = new RGBSpectrum[width*height];
+    if (nChannels == 1) {
+        for (int i = 0; i < width * height; ++i)
+            rgb[i] = data[i];
+    }
+    else {
+        for (int i = 0; i < width * height; ++i)
+            rgb[i] = RGBSpectrum::FromRGB(&data[3*i]);
+    }
+
+    delete[] data;
+    fclose(fp);
+    return rgb;
+
+ fail:
+    Error("Error reading PFM file \"%s\"", filename.c_str());
+    fclose(fp);
+    delete[] data;
+    delete[] rgb;
+    return NULL;
+}
+
+
+
+
+static bool WriteImagePFM(const string &filename, const float *rgb,
+                          int width, int height) {
+    FILE* fp;
+    unsigned int nFloats;
+    float scale;
+
+    fp = fopen(filename.c_str(), "wb");
+    if (!fp) {
+        Error("Unable to open output PFM file \"%s\"", filename.c_str());
+        return false;
+    }
+
+    // only write 3 channel PFMs here...
+    if (fprintf(fp, "PF\n") < 0)
+        goto fail;
+
+    // write the width and height, which must be positive
+    if (fprintf(fp, "%d %d\n", width, height) < 0)
+        goto fail;
+
+    // write the scale, which encodes endianness
+    scale = hostLittleEndian ? -1.f : 1.f;
+    if (fprintf(fp, "%f\n", scale) < 0)
+        goto fail;
+
+    // write the data
+    nFloats = 3 * width * height;
+    if (fwrite(rgb, sizeof(float), nFloats, fp) < nFloats)
+        goto fail;
+
+    fclose(fp);
+    return true;
+
+ fail:
+    Error("Error writing PFM file \"%s\"", filename.c_str());
+    fclose(fp);
+    return false;
 }
 
 
