@@ -298,7 +298,8 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
                         b1 = Union(b1, buckets[j].bounds);
                         count1 += buckets[j].count;
                     }
-                    cost[i] = count0 * b0.SurfaceArea() + count1 * b1.SurfaceArea();
+                    cost[i] = .125f + (count0 * b0.SurfaceArea() + count1 * b1.SurfaceArea()) /
+                              bbox.SurfaceArea();
                 }
 
                 // Find bucket to split at that minimizes SAH metric
@@ -313,7 +314,7 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
 
                 // Either create leaf or split primitives at selected SAH bucket
                 if (nPrimitives > maxPrimsInNode ||
-                    minCost < (end-start) * bbox.SurfaceArea()) {
+                    minCost < (end-start)) {
                     BVHPrimitiveInfo *pmid = std::partition(&buildData[start],
                         &buildData[end-1]+1,
                         CompareToBucket(minCostSplit, nBuckets, dim, centroidBounds));
