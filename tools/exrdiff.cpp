@@ -17,29 +17,35 @@ static bool ReadEXR(const char *name, float *&rgba, int &xRes, int &yRes, bool &
 static void WriteEXR(const char *name, float *pixels, int xRes, int yRes);
 
 static void usage() {
-    fprintf(stderr, "usage: exrdiff [-o difffile.exr] <foo.exr> <bar.exr>\n");
+    fprintf(stderr, "usage: exrdiff [-o difffile.exr] [-d diff tolerance %%] <foo.exr> <bar.exr>\n");
     exit(1);
 }
 
 int main(int argc, char *argv[]) 
 {
     const char *outfile = NULL;
-    const char *imageFile1, *imageFile2;
+    const char *imageFile1 = NULL, *imageFile2 = NULL;
+    float tol = 0.f;
 
     if (argc == 1) usage();
-    if (!strcmp(argv[1], "-o")) {
-        if (argc != 5)
+    for (int i = 1; i < argc; ++i) {
+        if (!strcmp(argv[i], "-o")) {
+            if (!argv[i+1]) usage();
+            outfile = argv[i+1];
+            ++i;
+        }
+        else if (!strcmp(argv[i], "-d")) {
+            if (!argv[i+1]) usage();
+            tol = atof(argv[i+1]);
+            ++i;
+        }
+        else if (!imageFile1)
+            imageFile1 = argv[i];
+        else if (!imageFile2)
+            imageFile2 = argv[i];
+        else
             usage();
-        outfile = argv[2];
-        imageFile1 = argv[3];
-        imageFile2 = argv[4];
     }
-    else if (argc == 3) {
-        imageFile1 = argv[1];
-        imageFile2 = argv[2];
-    }
-    else
-        usage();
 
     float *im1, *im2;
     int r1[2], r2[2];
@@ -84,7 +90,8 @@ int main(int argc, char *argv[])
     double avg1 = sum1 / (3. * r1[0] * r1[1]);
     double avg2 = sum2 / (3. * r1[0] * r1[1]);
     double avgDelta = (avg1-avg2) / std::min(avg1, avg2);
-    if (bigDiff > 0 || smallDiff > 0 || fabs(avgDelta) > 1e-4) {
+    if ((tol == 0. && (bigDiff > 0 || smallDiff > 0) ||
+         100.f * fabs(avgDelta) > tol)) {
 	printf("%s %s\n\tImages differ: %d big (%.2f%%), %d small (%.2f%%)\n"
                "\tavg 1 = %g, avg2 = %g (%f%% delta)\n"
                "\tMSE = %g\n",
