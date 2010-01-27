@@ -206,10 +206,8 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
     BVHBuildNode *node = buildArena.Alloc<BVHBuildNode>();
     // Compute bounds of all primitives in BVH node
     BBox bbox;
-    for (uint32_t i = start; i < end; ++i) {
-        uint32_t primNum = buildData[i].primitiveNumber;
-        bbox = Union(bbox, primitives[primNum]->WorldBound());
-    }
+    for (uint32_t i = start; i < end; ++i)
+        bbox = Union(bbox, buildData[i].bounds);
     uint32_t nPrimitives = end - start;
     if (nPrimitives == 1) {
         // Create leaf _BVHBuildNode_
