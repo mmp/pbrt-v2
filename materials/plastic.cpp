@@ -55,8 +55,8 @@ BSDF *PlasticMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
 PlasticMaterial *CreatePlasticMaterial(const Transform &xform,
         const TextureParams &mp) {
-    Reference<Texture<Spectrum> > Kd = mp.GetSpectrumTexture("Kd", Spectrum(1.f));
-    Reference<Texture<Spectrum> > Ks = mp.GetSpectrumTexture("Ks", Spectrum(1.f));
+    Reference<Texture<Spectrum> > Kd = mp.GetSpectrumTexture("Kd", Spectrum(0.25f));
+    Reference<Texture<Spectrum> > Ks = mp.GetSpectrumTexture("Ks", Spectrum(0.25f));
     Reference<Texture<float> > roughness = mp.GetFloatTexture("roughness", .1f);
     Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
     return new PlasticMaterial(Kd, Ks, roughness, bumpMap);
