@@ -117,8 +117,8 @@ struct LinearBVHNode {
 static inline bool IntersectP(const BBox &bounds, const Ray &ray,
         const Vector &invDir, const uint32_t dirIsNeg[3]) {
     // Check for ray intersection against $x$ and $y$ slabs
-    float tmin = (bounds[  dirIsNeg[0]].x - ray.o.x) * invDir.x;
-    float tmax = (bounds[1-dirIsNeg[0]].x - ray.o.x) * invDir.x;
+    float tmin =  (bounds[  dirIsNeg[0]].x - ray.o.x) * invDir.x;
+    float tmax =  (bounds[1-dirIsNeg[0]].x - ray.o.x) * invDir.x;
     float tymin = (bounds[  dirIsNeg[1]].y - ray.o.y) * invDir.y;
     float tymax = (bounds[1-dirIsNeg[1]].y - ray.o.y) * invDir.y;
     if ((tmin > tymax) || (tymin > tmax))
@@ -258,7 +258,7 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
         }
         case SPLIT_SAH: default: {
             // Partition primitives using approximate SAH
-            if (end-start <= 4) {
+            if (nPrimitives <= 4) {
                 // Partition primitives into equally-sized subsets
                 mid = (start + end) / 2;
                 std::nth_element(&buildData[start], &buildData[mid],
@@ -314,7 +314,7 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
 
                 // Either create leaf or split primitives at selected SAH bucket
                 if (nPrimitives > maxPrimsInNode ||
-                    minCost < (end-start)) {
+                    minCost < nPrimitives) {
                     BVHPrimitiveInfo *pmid = std::partition(&buildData[start],
                         &buildData[end-1]+1,
                         CompareToBucket(minCostSplit, nBuckets, dim, centroidBounds));

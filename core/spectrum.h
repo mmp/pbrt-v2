@@ -249,7 +249,7 @@ public:
     SampledSpectrum(const CoefficientSpectrum<nSpectralSamples> &v)
         : CoefficientSpectrum<nSpectralSamples>(v) { }
     static SampledSpectrum FromSampled(const float *lambda,
-            const float *v, int n) {
+                                       const float *v, int n) {
         // Sort samples if unordered, use sorted for returned spectrum
         if (!SpectrumSamplesSorted(lambda, v, n)) {
             vector<float> slambda(&lambda[0], &lambda[n]);

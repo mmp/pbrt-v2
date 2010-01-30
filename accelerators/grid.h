@@ -53,7 +53,7 @@ private:
 
 
 // GridAccel Declarations
-class  GridAccel : public Aggregate {
+class GridAccel : public Aggregate {
 public:
     // GridAccel Public Methods
     GridAccel(const vector<Reference<Primitive> > &p, bool refineImmediately);

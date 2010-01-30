@@ -58,7 +58,7 @@ TriangleMesh::TriangleMesh(const Transform *o2w, const Transform *w2o,
     else s = NULL;
 
     // Transform mesh vertices to world space
-    for (int i  = 0; i < nverts; ++i)
+    for (int i = 0; i < nverts; ++i)
         p[i] = (*ObjectToWorld)(P[i]);
 }
 
@@ -73,10 +73,10 @@ TriangleMesh::~TriangleMesh() {
 
 
 BBox TriangleMesh::ObjectBound() const {
-    BBox bobj;
+    BBox objectBounds;
     for (int i = 0; i < nverts; i++)
-        bobj = Union(bobj, (*WorldToObject)(p[i]));
-    return bobj;
+        objectBounds = Union(objectBounds, (*WorldToObject)(p[i]));
+    return objectBounds;
 }
 
 
