@@ -128,7 +128,7 @@ void IrradianceCacheIntegrator::Preprocess(const Scene *scene,
     wb.pMin -= delta;
     wb.pMax += delta;
     octree = new Octree<IrradianceSample *>(wb);
-    // Preprime irradiance cache
+    // Prime irradiance cache
     minWeight *= 1.5f;
     int xstart, xend, ystart, yend;
     camera->film->GetSampleExtent(&xstart, &xend, &ystart, &yend);

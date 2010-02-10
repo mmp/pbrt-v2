@@ -438,7 +438,7 @@ void PhotonShootingTask::Run() {
                     BxDFType specularType = BxDFType(BSDF_REFLECTION |
                         BSDF_TRANSMISSION | BSDF_SPECULAR);
                     bool hasNonSpecular = (photonBSDF->NumComponents() >
-                        photonBSDF->NumComponents(specularType));
+                                           photonBSDF->NumComponents(specularType));
                     Vector wo = -photonRay.d;
                     if (hasNonSpecular) {
                         // Deposit photon at surface
@@ -690,7 +690,7 @@ Spectrum PhotonIntegrator::Li(const Scene *scene, const Renderer *renderer,
                             photonPdf += conePdf;
                     photonPdf /= nIndirSamplePhotons;
                     float wt = PowerHeuristic(gatherSamples, pdf, gatherSamples, photonPdf);
-                    Li += fr * Lindir * AbsDot(wi, n) * wt / pdf;
+                    Li += fr * Lindir * (AbsDot(wi, n) * wt / pdf);
                 }
             }
             L += Li / gatherSamples;

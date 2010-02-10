@@ -369,12 +369,12 @@ TriangleMesh *CreateTriangleMeshShape(const Transform *o2w, const Transform *w2o
     if (uvs) {
         if (nuvi < 2 * npi) {
             Error("Not enough of \"uv\"s for triangle mesh.  Expencted %d, "
-                  "found %d.  Discarding.\n", 2*npi, nuvi);
+                  "found %d.  Discarding.", 2*npi, nuvi);
             uvs = NULL;
         }
         else if (nuvi > 2 * npi)
             Warning("More \"uv\"s provided than will be used for triangle "
-                    "mesh.  (%d expcted, %d found)\n", 2*npi, nuvi);
+                    "mesh.  (%d expcted, %d found)", 2*npi, nuvi);
     }
     if (!vi || !P) return NULL;
     const Vector *S = params.FindVector("S", &nsi);

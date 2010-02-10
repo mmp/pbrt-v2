@@ -77,11 +77,11 @@ static void LargeStep(RNG &rng, MLTSample *sample, int maxDepth,
     sample->cameraSample.lensV = rng.RandomFloat();
     for (int i = 0; i < maxDepth; ++i) {
         // Apply large step to $i$th camera _PathSample_
-        PathSample &eps = sample->cameraPathSamples[i];
-        eps.bsdfSample.uComponent = rng.RandomFloat();
-        eps.bsdfSample.uDir[0] = rng.RandomFloat();
-        eps.bsdfSample.uDir[1] = rng.RandomFloat();
-        eps.rrSample = rng.RandomFloat();
+        PathSample &cps = sample->cameraPathSamples[i];
+        cps.bsdfSample.uComponent = rng.RandomFloat();
+        cps.bsdfSample.uDir[0] = rng.RandomFloat();
+        cps.bsdfSample.uDir[1] = rng.RandomFloat();
+        cps.rrSample = rng.RandomFloat();
 
         // Apply large step to $i$th _LightingSample_
         LightingSample &ls = sample->lightingSamples[i];
@@ -310,7 +310,7 @@ Spectrum MetropolisRenderer::PathL(const MLTSample &sample,
         LightSample lrs(sample.lightRaySamples[0], sample.lightRaySamples[1],
                         sample.lightRaySamples[2]);
         Spectrum lightWt = light->Sample_L(scene, lrs, sample.lightRaySamples[3],
-            sample.lightRaySamples[4], sample.cameraSample.time,  &lightRay,
+            sample.lightRaySamples[4], sample.cameraSample.time, &lightRay,
             &Nl, &lightRayPdf);
         PBRT_MLT_FINISHED_SAMPLE_LIGHT_FOR_BIDIR();
         if (lightWt.IsBlack() || lightRayPdf == 0.f) {

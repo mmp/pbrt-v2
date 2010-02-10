@@ -35,7 +35,7 @@ void EmissionIntegrator::RequestSamples(Sampler *sampler, Sample *sample,
 
 
 Spectrum EmissionIntegrator::Transmittance(const Scene *scene,
-        const Renderer *, const RayDifferential &ray,
+        const Renderer *renderer, const RayDifferential &ray,
         const Sample *sample, RNG &rng, MemoryArena &arena) const {
     if (!scene->volumeRegion) return Spectrum(1.f);
     float step, offset;

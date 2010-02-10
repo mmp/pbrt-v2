@@ -78,7 +78,7 @@ Spectrum UniformSampleOneLight(const Scene *scene,
         const BSDFSampleOffsets *bsdfSampleOffset) {
     // Randomly choose a single light to sample, _light_
     int nLights = int(scene->lights.size());
-    if (nLights == 0.) return Spectrum(0.);
+    if (nLights == 0) return Spectrum(0.);
     int lightNum;
     if (lightNumOffset != -1)
         lightNum = Floor2Int(sample->oneD[lightNumOffset][0] * nLights);
@@ -123,11 +123,11 @@ Spectrum EstimateDirect(const Scene *scene, const Renderer *renderer,
             // Add light's contribution to reflected radiance
             Li *= visibility.Transmittance(scene, renderer, NULL, rng, arena);
             if (light->IsDeltaLight())
-                Ld += f * Li * AbsDot(wi, n) / lightPdf;
+                Ld += f * Li * (AbsDot(wi, n) / lightPdf);
             else {
                 bsdfPdf = bsdf->Pdf(wo, wi, flags);
                 float weight = PowerHeuristic(1, lightPdf, 1, bsdfPdf);
-                Ld += f * Li * AbsDot(wi, n) * weight / lightPdf;
+                Ld += f * Li * (AbsDot(wi, n) * weight / lightPdf);
             }
         }
     }
@@ -135,7 +135,8 @@ Spectrum EstimateDirect(const Scene *scene, const Renderer *renderer,
     // Sample BSDF with multiple importance sampling
     if (!light->IsDeltaLight()) {
         BxDFType sampledType;
-        Spectrum f = bsdf->Sample_f(wo, &wi, bsdfSample, &bsdfPdf, flags, &sampledType);
+        Spectrum f = bsdf->Sample_f(wo, &wi, bsdfSample, &bsdfPdf, flags,
+                                    &sampledType);
         if (!f.IsBlack() && bsdfPdf > 0.) {
             float weight = 1.f;
             if (!(sampledType & BSDF_SPECULAR)) {

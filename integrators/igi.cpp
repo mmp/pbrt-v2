@@ -98,7 +98,6 @@ void IGIIntegrator::Preprocess(const Scene *scene, const Camera *camera,
             if (pdf == 0.f || alpha.IsBlack()) continue;
             alpha /= pdf * lightPdf;
             Intersection isect;
-            int depth = 0;
             while (scene->Intersect(ray, &isect) && !alpha.IsBlack()) {
                 // Create virtual light and sample new ray for path
                 alpha *= renderer->Transmittance(scene, RayDifferential(ray), NULL,
@@ -126,7 +125,6 @@ void IGIIntegrator::Preprocess(const Scene *scene, const Camera *camera,
                     break;
                 alpha *= contribScale / rrProb;
                 ray = RayDifferential(isect.dg.p, wi, ray, isect.rayEpsilon);
-                ++depth;
             }
             arena.FreeAll();
         }
@@ -180,7 +178,7 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
             L += Llight;
     }
     if (ray.depth < maxSpecularDepth) {
-        // Do bias compensation for bounding geoemtry term
+        // Do bias compensation for bounding geometry term
         int nSamples = (ray.depth == 0) ? nGatherSamples : 1;
         for (int i = 0; i < nSamples; ++i) {
             Vector wi;
