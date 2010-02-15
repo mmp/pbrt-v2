@@ -37,7 +37,7 @@ BSDF *MixMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     BSDF *b1 = m1->GetBSDF(dgGeom, dgShading, arena);
     BSDF *b2 = m2->GetBSDF(dgGeom, dgShading, arena);
     Spectrum s1 = scale->Evaluate(dgShading).Clamp();
-    Spectrum s2 = Spectrum(1.f) - s1;
+    Spectrum s2 = (Spectrum(1.f) - s1).Clamp();
     int n1 = b1->NumComponents(), n2 = b2->NumComponents();
     for (int i = 0; i < n1; ++i)
         b1->bxdfs[i] = BSDF_ALLOC(arena, ScaledBxDF)(b1->bxdfs[i], s1);

@@ -63,7 +63,7 @@ inline float Fdr(float eta) {
 inline float CosTheta(const Vector &w) { return w.z; }
 inline float AbsCosTheta(const Vector &w) { return fabsf(w.z); }
 inline float SinTheta2(const Vector &w) {
-    return 1.f - CosTheta(w)*CosTheta(w);
+    return max(0.f, 1.f - CosTheta(w)*CosTheta(w));
 }
 
 

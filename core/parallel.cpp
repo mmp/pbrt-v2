@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <sys/sysctl.h>
+#include <errno.h>
 #endif // WIN32
 #include <list>
 
@@ -474,7 +475,7 @@ Semaphore::Semaphore() {
     sprintf(name, "pbrt.%d-%d", (int)getpid(), count++);
     sem = sem_open(name, O_CREAT, S_IRUSR|S_IWUSR, 0);
     if (!sem)
-        Severe("Error from sem_open");
+        Severe("Error from sem_open: %s", strerror(errno));
 #endif // !__OpenBSD__
 }
 
