@@ -94,7 +94,7 @@ float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
         ray->d = Normalize(Pfocus - ray->o);
     }
 
-    // Compute offset rays for \use{PerspectiveCamera} ray differentials
+    // Compute offset rays for _PerspectiveCamera_ ray differentials
     ray->rxOrigin = ray->ryOrigin = ray->o;
     ray->rxDirection = Normalize(Vector(Pcamera) + dxCamera);
     ray->ryDirection = Normalize(Vector(Pcamera) + dyCamera);

@@ -57,7 +57,7 @@ void SamplerRendererTask::Run() {
     Spectrum *Ts = new Spectrum[maxSamples];
     Intersection *isects = new Intersection[maxSamples];
 
-    // Get samples from \use{Sampler} and update image
+    // Get samples from _Sampler_ and update image
     int sampleCount;
     while ((sampleCount = sampler->GetMoreSamples(samples, rng)) > 0) {
         // Generate camera rays and compute radiance along rays
@@ -108,11 +108,11 @@ void SamplerRendererTask::Run() {
             }
         }
 
-        // Free \use{MemoryArena} memory from computing image sample values
+        // Free _MemoryArena_ memory from computing image sample values
         arena.FreeAll();
     }
 
-    // Clean up after \use{SamplerRendererTask} is done with its image region
+    // Clean up after _SamplerRendererTask_ is done with its image region
     camera->film->UpdateDisplay(sampler->xPixelStart,
         sampler->yPixelStart, sampler->xPixelEnd+1, sampler->yPixelEnd+1);
     delete sampler;

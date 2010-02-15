@@ -62,7 +62,7 @@ struct Distribution1D {
         // Compute PDF for sampled offset
         if (pdf) *pdf = func[offset] / funcInt;
 
-        // Return $x \in [0,1)$ corresponding to sample
+        // Return $x\in{}[0,1)$ corresponding to sample
         return (offset + du) / count;
     }
     int SampleDiscrete(float u, float *pdf) const {
@@ -233,7 +233,8 @@ inline float PowerHeuristic(int nf, float fPdf, int ng, float gPdf) {
 
 
 // Sampling Inline Functions
-inline void Sample02(uint32_t n, const uint32_t scramble[2], float sample[2]) {
+inline void Sample02(uint32_t n, const uint32_t scramble[2],
+                     float sample[2]) {
     sample[0] = VanDerCorput(n, scramble[0]);
     sample[1] = Sobol2(n, scramble[1]);
 }

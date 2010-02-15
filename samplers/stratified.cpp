@@ -59,7 +59,7 @@ Sampler *StratifiedSampler::GetSubSampler(int num, int count) {
 int StratifiedSampler::GetMoreSamples(Sample *samples, RNG &rng) {
     if (yPos == yPixelEnd) return 0;
     int nSamples = xPixelSamples * yPixelSamples;
-    // Generate stratified camera samples for (_xPos_,_yPos_)
+    // Generate stratified camera samples for _(xPos, yPos)_
 
     // Generate initial stratified samples into _sampleBuf_ memory
     float *bufp = sampleBuf;

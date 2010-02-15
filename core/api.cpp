@@ -308,7 +308,7 @@ Reference<Shape> MakeShape(const string &name,
     if (name == "sphere")
         s = CreateSphereShape(object2world, world2object, reverseOrientation,
                               paramSet);
-    // Create remaining \use{Shape} types
+    // Create remaining _Shape_ types
     else if (name == "cylinder")
         s = CreateCylinderShape(object2world, world2object, reverseOrientation,
                                 paramSet);
@@ -390,7 +390,7 @@ Reference<Material> MakeMaterial(const string &name,
     else
         Warning("Material \"%s\" unknown.", name.c_str());
     mp.ReportUnused();
-    if (!material) Error("Unable to create material \"%s\"\n", name.c_str());
+    if (!material) Error("Unable to create material \"%s\"", name.c_str());
     return material;
 }
 
@@ -1200,7 +1200,7 @@ Renderer *RenderOptions::MakeRenderer() const {
         renderer = CreateMetropolisRenderer(RendererParams, camera);
         RendererParams.ReportUnused();
     }
-    // Create remaining \use{Renderer} types
+    // Create remaining _Renderer_ types
     else if (RendererName == "createprobes") {
         // Create surface and volume integrators
         SurfaceIntegrator *surfaceIntegrator = MakeSurfaceIntegrator(SurfIntegratorName,

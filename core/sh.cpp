@@ -164,7 +164,7 @@ void SHEvaluate(const Vector &w, int lmax, float *out) {
     if (lmax > 28)
         Severe("SHEvaluate() runs out of numerical precision for lmax > 28. "
                "If you need more bands, try recompiling using doubles.");
-    // Compute Legendre polynomial values for $\cos \theta$
+    // Compute Legendre polynomial values for $\cos\theta$
     Assert(w.Length() > .995f && w.Length() < 1.005f);
     legendrep(w.z, lmax, out);
 
@@ -174,7 +174,7 @@ void SHEvaluate(const Vector &w, int lmax, float *out) {
         for (int m = -l; m <= l; ++m)
             Klm[SHIndex(l, m)] = K(l, m);
 
-    // Compute $\sin \phi$ and $\cos \phi$ values
+    // Compute $\sin\phi$ and $\cos\phi$ values
     float *sins = ALLOCA(float, lmax+1), *coss = ALLOCA(float, lmax+1);
     float xyLen = sqrtf(max(0.f, 1.f - w.z*w.z));
     if (xyLen == 0.f) {

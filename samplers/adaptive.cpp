@@ -116,7 +116,7 @@ bool AdaptiveSampler::ReportResults(Sample *samples,
         // Advance to next pixel for sampling for _AdaptiveSampler_
         if (++xPos == xPixelEnd) {
             xPos = xPixelStart;
-             ++yPos;
+            ++yPos;
         }
         return true;
     }
@@ -130,7 +130,7 @@ bool AdaptiveSampler::ReportResults(Sample *samples,
         // Advance to next pixel for sampling for _AdaptiveSampler_
         if (++xPos == xPixelEnd) {
             xPos = xPixelStart;
-             ++yPos;
+            ++yPos;
         }
         return true;
     }
