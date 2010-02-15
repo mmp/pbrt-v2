@@ -49,8 +49,6 @@ void Material::Bump(const Reference<Texture<float> > &d,
     dgEval.nn = Normalize((Normal)Cross(dgs.dpdu, dgs.dpdv) +
                           du * dgs.dndu);
     float uDisplace = d->Evaluate(dgEval);
-    if (isnan(uDisplace))
-        uDisplace = d->Evaluate(dgEval);
 
     // Shift _dgEval_ _dv_ in the $v$ direction
     float dv = .5f * (fabsf(dgs.dvdx) + fabsf(dgs.dvdy));
