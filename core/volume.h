@@ -45,9 +45,9 @@ public:
     virtual BBox WorldBound() const = 0;
     virtual bool IntersectP(const Ray &ray, float *t0, float *t1) const = 0;
     virtual Spectrum sigma_a(const Point &, const Vector &,
-                            float time) const = 0;
+                             float time) const = 0;
     virtual Spectrum sigma_s(const Point &, const Vector &,
-                            float time) const = 0;
+                             float time) const = 0;
     virtual Spectrum Lve(const Point &, const Vector &,
                          float time) const = 0;
     virtual float p(const Point &, const Vector &,

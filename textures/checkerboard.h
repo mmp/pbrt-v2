@@ -44,7 +44,7 @@ public:
         if (aa == "none")             aaMethod = NONE;
         else if (aa == "closedform")  aaMethod = CLOSEDFORM;
         else {
-            Warning("Anti-aliasing mode \"%s\" not understood by "
+            Warning("Antialiasing mode \"%s\" not understood by "
                     "Checkerboard2DTexture; using \"closedform\"", aa.c_str());
             aaMethod = CLOSEDFORM;
         }
