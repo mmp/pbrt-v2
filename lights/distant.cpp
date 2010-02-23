@@ -86,6 +86,7 @@ Spectrum DistantLight::Sample_L(const Scene *scene,
     // Set ray origin and direction for infinite light ray
     *ray = Ray(Pdisk + worldRadius * lightDir, -lightDir, 0.f, INFINITY,
                time);
+    *Ns = (Normal)ray->d;
     *pdf = 1.f / (M_PI * worldRadius * worldRadius);
     return L;
 }
