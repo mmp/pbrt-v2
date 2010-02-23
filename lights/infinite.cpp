@@ -187,7 +187,7 @@ InfiniteAreaLight *CreateInfiniteLight(const Transform &light2world,
 Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
         const LightSample &ls, float time, Vector *wi, float *pdf,
         VisibilityTester *visibility) const {
-    PBRT_INFINITE_LIGHT_STARTED_SAMPLEL();
+    PBRT_INFINITE_LIGHT_STARTED_SAMPLE();
     // Find $(u,v)$ sample coordinates in infinite light texture
     float uv[2], mapPdf;
     distribution->SampleContinuous(ls.uPos[0], ls.uPos[1], uv, &mapPdf);
@@ -206,7 +206,7 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
     // Return radiance value for infinite light direction
     visibility->SetRay(p, pEpsilon, *wi, time);
     Spectrum Ls = Spectrum(radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
-    PBRT_INFINITE_LIGHT_FINISHED_SAMPLEL();
+    PBRT_INFINITE_LIGHT_FINISHED_SAMPLE();
     return Ls;
 }
 
@@ -227,7 +227,7 @@ float InfiniteAreaLight::Pdf(const Point &, const Vector &w) const {
 Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
         const LightSample &ls, float u1, float u2, float time,
         Ray *ray, Normal *Ns, float *pdf) const {
-    PBRT_INFINITE_LIGHT_STARTED_SAMPLEL();
+    PBRT_INFINITE_LIGHT_STARTED_SAMPLE();
     // Compute direction for infinite light sample ray
 
     // Find $(u,v)$ sample coordinates in infinite light texture
@@ -257,7 +257,7 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     *pdf = directionPdf * areaPdf;
     if (sintheta == 0.f) *pdf = 0.f;
     Spectrum Ls = (radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
-    PBRT_INFINITE_LIGHT_FINISHED_SAMPLEL();
+    PBRT_INFINITE_LIGHT_FINISHED_SAMPLE();
     return Ls;
 }
 
