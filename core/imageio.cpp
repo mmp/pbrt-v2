@@ -548,12 +548,10 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
  */
 
 static bool hostLittleEndian =
-#if defined(__LITTLE_ENDIAN__)
+#if defined(__LITTLE_ENDIAN__) || defined(__i386__) || defined(__x86_64__) || defined(WIN32)
 true
 #elif defined(__BIG_ENDIAN__)
 false
-#elif defined(WIN32)
-true
 #else
 #error "Can't detect machine endian-ness at compile-time."
 #endif
