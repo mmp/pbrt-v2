@@ -86,7 +86,7 @@ void PointLight::SHProject(const Point &p, float pEpsilon, int lmax,
         coeffs[i] = 0.f;
     if (computeLightVisibility &&
         scene->IntersectP(Ray(p, Normalize(lightPos - p), pEpsilon,
-                              1.f, time)))
+                              Distance(lightPos, p), time)))
         return;
     // Project point light source to SH
     float *Ylm = ALLOCA(float, SHTerms(lmax));
