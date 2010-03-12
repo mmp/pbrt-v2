@@ -150,7 +150,7 @@ class Integrator;
 class VolumeIntegrator;
 
 // Global Constants
-#define PBRT_VERSION "2.0 beta 1"
+#define PBRT_VERSION "2.0.0"
 #ifdef M_PI
 #undef M_PI
 #endif
@@ -158,7 +158,6 @@ class VolumeIntegrator;
 #define INV_PI     0.31830988618379067154f
 #define INV_TWOPI  0.15915494309189533577f
 #define INV_FOURPI 0.07957747154594766788f
-
 #ifndef INFINITY
 #define INFINITY FLT_MAX
 #endif
