@@ -586,8 +586,8 @@ TextureParams::GetSpectrumTexture(const string &n,
         if (spectrumTextures.find(name) != spectrumTextures.end())
             return spectrumTextures[name];
         else
-            Error("Couldn't find spectrum texture named \"%s\" for parameter \"%s\"",
-                  name.c_str(), n.c_str());
+            Error("Couldn't find spectrum texture named \"%s\" "
+                  "for parameter \"%s\"", name.c_str(), n.c_str());
     }
     Spectrum val = geomParams.FindOneSpectrum(n,
                                 materialParams.FindOneSpectrum(n, def));

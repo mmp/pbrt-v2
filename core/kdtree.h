@@ -138,7 +138,7 @@ KdTree<NodeData>::recursiveBuild(uint32_t nodeNum, int start, int end,
 
 template <typename NodeData> template <typename LookupProc>
 void KdTree<NodeData>::Lookup(const Point &p, LookupProc &proc,
-        float &maxDistSquared) const {
+                              float &maxDistSquared) const {
     privateLookup(0, p, proc, maxDistSquared);
 }
 

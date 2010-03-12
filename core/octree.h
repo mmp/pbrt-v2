@@ -53,7 +53,7 @@ public:
                    DistanceSquared(dataBound.pMin, dataBound.pMax));
     }
     template <typename LookupProc> void Lookup(const Point &p,
-            LookupProc &process) {
+                                               LookupProc &process) {
         if (!bound.Inside(p)) return;
         lookupPrivate(&root, bound, p, process);
     }
@@ -73,7 +73,7 @@ private:
 
 
 inline BBox octreeChildBound(int child, const BBox &nodeBound,
-        const Point &pMid) {
+                             const Point &pMid) {
     BBox childBound;
     childBound.pMin.x = (child & 4) ? pMid.x : nodeBound.pMin.x;
     childBound.pMax.x = (child & 4) ? nodeBound.pMax.x : pMid.x;
@@ -103,9 +103,9 @@ void Octree<NodeData>::addPrivate(
     Point pMid = .5 * nodeBound.pMin + .5 * nodeBound.pMax;
 
     // Determine which children the item overlaps
-    bool x[2] = { dataBound.pMin.x <= pMid.x, dataBound.pMax.x  > pMid.x };
-    bool y[2] = { dataBound.pMin.y <= pMid.y, dataBound.pMax.y  > pMid.y };
-    bool z[2] = { dataBound.pMin.z <= pMid.z, dataBound.pMax.z  > pMid.z };
+    bool x[2] = { dataBound.pMin.x <= pMid.x, dataBound.pMax.x > pMid.x };
+    bool y[2] = { dataBound.pMin.y <= pMid.y, dataBound.pMax.y > pMid.y };
+    bool z[2] = { dataBound.pMin.z <= pMid.z, dataBound.pMax.z > pMid.z };
     bool over[8] = { x[0] & y[0] & z[0], x[0] & y[0] & z[1],
                      x[0] & y[1] & z[0], x[0] & y[1] & z[1],
                      x[1] & y[0] & z[0], x[1] & y[0] & z[1],

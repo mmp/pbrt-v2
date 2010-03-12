@@ -90,7 +90,7 @@ inline int32_t AtomicAdd(AtomicInt32 *v, int32_t delta) {
 
 
 inline int32_t AtomicCompareAndSwap(AtomicInt32 *v, int32_t newValue,
-    int32_t oldValue);
+                                    int32_t oldValue);
 inline int32_t AtomicCompareAndSwap(AtomicInt32 *v, int32_t newValue, int32_t oldValue) {
     PBRT_ATOMIC_MEMORY_OP();
 #if defined(WIN32)

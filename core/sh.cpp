@@ -66,7 +66,7 @@ static void legendrep(float x, int lmax, float *out) {
         Assert(!isinf(P(l, l-1)));
     }
 
-    // Compute $m=1, \ldots, l-1$ values using Legendre recurrence
+    // Compute $m=1, \ldots, l-2$ values using Legendre recurrence
     for (int l = 3; l <= lmax; ++l)
         for (int m = 1; m <= l-2; ++m)
         {
@@ -124,7 +124,7 @@ static inline float fact(float v) {
 
 
 static void sinCosIndexed(float s, float c, int n,
-        float *sout, float *cout) {
+                          float *sout, float *cout) {
     float si = 0, ci = 1;
     for (int i = 0; i < n; ++i) {
         *sout++ = si;
