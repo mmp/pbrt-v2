@@ -54,9 +54,9 @@ static Mutex *taskQueueMutex = Mutex::Create();
 static std::vector<Task *> taskQueue;
 #endif // PBRT_USE_GRAND_CENTRAL_DISPATCH
 #ifndef PBRT_USE_GRAND_CENTRAL_DISPATCH
-static Semaphore workerSemaphore;
+static Semaphore *workerSemaphore;
 static uint32_t numUnfinishedTasks;
-static ConditionVariable tasksRunningCondition;
+static ConditionVariable *tasksRunningCondition;
 #endif // PBRT_USE_GRAND_CENTRAL_DISPATCH
 #ifndef PBRT_USE_GRAND_CENTRAL_DISPATCH
 static
@@ -712,10 +712,14 @@ void ConditionVariable::Signal() {
 
 #endif // WIN32
 void TasksInit() {
+    if (PbrtOptions.nCores == 1)
+        return;
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     return;
 #else // PBRT_USE_GRAND_CENTRAL_DISPATCH
     static const int nThreads = NumSystemCores();
+    workerSemaphore = new Semaphore;
+    tasksRunningCondition = new ConditionVariable;
 #ifdef PBRT_HAS_PTHREADS
     threads = new pthread_t[nThreads];
     for (int i = 0; i < nThreads; ++i) {
@@ -737,6 +741,8 @@ void TasksInit() {
 
 
 void TasksCleanup() {
+    if (PbrtOptions.nCores == 1)
+        return;
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     return;
 #else // // PBRT_USE_GRAND_CENTRAL_DISPATCH
@@ -745,7 +751,7 @@ void TasksCleanup() {
     }
 
     static const int nThreads = NumSystemCores();
-    workerSemaphore.Post(nThreads);
+    workerSemaphore->Post(nThreads);
 
     if (threads != NULL) {
 #ifdef PBRT_HAS_PTHREADS
@@ -799,11 +805,11 @@ void EnqueueTasks(const vector<Task *> &tasks) {
     for (unsigned int i = 0; i < tasks.size(); ++i)
         taskQueue.push_back(tasks[i]);
     }
-    tasksRunningCondition.Lock();
+    tasksRunningCondition->Lock();
     numUnfinishedTasks += tasks.size();
-    tasksRunningCondition.Unlock();
+    tasksRunningCondition->Unlock();
 
-    workerSemaphore.Post(tasks.size());
+    workerSemaphore->Post(tasks.size());
 #endif
 }
 
@@ -815,7 +821,7 @@ static DWORD WINAPI taskEntry(LPVOID arg) {
 static void *taskEntry(void *arg) {
 #endif
     while (true) {
-        workerSemaphore.Wait();
+        workerSemaphore->Wait();
         // Try to get task from task queue
         Task *myTask = NULL;
         { MutexLock lock(*taskQueueMutex);
@@ -829,11 +835,11 @@ static void *taskEntry(void *arg) {
         PBRT_STARTED_TASK(myTask);
         myTask->Run();
         PBRT_FINISHED_TASK(myTask);
-        tasksRunningCondition.Lock();
+        tasksRunningCondition->Lock();
         int unfinished = --numUnfinishedTasks;
         if (unfinished == 0)
-            tasksRunningCondition.Signal();
-        tasksRunningCondition.Unlock();
+            tasksRunningCondition->Signal();
+        tasksRunningCondition->Unlock();
     }
     // Cleanup from task thread and exit
 #ifdef PBRT_HAS_PTHREADS
@@ -845,13 +851,15 @@ static void *taskEntry(void *arg) {
 
 #endif // !PBRT_USE_GRAND_CENTRAL_DISPATCH
 void WaitForAllTasks() {
+    if (PbrtOptions.nCores == 1)
+        return; // enqueue just runs them immediately in this case
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     dispatch_group_wait(gcdGroup, DISPATCH_TIME_FOREVER);
 #else
-    tasksRunningCondition.Lock();
+    tasksRunningCondition->Lock();
     while (numUnfinishedTasks > 0)
-        tasksRunningCondition.Wait();
-    tasksRunningCondition.Unlock();
+        tasksRunningCondition->Wait();
+    tasksRunningCondition->Unlock();
 #endif
 }
 
