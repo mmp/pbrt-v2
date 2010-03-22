@@ -144,7 +144,7 @@ bool AdaptiveSampler::needsSupersampling(Sample *samples,
     case ADAPTIVE_COMPARE_SHAPE_ID:
         // See if any shape ids differ within samples
         for (int i = 0; i < count-1; ++i)
-            if (isects[i].shapeId != isects[i+1].shapeId &&
+            if (isects[i].shapeId != isects[i+1].shapeId ||
                 isects[i].primitiveId != isects[i+1].primitiveId)
                 return true;
         return false;
