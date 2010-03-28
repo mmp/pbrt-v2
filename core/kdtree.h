@@ -55,7 +55,7 @@ public:
     KdTree(const vector<NodeData> &data);
     ~KdTree() {
         FreeAligned(nodes);
-        delete[] nodeData;
+        FreeAligned(nodeData);
     }
     template <typename LookupProc> void Lookup(const Point &p,
             LookupProc &process, float &maxDistSquared) const;
@@ -90,7 +90,7 @@ KdTree<NodeData>::KdTree(const vector<NodeData> &d) {
     nNodes = d.size();
     nextFreeNode = 1;
     nodes = AllocAligned<KdNode>(nNodes);
-    nodeData = new NodeData[nNodes];
+    nodeData = AllocAligned<NodeData>(nNodes);
     vector<const NodeData *> buildNodes(nNodes, NULL);
     for (uint32_t i = 0; i < nNodes; ++i)
         buildNodes[i] = &d[i];
