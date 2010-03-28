@@ -243,11 +243,8 @@ void DipoleSubsurfaceIntegrator::Preprocess(const Scene *scene,
             }
             E += Elight / nSamples;
         }
-        if (E.y() > 0.f)
-        {
-            irradiancePoints.push_back(IrradiancePoint(sp, E));
-            PBRT_SUBSURFACE_COMPUTED_IRRADIANCE_AT_POINT(&sp, &E);
-        }
+        irradiancePoints.push_back(IrradiancePoint(sp, E));
+        PBRT_SUBSURFACE_COMPUTED_IRRADIANCE_AT_POINT(&sp, &E);
         arena.FreeAll();
         progress.Update();
     }
