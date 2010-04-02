@@ -56,7 +56,7 @@ GonioPhotometricLight::GonioPhotometricLight(const Transform &light2world,
 
 Spectrum GonioPhotometricLight::Power(const Scene *) const {
     return 4.f * M_PI * Intensity *
-        Spectrum(mipmap->Lookup(.5f, .5f, .5f), SPECTRUM_ILLUMINANT);
+        Spectrum(mipmap ? mipmap->Lookup(.5f, .5f, .5f) : 1.f, SPECTRUM_ILLUMINANT);
 
 }
 
