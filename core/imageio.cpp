@@ -544,7 +544,7 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
 
 // PFM Function Definitions
 /*
- * PFM reader/writer code courtesy Jiawan "Kevin" Chen (http://people.csail.mit.edu/jiawen/)
+ * PFM reader/writer code courtesy Jiawen "Kevin" Chen (http://people.csail.mit.edu/jiawen/)
  */
 
 static bool hostLittleEndian =
