@@ -856,6 +856,8 @@ void WaitForAllTasks() {
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     dispatch_group_wait(gcdGroup, DISPATCH_TIME_FOREVER);
 #else
+    if (!tasksRunningCondition)
+        return;  // no tasks have been enqueued, so TasksInit() never called
     tasksRunningCondition->Lock();
     while (numUnfinishedTasks > 0)
         tasksRunningCondition->Wait();
