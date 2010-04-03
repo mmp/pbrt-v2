@@ -125,7 +125,7 @@ static inline void mutate(RNG &rng, float *v, float min = 0.f,
         *v -= delta;
         if (*v < min) *v = max - (min - *v);
     }
-    Assert(*v >= min && *v < max);
+    if (*v < min || *v > max) *v = min;
 }
 
 
