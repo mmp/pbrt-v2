@@ -114,6 +114,9 @@ enum BxDFType {
 struct BSDFSample {
    // BSDFSample Public Methods
    BSDFSample(float up0, float up1, float ucomp) {
+       Assert(up0 >= 0.f && up0 < 1.f);
+       Assert(up1 >= 0.f && up1 < 1.f);
+       Assert(ucomp >= 0.f && ucomp < 1.f);
        uDir[0] = up0;
        uDir[1] = up1;
        uComponent = ucomp;

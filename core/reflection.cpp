@@ -492,6 +492,9 @@ BSDFSample::BSDFSample(const Sample *sample,
     uDir[0] = sample->twoD[offsets.dirOffset][2*n];
     uDir[1] = sample->twoD[offsets.dirOffset][2*n+1];
     uComponent = sample->oneD[offsets.componentOffset][n];
+    Assert(uDir[0] >= 0.f && uDir[0] < 1.f);
+    Assert(uDir[1] >= 0.f && uDir[1] < 1.f);
+    Assert(uComponent >= 0.f && uComponent < 1.f);
 }
 
 
