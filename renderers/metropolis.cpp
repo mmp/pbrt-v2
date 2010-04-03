@@ -119,13 +119,13 @@ static inline void mutate(RNG &rng, float *v, float min = 0.f,
     float delta = (max - min) * b * expf(logRatio * rng.RandomFloat());
     if (rng.RandomFloat() < 0.5f) {
         *v += delta;
-        if (*v > max) *v = min + (*v - max);
+        if (*v >= max) *v = min + (*v - max);
     }
     else {
         *v -= delta;
         if (*v < min) *v = max - (min - *v);
     }
-    Assert(*v >= min && *v <= max);
+    Assert(*v >= min && *v < max);
 }
 
 
