@@ -28,7 +28,7 @@
 // Spectrum Method Definitions
 bool SpectrumSamplesSorted(const float *lambda, const float *vals, int n) {
     for (int i = 0; i < n-1; ++i)
-        if (lambda[i] >= lambda[i+1]) return false;
+        if (lambda[i] > lambda[i+1]) return false;
     return true;
 }
 
