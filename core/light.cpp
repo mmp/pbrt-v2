@@ -66,6 +66,9 @@ LightSample::LightSample(const Sample *sample,
     uPos[0] = sample->twoD[offsets.posOffset][2*n];
     uPos[1] = sample->twoD[offsets.posOffset][2*n+1];
     uComponent = sample->oneD[offsets.componentOffset][n];
+    Assert(uPos[0] >= 0.f && uPos[0] < 1.f);
+    Assert(uPos[1] >= 0.f && uPos[1] < 1.f);
+    Assert(uComponent >= 0.f && uComponent < 1.f);
 }
 
 
