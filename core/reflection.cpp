@@ -203,7 +203,9 @@ Spectrum Microfacet::f(const Vector &wo, const Vector &wi) const {
     float cosThetaO = AbsCosTheta(wo);
     float cosThetaI = AbsCosTheta(wi);
     if (cosThetaI == 0.f || cosThetaO == 0.f) return Spectrum(0.f);
-    Vector wh = Normalize(wi + wo);
+    Vector wh = wi + wo;
+    if (wh.x == 0. && wh.y == 0. && wh.z == 0.) return Spectrum(0.f);
+    wh = Normalize(wh);
     float cosThetaH = Dot(wi, wh);
     Spectrum F = fresnel->Evaluate(cosThetaH);
     return R * distribution->D(wh) * G(wo, wi, wh) * F /
@@ -223,7 +225,9 @@ Spectrum FresnelBlend::f(const Vector &wo, const Vector &wi) const {
         (Spectrum(1.f) - Rs) *
         (1.f - powf(1.f - .5f * AbsCosTheta(wi), 5)) *
         (1.f - powf(1.f - .5f * AbsCosTheta(wo), 5));
-    Vector wh = Normalize(wi + wo);
+    Vector wh = wi + wo;
+    if (wh.x == 0. && wh.y == 0. && wh.z == 0.) return Spectrum(0.f);
+    wh = Normalize(wh);
     Spectrum specular = distribution->D(wh) /
         (4.f * AbsDot(wi, wh) * max(AbsCosTheta(wi), AbsCosTheta(wo))) *
         SchlickFresnel(Dot(wi, wh));
@@ -262,7 +266,9 @@ Spectrum IrregIsotropicBRDF::f(const Vector &wo,
 Spectrum RegularHalfangleBRDF::f(const Vector &wo,
                                  const Vector &wi) const {
     // Compute $\wh$ and transform $\wi$ to halfangle coordinate system
-    Vector wh = Normalize(wi + wo);
+    Vector wh = wi + wo;
+    if (wh.x == 0. && wh.y == 0. && wh.z == 0.) return Spectrum(0.f);
+    wh = Normalize(wh);
     float whTheta = SphericalTheta(wh);
     float whCosPhi = CosPhi(wh), whSinPhi = SinPhi(wh);
     float whCosTheta = CosTheta(wh), whSinTheta = SinTheta(wh);
