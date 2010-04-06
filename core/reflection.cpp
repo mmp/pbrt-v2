@@ -512,6 +512,7 @@ Spectrum BSDF::Sample_f(const Vector &woW, Vector *wiW,
     int matchingComps = NumComponents(flags);
     if (matchingComps == 0) {
         *pdf = 0.f;
+        if (sampledType) *sampledType = BxDFType(0);
         PBRT_FINISHED_BSDF_SAMPLE();
         return Spectrum(0.f);
     }
@@ -534,6 +535,7 @@ Spectrum BSDF::Sample_f(const Vector &woW, Vector *wiW,
                                 bsdfSample.uDir[1], pdf);
     if (*pdf == 0.f)
     {
+        if (sampledType) *sampledType = BxDFType(0);
         PBRT_FINISHED_BSDF_SAMPLE();
         return 0.f;
     }
