@@ -527,7 +527,6 @@ void MetropolisRenderer::Render(const Scene *scene) {
         camera->film->GetPixelExtent(&x0, &x1, &y0, &y1);
         float t0 = camera->shutterOpen, t1 = camera->shutterClose;
         Distribution1D *lightDistribution = ComputeLightSamplingCDF(scene);
-
         if (directLighting != NULL) {
             PBRT_MLT_STARTED_DIRECTLIGHTING();
             // Compute direct lighting before Metropolis light transport
@@ -619,6 +618,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
             delete tasks[i];
         progress.Done();
         Mutex::Destroy(filmMutex);
+        delete lightDistribution;
     }
     camera->film->WriteImage();
     PBRT_MLT_FINISHED_RENDERING();
