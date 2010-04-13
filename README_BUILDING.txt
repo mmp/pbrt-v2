@@ -22,16 +22,16 @@ PBRT_USE_GRAND_CENTRAL_DISPATCH in the DEFS line to do so.
 Finally, this version of pbrt doesn't connect any runtime rendering
 statistics.  (Updating shared statistics counters can cause a substantial
 performance impact with multi-threaded execution.)  To override this,
-change the definition of PBRT_STATS_NONE to either PBRT_STATS_DTRACE
-or PBRT_STATS_COUNTERS.  If your system supports dtrace (OSX, FreeBSD, and
+change the definition of PBRT_PROBES_NONE to either PBRT_PROBES_DTRACE
+or PBRT_PROBES_COUNTERS.  If your system supports dtrace (OSX, FreeBSD, and
 Solaris, currently), then pbrt is instrumented to provide a large number of
 dtrace probes that can be analyzed with dtrace scripts; building with
-dtrace support is supported if you set PBRT_STATS_DTRACE.  (However, you
+dtrace support is supported if you set PBRT_PROBES_DTRACE.  (However, you
 need to manually compile the dtrace.d file into a header file by running:
 
 % /usr/sbin/dtrace -h -s core/dtrace.h -o core/dtrace.h
 
 The Makefile currently doesn't have a rule for this.)  Finally,
-PBRT_STATS_COUNTERS can be set to compile the system to gather a number of
+PBRT_PROBES_COUNTERS can be set to compile the system to gather a number of
 statistics with shared counters, incurring the corresponding performance
 penalty.

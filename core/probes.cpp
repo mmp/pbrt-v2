@@ -24,7 +24,7 @@
 
 // core/probes.cpp*
 #include "probes.h"
-#ifdef PBRT_STATS_COUNTERS
+#ifdef PBRT_PROBES_COUNTERS
 #include "parallel.h"
 #include <map>
 using std::map;
@@ -354,4 +354,4 @@ void PBRT_STARTED_SPECULAR_REFRACTION_RAY(const RayDifferential *) {
 }
 
 
-#endif // PBRT_STATS_COUNTERS
+#endif // PBRT_PROBES_COUNTERS

@@ -74,9 +74,9 @@ setup_nice_print(env)
 debug_env = env.Clone()
 debug_env.Append(CPPDEFINES = [ 'DEBUG' ])
 if arch == 'darwin':
-    debug_env.Append(CPPDEFINES = [ 'PBRT_STATS_DTRACE' ])
+    debug_env.Append(CPPDEFINES = [ 'PBRT_PROBES_DTRACE' ])
 else:
-    debug_env.Append(CPPDEFINES = [ 'PBRT_STATS_COUNTERS' ])
+    debug_env.Append(CPPDEFINES = [ 'PBRT_PROBES_COUNTERS' ])
 build_envs['debug'] = debug_env
 
 coverage_env = debug_env.Clone()
@@ -97,13 +97,13 @@ build_envs['perf'] = perf_env
 
 stats_env = release_env.Clone()
 if arch == 'darwin':
-    stats_env.Append(CPPDEFINES = [ 'PBRT_STATS_DTRACE' ])
+    stats_env.Append(CPPDEFINES = [ 'PBRT_PROBES_DTRACE' ])
 else:
-    stats_env.Append(CPPDEFINES = [ 'PBRT_STATS_COUNTERS' ])
+    stats_env.Append(CPPDEFINES = [ 'PBRT_PROBES_COUNTERS' ])
 build_envs['stats'] = stats_env
 
-release_env.Append(CPPDEFINES = [ 'PBRT_STATS_NONE' ])
-perf_env.Append(CPPDEFINES = [ 'PBRT_STATS_NONE' ])
+release_env.Append(CPPDEFINES = [ 'PBRT_PROBES_NONE' ])
+perf_env.Append(CPPDEFINES = [ 'PBRT_PROBES_NONE' ])
 
 ###########################################################################
 

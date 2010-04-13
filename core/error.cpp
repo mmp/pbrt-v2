@@ -47,26 +47,22 @@ static void processError(const char *format, va_list args,
     vsnprintf_s(errorBuf, sizeof(errorBuf), _TRUNCATE, format, args);
 #endif
     // Report error
-    switch (disposition) {
-    case PBRT_ERROR_IGNORE:
+    if (disposition == PBRT_ERROR_IGNORE)
         return;
-    case PBRT_ERROR_CONTINUE:
-        // Print scene file and line number, if appropriate
+    else {
+        // PBRT_ERROR_CONTINUE, PBRT_ERROR_ABORT
+        // Print formatted error message
         extern int line_num;
         if (line_num != 0) {
             extern string current_file;
             fprintf(stderr, "%s(%d): ", current_file.c_str(), line_num);
         }
-        fprintf(stderr, "%s: %s\n", message, errorBuf);
-        break;
-    case PBRT_ERROR_ABORT:
-        // Print scene file and line number, if appropriate
-        extern int line_num;
-        if (line_num != 0) {
-            extern string current_file;
-            fprintf(stderr, "%s(%d): ", current_file.c_str(), line_num);
-        }
-        fprintf(stderr, "%s: %s\n", message, errorBuf);
+        fputs(message, stderr);
+        fputs(": ", stderr);
+        fputs(errorBuf, stderr);
+        fputs("\n", stderr);
+    }
+    if (disposition == PBRT_ERROR_ABORT) {
 #ifdef WIN32
         __debugbreak();
 #else

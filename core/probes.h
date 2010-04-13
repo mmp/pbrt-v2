@@ -26,13 +26,13 @@
 
 // core/probes.h*
 #include "pbrt.h"
-#ifdef PBRT_STATS_DTRACE
+#ifdef PBRT_PROBES_DTRACE
 #include "core/dtrace.h"
 inline void ProbesCleanup() { }
 inline void ProbesPrint(FILE *) { }
-#endif // PBRT_STATS_DTRACE
+#endif // PBRT_PROBES_DTRACE
 
-#ifdef PBRT_STATS_NONE
+#ifdef PBRT_PROBES_NONE
 inline void ProbesCleanup() { }
 inline void ProbesPrint(FILE *) { }
 
@@ -201,9 +201,9 @@ inline void ProbesPrint(FILE *) { }
 #define PBRT_INFINITE_LIGHT_FINISHED_SAMPLE()
 #define PBRT_INFINITE_LIGHT_STARTED_PDF()
 #define PBRT_INFINITE_LIGHT_FINISHED_PDF()
-#endif // PBRT_STATS_NONE
+#endif // PBRT_PROBES_NONE
 
-#ifdef PBRT_STATS_COUNTERS
+#ifdef PBRT_PROBES_COUNTERS
 
 // Statistics Counters Declarations
 void ProbesPrint(FILE *dest);
@@ -378,6 +378,6 @@ extern void PBRT_STARTED_SPECULAR_REFRACTION_RAY(const RayDifferential *);
 #define PBRT_INFINITE_LIGHT_FINISHED_SAMPLE()
 #define PBRT_INFINITE_LIGHT_STARTED_PDF()
 #define PBRT_INFINITE_LIGHT_FINISHED_PDF()
-#endif // PBRT_STATS_COUNTERS
+#endif // PBRT_PROBES_COUNTERS
 
 #endif // PBRT_CORE_PROBES_H
