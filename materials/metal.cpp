@@ -28,8 +28,8 @@
 #include "paramset.h"
 #include "texture.h"
 
-// Metal Method Definitions
-Metal::Metal(Reference<Texture<Spectrum> > et,
+// MetalMaterial Method Definitions
+MetalMaterial::MetalMaterial(Reference<Texture<Spectrum> > et,
         Reference<Texture<Spectrum> > kk, Reference<Texture<float> > rough,
         Reference<Texture<float> > bump) {
     eta = et;
@@ -39,7 +39,7 @@ Metal::Metal(Reference<Texture<Spectrum> > et,
 }
 
 
-BSDF *Metal::GetBSDF(const DifferentialGeometry &dgGeom,
+BSDF *MetalMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
         const DifferentialGeometry &dgShading, MemoryArena &arena) const {
     // Allocate _BSDF_, possibly doing bump mapping with _bumpMap_
     DifferentialGeometry dgs;
@@ -86,7 +86,7 @@ const float CopperK[CopperSamples] = {
     2.160063, 2.21, 2.249938, 2.289, 2.326, 2.362, 2.397625, 2.433, 2.469187, 2.504, 2.535875, 2.564,
     2.589625, 2.605, 2.595562, 2.583, 2.5765, 2.599, 2.678062, 2.809, 3.01075, 3.24, 3.458187, 3.67,
     3.863125, 4.05, 4.239563, 4.43, 4.619563, 4.817, 5.034125, 5.26, 5.485625, 5.717 };
-Metal *CreateMetalMaterial(const Transform &xform, const TextureParams &mp) {
+MetalMaterial *CreateMetalMaterial(const Transform &xform, const TextureParams &mp) {
     static Spectrum copperN = Spectrum::FromSampled(CopperWavelengths, CopperN, CopperSamples);
     Reference<Texture<Spectrum> > eta = mp.GetSpectrumTexture("eta", copperN);
 
@@ -95,7 +95,7 @@ Metal *CreateMetalMaterial(const Transform &xform, const TextureParams &mp) {
 
     Reference<Texture<float> > roughness = mp.GetFloatTexture("roughness", .01f);
     Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
-    return new Metal(eta, k, roughness, bumpMap);
+    return new MetalMaterial(eta, k, roughness, bumpMap);
 }
 
 
