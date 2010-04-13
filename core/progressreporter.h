@@ -32,14 +32,14 @@ class ProgressReporter {
 public:
     // ProgressReporter Public Methods
     ProgressReporter(int totalWork, const string &title,
-                     int barLength = 58);
+                     int barLength = -1);
     ~ProgressReporter();
     void Update(int num = 1);
     void Done();
 private:
     // ProgressReporter Private Data
-    const int totalWork, totalPlusses;
-    int workDone, plussesPrinted;
+    const int totalWork;
+    int workDone, plussesPrinted, totalPlusses;
     Timer *timer;
     FILE *outFile;
     char *buf, *curSpace;
@@ -47,5 +47,6 @@ private:
 };
 
 
+extern int TerminalWidth();
 
 #endif // PBRT_CORE_PROGRESSREPORTER_H

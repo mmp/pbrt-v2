@@ -26,10 +26,20 @@
 #include "progressreporter.h"
 #include "timer.h"
 #include "parallel.h"
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <errno.h>
+#endif // !WIN32
 
 // ProgressReporter Method Definitions
 ProgressReporter::ProgressReporter(int tw, const string &title, int barLength)
-    : totalWork(tw), totalPlusses(barLength - title.size()) {
+    : totalWork(tw) {
+    if (barLength <= 0)
+        barLength = TerminalWidth() - 28;
+    totalPlusses = max(2ul, barLength - title.size());
     mutex = Mutex::Create();
     plussesPrinted = 0;
     workDone = 0;
@@ -93,6 +103,27 @@ void ProgressReporter::Done() {
     float seconds = (float)timer->Time();
     fprintf(outFile, " (%.1fs)       \n", seconds);
     fflush(outFile);
+}
+
+
+int TerminalWidth() {
+#ifdef WIN32
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (h == INVALID_HANDLE_VALUE || h == NULL) {
+        fprintf(stderr, "GetStdHandle() call failed");
+        return 80;
+    }
+    CONSOLE_SCREEN_BUFFER_INFO bufferInfo = { 0 };
+    GetConsoleScreenBufferInfo(h, &bufferInfo);
+    return bufferInfo.dwSize.x;
+#else
+    struct winsize w;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) < 0) {
+        fprintf(stderr, "Error in ioctl() in TerminalWidth(): %d", errno);
+        return 80;
+    }
+    return w.ws_col;
+#endif // WIN32
 }
 
 
