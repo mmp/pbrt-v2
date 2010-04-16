@@ -5,14 +5,12 @@ ARCH = $(shell uname)
 EXRINCLUDE=-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR -I/opt/local/include/OpenEXR 
 EXRLIBDIR=-L/usr/local/lib -L/opt/local/lib
 
-DEFS=-DPBRT_PROBES_NONE -DPBRT_HAS_PTHREADS -DPBRT_HAS_OPENEXR
+DEFS=-DPBRT_PROBES_NONE -DPBRT_HAS_OPENEXR
 
 # 32 bit
-#DEFS+=-DPBRT_POINTER_SIZE=4
 #MARCH=-m32 -msse2 -mfpmath=sse
 
 # 64 bit
-DEFS+=-DPBRT_POINTER_SIZE=8 -DPBRT_HAS_64_BIT_ATOMICS
 MARCH=-m64
 
 OPT=-O2

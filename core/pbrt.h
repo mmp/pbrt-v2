@@ -167,6 +167,18 @@ class VolumeIntegrator;
 #ifndef PBRT_L1_CACHE_LINE_SIZE
 #define PBRT_L1_CACHE_LINE_SIZE 64
 #endif
+#ifndef PBRT_POINTER_SIZE
+#if defined(__amd64__) || defined(_M_X64)
+#define PBRT_POINTER_SIZE 8
+#elif defined(__i386__) || defined(_M_IX86)
+#define PBRT_POINTER_SIZE 4
+#endif
+#endif
+#ifndef PBRT_HAS_64_BIT_ATOMICS
+#if (PBRT_POINTER_SIZE == 8)
+#define PBRT_HAS_64_BIT_ATOMICS
+#endif
+#endif // PBRT_HAS_64_BIT_ATOMICS
 
 // Global Inline Functions
 inline float Lerp(float t, float v1, float v2) {

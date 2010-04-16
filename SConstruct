@@ -52,19 +52,15 @@ if arch == 'darwin':
     env.Append(BUILDERS = { 'DTrace' : 
                             Builder(action = '/usr/sbin/dtrace -h -s $SOURCE -o $TARGET')})
 
-env.Append(CPPDEFINES = [ 'PBRT_HAS_PTHREADS' ])
 env.Append(CPPDEFINES = [ 'PBRT_HAS_OPENEXR' ])
 parallel_libs = [ 'pthread' ]
 if arch != 'darwin':
     # 32-bit build
-    env.Append(CPPDEFINES = [ 'PBRT_POINTER_SIZE=4' ])
     exr_libs = [ 'Iex', 'IlmImf', 'Imath', 'Iex', 'IlmThread', 'Half' ] 
 else:
-    env.Append(CPPDEFINES = [ 'PBRT_POINTER_SIZE=8' ])
     exr_libs = [ 'Iex', 'IlmImf', 'Imath', 'Iex', 'IlmThread', 'Half', 'z' ] 
     env.Append(CCFLAGS = [ '-m64' ],
-               LINKFLAGS = [ '-m64', '-Z' ],
-               CPPDEFINES = [ 'PBRT_HAS_64_BIT_ATOMICS' ])
+               LINKFLAGS = [ '-m64', '-Z' ])
     
 tiff_libs = [ 'tiff' ]
 Export('exr_libs', 'parallel_libs', 'tiff_libs')

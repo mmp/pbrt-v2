@@ -56,7 +56,7 @@ numbers of CPU cores.  We are particularly interested to hear any
 experience running the system with >4 cores as well as any insight gained
 from digging into any scalability bottlenecks.  The system attempts to
 automatically determine how many CPU cores are present in the system, but
-the PBRT_NTHREADS environment variable can be used to override this.
+the --ncores command line argument to override this.
 
 OpenEXR is no longer required to build the system (but it is highly
 recommended).  pbrt now includes code to read and write TGA format files;

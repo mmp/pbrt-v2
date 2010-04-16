@@ -31,8 +31,7 @@
 #endif // __APPLE__ and not x86
 #ifdef WIN32
 #include <windows.h>
-#endif
-#ifdef PBRT_HAS_PTHREADS
+#else
 #include <pthread.h>
 #include <semaphore.h>
 #endif
@@ -205,10 +204,10 @@ private:
     Mutex &operator=(const Mutex &);
 
     // System-dependent mutex implementation
-#ifdef PBRT_HAS_PTHREADS
-    pthread_mutex_t mutex;
-#elif defined(WIN32)
+#ifdef WIN32
     CRITICAL_SECTION criticalSection;
+#else
+    pthread_mutex_t mutex;
 #endif
 };
 
@@ -236,9 +235,7 @@ private:
     RWMutex &operator=(const RWMutex &);
 
     // System-dependent rw mutex implementation
-#ifdef PBRT_HAS_PTHREADS
-    pthread_rwlock_t mutex;
-#elif defined(WIN32)
+#ifdef WIN32
     void AcquireRead();
     void ReleaseRead();
     void AcquireWrite();
@@ -254,6 +251,8 @@ private:
     HANDLE hReadyToRead;
     HANDLE hReadyToWrite;
     CRITICAL_SECTION cs;
+#else
+    pthread_rwlock_t mutex;
 #endif
 };
 
@@ -282,13 +281,12 @@ public:
     bool TryWait();
 private:
     // Semaphore Private Data
-#ifdef PBRT_HAS_PTHREADS
-    sem_t *sem;
-    static int count;
-#endif // PBRT_HAS_PTHREADS
 #ifdef WIN32
     HANDLE handle;
-#endif // WIN32
+#else
+    sem_t *sem;
+    static int count;
+#endif // !WIN32
 };
 
 
@@ -303,10 +301,10 @@ public:
     void Signal();
 private:
     // ConditionVariable Private Data
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
     pthread_mutex_t mutex;
     pthread_cond_t cond;
-#endif // PBRT_HAS_PTHREADS
+#endif // !WIN32
 #ifdef WIN32
     // Count of the number of waiters.
     uint32_t waitersCount;

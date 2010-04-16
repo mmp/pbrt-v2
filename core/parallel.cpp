@@ -40,11 +40,10 @@
 #include <list>
 
 // Parallel Local Declarations
-#if defined(PBRT_HAS_PTHREADS) && !defined(PBRT_USE_GRAND_CENTRAL_DISPATCH)
-static pthread_t *threads;
-#endif
 #ifdef WIN32
 static HANDLE *threads;
+#elif !defined(PBRT_USE_GRAND_CENTRAL_DISPATCH)
+static pthread_t *threads;
 #endif // WIN32
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
 static dispatch_queue_t gcdQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -68,7 +67,7 @@ void *taskEntry(void *arg);
 #endif // !PBRT_USE_GRAND_CENTRAL_DISPATCH
 
 // Parallel Definitions
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
 
 Mutex *Mutex::Create() {
     int sz = sizeof(Mutex);
@@ -190,7 +189,7 @@ void RWMutexLock::DowngradeToRead() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
+#endif // !WIN32
 #ifdef WIN32
 
 Mutex *Mutex::Create() {
@@ -461,7 +460,7 @@ void RWMutexLock::DowngradeToRead() {
 
 
 #endif // WIN32
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
 Semaphore::Semaphore() {
 #ifdef __OpenBSD__
     sem = (sem_t *)malloc(sizeof(sem_t));
@@ -480,7 +479,7 @@ Semaphore::Semaphore() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
+#endif // !WIN32
 #ifdef WIN32
 Semaphore::Semaphore() {
     handle = CreateSemaphore(NULL, 0, 65535,  NULL);
@@ -490,10 +489,10 @@ Semaphore::Semaphore() {
 
 
 #endif // WIN32
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
 int Semaphore::count = 0;
-#endif // PBRT_HAS_PTHREADS
-#ifdef PBRT_HAS_PTHREADS
+#endif // !WIN32
+#ifndef WIN32
 Semaphore::~Semaphore() {
 #ifdef __OpenBSD__
     int err = sem_destroy(sem);
@@ -509,7 +508,7 @@ Semaphore::~Semaphore() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
+#endif // !WIN32
 #ifdef WIN32
 Semaphore::~Semaphore() {
     CloseHandle(handle);
@@ -517,7 +516,7 @@ Semaphore::~Semaphore() {
 
 
 #endif // WIN32
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
 void Semaphore::Wait() {
     int err;
     if ((err = sem_wait(sem)) != 0)
@@ -525,15 +524,15 @@ void Semaphore::Wait() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
-#ifdef PBRT_HAS_PTHREADS
+#endif // !WIN32
+#ifndef WIN32
 bool Semaphore::TryWait() {
     return (sem_trywait(sem) == 0);
 }
 
 
-#endif // PBRT_HAS_PTHREADS
-#ifdef PBRT_HAS_PTHREADS
+#endif // !WIN32
+#ifndef WIN32
 void Semaphore::Post(int count) {
     int err;
     while (count-- > 0)
@@ -542,7 +541,7 @@ void Semaphore::Post(int count) {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
+#endif // !WIN32
 #ifdef WIN32
 void Semaphore::Wait() {
     if (WaitForSingleObject(handle, INFINITE) == WAIT_FAILED)
@@ -567,7 +566,7 @@ void Semaphore::Post(int count) {
 
 
 #endif // WIN32
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
 ConditionVariable::ConditionVariable() {
    int err;
    if ((err = pthread_cond_init(&cond, NULL)) != 0)
@@ -577,16 +576,16 @@ ConditionVariable::ConditionVariable() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
-#ifdef PBRT_HAS_PTHREADS
+#endif // !WIN32
+#ifndef WIN32
 ConditionVariable::~ConditionVariable() {
     pthread_cond_destroy(&cond);
     pthread_mutex_destroy(&mutex);
 }
 
 
-#endif // PBRT_HAS_PTHREADS
-#ifdef PBRT_HAS_PTHREADS
+#endif // !WIN32
+#ifndef WIN32
 void ConditionVariable::Lock() {
     int err;
     if ((err = pthread_mutex_lock(&mutex)) != 0)
@@ -594,8 +593,8 @@ void ConditionVariable::Lock() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
-#ifdef PBRT_HAS_PTHREADS
+#endif // !WIN32
+#ifndef WIN32
 void ConditionVariable::Unlock() {
     int err;
     if ((err = pthread_mutex_unlock(&mutex)) != 0)
@@ -603,8 +602,8 @@ void ConditionVariable::Unlock() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
-#ifdef PBRT_HAS_PTHREADS
+#endif // !WIN32
+#ifndef WIN32
 void ConditionVariable::Wait() {
     int err;
     if ((err = pthread_cond_wait(&cond, &mutex)) != 0)
@@ -612,8 +611,8 @@ void ConditionVariable::Wait() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
-#ifdef PBRT_HAS_PTHREADS
+#endif // !WIN32
+#ifndef WIN32
 void ConditionVariable::Signal() {
     int err;
     if ((err = pthread_cond_signal(&cond)) != 0)
@@ -621,7 +620,7 @@ void ConditionVariable::Signal() {
 }
 
 
-#endif // PBRT_HAS_PTHREADS
+#endif // !WIN32
 #ifdef WIN32
 
 // http://www.cs.wustl.edu/\~schmidt/win32-cv-1.html
@@ -720,15 +719,14 @@ void TasksInit() {
     static const int nThreads = NumSystemCores();
     workerSemaphore = new Semaphore;
     tasksRunningCondition = new ConditionVariable;
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
     threads = new pthread_t[nThreads];
     for (int i = 0; i < nThreads; ++i) {
         int err = pthread_create(&threads[i], NULL, &taskEntry, reinterpret_cast<void *>(i));
         if (err != 0)
             Severe("Error from pthread_create: %s", strerror(err));
     }
-#endif // !PBRT_HAS_PTHREADS
-#ifdef WIN32
+#else
     threads = new HANDLE[nThreads];
     for (int i = 0; i < nThreads; ++i) {
         threads[i] = CreateThread(NULL, 0, taskEntry, reinterpret_cast<void *>(i), 0, NULL);
@@ -754,14 +752,13 @@ void TasksCleanup() {
     workerSemaphore->Post(nThreads);
 
     if (threads != NULL) {
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
         for (int i = 0; i < nThreads; ++i) {
             int err = pthread_join(threads[i], NULL);
             if (err != 0)
                 Severe("Error from pthread_join: %s", strerror(err));
         }
-#endif
-#ifdef WIN32
+#else
         WaitForMultipleObjects(nThreads, threads, TRUE, INFINITE);
         for (int i = 0; i < nThreads; ++i) {
             CloseHandle(threads[i]);
@@ -842,9 +839,9 @@ static void *taskEntry(void *arg) {
         tasksRunningCondition->Unlock();
     }
     // Cleanup from task thread and exit
-#ifdef PBRT_HAS_PTHREADS
+#ifndef WIN32
     pthread_exit(NULL);
-#endif // PBRT_HAS_PTHREADS
+#endif // !WIN32
     return 0;
 }
 
