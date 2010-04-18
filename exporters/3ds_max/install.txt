@@ -1,0 +1,8 @@
+
+this 2 files must be placed in the script startup folder or run each time you are going to use the exporter.
+as this files create all the materials and maps plugins.
+copy:
+Gtools_PBRT_Maps.ms to -> C:\Program Files\Autodesk\3ds Max 2010\Scripts\Startup\
+Gtools_PBRT_Materials.ms to -> C:\Program Files\Autodesk\3ds Max 2010\Scripts\Startup\
+
+then just run Gtools_PBRT_Exporter.ms
