@@ -88,17 +88,22 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
         }
         
         FILE *f = fopen(filename.c_str(), "rb");
-        if (!f)
+        if (!f) {
             Error("Unable to open BRDF data file \"%s\"", filename.c_str());
-        
+            return;
+        }
         int dims[3];
-        if (fread(dims, sizeof(int), 3, f) != 3)
+        if (fread(dims, sizeof(int), 3, f) != 3) {
             Error("Premature end-of-file in measured BRDF data file \"%s\"",
                   filename.c_str());
+            fclose(f);
+            return;
+        }
         uint32_t n = dims[0] * dims[1] * dims[2];
         if (n != nThetaH * nThetaD * nPhiD)  {
             Error("Dimensions don't match\n");
             fclose(f);
+            return;
         }
         
         regularHalfangleData = new float[3*n];
@@ -110,9 +115,14 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
         for (int c = 0; c < 3; ++c) {
             int offset = 0;
             for (uint32_t i = 0; i < nChunks; ++i) {
-                if (fread(tmp, sizeof(double), chunkSize, f) != chunkSize)
+                if (fread(tmp, sizeof(double), chunkSize, f) != chunkSize) {
                     Error("Premature end-of-file in measured BRDF data file \"%s\"",
                           filename.c_str());
+                    delete[] regularHalfangleData;
+                    regularHalfangleData = NULL;
+                    fclose(f);
+                    return;
+                }
                 for (uint32_t j = 0; j < chunkSize; ++j)
                     regularHalfangleData[3 * offset++ + c] = max(0., tmp[j] * scales[c]);
             }
