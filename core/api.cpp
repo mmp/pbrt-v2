@@ -902,7 +902,7 @@ void pbrtTexture(const string &name, const string &type,
         // Create _float_ texture and store in _floatTextures_
         if (graphicsState.floatTextures.find(name) !=
             graphicsState.floatTextures.end())
-            Warning("Texture \"%s\" being redefined", name.c_str());
+            Info("Texture \"%s\" being redefined", name.c_str());
         WARN_IF_ANIMATED_TRANSFORM("Texture");
         Reference<Texture<float> > ft = MakeFloatTexture(texname,
                                                          curTransform[0], tp);
@@ -911,7 +911,7 @@ void pbrtTexture(const string &name, const string &type,
     else if (type == "color")  {
         // Create _color_ texture and store in _spectrumTextures_
         if (graphicsState.spectrumTextures.find(name) != graphicsState.spectrumTextures.end())
-            Warning("Texture \"%s\" being redefined", name.c_str());
+            Info("Texture \"%s\" being redefined", name.c_str());
         WARN_IF_ANIMATED_TRANSFORM("Texture");
         Reference<Texture<Spectrum> > st = MakeSpectrumTexture(texname,
             curTransform[0], tp);
