@@ -1,0 +1,75 @@
+<template name="pbrt Template" defaultExtension="pbrt file (*.pbrt)" 
+runAfter="/Users/mmp/pbrt-git/book/src/build/darwin-release/pbrt &quot;$FILE&quot;">
+<description>
+Exporter to the pbrt rendering system (http://pbrt.org).
+
+Written by Matt Pharr (matt@pharr.org), heavily inspired by the RenderMan
+exporter by Tom Beddard.
+</description>
+<primitive name="begin">
+<![CDATA[
+# Exported from structuresynth by the pbrt exporter
+# http://pbrt.org
+
+Film "image" "integer xresolution" [{width}] "integer yresolution" [{height}]
+
+Scale -1 1 1
+LookAt {CamPosX} {CamPosY} {CamPosZ}
+       {CamTargetX} {CamTargetY} {CamTargetZ}
+       {CamUpX} {CamUpY} {CamUpZ}
+
+Camera "perspective" "float halffov" [{fov}]
+
+SurfaceIntegrator "ambientocclusion" "integer nsamples" [32]
+
+WorldBegin 
+
+]]>
+</primitive>
+
+<primitive name="end">
+<![CDATA[
+WorldEnd
+]]>
+</primitive>
+
+<primitive name="box">
+<![CDATA[
+Material "plastic" "rgb Kd" [{r} {g} {b}]
+TransformBegin 
+    Transform [ {matrix} ]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 -0.5 0.5 -0.5 -0.5 -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5 -0.5 -0.5 -0.5 -0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 0.5 -0.5 -0.5 0.5 -0.5 -0.5 0.5 0.5 0.5 0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 0.5 -0.5 0.5 0.5 0.5 0.5 -0.5 0.5 0.5 -0.5 -0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 -0.5 0.5 0.5 0.5 0.5 -0.5 0.5 0.5 -0.5 -0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 0.5 -0.5 0.5 0.5 -0.5 0.5 -0.5 -0.5 -0.5 -0.5 -0.5]
+TransformEnd
+]]>
+</primitive>
+
+<primitive name="sphere">
+<![CDATA[
+Material "plastic" "rgb Kd" [{r} {g} {b}]
+TransformBegin 
+    Translate {cx} {cy} {cz}
+    Shape "sphere" "float radius" [{rad}]
+TransformEnd
+]]>
+</primitive>
+
+<primitive name="grid">
+<![CDATA[
+Material "plastic" "rgb Kd" [{r} {g} {b}]
+TransformBegin 
+    Transform [ {matrix} ]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 -0.5 0.5 -0.5 -0.5 -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5 -0.5 -0.5 -0.5 -0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 0.5 -0.5 -0.5 0.5 -0.5 -0.5 0.5 0.5 0.5 0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 0.5 -0.5 0.5 0.5 0.5 0.5 -0.5 0.5 0.5 -0.5 -0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [0.5 -0.5 0.5 0.5 0.5 0.5 -0.5 0.5 0.5 -0.5 -0.5 0.5]
+    Shape "trianglemesh" "integer indices" [ 0 1 2 2 3 0 ] "point P" [-0.5 0.5 -0.5 0.5 0.5 -0.5 0.5 -0.5 -0.5 -0.5 -0.5 -0.5]
+TransformEnd
+]]>
+</primitive>
+</template>

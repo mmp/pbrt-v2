@@ -132,6 +132,10 @@ PerspectiveCamera *CreatePerspectiveCamera(const ParamSet &params,
     if (sw && swi == 4)
         memcpy(screen, sw, 4*sizeof(float));
     float fov = params.FindOneFloat("fov", 90.);
+    float halffov = params.FindOneFloat("fov", -1.f);
+    if (halffov > 0.f)
+        // hack for structure synth, which exports half of the full fov
+        fov = 2.f * halffov;
     return new PerspectiveCamera(cam2world, screen, shutteropen,
         shutterclose, lensradius, focaldistance, fov, film);
 }
