@@ -59,7 +59,7 @@ Spectrum EmissionIntegrator::Li(const Scene *scene,
     VolumeRegion *vr = scene->volumeRegion;
     Assert(sample != NULL);
     float t0, t1;
-    if (!vr || !vr->IntersectP(ray, &t0, &t1)) {
+    if (!vr || !vr->IntersectP(ray, &t0, &t1) || (t1-t0) == 0.f) {
         *T = Spectrum(1.f);
         return 0.f;
     }

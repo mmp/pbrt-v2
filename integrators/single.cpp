@@ -59,7 +59,7 @@ Spectrum SingleScatteringIntegrator::Li(const Scene *scene, const Renderer *rend
         Spectrum *T, MemoryArena &arena) const {
     VolumeRegion *vr = scene->volumeRegion;
     float t0, t1;
-    if (!vr || !vr->IntersectP(ray, &t0, &t1)) {
+    if (!vr || !vr->IntersectP(ray, &t0, &t1) || (t1-t0) == 0.f) {
         *T = 1.f;
         return 0.f;
     }
