@@ -1199,6 +1199,10 @@ Renderer *RenderOptions::MakeRenderer() const {
     if (RendererName == "metropolis") {
         renderer = CreateMetropolisRenderer(RendererParams, camera);
         RendererParams.ReportUnused();
+        // Warn if no light sources are defined
+        if (lights.size() == 0)
+            Warning("No light sources defined in scene; "
+                "possibly rendering a black image.");
     }
     // Create remaining _Renderer_ types
     else if (RendererName == "createprobes") {
@@ -1211,6 +1215,10 @@ Renderer *RenderOptions::MakeRenderer() const {
         if (!volumeIntegrator) Severe("Unable to create volume integrator.");
         renderer = CreateRadianceProbesRenderer(camera, surfaceIntegrator, volumeIntegrator, RendererParams);
         RendererParams.ReportUnused();
+        // Warn if no light sources are defined
+        if (lights.size() == 0)
+            Warning("No light sources defined in scene; "
+                "possibly rendering a black image.");
     }
     else if (RendererName == "aggregatetest") {
         renderer = CreateAggregateTestRenderer(RendererParams, primitives);
@@ -1237,6 +1245,10 @@ Renderer *RenderOptions::MakeRenderer() const {
         if (!volumeIntegrator) Severe("Unable to create volume integrator.");
         renderer = new SamplerRenderer(sampler, camera, surfaceIntegrator,
             volumeIntegrator);
+        // Warn if no light sources are defined
+        if (lights.size() == 0)
+            Warning("No light sources defined in scene; "
+                "possibly rendering a black image.");
     }
     return renderer;
 }

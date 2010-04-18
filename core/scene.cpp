@@ -46,9 +46,6 @@ Scene::Scene(Primitive *accel, const vector<Light *> &lts,
     lights = lts;
     aggregate = accel;
     volumeRegion = vr;
-    if (lts.size() == 0)
-        Warning("No light sources defined in scene; "
-            "possibly rendering a black image.");
     // Scene Constructor Implementation
     bound = aggregate->WorldBound();
     if (volumeRegion) bound = Union(bound, volumeRegion->WorldBound());
