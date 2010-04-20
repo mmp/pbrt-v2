@@ -1,10 +1,18 @@
-ARCH = $(shell uname)
+###########################################################################
+# user-configurable section
+###########################################################################
 
-# user-configuration section
+# common locations for the OpenEXR libraries; may need to be updated
+# for unusual installation locations
+HAVE_EXR=1
+EXR_INCLUDES=-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR -I/opt/local/include/OpenEXR 
+EXR_LIBDIR=-L/usr/local/lib -L/opt/local/lib
 
-EXRINCLUDE=-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR -I/opt/local/include/OpenEXR 
-EXRLIBDIR=-L/usr/local/lib -L/opt/local/lib
+HAVE_LIBTIFF=0
+TIFF_INCLUDES=-I/usr/local/include -I/opt/local/include
+TIFF_LIBDIR=-L/usr/local/lib -L/opt/local/lib
 
+# remove -DPBRT_HAS_OPENEXR to build without OpenEXR support
 DEFS=-DPBRT_PROBES_NONE -DPBRT_HAS_OPENEXR
 
 # 32 bit
@@ -13,15 +21,22 @@ DEFS=-DPBRT_PROBES_NONE -DPBRT_HAS_OPENEXR
 # 64 bit
 MARCH=-m64
 
+# change this to -g3 for debug builds
 OPT=-O2
+# comment out this line to enable assertions at runtime
+DEFS += -DNDEBUG
 
 #########################################################################
+# nothing below this line should need to be changed (usually)
+#########################################################################
+
+ARCH = $(shell uname)
 
 LEX=flex
 YACC=bison -d -v -t
 LEXLIB = -lfl
 
-EXRLIBS=$(EXRLIBDIR) -Bstatic -lIex -lIlmImf -lIlmThread -lImath -lIex -lHalf -Bdynamic
+EXRLIBS=$(EXR_LIBDIR) -Bstatic -lIex -lIlmImf -lIlmThread -lImath -lIex -lHalf -Bdynamic
 ifeq ($(ARCH),Linux)
   EXRLIBS += -lpthread
 endif
@@ -35,24 +50,28 @@ endif
 CC=gcc
 CXX=g++
 LD=$(CXX) $(OPT) $(MARCH)
-INCLUDE=-I. -Icore $(EXRINCLUDE) -I/usr/local/include -I/opt/local/include
+INCLUDE=-I. -Icore $(EXR_INCLUDES) $(TIFF_INCLUDES)
 WARN=-Wall
 CWD=$(shell pwd)
 CXXFLAGS=$(OPT) $(MARCH) $(INCLUDE) $(WARN) $(DEFS)
 CCFLAGS=$(CXXFLAGS)
-LIBS=$(LEXLIB) $(EXRLIBDIR) $(EXRLIBS) -lm 
+LIBS=$(LEXLIB) $(EXR_LIBDIR) $(EXRLIBS) -lm 
 
 LIBSRCS=$(wildcard core/*.cpp) core/pbrtlex.cpp core/pbrtparse.cpp
 LIBSRCS += $(wildcard accelerators/*.cpp cameras/*.cpp film/*.cpp filters/*.cpp )
 LIBSRCS += $(wildcard integrators/*.cpp lights/*.cpp materials/*.cpp renderers/*.cpp )
 LIBSRCS += $(wildcard samplers/*.cpp shapes/*.cpp textures/*.cpp volumes/*.cpp)
 
-#LIBOBJS=$(addprefix objs/, $(notdir $(LIBSRCS:.cpp=.o)))
 LIBOBJS=$(addprefix objs/, $(subst /,_,$(LIBSRCS:.cpp=.o)))
 
 HEADERS = $(wildcard */*.h)
 
-default: dirs bin/pbrt bin/bsdftest bin/exravg bin/exrdiff bin/exrtotiff bin/tifftoexr
+TOOLS = bin/bsdftest bin/exravg bin/exrdiff
+ifeq ($(HAVE_LIBTIFF),1)
+    TOOLS += bin/exrtotiff
+endif
+
+default: dirs bin/pbrt $(TOOLS)
 
 bin/%: dirs
 
@@ -63,7 +82,7 @@ dirs:
 
 $(LIBOBJS): $(HEADERS)
 
-.PHONY: dirs tools exrcheck
+.PHONY: dirs tools 
 
 objs/libpbrt.a: $(LIBOBJS)
 	@echo "Building the core rendering library (libpbrt.a)"
@@ -139,11 +158,7 @@ bin/%: objs/%.o objs/libpbrt.a
 
 bin/exrtotiff: objs/exrtotiff.o 
 	@echo "Linking $@"
-	@$(CXX) $(CXXFLAGS) -o $@ $^ -ltiff $(LIBS) 
-
-bin/tifftoexr: objs/tifftoexr.o 
-	@echo "Linking $@"
-	@$(CXX) $(CXXFLAGS) -o $@ $^ -ltiff $(LIBS) 
+	@$(CXX) $(CXXFLAGS) -o $@ $^ $(TIFF_LIBDIR) -ltiff $(LIBS) 
 
 core/pbrtlex.cpp: core/pbrtlex.ll core/pbrtparse.cpp
 	@echo "Lex'ing pbrtlex.ll"
@@ -159,11 +174,3 @@ $(RENDERER_BINARY): $(RENDERER_OBJS) $(CORE_LIB)
 
 clean:
 	rm -f objs/* bin/* core/pbrtlex.[ch]* core/pbrtparse.[ch]*
-	#(cd tools && $(MAKE) clean)
-
-objs/exrio.o: exrcheck
-
-exrcheck:
-	@echo -n Checking for EXR installation... 
-	@$(CXX) $(CXXFLAGS) -o exrcheck exrcheck.cpp $(LIBS) || \
-		(cat exrinstall.txt; exit 1)
