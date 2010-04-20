@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" media="screen" href="readme_files/readme.css" />
+  </head>
+  <body style="margin: 72pt 72pt 72pt 72pt;" bgcolor="#ffffff">
+    <div>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 20.000000pt; padding-top: 0pt; text-align: center; font-size: 32.00pt; font-weight: bold; " class="Free_Form ">Mathematica To PBRT Convertor</p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 20.000000pt; padding-top: 20.000000pt; text-align: center; " class="Free_Form ">
+        <span style="font-size: 24.00pt; font-weight: bold; ">by Greg Humphreys</span>
+        <span style="font-size: 24.00pt; font-weight: bold; "></span>
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 20.000000pt; padding-top: 20.000000pt; font-size: 24.00pt; font-weight: bold; " class="Free_Form ">Installation</p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <span>Unzip the downloaded ZIP file. This should create a directory called "PBRT". If you&#x2019;re looking at this </span>
+        <span>README, you&#x2019;ve already done that.</span>
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <span>Place this directory in the "</span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">Applications</span>
+        <span>" subdirectory of your Mathematica add-on location. If you're not sure where that is, fire up Mathematica and consult the </span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">$UserBaseDirectory</span>
+        <span> variable, or the </span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">$BaseDirectory</span>
+        <span> variable if you want the converter to be available to all users on your system (typically requires root or administrator access).</span>
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">On my system, this looks like:</p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <img src="readme_files/basedir4.jpg" alt="basedir.jpg" width="468.00pt" height="190.00pt" />
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <span>So I would place the package in the directory </span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">/Users/humper/Library/Mathematica/Applications/PBRT</span>
+        <span> on my computer. That's it! Nothing to compile!</span>
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 20.000000pt; padding-top: 20.000000pt; font-size: 24.00pt; font-weight: bold; " class="Free_Form ">Demo</p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">Below is a screen capure of the system in action.</p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <img src="readme_files/demo4.jpg" alt="demo.jpg" width="468.00pt" height="463.00pt" />
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <span>The return value of </span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">PBRTExport</span>
+        <span> tells you exactly where the file is located. We can just render it!</span>
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <img src="readme_files/demo_terminal4.jpg" alt="demo_terminal.jpg" width="468.00pt" height="338.00pt" />
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <span>Since we called the file </span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">cool.pbrt</span>
+        <span>, the output is placed in </span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">cool.exr</span>
+        <span>.</span>
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <img src="readme_files/demo_render4.jpg" alt="demo_render.jpg" width="468.00pt" height="422.00pt" />
+      </p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 20.000000pt; padding-top: 20.000000pt; font-size: 24.00pt; font-weight: bold; " class="Free_Form ">What can it do?</p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">This converter supports:</p>
+      <ol class="Bullet " start="1">
+        <li style="color: #000000; font-family: 'Times-Roman', 'Times'; font-size: 16.00pt; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: 0; line-height: 1.19; text-decoration: none; text-transform: none; vertical-align: 0.000000em; ">
+          <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; text-indent: 5.000000pt; " class="Free_Form ">
+            <span>Export of any </span>
+            <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">Graphics3D</span>
+            <span> </span>
+            <span>object as polygons.</span>
+          </p>
+        </li>
+      </ol>
+      <ol class="Bullet " start="2">
+        <li style="color: #000000; font-family: 'Times-Roman', 'Times'; font-size: 16.00pt; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: 0; line-height: 1.19; text-decoration: none; text-transform: none; vertical-align: 0.000000em; ">
+          <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; text-indent: 5.000000pt; " class="Free_Form ">
+            <span>Export of the result of </span>
+            <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">Plot3D</span>
+            <span> or </span>
+            <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">ParametricPlot3D</span>
+            <span> as a mesh with texture coordinates and optional analytic vertex normals.</span>
+          </p>
+        </li>
+      </ol>
+      <ol class="Bullet " start="3">
+        <li style="color: #000000; font-family: 'Times-Roman', 'Times'; font-size: 16.00pt; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: 0; line-height: 1.19; text-decoration: none; text-transform: none; vertical-align: 0.000000em; ">
+          <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; text-indent: 5.000000pt; " class="Free_Form ">Warping of the generated texture coordinates by an arbitrary function.</p>
+        </li>
+      </ol>
+      <ol class="Bullet " start="4">
+        <li style="color: #000000; font-family: 'Times-Roman', 'Times'; font-size: 16.00pt; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: 0; line-height: 1.19; text-decoration: none; text-transform: none; vertical-align: 0.000000em; ">
+          <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; text-indent: 5.000000pt; " class="Free_Form ">
+            <span>Scaling of the output of </span>
+            <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">Plot3D</span>
+            <span> to give the desired aspect ratio.</span>
+          </p>
+        </li>
+      </ol>
+      <ol class="Bullet " start="5">
+        <li style="color: #000000; font-family: 'Times-Roman', 'Times'; font-size: 16.00pt; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: 0; line-height: 1.19; text-decoration: none; text-transform: none; vertical-align: 0.000000em; ">
+          <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; text-indent: 5.000000pt; " class="Free_Form ">Export to a ready-to-render scene that matches Mathematica&#x2019;s viewpoint and lighting parameters.</p>
+        </li>
+      </ol>
+      <ol class="Bullet " start="6">
+        <li style="color: #000000; font-family: 'Times-Roman', 'Times'; font-size: 16.00pt; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: 0; line-height: 1.19; text-decoration: none; text-transform: none; vertical-align: 0.000000em; ">
+          <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; text-indent: 5.000000pt; " class="Free_Form ">Export of geometry only, ready to be included in a larger PBRT scene.</p>
+        </li>
+      </ol>
+      <ol class="Bullet " start="7">
+        <li style="color: #000000; font-family: 'Times-Roman', 'Times'; font-size: 16.00pt; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: 0; line-height: 1.19; text-decoration: none; text-transform: none; vertical-align: 0.000000em; ">
+          <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; text-indent: 5.000000pt; " class="Free_Form ">Specification of output file width, height, and filename.</p>
+        </li>
+      </ol>
+      <ol class="Bullet " start="8">
+        <li style="color: #000000; font-family: 'Times-Roman', 'Times'; font-size: 16.00pt; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: 0; line-height: 1.19; text-decoration: none; text-transform: none; vertical-align: 0.000000em; ">
+          <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; text-indent: 5.000000pt; " class="Free_Form ">Creation of a unique temporary output file, if the user does not specify where the generated PBRT code should go.</p>
+        </li>
+      </ol>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; font-family: 'Times-Bold', 'Times'; font-size: 24.00pt; font-weight: bold; line-height: 1.21; " class="Free_Form ">Setting options</p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">The ExportPBRT function supports five options. &#xA0;They are passed in the standard way. &#xA0;For example, to specify a larger output image size, you would just use the command</p>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; " class="Free_Form ">&#xA0;ExportPBRT[&#x201C;~/filename.pbrt&#x201D;,graphicsObject,<br />&#xA0;&#xA0; &#xA0; &#xA0; &#xA0; &#xA0; &#xA0;EXRWidth-&gt;1024,EXRHeight-&gt;768]</p>
+      <div style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 16.000000pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <table cellspacing="0" style="background-color: transparent; border-collapse: collapse; " class="Table">
+          <tr>
+            <th style="background-color: #afb3b2; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 105pt; " class="Normal table_header_row_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; text-align: center; " class="Sub_heading ">Option</p>
+              </div>
+            </th>
+            <th style="background-color: #afb3b2; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 66pt; " class="Normal table_header_row_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; text-align: center; " class="Sub_heading ">Default</p>
+              </div>
+            </th>
+            <th style="background-color: #afb3b2; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 296pt; " class="Normal table_header_row_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; text-align: center; " class="Sub_heading ">Description</p>
+              </div>
+            </th>
+          </tr>
+          <tr>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 105pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; font-family: 'Courier', 'Courier'; line-height: 1.17; " class="Body ">EXRWidth</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 66pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">512</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 296pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">The width of the output image, in pixels</p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 105pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; font-family: 'Courier', 'Courier'; line-height: 1.17; " class="Body ">EXRHeight</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 66pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">384</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 25pt; vertical-align: top; width: 296pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">The height of the output image, in pixels</p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 82pt; vertical-align: top; width: 105pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; font-family: 'Courier', 'Courier'; line-height: 1.17; " class="Body ">EXRName</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 82pt; vertical-align: top; width: 66pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">Automatic</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 82pt; vertical-align: top; width: 296pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; " class="Body ">
+                  <span style="vertical-align: 0.000000em; ">The name of the output image. &#xA0;If no name is specified, the EXR file will have the same name as the PBRT file, with the extension .exr. &#xA0;If the converter can&#x2019;t figure out how to do this conversion, it will fall back to </span>
+                  <span style="font-family: 'Courier', 'Courier'; line-height: 1.17; vertical-align: 0.000000em; ">mathematica.exr</span>
+                  <span style="font-family: 'Times-Roman', 'Times'; line-height: 1.17; vertical-align: 0.000000em; ">.</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 110pt; vertical-align: top; width: 105pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; font-family: 'Courier', 'Courier'; line-height: 1.17; " class="Body ">GeometryOnly</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 110pt; vertical-align: top; width: 66pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">False</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 110pt; vertical-align: top; width: 296pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; " class="Body ">
+                  <span style="vertical-align: 0.000000em; ">If set to true, the generated file will only contain the geometry of the Mathematica object, not the necessary surrounding PBRT commands to make an image. &#xA0;This is useful if you want to include the geometry in some larger scene. &#xA0;In this case, you can use the PBRT </span>
+                  <span style="font-family: 'Courier', 'Courier'; line-height: 1.17; vertical-align: 0.000000em; ">Include</span>
+                  <span style="vertical-align: 0.000000em; "> command to reference the generated file.</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 95pt; vertical-align: top; width: 105pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; font-family: 'Courier', 'Courier'; line-height: 1.17; " class="Body ">VertexNormals</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 95pt; vertical-align: top; width: 66pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">True</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 95pt; vertical-align: top; width: 296pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">If True, the generated mesh will contain per-vertex normals for smooth shading. &#xA0;These normals are computed using the derivatives of the supplied function. &#xA0;If the derivatives are not defined at all of the sample points, or if the function is not differentiable, a flat-shaded mesh will always be generated.</p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 95pt; vertical-align: top; width: 105pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 0pt; font-family: 'Courier', 'Courier'; line-height: 1.17; " class="Body ">TextureWarp</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 95pt; vertical-align: top; width: 66pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">None</p>
+              </div>
+            </td>
+            <td style="background-color: transparent; border: 1.00pt #000000 solid; height: 95pt; vertical-align: top; width: 296pt; " class="Normal table_cell_style_default">
+              <div>
+                <p style="padding-bottom: 0pt; padding-top: 0pt; vertical-align: 0.000000em; " class="Body ">If provided, this function will be applied to the generated texture coordinates before export. &#xA0;This function must take a pair of real-valued numbers {u,v}, and return another pair of real-valued numbers {f(u),g(v)}. &#xA0;This option has no effect if the object being exported does not have texture coordinates.</p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p style="margin-bottom: 0.000000pt; margin-top: 0.000000pt; padding-bottom: 0pt; padding-top: 16.000000pt; " class="Free_Form ">
+        <span>Furthermore, the </span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">Plot3D</span>
+        <span> command can accept a constant </span>
+        <span style="font-family: 'Courier', 'Courier'; font-size: 13.00pt; line-height: 1.23; ">PlotScale</span>
+        <span> parameter (default 3.5) which will multiply the function by that constant.</span>
+      </p>
+    </div>
+  </body>
+</html>

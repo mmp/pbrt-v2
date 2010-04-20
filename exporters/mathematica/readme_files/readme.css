@@ -1,0 +1,84 @@
+.Sub_heading {
+    color: #000000;
+    font-family: 'Helvetica-Bold', 'Helvetica';
+    font-size: 12.00pt;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 1.17;
+    margin-bottom: 0.000000pt;
+    margin-left: 0.00pt;
+    margin-right: 0.00pt;
+    margin-top: 0.000000pt;
+    padding-bottom: 0.000000pt;
+    padding-top: 6.000000pt;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0.00pt;
+    text-transform: none;
+    vertical-align: 0.000000em;
+}
+.Free_Form {
+    color: #000000;
+    font-family: 'Times-Roman', 'Times';
+    font-size: 16.00pt;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.19;
+    margin-bottom: 0.000000pt;
+    margin-left: 0.00pt;
+    margin-right: 0.00pt;
+    margin-top: 0.000000pt;
+    padding-bottom: 0.000000pt;
+    padding-top: 0.000000pt;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0.00pt;
+    text-transform: none;
+    vertical-align: 0.000000em;
+}
+.Body {
+    color: #000000;
+    font-family: 'Helvetica', 'Helvetica';
+    font-size: 12.00pt;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.17;
+    margin-bottom: 0.000000pt;
+    margin-left: 0.00pt;
+    margin-right: 0.00pt;
+    margin-top: 0.000000pt;
+    padding-bottom: 12.000000pt;
+    padding-top: 0.000000pt;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0.00pt;
+    text-transform: none;
+    vertical-align: 0.000000em;
+}
+.Bullet {
+    list-style: disc;
+    margin-bottom: 0.000000pt;
+    margin-left: 0.000000pt;
+    margin-top: 0.000000pt;
+    padding-left: 10pt;
+    text-indent: 5.000000pt;
+}
+.table_cell_style_default {
+    background-color: transparent;
+}
+.Table {
+    background-color: transparent;
+    border-collapse: collapse;
+}
+.Normal {
+    vertical-align: top;
+}
+.table_header_row_cell_style_default {
+    background-color: #afb3b2;
+}
