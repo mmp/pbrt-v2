@@ -12,8 +12,10 @@ HAVE_LIBTIFF=0
 TIFF_INCLUDES=-I/usr/local/include -I/opt/local/include
 TIFF_LIBDIR=-L/usr/local/lib -L/opt/local/lib
 
+HAVE_DTRACE=0
+
 # remove -DPBRT_HAS_OPENEXR to build without OpenEXR support
-DEFS=-DPBRT_PROBES_NONE -DPBRT_HAS_OPENEXR
+DEFS=-DPBRT_HAS_OPENEXR
 
 # 32 bit
 #MARCH=-m32 -msse2 -mfpmath=sse
@@ -35,6 +37,12 @@ ARCH = $(shell uname)
 LEX=flex
 YACC=bison -d -v -t
 LEXLIB = -lfl
+
+ifeq ($(HAVE_DTRACE),1)
+    DEFS += -DPBRT_PROBES_DTRACE
+else
+    DEFS += -DPBRT_PROBES_NONE
+endif
 
 EXRLIBS=$(EXR_LIBDIR) -Bstatic -lIex -lIlmImf -lIlmThread -lImath -lIex -lHalf -Bdynamic
 ifeq ($(ARCH),Linux)
@@ -169,6 +177,13 @@ core/pbrtparse.cpp: core/pbrtparse.yy
 	@$(YACC) -o $@ core/pbrtparse.yy
 	@if [ -e core/pbrtparse.cpp.h ]; then /bin/mv core/pbrtparse.cpp.h core/pbrtparse.hh; fi
 	@if [ -e core/pbrtparse.hpp ]; then /bin/mv core/pbrtparse.hpp core/pbrtparse.hh; fi
+
+ifeq ($(HAVE_DTRACE),1)
+core/dtrace.h: core/dtrace.d
+	/usr/sbin/dtrace -h -s $^ -o $@
+
+$(LIBOBJS): core/dtrace.h
+endif
 
 $(RENDERER_BINARY): $(RENDERER_OBJS) $(CORE_LIB)
 
