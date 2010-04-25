@@ -1,0 +1,16 @@
+test:
+- object motion blur
+- camera motion blur
+- launching pbrt.exe?
+- all materials
+
+bugs:
+- output image filename doesn't end with exr
+- change to pretend that metropolis is just a surface integrator as far as
+  the GUI is concerned?
+
+add:
+- subsurface scattering presets
+- subsurface scattering builtins
+- metal builtins (put spd data right in pbrt file)
+- cool light spectrum builtins (ditto)
