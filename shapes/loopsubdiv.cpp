@@ -388,8 +388,7 @@ void LoopSubdiv::Refine(vector<Reference<Shape> > &refined) const {
                 S += cosf(2.f*M_PI*k/valence) * Vector(Pring[k]);
                 T += sinf(2.f*M_PI*k/valence) * Vector(Pring[k]);
             }
-        }
-        else {
+        } else {
             // Compute tangents of boundary face
             S = Pring[valence-1] - Pring[0];
             if (valence == 2)

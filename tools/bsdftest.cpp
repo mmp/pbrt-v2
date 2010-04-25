@@ -70,13 +70,13 @@ int main(int argc, char *argv[])
 
 
     CreateBSDFFunc BSDFFuncArray[] = {
-//CO        createBlinn0,
-//CO        createBlinn05,
-//CO        createBlinn2,
-//CO        createBlinn30and0,
-//CO        createAniso0_0,
+        createBlinn0,
+        createBlinn05,
+        createBlinn2,
+        createBlinn30and0,
+        createAniso0_0,
         createAniso10_10,
-//CO        createAniso30_30,
+        createAniso30_30,
 //CO        createLambertian,
 //CO        createOrenNayar0,
 //CO        createOrenNayar20,
@@ -87,13 +87,13 @@ int main(int argc, char *argv[])
     };
 
     const char* BSDFFuncDescripArray[] = {
-//CO        "Blinn (exponent 0)",
-//CO        "Blinn (exponent 0.5)",
-//CO        "Blinn (exponent 2)",
-//CO        "Blinn (exponent 30 and 0)",
-//CO        "Anisotropic (exponent 0, 0)",
+        "Blinn (exponent 0)",
+        "Blinn (exponent 0.5)",
+        "Blinn (exponent 2)",
+        "Blinn (exponent 30 and 0)",
+        "Anisotropic (exponent 0, 0)",
         "Anisotropic (exponent 10, 10)",
-//CO        "Anisotropic (exponent 30, 30)",
+        "Anisotropic (exponent 30, 30)",
 //CO        "Lambertian",
 //CO        "Oren Nayar (sigma 0)",
 //CO        "Oren Nayar (sigma 20)",
@@ -105,13 +105,13 @@ int main(int argc, char *argv[])
 
     GenSampleFunc SampleFuncArray[] = {
         Gen_Sample_f,
-//CO        Gen_CosHemisphere,
+        Gen_CosHemisphere,
 //CO        Gen_UniformHemisphere,
     };
 
     const char* SampleFuncDescripArray[] = {
         "BSDF Importance Sampling",
-//CO        "Cos Hemisphere",
+        "Cos Hemisphere",
 //CO        "Uniform Hemisphere",
     };
 

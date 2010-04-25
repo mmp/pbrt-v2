@@ -191,18 +191,18 @@ Spectrum SamplerRenderer::Li(const Scene *scene,
     if (!T) T = &localT;
     Intersection localIsect;
     if (!isect) isect = &localIsect;
-    Spectrum Lo = 0.f;
+    Spectrum Li = 0.f;
     if (scene->Intersect(ray, isect))
-        Lo = surfaceIntegrator->Li(scene, this, ray, *isect, sample,
+        Li = surfaceIntegrator->Li(scene, this, ray, *isect, sample,
                                    rng, arena);
     else {
         // Handle ray that doesn't intersect any geometry
         for (uint32_t i = 0; i < scene->lights.size(); ++i)
-           Lo += scene->lights[i]->Le(ray);
+           Li += scene->lights[i]->Le(ray);
     }
-    Spectrum Lv = volumeIntegrator->Li(scene, this, ray, sample, rng,
-                                       T, arena);
-    return *T * Lo + Lv;
+    Spectrum Lvi = volumeIntegrator->Li(scene, this, ray, sample, rng,
+                                        T, arena);
+    return *T * Li + Lvi;
 }
 
 

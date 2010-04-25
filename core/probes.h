@@ -42,7 +42,7 @@ inline void ProbesPrint(FILE *) { }
 #define PBRT_STARTED_RAY_INTERSECTIONP(ray)
 #define PBRT_FINISHED_RAY_INTERSECTIONP(ray, hit)
 
-// Remainder of statistics disabled declarations
+// Remainder of disabled probes declarations
 #define PBRT_ACCESSED_TEXEL(arg0, arg1, arg2, arg3)
 #define PBRT_ALLOCATED_CACHED_TRANSFORM()
 #define PBRT_ATOMIC_MEMORY_OP()

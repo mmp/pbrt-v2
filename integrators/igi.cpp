@@ -53,6 +53,7 @@ void IGIIntegrator::RequestSamples(Sampler *sampler, Sample *sample,
         bsdfSampleOffsets[i] = BSDFSampleOffsets(nSamples, sample);
     }
     vlSetOffset = sample->Add1D(1);
+
     if (sampler) nGatherSamples = sampler->RoundSize(nGatherSamples);
     gatherSampleOffset = BSDFSampleOffsets(nGatherSamples, sample);
 }
@@ -195,6 +196,8 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
                 Spectrum Li = renderer->Li(scene, gatherRay, sample, rng, arena,
                                            &gatherIsect);
                 if (Li.IsBlack()) continue;
+
+                // Add bias compensation ray contribution to radiance sum
                 float Ggather = AbsDot(wi, n) * AbsDot(-wi, gatherIsect.dg.nn) /
                     DistanceSquared(p, gatherIsect.dg.p);
                 if (Ggather - gLimit > 0.f && !isinf(Ggather)) {

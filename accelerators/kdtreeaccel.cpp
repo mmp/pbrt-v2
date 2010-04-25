@@ -45,6 +45,7 @@ struct KdAccelNode {
         uint32_t onePrimitive;  // Leaf
         uint32_t *primitives;   // Leaf
     };
+
 private:
     union {
         uint32_t flags;         // Both

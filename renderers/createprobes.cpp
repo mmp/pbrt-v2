@@ -270,13 +270,12 @@ void CreateRadProbeTask::Run() {
                                   1e-4f, 1.f, time))) {
             uint32_t j;
             // See if point is visible to any element of _surfacePoints_
-            for (j = 0; j < surfacePoints.size(); ++j) {
+            for (j = 0; j < surfacePoints.size(); ++j)
                 if (!scene->IntersectP(Ray(surfacePoints[j], p - surfacePoints[j],
                                            1e-4f, 1.f, time))) {
                     lastVisibleOffset = j;
                     break;
                 }
-            }
             if (j == surfacePoints.size())
                 continue;
         }
@@ -291,6 +290,7 @@ void CreateRadProbeTask::Run() {
             for (int i = 0; i < SHTerms(lmax); ++i)
                 c_in[i] += c_probe[i];
         }
+        
         if (includeIndirectInProbes) {
             for (int i = 0; i < SHTerms(lmax); ++i)
                 c_probe[i] = 0.f;

@@ -59,7 +59,6 @@ private:
     Point lightPos;
     Spectrum Intensity;
     MIPMap<RGBSpectrum> *mipmap;
-
 };
 
 

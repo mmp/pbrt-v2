@@ -45,7 +45,7 @@ public:
     friend class Triangle;
     template <typename T> friend class VertexTexture;
 protected:
-    // TriangleMesh Proteted Data
+    // TriangleMesh Protected Data
     int ntris, nverts;
     int *vertexIndex;
     Point *p;

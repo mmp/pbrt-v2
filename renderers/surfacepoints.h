@@ -34,6 +34,7 @@ struct SurfacePoint {
     SurfacePoint() { }
     SurfacePoint(const Point &pp, const Normal &nn, float a, float eps)
         : p(pp), n(nn), area(a), rayEpsilon(eps) { }
+    // SurfacePoint Data
     Point p;
     Normal n;
     float area, rayEpsilon;

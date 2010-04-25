@@ -36,8 +36,7 @@ LDSampler::LDSampler(int xstart, int xend, int ystart, int yend, int ps,
     if (!IsPowerOf2(ps)) {
         Warning("Pixel samples being rounded up to power of 2");
         nPixelSamples = RoundUpPow2(ps);
-    }
-    else
+    } else
         nPixelSamples = ps;
     sampleBuf = NULL;
 }

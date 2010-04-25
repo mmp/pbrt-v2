@@ -78,6 +78,8 @@ struct IrradProcess {
     }
     Spectrum GetIrradiance() const { return E / sumWt; }
     Vector GetAverageDirection() const { return wAvg; }
+
+    // IrradProcess Data
     Point p;
     Normal n;
     float minWeight, cosMaxSampleAngleDifference, sumWt;

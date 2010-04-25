@@ -102,7 +102,6 @@ Spectrum InfiniteAreaLight::Power(const Scene *scene) const {
     scene->WorldBound().BoundingSphere(&worldCenter, &worldRadius);
     return M_PI * worldRadius * worldRadius *
         Spectrum(radianceMap->Lookup(.5f, .5f, .5f), SPECTRUM_ILLUMINANT);
-
 }
 
 
@@ -205,7 +204,8 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
 
     // Return radiance value for infinite light direction
     visibility->SetRay(p, pEpsilon, *wi, time);
-    Spectrum Ls = Spectrum(radianceMap->Lookup(uv[0], uv[1]), SPECTRUM_ILLUMINANT);
+    Spectrum Ls = Spectrum(radianceMap->Lookup(uv[0], uv[1]),
+                           SPECTRUM_ILLUMINANT);
     PBRT_INFINITE_LIGHT_FINISHED_SAMPLE();
     return Ls;
 }

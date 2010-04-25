@@ -125,6 +125,7 @@ bool AdaptiveSampler::ReportResults(Sample *samples,
         supersamplePixel = true;
         return false;
     }
+
     else {
         PBRT_SUPERSAMPLE_PIXEL_NO(xPos, yPos);
         // Advance to next pixel for sampling for _AdaptiveSampler_

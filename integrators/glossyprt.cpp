@@ -114,7 +114,7 @@ Spectrum GlossyPRTIntegrator::Li(const Scene *scene, const Renderer *,
     Spectrum *c_o = arena.Alloc<Spectrum>(SHTerms(lmax));
     SHMatrixVectorMultiply(B, c_l, c_o, lmax);
 
-    // Evaluate outgong radiance function for $\wo$ and add to _L_
+    // Evaluate outgoing radiance function for $\wo$ and add to _L_
     Vector woLocal = bsdf->WorldToLocal(wo);
     float *Ylm = ALLOCA(float, SHTerms(lmax));
     SHEvaluate(woLocal, lmax, Ylm);

@@ -50,7 +50,7 @@ void SHProjectCube(Func func, const Point &p, int res, int lmax,
         float fu = -1.f + 2.f * (float(u) + 0.5f) / float(res);
         for (int v = 0; v < res; ++v) {
             float fv = -1.f + 2.f * (float(v) + 0.5f) / float(res);
-            // Incorporate resuls from $+z$ face to coefficients
+            // Incorporate results from $+z$ face to coefficients
             Vector w(fu, fv, 1);
             SHEvaluate(Normalize(w), lmax, Ylm);
             Spectrum f = func(u, v, p, w);

@@ -112,6 +112,7 @@ void Octree<NodeData>::addPrivate(
                      x[1] & y[1] & z[0], x[1] & y[1] & z[1] };
     for (int child = 0; child < 8; ++child) {
         if (!over[child]) continue;
+        // Allocate octree node if needed and continue recursive traversal
         if (!node->children[child])
             node->children[child] = new OctNode<NodeData>;
         BBox childBound = octreeChildBound(child, nodeBound, pMid);

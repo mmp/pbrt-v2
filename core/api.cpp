@@ -128,7 +128,7 @@ Options PbrtOptions;
 #define MAX_TRANSFORMS 2
 #define START_TRANSFORM_BITS (1 << 0)
 #define END_TRANSFORM_BITS   (1 << 1)
-#define ALL_TRANSFORMS_BITS ((1 << MAX_TRANSFORMS) - 1)
+#define ALL_TRANSFORMS_BITS  ((1 << MAX_TRANSFORMS) - 1)
 struct TransformSet {
    // TransformSet Public Methods
    Transform &operator[](int i) {
@@ -305,9 +305,10 @@ Reference<Shape> MakeShape(const string &name,
         const Transform *object2world, const Transform *world2object,
         bool reverseOrientation, const ParamSet &paramSet) {
     Shape *s = NULL;
+
     if (name == "sphere")
-        s = CreateSphereShape(object2world, world2object, reverseOrientation,
-                              paramSet);
+        s = CreateSphereShape(object2world, world2object,
+                              reverseOrientation, paramSet);
     // Create remaining _Shape_ types
     else if (name == "cylinder")
         s = CreateCylinderShape(object2world, world2object, reverseOrientation,
@@ -993,8 +994,7 @@ void pbrtShape(const string &name, const ParamSet &params) {
                                  graphicsState.areaLightParams, shape);
         }
         prim = new GeometricPrimitive(shape, mtl, area);
-    }
-    else {
+    } else {
         // Create primitive for animated shape
 
         // Create initial _Shape_ for animated shape
@@ -1036,6 +1036,7 @@ void pbrtShape(const string &name, const ParamSet &params) {
             Warning("Area lights not supported with object instancing");
         renderOptions->currentInstance->push_back(prim);
     }
+    
     else {
         renderOptions->primitives.push_back(prim);
         if (area != NULL) {

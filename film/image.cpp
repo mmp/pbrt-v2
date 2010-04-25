@@ -177,6 +177,7 @@ void ImageFilm::GetSampleExtent(int *xstart, int *xend,
     *xstart = Floor2Int(xPixelStart + 0.5f - filter->xWidth);
     *xend   = Floor2Int(xPixelStart + 0.5f + xPixelCount  +
                         filter->xWidth);
+
     *ystart = Floor2Int(yPixelStart + 0.5f - filter->yWidth);
     *yend   = Floor2Int(yPixelStart + 0.5f + yPixelCount +
                         filter->yWidth);
@@ -213,7 +214,7 @@ void ImageFilm::WriteImage(float splatScale) {
 
             // Add splat value at pixel
             float splatRGB[3];
-            XYZToRGB((*pixels)(x,y).splatXYZ, splatRGB);
+            XYZToRGB((*pixels)(x, y).splatXYZ, splatRGB);
             rgb[3*offset  ] += splatScale * splatRGB[0];
             rgb[3*offset+1] += splatScale * splatRGB[1];
             rgb[3*offset+2] += splatScale * splatRGB[2];

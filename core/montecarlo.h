@@ -39,11 +39,11 @@ struct Distribution1D {
         cdf = new float[n+1];
         // Compute integral of step function at $x_i$
         cdf[0] = 0.;
-        for (int i = 1; i < n+1; ++i)
-            cdf[i] = cdf[i-1] + f[i-1] / n;
+        for (int i = 1; i < count+1; ++i)
+            cdf[i] = cdf[i-1] + func[i-1] / n;
 
         // Transform step function integral into CDF
-        funcInt = cdf[n];
+        funcInt = cdf[count];
         for (int i = 1; i < n+1; ++i)
             cdf[i] /= funcInt;
     }
@@ -175,6 +175,7 @@ inline double PermutedRadicalInverse(uint32_t n, uint32_t base,
                                      const uint32_t *p) {
     double val = 0;
     double invBase = 1. / base, invBi = invBase;
+
     while (n > 0) {
         uint32_t d_i = p[n % base];
         val += d_i * invBi;

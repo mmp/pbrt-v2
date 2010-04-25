@@ -267,7 +267,7 @@ Spectrum RegularHalfangleBRDF::f(const Vector &wo,
                                  const Vector &wi) const {
     // Compute $\wh$ and transform $\wi$ to halfangle coordinate system
     Vector wh = wi + wo;
-    if (wh.x == 0. && wh.y == 0. && wh.z == 0.) return Spectrum(0.f);
+    if (wh.x == 0.f && wh.y == 0.f && wh.z == 0.f) return Spectrum (0.f);
     wh = Normalize(wh);
     float whTheta = SphericalTheta(wh);
     float whCosPhi = CosPhi(wh), whSinPhi = SinPhi(wh);

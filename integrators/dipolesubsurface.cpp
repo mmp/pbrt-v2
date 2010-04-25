@@ -315,7 +315,7 @@ Spectrum SubsurfaceOctreeNode::Mo(const BBox &nodeBound, const Point &pt,
         return Rd(DistanceSquared(pt, p)) * E * sumArea;
     }
 
-    // Otherwise comupte $M_\roman{o}$ from points in leaf or recursively visit children
+    // Otherwise compute $M_\roman{o}$ from points in leaf or recursively visit children
     Spectrum Mo = 0.f;
     if (isLeaf) {
         // Accumulate $M_\roman{o}$ from leaf node

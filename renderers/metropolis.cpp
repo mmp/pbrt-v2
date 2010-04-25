@@ -324,6 +324,7 @@ Spectrum MetropolisRenderer::PathL(const MLTSample &sample,
             lightWt *= AbsDot(Normalize(Nl), lightRay.d) / (lightPdf * lightRayPdf);
             uint32_t lightLength = GeneratePath(RayDifferential(lightRay), lightWt,
                 scene, arena, sample.lightPathSamples, lightPath, NULL, NULL);
+            
             return Lbidir(scene, cameraPath, cameraLength, lightPath, lightLength,
                 arena, sample.lightingSamples, rng, sample.cameraSample.time,
                 lightDistribution, escapedRay, escapedAlpha);
@@ -360,6 +361,7 @@ Spectrum MetropolisRenderer::Lpath(const Scene *scene,
                                                                   &lightPdf);
             const Light *light = scene->lights[lightNum];
             PBRT_MLT_STARTED_ESTIMATE_DIRECT();
+            
             Ld = vc.alpha *
                  EstimateDirect(scene, this, arena, light, pc, nc, vc.wPrev,
                                 vc.isect.rayEpsilon, time, vc.bsdf, rng,
@@ -420,6 +422,7 @@ Spectrum MetropolisRenderer::Lbidir(const Scene *scene,
                                                                   &lightPdf);
             const Light *light = scene->lights[lightNum];
             PBRT_MLT_STARTED_ESTIMATE_DIRECT();
+            
             Ld = vc.alpha *
                  EstimateDirect(scene, this, arena, light, pc, nc, vc.wPrev,
                                 vc.isect.rayEpsilon, time, vc.bsdf, rng,
@@ -527,6 +530,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
         camera->film->GetPixelExtent(&x0, &x1, &y0, &y1);
         float t0 = camera->shutterOpen, t1 = camera->shutterClose;
         Distribution1D *lightDistribution = ComputeLightSamplingCDF(scene);
+
         if (directLighting != NULL) {
             PBRT_MLT_STARTED_DIRECTLIGHTING();
             // Compute direct lighting before Metropolis light transport

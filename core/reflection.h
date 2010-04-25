@@ -270,6 +270,7 @@ public:
     FresnelConductor(const Spectrum &e, const Spectrum &kk)
         : eta(e), k(kk) {
     }
+
 private:
     Spectrum eta, k;
 };

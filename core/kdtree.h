@@ -44,8 +44,7 @@ struct KdNode {
     // KdNode Data
     float splitPos;
     uint32_t splitAxis:2;
-    uint32_t hasLeftChild:1;
-    uint32_t rightChild:29;
+    uint32_t hasLeftChild:1, rightChild:29;
 };
 
 

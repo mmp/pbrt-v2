@@ -92,7 +92,9 @@ class Shape;
 class ParamSet;
 template <typename T> struct ParamSetItem;
 struct Options {
-    Options() { nCores = 0; quickRender = quiet = openWindow = verbose = false; imageFile = ""; }
+    Options() { nCores = 0;
+                quickRender = quiet = openWindow = verbose = false;
+                imageFile = ""; }
     int nCores;
     bool quickRender;
     bool quiet, verbose;

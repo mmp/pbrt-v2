@@ -87,8 +87,7 @@ struct CompareToBucket {
     { splitBucket = split; nBuckets = num; dim = d; }
     bool operator()(const BVHPrimitiveInfo &p) const;
 
-    int splitBucket;
-    int nBuckets, dim;
+    int splitBucket, nBuckets, dim;
     const BBox &centroidBounds;
 };
 
@@ -108,6 +107,7 @@ struct LinearBVHNode {
         uint32_t primitivesOffset;    // leaf
         uint32_t secondChildOffset;   // interior
     };
+
     uint8_t nPrimitives;  // 0 -> interior node
     uint8_t axis;         // interior node: xyz
     uint8_t pad[2];       // ensure 32 byte total size
@@ -154,6 +154,7 @@ BVHAccel::BVHAccel(const vector<Reference<Primitive> > &p,
                 sm.c_str());
         splitMethod = SPLIT_SAH;
     }
+
     if (primitives.size() == 0) {
         nodes = NULL;
         return;
@@ -298,7 +299,7 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
                         b1 = Union(b1, buckets[j].bounds);
                         count1 += buckets[j].count;
                     }
-                    cost[i] = .125f + (count0 * b0.SurfaceArea() + count1 * b1.SurfaceArea()) /
+                    cost[i] = .125f + (count0*b0.SurfaceArea() + count1*b1.SurfaceArea()) /
                               bbox.SurfaceArea();
                 }
 
@@ -320,6 +321,7 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
                         CompareToBucket(minCostSplit, nBuckets, dim, centroidBounds));
                     mid = pmid - &buildData[0];
                 }
+                
                 else {
                     // Create leaf _BVHBuildNode_
                     uint32_t firstPrimOffset = orderedPrims.size();

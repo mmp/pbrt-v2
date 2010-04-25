@@ -436,7 +436,7 @@ void PhotonShootingTask::Run() {
                     alpha *= renderer->Transmittance(scene, photonRay, NULL, rng, arena);
                     BSDF *photonBSDF = photonIsect.GetBSDF(photonRay, arena);
                     BxDFType specularType = BxDFType(BSDF_REFLECTION |
-                        BSDF_TRANSMISSION | BSDF_SPECULAR);
+                                            BSDF_TRANSMISSION | BSDF_SPECULAR);
                     bool hasNonSpecular = (photonBSDF->NumComponents() >
                                            photonBSDF->NumComponents(specularType));
                     Vector wo = -photonRay.d;
@@ -488,8 +488,7 @@ void PhotonShootingTask::Run() {
                     BxDFType flags;
                     Spectrum fr = photonBSDF->Sample_f(wo, &wi, BSDFSample(rng),
                                                        &pdf, BSDF_ALL, &flags);
-                    if (fr.IsBlack() || pdf == 0.f)
-                        break;
+                    if (fr.IsBlack() || pdf == 0.f) break;
                     Spectrum anew = alpha * fr *
                         AbsDot(wi, photonBSDF->dgShading.nn) / pdf;
 
@@ -499,6 +498,7 @@ void PhotonShootingTask::Run() {
                         break;
                     alpha = anew / continueProb;
                     specularPath &= ((flags & BSDF_SPECULAR) != 0);
+                    
                     if (indirectDone && !specularPath) break;
                     photonRay = RayDifferential(photonIsect.dg.p, wi, photonRay,
                                                 photonIsect.rayEpsilon);

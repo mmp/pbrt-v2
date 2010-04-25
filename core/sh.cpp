@@ -127,6 +127,7 @@ static void sinCosIndexed(float s, float c, int n,
                           float *sout, float *cout) {
     float si = 0, ci = 1;
     for (int i = 0; i < n; ++i) {
+        // Compute $\sin{}i\phi$ and $\cos{}i\phi$ using recurrence
         *sout++ = si;
         *cout++ = ci;
         float oldsi = si;
