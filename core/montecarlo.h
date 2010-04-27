@@ -51,10 +51,11 @@ struct Distribution1D {
         delete[] func;
         delete[] cdf;
     }
-    float SampleContinuous(float u, float *pdf) const {
+    float SampleContinuous(float u, float *pdf, int *off = NULL) const {
         // Find surrounding CDF segments and _offset_
         float *ptr = std::lower_bound(cdf, cdf+count+1, u);
         int offset = max(0, int(ptr-cdf-1));
+        if (off) *off = offset;
 
         // Compute offset along CDF segment
         float du = (u - cdf[offset]) / (cdf[offset+1] - cdf[offset]);
@@ -113,9 +114,8 @@ struct Distribution2D {
     void SampleContinuous(float u0, float u1, float uv[2],
                           float *pdf) const {
         float pdfs[2];
-        uv[1] = pMarginal->SampleContinuous(u1, &pdfs[1]);
-        int v = Clamp(Float2Int(uv[1] * pMarginal->count), 0,
-                      pMarginal->count-1);
+        int v;
+        uv[1] = pMarginal->SampleContinuous(u1, &pdfs[1], &v);
         uv[0] = pConditionalV[v]->SampleContinuous(u0, &pdfs[0]);
         *pdf = pdfs[0] * pdfs[1];
     }
