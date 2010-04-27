@@ -141,7 +141,7 @@ void StratifiedSample1D(float *samp, int nSamples, RNG &rng,
     float invTot = 1.f / nSamples;
     for (int i = 0;  i < nSamples; ++i) {
         float delta = jitter ? rng.RandomFloat() : 0.5f;
-        *samp++ = (i + delta) * invTot;
+        *samp++ = min((i + delta) * invTot, OneMinusEpsilon);
     }
 }
 
@@ -153,8 +153,8 @@ void StratifiedSample2D(float *samp, int nx, int ny, RNG &rng,
         for (int x = 0; x < nx; ++x) {
             float jx = jitter ? rng.RandomFloat() : 0.5f;
             float jy = jitter ? rng.RandomFloat() : 0.5f;
-            *samp++ = (x + jx) * dx;
-            *samp++ = (y + jy) * dy;
+            *samp++ = min((x + jx) * dx, OneMinusEpsilon);
+            *samp++ = min((y + jy) * dy, OneMinusEpsilon);
         }
 }
 
@@ -165,7 +165,8 @@ void LatinHypercube(float *samples, uint32_t nSamples, uint32_t nDim,
     float delta = 1.f / nSamples;
     for (uint32_t i = 0; i < nSamples; ++i)
         for (uint32_t j = 0; j < nDim; ++j)
-            samples[nDim * i + j] = (i + (rng.RandomFloat())) * delta;
+            samples[nDim * i + j] = min((i + (rng.RandomFloat())) * delta,
+                                        OneMinusEpsilon);
 
     // Permute LHS samples in each dimension
     for (uint32_t i = 0; i < nDim; ++i) {

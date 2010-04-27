@@ -29,6 +29,10 @@
 #include "geometry.h"
 #include "rng.h"
 
+// smallest floating point value less than one; all canonical random samples
+// should be <= this.
+static const float OneMinusEpsilon=0x1.fffffep-1;
+
 // Monte Carlo Utility Declarations
 struct Distribution1D {
     // Distribution1D Public Methods
@@ -197,7 +201,8 @@ public:
     void Sample(uint32_t n, float *out) const {
         uint32_t *p = permute;
         for (uint32_t i = 0; i < dims; ++i) {
-            out[i] = PermutedRadicalInverse(n, b[i], p);
+            out[i] = min(float(PermutedRadicalInverse(n, b[i], p)), 
+                         OneMinusEpsilon);
             p += b[i];
         }
     }
@@ -249,14 +254,14 @@ inline float VanDerCorput(uint32_t n, uint32_t scramble) {
     n = ((n & 0x33333333) << 2) | ((n & 0xcccccccc) >> 2);
     n = ((n & 0x55555555) << 1) | ((n & 0xaaaaaaaa) >> 1);
     n ^= scramble;
-    return ((n>>8) & 0xffffff) / float(1 << 24);
+    return min(((n>>8) & 0xffffff) / float(1 << 24), OneMinusEpsilon);
 }
 
 
 inline float Sobol2(uint32_t n, uint32_t scramble) {
     for (uint32_t v = 1 << 31; n != 0; n >>= 1, v ^= v >> 1)
         if (n & 0x1) scramble ^= v;
-    return ((scramble>>8) & 0xffffff) / float(1 << 24);
+    return min(((scramble>>8) & 0xffffff) / float(1 << 24), OneMinusEpsilon);
 }
 
 
@@ -264,7 +269,7 @@ inline float
 LarcherPillichshammer2(uint32_t n, uint32_t scramble) {
     for (uint32_t v = 1 << 31; n != 0; n >>= 1, v |= v >> 1)
         if (n & 0x1) scramble ^= v;
-    return ((scramble>>8) & 0xffffff) / float(1 << 24);
+    return min(((scramble>>8) & 0xffffff) / float(1 << 24), OneMinusEpsilon);
 }
 
 
