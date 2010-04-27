@@ -439,25 +439,31 @@ inline float AbsDot(const Vector &v1, const Vector &v2) {
 
 inline Vector Cross(const Vector &v1, const Vector &v2) {
     Assert(!v1.HasNaNs() && !v2.HasNaNs());
-    return Vector((v1.y * v2.z) - (v1.z * v2.y),
-                  (v1.z * v2.x) - (v1.x * v2.z),
-                  (v1.x * v2.y) - (v1.y * v2.x));
+    double v1x = v1.x, v1y = v1.y, v1z = v1.z;
+    double v2x = v2.x, v2y = v2.y, v2z = v2.z;
+    return Vector((v1y * v2z) - (v1z * v2y),
+                  (v1z * v2x) - (v1x * v2z),
+                  (v1x * v2y) - (v1y * v2x));
 }
 
 
 inline Vector Cross(const Vector &v1, const Normal &v2) {
     Assert(!v1.HasNaNs() && !v2.HasNaNs());
-    return Vector((v1.y * v2.z) - (v1.z * v2.y),
-                  (v1.z * v2.x) - (v1.x * v2.z),
-                  (v1.x * v2.y) - (v1.y * v2.x));
+    double v1x = v1.x, v1y = v1.y, v1z = v1.z;
+    double v2x = v2.x, v2y = v2.y, v2z = v2.z;
+    return Vector((v1y * v2z) - (v1z * v2y),
+                  (v1z * v2x) - (v1x * v2z),
+                  (v1x * v2y) - (v1y * v2x));
 }
 
 
 inline Vector Cross(const Normal &v1, const Vector &v2) {
     Assert(!v1.HasNaNs() && !v2.HasNaNs());
-    return Vector((v1.y * v2.z) - (v1.z * v2.y),
-                  (v1.z * v2.x) - (v1.x * v2.z),
-                  (v1.x * v2.y) - (v1.y * v2.x));
+    double v1x = v1.x, v1y = v1.y, v1z = v1.z;
+    double v2x = v2.x, v2y = v2.y, v2z = v2.z;
+    return Vector((v1y * v2z) - (v1z * v2y),
+                  (v1z * v2x) - (v1x * v2z),
+                  (v1x * v2y) - (v1y * v2x));
 }
 
 
