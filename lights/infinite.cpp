@@ -190,6 +190,7 @@ Spectrum InfiniteAreaLight::Sample_L(const Point &p, float pEpsilon,
     // Find $(u,v)$ sample coordinates in infinite light texture
     float uv[2], mapPdf;
     distribution->SampleContinuous(ls.uPos[0], ls.uPos[1], uv, &mapPdf);
+    if (mapPdf == 0.f) return 0.f;
 
     // Convert infinite light sample point to direction
     float theta = uv[1] * M_PI, phi = uv[0] * 2.f * M_PI;
