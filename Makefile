@@ -45,12 +45,6 @@ else
 endif
 
 EXRLIBS=$(EXR_LIBDIR) -Bstatic -lIex -lIlmImf -lIlmThread -lImath -lIex -lHalf -Bdynamic
-ifeq ($(ARCH),Linux)
-  EXRLIBS += -lpthread
-endif
-ifeq ($(ARCH),OpenBSD)
-  EXRLIBS += -lpthread
-endif
 ifeq ($(ARCH),Darwin)
   EXRLIBS += -lz
 endif
@@ -160,9 +154,21 @@ objs/%.o: tools/%.cpp
 	@echo "Building object $@"
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-bin/%: objs/%.o objs/libpbrt.a 
+bin/pbrt: objs/pbrt.o objs/libpbrt.a 
 	@echo "Linking $@"
-	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS) -lpthread
+
+bin/bsdftest: objs/bsdftest.o objs/libpbrt.a 
+	@echo "Linking $@"
+	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS) -lpthread
+
+bin/exravg: objs/exravg.o 
+	@echo "Linking $@"
+	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS) -lpthread
+
+bin/exrdiff: objs/exrdiff.o 
+	@echo "Linking $@"
+	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS) -lpthread
 
 bin/exrtotiff: objs/exrtotiff.o 
 	@echo "Linking $@"
