@@ -24,6 +24,7 @@
 
 // core/error.cpp*
 #include "pbrt.h"
+#include "progressreporter.h"
 
 // Error Reporting Includes
 #include <stdarg.h>
@@ -32,6 +33,12 @@
 #define PBRT_ERROR_IGNORE 0
 #define PBRT_ERROR_CONTINUE 1
 #define PBRT_ERROR_ABORT 2
+
+const char *findWordEnd(const char *buf) {
+    while (*buf != '\0' && !isspace(*buf))
+        ++buf;
+    return buf;
+}
 
 // Error Reporting Functions
 static void processError(const char *format, va_list args,
@@ -53,13 +60,32 @@ static void processError(const char *format, va_list args,
         // PBRT_ERROR_CONTINUE, PBRT_ERROR_ABORT
         // Print formatted error message
         extern int line_num;
+        int column = 0;
+        int width = max(20, TerminalWidth() - 2);
         if (line_num != 0) {
             extern string current_file;
-            fprintf(stderr, "%s(%d): ", current_file.c_str(), line_num);
+            column += fprintf(stderr, "%s(%d): ", current_file.c_str(), line_num);
         }
         fputs(message, stderr);
         fputs(": ", stderr);
-        fputs(errorBuf, stderr);
+        column += strlen(message) + 2;
+        const char *msgPos = errorBuf;
+        while (true) {
+            while (*msgPos != '\0' && isspace(*msgPos))
+                ++msgPos;
+            if (*msgPos == '\0')
+                break;
+
+            const char *wordEnd = findWordEnd(msgPos);
+            if (column + wordEnd - msgPos > width)
+                column = fprintf(stderr, "\n    ");
+            while (msgPos != wordEnd) {
+                fputc(*msgPos++, stderr);
+                ++column;
+            }
+            fputc(' ', stderr);
+            ++column;
+        }
         fputs("\n", stderr);
     }
     if (disposition == PBRT_ERROR_ABORT) {
