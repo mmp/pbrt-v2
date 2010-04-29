@@ -109,6 +109,7 @@ for target in build_envs:
     env = build_envs[target]
     Export('env')
     output = SConscript(dirs = '.',
-                        variant_dir = 'build/' + arch + '-' + target)
+                        variant_dir = 'build/' + arch + '-' + target,
+                        duplicate=False)
     env.Alias(target, output['defaults'])
     env.Default(target)
