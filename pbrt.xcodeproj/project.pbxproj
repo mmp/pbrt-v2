@@ -295,8 +295,6 @@
 		B1D8EC041170310E00A8A49E /* diffuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = diffuse.h; path = lights/diffuse.h; sourceTree = SOURCE_ROOT; };
 		B1D8EC051170310E00A8A49E /* distant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = distant.cpp; path = lights/distant.cpp; sourceTree = SOURCE_ROOT; };
 		B1D8EC061170310E00A8A49E /* distant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = distant.h; path = lights/distant.h; sourceTree = SOURCE_ROOT; };
-		B1D8EC071170310E00A8A49E /* distantinfinite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = distantinfinite.cpp; path = lights/distantinfinite.cpp; sourceTree = SOURCE_ROOT; };
-		B1D8EC081170310E00A8A49E /* distantinfinite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = distantinfinite.h; path = lights/distantinfinite.h; sourceTree = SOURCE_ROOT; };
 		B1D8EC091170310E00A8A49E /* goniometric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = goniometric.cpp; path = lights/goniometric.cpp; sourceTree = SOURCE_ROOT; };
 		B1D8EC0A1170310E00A8A49E /* goniometric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = goniometric.h; path = lights/goniometric.h; sourceTree = SOURCE_ROOT; };
 		B1D8EC0B1170310E00A8A49E /* infinite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = infinite.cpp; path = lights/infinite.cpp; sourceTree = SOURCE_ROOT; };
@@ -633,8 +631,6 @@
 				B1D8EC041170310E00A8A49E /* diffuse.h */,
 				B1D8EC051170310E00A8A49E /* distant.cpp */,
 				B1D8EC061170310E00A8A49E /* distant.h */,
-				B1D8EC071170310E00A8A49E /* distantinfinite.cpp */,
-				B1D8EC081170310E00A8A49E /* distantinfinite.h */,
 				B1D8EC091170310E00A8A49E /* goniometric.cpp */,
 				B1D8EC0A1170310E00A8A49E /* goniometric.h */,
 				B1D8EC0B1170310E00A8A49E /* infinite.cpp */,
@@ -1034,6 +1030,7 @@
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
 					PBRT_STATS_NONE,
 					PBRT_HAS_PTHREADS,
 				);
@@ -1046,6 +1043,41 @@
 			};
 			name = Release;
 		};
+		B18C76E91189CC6400AEF213 /* dtrace */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					PBRT_STATS_DTRACE,
+					PBRT_HAS_PTHREADS,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ..;
+				PREBINDING = NO;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = dtrace;
+		};
+		B18C76EA1189CC6400AEF213 /* dtrace */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = PBRT_PROBES_NONE;
+				HEADER_SEARCH_PATHS = (
+					"$(DERIVED_FILES_DIR)/Yacc",
+					.,
+				);
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = pbrt;
+			};
+			name = dtrace;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1054,6 +1086,7 @@
 			buildConfigurations = (
 				1DEB923208733DC60010E9CD /* Debug */,
 				1DEB923308733DC60010E9CD /* Release */,
+				B18C76EA1189CC6400AEF213 /* dtrace */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1063,6 +1096,7 @@
 			buildConfigurations = (
 				1DEB923608733DC60010E9CD /* Debug */,
 				1DEB923708733DC60010E9CD /* Release */,
+				B18C76E91189CC6400AEF213 /* dtrace */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
