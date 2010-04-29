@@ -234,6 +234,8 @@ Spectrum InfiniteAreaLight::Sample_L(const Scene *scene,
     // Find $(u,v)$ sample coordinates in infinite light texture
     float uv[2], mapPdf;
     distribution->SampleContinuous(ls.uPos[0], ls.uPos[1], uv, &mapPdf);
+    if (mapPdf == 0.f) return Spectrum(0.f);
+
     float theta = uv[1] * M_PI, phi = uv[0] * 2.f * M_PI;
     float costheta = cosf(theta), sintheta = sinf(theta);
     float sinphi = sinf(phi), cosphi = cosf(phi);
