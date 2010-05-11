@@ -520,6 +520,9 @@ void PhotonShootingTask::Run() {
              unsuccessful(integrator->nIndirectPhotonsWanted,
                                       indirectPhotons.size(), blockSize))) {
             Error("Unable to store enough photons.  Giving up.\n");
+            causticPhotons.erase(causticPhotons.begin(), causticPhotons.end());
+            indirectPhotons.erase(indirectPhotons.begin(), indirectPhotons.end());
+            radiancePhotons.erase(radiancePhotons.begin(), radiancePhotons.end());
             abortTasks = true;
             return;
         }
