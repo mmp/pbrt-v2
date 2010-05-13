@@ -14,7 +14,8 @@ exr_libdir = [ '/opt/local/lib' ]
 has_dtrace = (arch == 'darwin')
 Export('has_dtrace')
 
-has_gcd = float(platform.mac_ver()[0][:4] >= 10.6)
+#has_gcd = float(platform.mac_ver()[0][:4] >= 10.6)
+has_gcd = False
 
 build_64bit = True
 
