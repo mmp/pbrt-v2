@@ -8,14 +8,34 @@ The latest version of the pbrt code, including all of the latest bug fixes,
 updates, and conversion utilities is available from the
 http://pbrt.org/downloads.php page on the pbrt website as well as via
 GitHub (using the git source control management system) from the page
-http://github.com/mmp/pbrt-v2.  
+http://github.com/mmp/pbrt-v2.
 
 Please report any bugs encountered or other issues with the system to Matt
 Pharr and Greg Humphreys, via the authors@pbrt.org e-mail address.
 
+--- Organization ---
+
+src/ : The implementation of the pbrt rendering system is in this
+directory.  It includes a MSVC project to build the system as well as an
+XCode project, build scripts for scons, and a Makefile as well.
+
+scenes/ : A number of simple example scenes.
+
+exporters/ : Scripts to export to the pbrt file format from a number of
+modeling systems.  (Currently, 3ds max, Blender, StructureSynth, as well as
+a Mathematica exporter)
+
+dtrace/ : A number of scripts for gathering data about the run-time
+behavior of pbrt using dtrace (http://en.wikipedia.org/wiki/DTrace).
+Dtrace is only supported on Mac OSX and FreeBSD; see the
+src/README_BUILDING.txt file for more information about building pbrt with
+dtrace support.
+
+--- Changes ---
+
 The remainder of this document will summarize the major changes to the
 system since the version described in the first edition of the book.  See
-the file README_BUILDING.txt for information about how to compile the
+the file src/README_BUILDING.txt for information about how to compile the
 system.
 
 --- Incompatibilities ---
