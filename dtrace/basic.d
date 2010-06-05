@@ -66,6 +66,10 @@ uint64_t phase_tasks_count[NUM_PHASES];
     ++allocated_cached_transforms;
 }
 
+:::found_cached_transform {
+    ++found_cached_transforms;
+}
+
 :::started_preprocessing {
     phase = PREPROCESSING;
     preprocessing = 1;
@@ -161,6 +165,8 @@ dtrace:::END {
     printf("  Total shapes in scene                    %12d\n", num_shapes);
     printf("  Transforms allocated                     %12d (%d kB)\n",
            allocated_cached_transforms, (allocated_cached_transforms * 16 * 2 * 4)/1024);
+    printf("  Transform cache hit rate                       %3d.%02d%%\n",
+           PCT_PARTS(found_cached_transforms, found_cached_transforms + allocated_cached_transforms));
     printf("\n");
 
     printf("Rays Traced\n");

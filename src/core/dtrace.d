@@ -32,6 +32,7 @@ probe atomic_memory_op();
 probe started_parsing();
 probe finished_parsing();
 probe allocated_cached_transform();
+probe found_cached_transform();
 
 probe started_preprocessing();
 probe finished_preprocessing();

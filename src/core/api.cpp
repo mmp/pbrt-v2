@@ -239,12 +239,15 @@ public:
             *tinv = Transform(Inverse(t));
             cache[t] = std::make_pair(tr, tinv);
             iter = cache.find(t);
+            PBRT_ALLOCATED_CACHED_TRANSFORM();
         }
+        else
+            PBRT_FOUND_CACHED_TRANSFORM();
         if (tCached) *tCached = iter->second.first;
         if (tCachedInverse) *tCachedInverse = iter->second.second;
-        PBRT_ALLOCATED_CACHED_TRANSFORM();
     }
     void Clear() {
+        arena.FreeAll();
         cache.erase(cache.begin(), cache.end());
     }
 private:
