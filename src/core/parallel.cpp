@@ -744,6 +744,8 @@ void TasksCleanup() {
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     return;
 #else // // PBRT_USE_GRAND_CENTRAL_DISPATCH
+    if (!taskQueueMutex || !workerSemaphore)
+        return;
     { MutexLock lock(*taskQueueMutex);
     Assert(taskQueue.size() == 0);
     }

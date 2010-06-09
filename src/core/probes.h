@@ -45,6 +45,7 @@ inline void ProbesPrint(FILE *) { }
 // Remainder of disabled probes declarations
 #define PBRT_ACCESSED_TEXEL(arg0, arg1, arg2, arg3)
 #define PBRT_ALLOCATED_CACHED_TRANSFORM()
+#define PBRT_FOUND_CACHED_TRANSFORM()
 #define PBRT_ATOMIC_MEMORY_OP()
 #define PBRT_BVH_STARTED_CONSTRUCTION(arg0, arg1)
 #define PBRT_BVH_FINISHED_CONSTRUCTION(arg0)
@@ -231,6 +232,7 @@ extern void PBRT_STARTED_SPECULAR_REFLECTION_RAY(const RayDifferential *);
 extern void PBRT_STARTED_SPECULAR_REFRACTION_RAY(const RayDifferential *);
 #define PBRT_ACCESSED_TEXEL(arg0, arg1, arg2, arg3)
 #define PBRT_ALLOCATED_CACHED_TRANSFORM()
+#define PBRT_FOUND_CACHED_TRANSFORM()
 #define PBRT_ATOMIC_MEMORY_OP()
 #define PBRT_BVH_STARTED_CONSTRUCTION(arg0, arg1)
 #define PBRT_BVH_FINISHED_CONSTRUCTION(arg0)
