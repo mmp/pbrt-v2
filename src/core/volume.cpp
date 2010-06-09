@@ -199,12 +199,9 @@ float AggregateVolume::p(const Point &p, const Vector &w, const Vector &wp,
         float time) const {
     float ph = 0, sumWt = 0;
     for (uint32_t i = 0; i < regions.size(); ++i) {
-        float sigt = regions[i]->sigma_t(p, w, time).y();
-        if (sigt != 0.f) {
-            float wt = regions[i]->sigma_s(p, w, time).y() / sigt;
-            sumWt += wt;
-            ph += wt * regions[i]->p(p, w, wp, time);
-        }
+        float wt = regions[i]->sigma_s(p, w, time).y();
+        sumWt += wt;
+        ph += wt * regions[i]->p(p, w, wp, time);
     }
     return ph / sumWt;
 }
