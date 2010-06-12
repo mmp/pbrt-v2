@@ -45,7 +45,7 @@ ProjectionLight::ProjectionLight(const Transform &light2world,
     delete[] texels;
 
     // Initialize _ProjectionLight_ projection matrix
-    float aspect = float(width) / float(height);
+    float aspect = projectionMap ? float(width) / float(height) : 1.f;
     if (aspect > 1.f)  {
         screenX0 = -aspect; screenX1 = aspect;
         screenY0 = -1.f;    screenY1 = 1.f;
