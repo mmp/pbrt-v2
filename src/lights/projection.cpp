@@ -94,8 +94,8 @@ Spectrum ProjectionLight::Projection(const Vector &w) const {
 
 
 Spectrum ProjectionLight::Power(const Scene *) const {
-    return Spectrum(projectionMap->Lookup(.5f, .5f, .5f),
-                    SPECTRUM_ILLUMINANT) *
+    return (projectionMap ? Spectrum(projectionMap->Lookup(.5f, .5f, .5f),
+                                     SPECTRUM_ILLUMINANT) : Spectrum(1.f)) *
         Intensity * 2.f * M_PI * (1.f - cosTotalWidth);
 }
 
