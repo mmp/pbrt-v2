@@ -27,11 +27,11 @@
 #include "paramset.h"
 #include <stdarg.h>
 
-#ifdef WIN32
+#ifdef PBRT_IS_WINDOWS
 #pragma warning(disable:4065)
 #pragma warning(disable:4996)
 #pragma warning(disable:4018)
-#endif // WIN32
+#endif // PBRT_IS_WINDOWS
 
 extern int yylex();
 int line_num = 0;

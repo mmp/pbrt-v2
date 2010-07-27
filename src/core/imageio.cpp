@@ -23,6 +23,7 @@
 
 
 // core/imageio.cpp*
+#include "stdafx.h"
 #include "imageio.h"
 #include "spectrum.h"
 
@@ -95,7 +96,7 @@ void WriteImage(const string &name, float *pixels, float *alpha, int xRes,
 
 
 #ifdef PBRT_HAS_OPENEXR
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 #define hypotf hypot // For the OpenEXR headers
 #endif
 #include <ImfInputFile.h>
@@ -205,7 +206,7 @@ static void WriteImageEXR(const string &name, float *pixels,
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 typedef unsigned char byte;
 #else
 #include <stdint.h>
@@ -548,7 +549,7 @@ static RGBSpectrum *ReadImageTGA(const string &name, int *width, int *height)
  */
 
 static bool hostLittleEndian =
-#if defined(__LITTLE_ENDIAN__) || defined(__i386__) || defined(__x86_64__) || defined(WIN32)
+#if defined(__LITTLE_ENDIAN__) || defined(__i386__) || defined(__x86_64__) || defined(PBRT_IS_WINDOWS)
 true
 #elif defined(__BIG_ENDIAN__)
 false

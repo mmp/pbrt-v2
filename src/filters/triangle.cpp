@@ -23,6 +23,7 @@
 
 
 // filters/triangle.cpp*
+#include "stdafx.h"
 #include "filters/triangle.h"
 #include "paramset.h"
 

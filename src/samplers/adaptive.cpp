@@ -23,6 +23,7 @@
 
 
 // samplers/adaptive.cpp*
+#include "stdafx.h"
 #include "samplers/adaptive.h"
 #include "paramset.h"
 #include "film.h"

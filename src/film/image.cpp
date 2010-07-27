@@ -23,6 +23,7 @@
 
 
 // film/image.cpp*
+#include "stdafx.h"
 #include "film/image.h"
 #include "spectrum.h"
 #include "parallel.h"

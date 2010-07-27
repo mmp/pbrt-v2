@@ -23,6 +23,7 @@
 
 
 // textures/windy.cpp*
+#include "stdafx.h"
 #include "textures/windy.h"
 
 // WindyTexture Method Definitions

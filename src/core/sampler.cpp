@@ -23,7 +23,7 @@
 
 
 // core/sampler.cpp*
-#include "pbrt.h"
+#include "stdafx.h"
 #include "sampler.h"
 #include "integrator.h"
 #include "volume.h"

@@ -23,6 +23,7 @@
 
 
 // core/film.cpp*
+#include "stdafx.h"
 #include "film.h"
 #include "paramset.h"
 

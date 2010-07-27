@@ -23,6 +23,7 @@
 
 
 // materials/measured.cpp*
+#include "stdafx.h"
 #include "materials/measured.h"
 #include "paramset.h"
 #include "floatfile.h"

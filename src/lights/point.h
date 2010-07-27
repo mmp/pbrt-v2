@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_LIGHTS_POINT_H
 #define PBRT_LIGHTS_POINT_H
 

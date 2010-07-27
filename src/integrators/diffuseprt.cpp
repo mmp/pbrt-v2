@@ -23,6 +23,7 @@
 
 
 // integrators/diffuseprt.cpp*
+#include "stdafx.h"
 #include "integrators/diffuseprt.h"
 #include "sh.h"
 #include "light.h"

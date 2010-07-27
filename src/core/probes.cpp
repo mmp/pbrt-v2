@@ -23,6 +23,7 @@
 
 
 // core/probes.cpp*
+#include "stdafx.h"
 #include "probes.h"
 #ifdef PBRT_PROBES_COUNTERS
 #include "parallel.h"
@@ -190,7 +191,7 @@ void ProbesPrint(FILE *dest) {
 
 
 static void ProbesPrintVal(FILE *f, const StatsCounterType &v) {
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     LONG vv = v;
     fprintf(f, "%d", vv);
 #else
@@ -207,7 +208,7 @@ static void ProbesPrintVal(FILE *f, const StatsCounterType &v) {
 
 static void ProbesPrintVal(FILE *f, const StatsCounterType &v1,
         const StatsCounterType &v2) {
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     LONG vv1 = v1, vv2 = v2;
     fprintf(f, "%d:%d", vv1, vv2);
 #else

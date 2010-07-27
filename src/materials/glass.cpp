@@ -23,6 +23,7 @@
 
 
 // materials/glass.cpp*
+#include "stdafx.h"
 #include "materials/glass.h"
 #include "spectrum.h"
 #include "reflection.h"

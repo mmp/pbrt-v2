@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_SHAPES_DISK_H
 #define PBRT_SHAPES_DISK_H
 

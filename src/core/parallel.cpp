@@ -23,12 +23,13 @@
 
 
 // core/parallel.cpp*
+#include "stdafx.h"
 #include "parallel.h"
 #include "memory.h"
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
 #include <dispatch/dispatch.h>
 #endif // PBRT_USE_GRAND_CENTRAL_DISPATCH
-#ifndef WIN32
+#if !defined(PBRT_IS_WINDOWS)
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -36,15 +37,15 @@
 #include <sys/param.h>
 #include <sys/sysctl.h>
 #include <errno.h>
-#endif // WIN32
+#endif 
 #include <list>
 
 // Parallel Local Declarations
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 static HANDLE *threads;
 #elif !defined(PBRT_USE_GRAND_CENTRAL_DISPATCH)
 static pthread_t *threads;
-#endif // WIN32
+#endif 
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
 static dispatch_queue_t gcdQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 static dispatch_group_t gcdGroup = dispatch_group_create();
@@ -59,7 +60,7 @@ static ConditionVariable *tasksRunningCondition;
 #endif // PBRT_USE_GRAND_CENTRAL_DISPATCH
 #ifndef PBRT_USE_GRAND_CENTRAL_DISPATCH
 static
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 DWORD WINAPI taskEntry(LPVOID arg);
 #else
 void *taskEntry(void *arg);
@@ -67,7 +68,7 @@ void *taskEntry(void *arg);
 #endif // !PBRT_USE_GRAND_CENTRAL_DISPATCH
 
 // Parallel Definitions
-#ifndef WIN32
+#if !defined(PBRT_IS_WINDOWS)
 
 Mutex *Mutex::Create() {
     int sz = sizeof(Mutex);
@@ -189,8 +190,8 @@ void RWMutexLock::DowngradeToRead() {
 }
 
 
-#endif // !WIN32
-#ifdef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 
 Mutex *Mutex::Create() {
     return new Mutex;
@@ -459,8 +460,8 @@ void RWMutexLock::DowngradeToRead() {
 }
 
 
-#endif // WIN32
-#ifndef WIN32
+#endif 
+#if !defined(PBRT_IS_WINDOWS)
 Semaphore::Semaphore() {
 #ifdef __OpenBSD__
     sem = (sem_t *)malloc(sizeof(sem_t));
@@ -479,8 +480,8 @@ Semaphore::Semaphore() {
 }
 
 
-#endif // !WIN32
-#ifdef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 Semaphore::Semaphore() {
     handle = CreateSemaphore(NULL, 0, 65535,  NULL);
     if (!handle)
@@ -488,11 +489,11 @@ Semaphore::Semaphore() {
 }
 
 
-#endif // WIN32
-#ifndef WIN32
+#endif // PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 int Semaphore::count = 0;
-#endif // !WIN32
-#ifndef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 Semaphore::~Semaphore() {
 #ifdef __OpenBSD__
     int err = sem_destroy(sem);
@@ -508,15 +509,15 @@ Semaphore::~Semaphore() {
 }
 
 
-#endif // !WIN32
-#ifdef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 Semaphore::~Semaphore() {
     CloseHandle(handle);
 }
 
 
-#endif // WIN32
-#ifndef WIN32
+#endif // PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 void Semaphore::Wait() {
     int err;
     if ((err = sem_wait(sem)) != 0)
@@ -524,15 +525,15 @@ void Semaphore::Wait() {
 }
 
 
-#endif // !WIN32
-#ifndef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 bool Semaphore::TryWait() {
     return (sem_trywait(sem) == 0);
 }
 
 
-#endif // !WIN32
-#ifndef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 void Semaphore::Post(int count) {
     int err;
     while (count-- > 0)
@@ -541,8 +542,8 @@ void Semaphore::Post(int count) {
 }
 
 
-#endif // !WIN32
-#ifdef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 void Semaphore::Wait() {
     if (WaitForSingleObject(handle, INFINITE) == WAIT_FAILED)
         Severe("Error from WaitForSingleObject: %d", GetLastError());
@@ -550,23 +551,23 @@ void Semaphore::Wait() {
 }
 
 
-#endif // WIN32
-#ifdef WIN32
+#endif // PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 bool Semaphore::TryWait() {
     return (WaitForSingleObject(handle, 0L) == WAIT_OBJECT_0);
 }
 
 
-#endif // WIN32
-#ifdef WIN32
+#endif // PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 void Semaphore::Post(int count) {
     if (!ReleaseSemaphore(handle, count, NULL))
         Severe("Error from ReleaseSemaphore: %d", GetLastError());
 }
 
 
-#endif // WIN32
-#ifndef WIN32
+#endif // PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 ConditionVariable::ConditionVariable() {
    int err;
    if ((err = pthread_cond_init(&cond, NULL)) != 0)
@@ -576,16 +577,16 @@ ConditionVariable::ConditionVariable() {
 }
 
 
-#endif // !WIN32
-#ifndef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 ConditionVariable::~ConditionVariable() {
     pthread_cond_destroy(&cond);
     pthread_mutex_destroy(&mutex);
 }
 
 
-#endif // !WIN32
-#ifndef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 void ConditionVariable::Lock() {
     int err;
     if ((err = pthread_mutex_lock(&mutex)) != 0)
@@ -593,8 +594,8 @@ void ConditionVariable::Lock() {
 }
 
 
-#endif // !WIN32
-#ifndef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if !(defined(PBRT_IS_WINDOWS))
 void ConditionVariable::Unlock() {
     int err;
     if ((err = pthread_mutex_unlock(&mutex)) != 0)
@@ -602,8 +603,8 @@ void ConditionVariable::Unlock() {
 }
 
 
-#endif // !WIN32
-#ifndef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 void ConditionVariable::Wait() {
     int err;
     if ((err = pthread_cond_wait(&cond, &mutex)) != 0)
@@ -611,8 +612,8 @@ void ConditionVariable::Wait() {
 }
 
 
-#endif // !WIN32
-#ifndef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if !defined(PBRT_IS_WINDOWS)
 void ConditionVariable::Signal() {
     int err;
     if ((err = pthread_cond_signal(&cond)) != 0)
@@ -620,8 +621,8 @@ void ConditionVariable::Signal() {
 }
 
 
-#endif // !WIN32
-#ifdef WIN32
+#endif // !PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 
 // http://www.cs.wustl.edu/\~schmidt/win32-cv-1.html
 
@@ -642,30 +643,30 @@ ConditionVariable::ConditionVariable() {
 }
 
 
-#endif // WIN32
-#ifdef WIN32
+#endif // PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 ConditionVariable::~ConditionVariable() {
     CloseHandle(events[SIGNAL]);
     CloseHandle(events[BROADCAST]);
 }
 
 
-#endif // WIN32
-#ifdef WIN32
+#endif // PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 void ConditionVariable::Lock() {
     EnterCriticalSection(&conditionMutex);
 }
 
 
-#endif // WIN32
-#ifdef WIN32
+#endif // PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 void ConditionVariable::Unlock() {
     LeaveCriticalSection(&conditionMutex);
 }
 
 
-#endif // WIN32
-#ifdef WIN32
+#endif // PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 void ConditionVariable::Wait() {
     // Avoid race conditions.
     EnterCriticalSection(&waitersCountMutex);
@@ -697,8 +698,8 @@ void ConditionVariable::Wait() {
 }
 
 
-#endif // WIN32
-#ifdef WIN32
+#endif // PBRT_IS_WINDOWS
+#if defined(PBRT_IS_WINDOWS)
 void ConditionVariable::Signal() {
     EnterCriticalSection(&waitersCountMutex);
     int haveWaiters = (waitersCount > 0);
@@ -709,7 +710,7 @@ void ConditionVariable::Signal() {
 }
 
 
-#endif // WIN32
+#endif // PBRT_IS_WINDOWS
 void TasksInit() {
     if (PbrtOptions.nCores == 1)
         return;
@@ -719,7 +720,7 @@ void TasksInit() {
     static const int nThreads = NumSystemCores();
     workerSemaphore = new Semaphore;
     tasksRunningCondition = new ConditionVariable;
-#ifndef WIN32
+#if !defined(PBRT_IS_WINDOWS)
     threads = new pthread_t[nThreads];
     for (int i = 0; i < nThreads; ++i) {
         int err = pthread_create(&threads[i], NULL, &taskEntry, reinterpret_cast<void *>(i));
@@ -733,7 +734,7 @@ void TasksInit() {
         if (threads[i] == NULL)
             Severe("Error from CreateThread");
     }
-#endif // WIN32
+#endif // PBRT_IS_WINDOWS
 #endif // PBRT_USE_GRAND_CENTRAL_DISPATCH
 }
 
@@ -744,8 +745,6 @@ void TasksCleanup() {
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     return;
 #else // // PBRT_USE_GRAND_CENTRAL_DISPATCH
-    if (!taskQueueMutex || !workerSemaphore)
-        return;
     { MutexLock lock(*taskQueueMutex);
     Assert(taskQueue.size() == 0);
     }
@@ -754,7 +753,7 @@ void TasksCleanup() {
     workerSemaphore->Post(nThreads);
 
     if (threads != NULL) {
-#ifndef WIN32
+#if !defined(PBRT_IS_WINDOWS)
         for (int i = 0; i < nThreads; ++i) {
             int err = pthread_join(threads[i], NULL);
             if (err != 0)
@@ -765,7 +764,7 @@ void TasksCleanup() {
         for (int i = 0; i < nThreads; ++i) {
             CloseHandle(threads[i]);
         }
-#endif // WIN32
+#endif // PBRT_IS_WINDOWS
         delete[] threads;
         threads = NULL;
     }
@@ -814,7 +813,7 @@ void EnqueueTasks(const vector<Task *> &tasks) {
 
 
 #ifndef PBRT_USE_GRAND_CENTRAL_DISPATCH
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 static DWORD WINAPI taskEntry(LPVOID arg) {
 #else
 static void *taskEntry(void *arg) {
@@ -841,9 +840,9 @@ static void *taskEntry(void *arg) {
         tasksRunningCondition->Unlock();
     }
     // Cleanup from task thread and exit
-#ifndef WIN32
+#if !defined(PBRT_IS_WINDOWS)
     pthread_exit(NULL);
-#endif // !WIN32
+#endif // !PBRT_IS_WINDOWS
     return 0;
 }
 
@@ -867,7 +866,7 @@ void WaitForAllTasks() {
 
 int NumSystemCores() {
     if (PbrtOptions.nCores > 0) return PbrtOptions.nCores;
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
     return sysinfo.dwNumberOfProcessors;

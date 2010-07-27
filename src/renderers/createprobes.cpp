@@ -23,6 +23,7 @@
 
 
 // renderers/createprobes.cpp*
+#include "stdafx.h"
 #include "renderers/createprobes.h"
 #include "shapes/sphere.h"
 #include "sh.h"

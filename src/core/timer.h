@@ -21,12 +21,16 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_CORE_TIMER_H
 #define PBRT_CORE_TIMER_H
 
 // core/timer.h*
 #include "pbrt.h"
-#if defined ( WIN32 )
+#if defined (PBRT_IS_WINDOWS)
 #include <windows.h>
 #if (_MSC_VER >= 1400)
 #include <stdio.h>
@@ -52,7 +56,7 @@ private:
     double time0, elapsed;
     bool running;
     double GetTime();
-#if defined( WIN32 )
+#if defined(PBRT_IS_WINDOWS)
     // Private Windows Timer Data
     LARGE_INTEGER performance_counter, performance_frequency;
     double one_over_frequency;

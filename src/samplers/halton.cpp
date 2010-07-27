@@ -23,6 +23,7 @@
 
 
 // samplers/halton.cpp*
+#include "stdafx.h"
 #include "samplers/halton.h"
 #include "paramset.h"
 #include "camera.h"

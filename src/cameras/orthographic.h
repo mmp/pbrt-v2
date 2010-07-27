@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_CAMERAS_ORTHOGRAPHIC_H
 #define PBRT_CAMERAS_ORTHOGRAPHIC_H
 

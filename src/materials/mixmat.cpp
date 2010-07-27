@@ -23,6 +23,7 @@
 
 
 // materials/mixmat.cpp*
+#include "stdafx.h"
 #include "materials/mixmat.h"
 #include "materials/matte.h"
 #include "spectrum.h"

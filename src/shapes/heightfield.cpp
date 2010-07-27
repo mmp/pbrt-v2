@@ -23,6 +23,7 @@
 
 
 // shapes/heightfield.cpp*
+#include "stdafx.h"
 #include "shapes/heightfield.h"
 #include "shapes/trianglemesh.h"
 #include "paramset.h"

@@ -23,6 +23,7 @@
 
 
 // integrators/photonmap.cpp*
+#include "stdafx.h"
 #include "integrators/photonmap.h"
 #include "scene.h"
 #include "montecarlo.h"

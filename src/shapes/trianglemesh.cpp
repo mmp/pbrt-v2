@@ -23,6 +23,7 @@
 
 
 // shapes/trianglemesh.cpp*
+#include "stdafx.h"
 #include "shapes/trianglemesh.h"
 #include "texture.h"
 #include "textures/constant.h"

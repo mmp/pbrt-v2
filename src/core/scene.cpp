@@ -23,6 +23,7 @@
 
 
 // core/scene.cpp*
+#include "stdafx.h"
 #include "scene.h"
 #include "camera.h"
 #include "film.h"

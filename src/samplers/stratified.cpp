@@ -23,6 +23,7 @@
 
 
 // samplers/stratified.cpp*
+#include "stdafx.h"
 #include "samplers/stratified.h"
 #include "paramset.h"
 #include "camera.h"

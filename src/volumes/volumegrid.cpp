@@ -23,6 +23,7 @@
 
 
 // volumes/volumegrid.cpp*
+#include "stdafx.h"
 #include "volumes/volumegrid.h"
 #include "paramset.h"
 

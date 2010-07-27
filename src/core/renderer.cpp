@@ -23,6 +23,7 @@
 
 
 // core/renderer.cpp*
+#include "stdafx.h"
 #include "renderer.h"
 
 // Renderer Method Definitions

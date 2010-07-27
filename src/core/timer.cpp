@@ -23,12 +23,13 @@
 
 
 // core/timer.cpp*
+#include "stdafx.h"
 #include "timer.h"
 
 // Timer Method Definitions
 Timer::Timer()
 {
-#if defined( WIN32 )
+#if defined( PBRT_IS_WINDOWS )
     // Windows Timer Initialization
     QueryPerformanceFrequency( &performance_frequency );
     one_over_frequency = 1.0/((double)performance_frequency.QuadPart);
@@ -42,7 +43,7 @@ Timer::Timer()
 
 double Timer::GetTime()
 {
-#if defined( WIN32 )
+#if defined( PBRT_IS_WINDOWS )
     // Windows GetTime
     QueryPerformanceCounter( &performance_counter );
     return (double) performance_counter.QuadPart * one_over_frequency;

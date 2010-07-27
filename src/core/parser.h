@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_CORE_PARSER_H
 #define PBRT_CORE_PARSER_H
 

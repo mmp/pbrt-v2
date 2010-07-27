@@ -23,6 +23,7 @@
 
 
 // core/paramset.cpp*
+#include "stdafx.h"
 #include "paramset.h"
 #include "floatfile.h"
 #include "textures/constant.h"

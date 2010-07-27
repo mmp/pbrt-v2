@@ -23,6 +23,7 @@
 
 
 // shapes/loopsubdiv.cpp*
+#include "stdafx.h"
 #include "shapes/loopsubdiv.h"
 #include "shapes/trianglemesh.h"
 #include "paramset.h"

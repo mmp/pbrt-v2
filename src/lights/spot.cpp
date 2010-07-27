@@ -23,6 +23,7 @@
 
 
 // lights/spot.cpp*
+#include "stdafx.h"
 #include "lights/spot.h"
 #include "paramset.h"
 #include "montecarlo.h"

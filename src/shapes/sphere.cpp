@@ -23,6 +23,7 @@
 
 
 // shapes/sphere.cpp*
+#include "stdafx.h"
 #include "shapes/sphere.h"
 #include "montecarlo.h"
 #include "paramset.h"

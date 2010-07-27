@@ -23,6 +23,7 @@
 
 
 // textures/wrinkled.cpp*
+#include "stdafx.h"
 #include "textures/wrinkled.h"
 
 // WrinkledTexture Method Definitions

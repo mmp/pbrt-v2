@@ -23,6 +23,7 @@
 
 
 // accelerators/kdtreeaccel.cpp*
+#include "stdafx.h"
 #include "accelerators/kdtreeaccel.h"
 #include "paramset.h"
 

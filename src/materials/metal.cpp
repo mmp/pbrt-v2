@@ -23,6 +23,7 @@
 
 
 // materials/metal.cpp*
+#include "stdafx.h"
 #include "materials/metal.h"
 #include "reflection.h"
 #include "paramset.h"

@@ -23,6 +23,7 @@
 
 
 // shapes/cone.cpp*
+#include "stdafx.h"
 #include "shapes/cone.h"
 #include "paramset.h"
 

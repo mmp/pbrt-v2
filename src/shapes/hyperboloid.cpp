@@ -23,6 +23,7 @@
 
 
 // shapes/hyperboloid.cpp*
+#include "stdafx.h"
 #include "shapes/hyperboloid.h"
 #include "paramset.h"
 

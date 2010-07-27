@@ -23,6 +23,7 @@
 
 
 // integrators/dipolesubsurface.cpp*
+#include "stdafx.h"
 #include "integrators/dipolesubsurface.h"
 #include "scene.h"
 #include "montecarlo.h"

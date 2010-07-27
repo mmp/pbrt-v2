@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_VOLUMES_EXPONENTIAL_H
 #define PBRT_VOLUMES_EXPONENTIAL_H
 

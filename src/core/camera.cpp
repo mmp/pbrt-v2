@@ -23,7 +23,7 @@
 
 
 // core/camera.cpp*
-#include "pbrt.h"
+#include "stdafx.h"
 #include "camera.h"
 #include "film.h"
 #include "montecarlo.h"

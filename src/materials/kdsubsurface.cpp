@@ -23,6 +23,7 @@
 
 
 // materials/kdsubsurface.cpp*
+#include "stdafx.h"
 #include "materials/kdsubsurface.h"
 #include "textures/constant.h"
 #include "volume.h"

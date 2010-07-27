@@ -32,7 +32,7 @@
 
 struct ParamArray;
 
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 #pragma warning(disable:4244)
 #pragma warning(disable:4065)
 #pragma warning(disable:4018)

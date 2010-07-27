@@ -23,6 +23,7 @@
 
 
 // core/shrots.cpp*
+#include "stdafx.h"
 #include "sh.h"
 
 // Spherical Harmonics Rotations Definitions

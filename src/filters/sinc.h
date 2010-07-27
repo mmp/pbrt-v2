@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_FILTERS_SINC_H
 #define PBRT_FILTERS_SINC_H
 

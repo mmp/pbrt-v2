@@ -23,6 +23,7 @@
 
 
 // lights/goniometric.cpp*
+#include "stdafx.h"
 #include "lights/goniometric.h"
 #include "paramset.h"
 #include "montecarlo.h"

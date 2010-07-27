@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_VOLUMES_HOMOGENEOUS_H
 #define PBRT_VOLUMES_HOMOGENEOUS_H
 

@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_TEXTURES_BILERP_H
 #define PBRT_TEXTURES_BILERP_H
 

@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_MATERIALS_MATTE_H
 #define PBRT_MATERIALS_MATTE_H
 

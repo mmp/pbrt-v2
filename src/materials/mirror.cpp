@@ -23,6 +23,7 @@
 
 
 // materials/mirror.cpp*
+#include "stdafx.h"
 #include "materials/mirror.h"
 #include "spectrum.h"
 #include "reflection.h"

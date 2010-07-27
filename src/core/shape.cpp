@@ -23,6 +23,7 @@
 
 
 // core/shape.cpp*
+#include "stdafx.h"
 #include "shape.h"
 
 // Shape Method Definitions

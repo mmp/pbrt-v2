@@ -23,7 +23,7 @@
 
 
 // main/pbrt.cpp*
-#include "pbrt.h"
+#include "stdafx.h"
 #include "api.h"
 #include "probes.h"
 #include "parser.h"

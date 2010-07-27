@@ -23,6 +23,7 @@
 
 
 // cameras/perspective.cpp*
+#include "stdafx.h"
 #include "cameras/perspective.h"
 #include "paramset.h"
 #include "sampler.h"

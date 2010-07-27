@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_SAMPLERS_RANDOM_H
 #define PBRT_SAMPLERS_RANDOM_H
 

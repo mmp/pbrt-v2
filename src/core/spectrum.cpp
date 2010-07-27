@@ -23,6 +23,7 @@
 
 
 // core/spectrum.cpp*
+#include "stdafx.h"
 #include "spectrum.h"
 
 // Spectrum Method Definitions

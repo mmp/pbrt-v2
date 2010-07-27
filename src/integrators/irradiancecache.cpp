@@ -23,6 +23,7 @@
 
 
 // integrators/irradiancecache.cpp*
+#include "stdafx.h"
 #include "integrators/irradiancecache.h"
 #include "camera.h"
 #include "progressreporter.h"

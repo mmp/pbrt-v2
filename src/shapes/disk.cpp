@@ -23,6 +23,7 @@
 
 
 // shapes/disk.cpp*
+#include "stdafx.h"
 #include "shapes/disk.h"
 #include "paramset.h"
 #include "montecarlo.h"

@@ -23,6 +23,7 @@
 
 
 // core/material.cpp*
+#include "stdafx.h"
 #include "material.h"
 #include "primitive.h"
 #include "texture.h"

@@ -23,6 +23,7 @@
 
 
 // integrators/useprobes.cpp*
+#include "stdafx.h"
 #include "integrators/useprobes.h"
 #include "integrators/photonmap.h"
 #include "integrators/directlighting.h"

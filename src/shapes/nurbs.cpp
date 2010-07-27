@@ -23,6 +23,7 @@
 
 
 // shapes/nurbs.cpp*
+#include "stdafx.h"
 #include "shapes/nurbs.h"
 #include "shapes/trianglemesh.h"
 #include "paramset.h"

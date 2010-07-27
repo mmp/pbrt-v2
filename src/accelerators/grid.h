@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_ACCELERATORS_GRID_H
 #define PBRT_ACCELERATORS_GRID_H
 

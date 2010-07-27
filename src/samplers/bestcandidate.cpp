@@ -23,6 +23,7 @@
 
 
 // samplers/bestcandidate.cpp*
+#include "stdafx.h"
 #include "samplers/bestcandidate.h"
 #include "camera.h"
 #include "montecarlo.h"

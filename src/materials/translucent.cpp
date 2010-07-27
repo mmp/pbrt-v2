@@ -23,6 +23,7 @@
 
 
 // materials/translucent.cpp*
+#include "stdafx.h"
 #include "materials/translucent.h"
 #include "spectrum.h"
 #include "reflection.h"

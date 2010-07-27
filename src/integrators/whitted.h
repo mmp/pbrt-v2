@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_INTEGRATORS_WHITTED_H
 #define PBRT_INTEGRATORS_WHITTED_H
 

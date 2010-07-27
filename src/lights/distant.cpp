@@ -23,6 +23,7 @@
 
 
 // lights/distant.cpp*
+#include "stdafx.h"
 #include "lights/distant.h"
 #include "paramset.h"
 #include "montecarlo.h"

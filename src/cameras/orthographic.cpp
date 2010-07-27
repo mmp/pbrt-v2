@@ -23,6 +23,7 @@
 
 
 // cameras/orthographic.cpp*
+#include "stdafx.h"
 #include "cameras/orthographic.h"
 #include "paramset.h"
 #include "sampler.h"

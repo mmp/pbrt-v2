@@ -23,6 +23,7 @@
 
 
 // samplers/lowdiscrepancy.cpp*
+#include "stdafx.h"
 #include "samplers/lowdiscrepancy.h"
 #include "camera.h"
 #include "montecarlo.h"

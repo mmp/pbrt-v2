@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_ACCELERATORS_KDTREEACCEL_H
 #define PBRT_ACCELERATORS_KDTREEACCEL_H
 

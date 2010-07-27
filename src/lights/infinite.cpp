@@ -23,6 +23,7 @@
 
 
 // lights/infinite.cpp*
+#include "stdafx.h"
 #include "lights/infinite.h"
 #include "sh.h"
 #include "montecarlo.h"

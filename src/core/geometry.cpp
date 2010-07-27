@@ -23,6 +23,7 @@
 
 
 // core/geometry.cpp*
+#include "stdafx.h"
 #include "geometry.h"
 
 // BBox Method Definitions

@@ -23,6 +23,7 @@
 
 
 // shapes/paraboloid.cpp*
+#include "stdafx.h"
 #include "shapes/paraboloid.h"
 #include "paramset.h"
 

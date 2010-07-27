@@ -23,6 +23,7 @@
 
 
 // textures/scale.cpp*
+#include "stdafx.h"
 #include "textures/scale.h"
 
 // ScaleTexture Method Definitions

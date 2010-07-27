@@ -23,6 +23,7 @@
 
 
 // core/filter.cpp*
+#include "stdafx.h"
 #include "filter.h"
 
 // Filter Method Definitions

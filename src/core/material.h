@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_CORE_MATERIAL_H
 #define PBRT_CORE_MATERIAL_H
 

@@ -23,6 +23,7 @@
 
 
 // materials/subsurface.cpp*
+#include "stdafx.h"
 #include "materials/subsurface.h"
 #include "textures/constant.h"
 #include "volume.h"

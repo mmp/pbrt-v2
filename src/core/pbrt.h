@@ -21,10 +21,24 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_CORE_PBRT_H
 #define PBRT_CORE_PBRT_H
 
 // core/pbrt.h*
+
+#if defined(_WIN32) || defined(_WIN64)
+#define PBRT_IS_WINDOWS
+#elif defined(__linux__)
+#define PBRT_IS_LINUX
+#elif defined(__APPLE__)
+#define PBRT_IS_APPLE
+#elif defined(__OpenBSD__)
+#define PBRT_IS_OPENBSD
+#endif
 
 // Global Include Files
 #include <math.h>
@@ -40,7 +54,7 @@ using std::vector;
 #if !defined(__APPLE__) && !defined(__OpenBSD__)
 #include <malloc.h> // for _alloca, memalign
 #endif
-#if !defined(WIN32) && !defined(__APPLE__) && !defined(__OpenBSD__)
+#if !defined(PBRT_IS_WINDOWS) && !defined(__APPLE__) && !defined(__OpenBSD__)
 #include <alloca.h>
 #endif
 #include <assert.h>
@@ -51,7 +65,7 @@ using std::swap;
 using std::sort;
 
 // Platform-specific definitions
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 #include <float.h>
 #define isnan _isnan
 #define isinf(f) (!_finite((f)))
@@ -66,12 +80,12 @@ using std::sort;
 #pragma warning (disable : 4305) // double constant assigned to float
 #pragma warning (disable : 4244) // int -> float conversion
 #pragma warning (disable : 4267) // size_t -> unsigned int conversion
-#endif // WIN32
+#endif
 
 #ifdef __linux__
 #include <stdint.h>
 #endif // __linux__
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 #define isnan _isnan
 #define isinf(f) (!_finite((f)))
 #endif
@@ -163,7 +177,7 @@ class VolumeIntegrator;
 #ifndef INFINITY
 #define INFINITY FLT_MAX
 #endif
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 #define alloca _alloca
 #endif
 #ifndef PBRT_L1_CACHE_LINE_SIZE

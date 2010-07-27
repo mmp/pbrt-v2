@@ -23,6 +23,7 @@
 
 
 // materials/plastic.cpp*
+#include "stdafx.h"
 #include "materials/plastic.h"
 #include "spectrum.h"
 #include "reflection.h"

@@ -23,6 +23,7 @@
 
 
 // lights/diffuse.cpp*
+#include "stdafx.h"
 #include "lights/diffuse.h"
 #include "paramset.h"
 #include "montecarlo.h"

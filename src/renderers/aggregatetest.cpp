@@ -23,6 +23,7 @@
 
 
 // renderers/aggregatetest.cpp*
+#include "stdafx.h"
 #include "renderers/aggregatetest.h"
 #include "progressreporter.h"
 #include "scene.h"

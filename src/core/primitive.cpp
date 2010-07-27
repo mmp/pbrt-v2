@@ -23,6 +23,7 @@
 
 
 // core/primitive.cpp*
+#include "stdafx.h"
 #include "primitive.h"
 #include "light.h"
 #include "intersection.h"

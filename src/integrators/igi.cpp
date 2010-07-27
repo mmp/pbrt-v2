@@ -23,6 +23,7 @@
 
 
 // integrators/igi.cpp*
+#include "stdafx.h"
 #include "integrators/igi.h"
 #include "scene.h"
 #include "montecarlo.h"

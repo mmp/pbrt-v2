@@ -23,6 +23,7 @@
 
 
 // accelerators/grid.cpp*
+#include "stdafx.h"
 #include "accelerators/grid.h"
 #include "probes.h"
 #include "paramset.h"

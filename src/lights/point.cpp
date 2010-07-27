@@ -23,6 +23,7 @@
 
 
 // lights/point.cpp*
+#include "stdafx.h"
 #include "lights/point.h"
 #include "sh.h"
 #include "scene.h"

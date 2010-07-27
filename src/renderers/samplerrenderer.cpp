@@ -23,6 +23,7 @@
 
 
 // renderers/samplerrenderer.cpp*
+#include "stdafx.h"
 #include "renderers/samplerrenderer.h"
 #include "scene.h"
 #include "film.h"

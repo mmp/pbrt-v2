@@ -23,6 +23,7 @@
 
 
 // filters/gaussian.cpp*
+#include "stdafx.h"
 #include "filters/gaussian.h"
 #include "paramset.h"
 

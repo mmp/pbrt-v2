@@ -23,7 +23,8 @@
 
 
 // core/parser.cpp*
-#include "pbrt.h"
+#include "stdafx.h"
+#include "parser.h"
 
 // Parsing Global Interface
 bool ParseFile(const string &filename) {

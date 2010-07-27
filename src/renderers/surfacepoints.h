@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_RENDERERS_SURFACEPOINTS_H
 #define PBRT_RENDERERS_SURFACEPOINTS_H
 

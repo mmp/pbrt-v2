@@ -2,16 +2,20 @@
 Welcome to the 'final' version of pbrt, version 2.  This version of the
 source code corresponds to the system that is described in the second
 edition of the book "Physically Based Rendering: From Theory To
-Implementation", which will be available in July of 2010.
+Implementation", released in July 2010.
 
 The latest version of the pbrt code, including all of the latest bug fixes,
 updates, and conversion utilities is available from the
 http://pbrt.org/downloads.php page on the pbrt website as well as via
 GitHub (using the git source control management system) from the page
-http://github.com/mmp/pbrt-v2.
+http://github.com/mmp/pbrt-v2.  Please report any bugs encountered or other
+issues with the system to Matt Pharr and Greg Humphreys, via the
+authors@pbrt.org e-mail address.
 
-Please report any bugs encountered or other issues with the system to Matt
-Pharr and Greg Humphreys, via the authors@pbrt.org e-mail address.
+pbrt-v2 has been ported to a number of architectures and operating systems,
+including Windows (x86 and x64), Mac OS X, Linux, and OpenBSD.  It should
+build on most UNIX-like systems.  Please see the file
+src/README_BUILDING.txt for more information about compiling the system.
 
 --- Organization ---
 
@@ -159,6 +163,8 @@ anim-killeroos-moving.pbrt, anim-moving-reflection.pbrt: demonstrates
 motion blur features.
 
 bunny.pbrt: measured BRDFs
+
+killeroo-simple.pbrt: simple scene with "Killeroo" model
 
 metal.pbrt: Metropolis light transport, measured BRDFs
 

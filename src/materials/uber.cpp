@@ -23,6 +23,7 @@
 
 
 // materials/uber.cpp*
+#include "stdafx.h"
 #include "materials/uber.h"
 #include "spectrum.h"
 #include "reflection.h"

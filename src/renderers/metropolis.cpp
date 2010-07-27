@@ -23,6 +23,7 @@
 
 
 // renderers/metropolis.cpp*
+#include "stdafx.h"
 #include "renderers/metropolis.h"
 #include "renderers/samplerrenderer.h"
 #include "scene.h"

@@ -23,11 +23,12 @@
 
 
 // core/memory.cpp*
+#include "stdafx.h"
 #include "memory.h"
 
 // Memory Allocation Functions
 void *AllocAligned(size_t size) {
-#if defined(WIN32)
+#if defined(PBRT_IS_WINDOWS)
     return _aligned_malloc(size, PBRT_L1_CACHE_LINE_SIZE);
 #elif defined (__OpenBSD__) || defined(__APPLE__)
     // Allocate excess memory to ensure an aligned pointer can be returned
@@ -50,7 +51,7 @@ void *AllocAligned(size_t size) {
 
 void FreeAligned(void *ptr) {
     if (!ptr) return;
-#if defined(WIN32)
+#if defined(PBRT_IS_WINDOWS)
     _aligned_free(ptr);
 #elif defined (__OpenBSD__) || defined(__APPLE__)
     free(((void**)ptr)[-1]);

@@ -23,6 +23,7 @@
 
 
 // volumes/exponential.cpp*
+#include "stdafx.h"
 #include "volumes/exponential.h"
 #include "paramset.h"
 

@@ -23,6 +23,7 @@
 
 
 // integrators/emission.cpp*
+#include "stdafx.h"
 #include "integrators/emission.h"
 #include "paramset.h"
 

@@ -23,6 +23,7 @@
 
 
 // core/rng.cpp*
+#include "stdafx.h"
 #include "rng.h"
 
 // Random Number Method Definitions

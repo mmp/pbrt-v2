@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_CORE_PARALLEL_H
 #define PBRT_CORE_PARALLEL_H
 
@@ -29,7 +33,7 @@
 #if defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
 #include <libkern/OSAtomic.h>
 #endif // __APPLE__ and not x86
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 #include <windows.h>
 #else
 #include <pthread.h>
@@ -38,27 +42,28 @@
 #include "core/probes.h"
 
 // Parallel Declarations
-#ifdef WIN32
-#if _MSC_VER >= 1300
-extern "C" void _ReadWriteBarrier();
-#pragma intrinsic(_ReadWriteBarrier)
+#if defined(PBRT_IS_WINDOWS)
+	#if _MSC_VER >= 1300
+		extern "C" void _ReadWriteBarrier();
+		#pragma intrinsic(_ReadWriteBarrier)
+	#else
+		#define _ReadWriteBarrier()
+	#endif
+
+	typedef volatile LONG AtomicInt32;
+
+	#ifdef PBRT_HAS_64_BIT_ATOMICS
+		typedef volatile LONGLONG AtomicInt64;
+	#endif // 64-bit
 #else
-#define _ReadWriteBarrier()
-#endif
-typedef volatile LONG AtomicInt32;
-#ifdef PBRT_HAS_64_BIT_ATOMICS
-typedef volatile LONGLONG AtomicInt64;
-#endif // 64-bit
-#endif // WIN32
-#ifndef WIN32
-typedef volatile int32_t AtomicInt32;
-#ifdef PBRT_HAS_64_BIT_ATOMICS
-typedef volatile int64_t AtomicInt64;
-#endif
-#endif // !WIN32
+	typedef volatile int32_t AtomicInt32;
+	#ifdef PBRT_HAS_64_BIT_ATOMICS
+		typedef volatile int64_t AtomicInt64;
+	#endif
+#endif // !PBRT_IS_WINDOWS
 inline int32_t AtomicAdd(AtomicInt32 *v, int32_t delta) {
     PBRT_ATOMIC_MEMORY_OP();
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     // Do atomic add with MSVC inline assembly
 #if (PBRT_POINTER_SIZE == 8)
     return InterlockedAdd(v, delta);
@@ -92,7 +97,7 @@ inline int32_t AtomicCompareAndSwap(AtomicInt32 *v, int32_t newValue,
                                     int32_t oldValue);
 inline int32_t AtomicCompareAndSwap(AtomicInt32 *v, int32_t newValue, int32_t oldValue) {
     PBRT_ATOMIC_MEMORY_OP();
-#if defined(WIN32)
+#if defined(PBRT_IS_WINDOWS)
     return InterlockedCompareExchange(v, newValue, oldValue);
 #elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
     return OSAtomicCompareAndSwap32Barrier(oldValue, newValue, v);
@@ -110,7 +115,7 @@ inline int32_t AtomicCompareAndSwap(AtomicInt32 *v, int32_t newValue, int32_t ol
 template <typename T>
 inline T *AtomicCompareAndSwapPointer(T **v, T *newValue, T *oldValue) {
     PBRT_ATOMIC_MEMORY_OP();
-#if defined(WIN32)
+#if defined(PBRT_IS_WINDOWS)
     return InterlockedCompareExchange(v, newValue, oldValue);
 #elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
   #ifdef PBRT_HAS_64_BIT_ATOMICS
@@ -138,7 +143,7 @@ inline T *AtomicCompareAndSwapPointer(T **v, T *newValue, T *oldValue) {
 #ifdef PBRT_HAS_64_BIT_ATOMICS
 inline int64_t AtomicAdd(AtomicInt64 *v, int64_t delta) {
     PBRT_ATOMIC_MEMORY_OP();
-#ifdef WIN32
+#ifdef PBRT_IS_WINDOWS
     return InterlockedAdd64(v, delta);
 #elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
     return OSAtomicAdd64Barrier(delta, v);
@@ -156,7 +161,7 @@ inline int64_t AtomicAdd(AtomicInt64 *v, int64_t delta) {
 
 inline int64_t AtomicCompareAndSwap(AtomicInt64 *v, int64_t newValue, int64_t oldValue) {
     PBRT_ATOMIC_MEMORY_OP();
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     return InterlockedCompareExchange64(v, newValue, oldValue);
 #elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
     return OSAtomicCompareAndSwap64Barrier(oldValue, newValue, v);
@@ -204,7 +209,7 @@ private:
     Mutex &operator=(const Mutex &);
 
     // System-dependent mutex implementation
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     CRITICAL_SECTION criticalSection;
 #else
     pthread_mutex_t mutex;
@@ -235,7 +240,7 @@ private:
     RWMutex &operator=(const RWMutex &);
 
     // System-dependent rw mutex implementation
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     void AcquireRead();
     void ReleaseRead();
     void AcquireWrite();
@@ -281,12 +286,12 @@ public:
     bool TryWait();
 private:
     // Semaphore Private Data
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     HANDLE handle;
 #else
     sem_t *sem;
     static int count;
-#endif // !WIN32
+#endif
 };
 
 
@@ -301,11 +306,10 @@ public:
     void Signal();
 private:
     // ConditionVariable Private Data
-#ifndef WIN32
+#if !defined(PBRT_IS_WINDOWS)
     pthread_mutex_t mutex;
     pthread_cond_t cond;
-#endif // !WIN32
-#ifdef WIN32
+#else
     // Count of the number of waiters.
     uint32_t waitersCount;
     // Serialize access to <waitersCount>.
@@ -313,7 +317,7 @@ private:
     // Signal and broadcast event HANDLEs.
     enum { SIGNAL = 0, BROADCAST=1, NUM_EVENTS=2 };
     HANDLE events[NUM_EVENTS];
-#endif // WIN32
+#endif
 };
 
 

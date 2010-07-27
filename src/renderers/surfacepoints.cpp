@@ -23,6 +23,7 @@
 
 
 // renderers/surfacepoints.cpp*
+#include "stdafx.h"
 #include "renderers/surfacepoints.h"
 #include "paramset.h"
 #include "octree.h"

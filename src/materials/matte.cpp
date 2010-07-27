@@ -23,6 +23,7 @@
 
 
 // materials/matte.cpp*
+#include "stdafx.h"
 #include "materials/matte.h"
 #include "paramset.h"
 #include "reflection.h"

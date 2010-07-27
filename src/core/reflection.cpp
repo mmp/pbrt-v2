@@ -23,6 +23,7 @@
 
 
 // core/reflection.cpp*
+#include "stdafx.h"
 #include "reflection.h"
 #include "spectrum.h"
 #include "sampler.h"

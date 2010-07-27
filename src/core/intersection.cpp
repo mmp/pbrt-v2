@@ -23,6 +23,7 @@
 
 
 // core/intersection.cpp*
+#include "stdafx.h"
 #include "intersection.h"
 #include "shape.h"
 #include "primitive.h"

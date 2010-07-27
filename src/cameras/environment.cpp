@@ -23,6 +23,7 @@
 
 
 // cameras/environment.cpp*
+#include "stdafx.h"
 #include "cameras/environment.h"
 #include "paramset.h"
 #include "sampler.h"

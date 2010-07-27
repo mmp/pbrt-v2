@@ -23,6 +23,7 @@
 
 
 // lights/projection.cpp*
+#include "stdafx.h"
 #include "lights/projection.h"
 #include "montecarlo.h"
 #include "paramset.h"

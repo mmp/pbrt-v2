@@ -23,6 +23,7 @@
 
 
 // core/sh.cpp*
+#include "stdafx.h"
 #include "sh.h"
 #include "scene.h"
 #include "integrator.h"

@@ -23,6 +23,7 @@
 
 
 // integrators/path.cpp*
+#include "stdafx.h"
 #include "integrators/path.h"
 #include "scene.h"
 #include "intersection.h"

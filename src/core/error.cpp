@@ -23,7 +23,7 @@
 
 
 // core/error.cpp*
-#include "pbrt.h"
+#include "stdafx.h"
 #include "progressreporter.h"
 
 // Error Reporting Includes
@@ -43,7 +43,7 @@ const char *findWordEnd(const char *buf) {
 // Error Reporting Functions
 static void processError(const char *format, va_list args,
         const char *message, int disposition) {
-#ifndef WIN32
+#if !defined(PBRT_IS_WINDOWS)
     char *errorBuf;
     if (vasprintf(&errorBuf, format, args) == -1) {
         fprintf(stderr, "vasprintf() unable to allocate memory!\n");
@@ -89,13 +89,13 @@ static void processError(const char *format, va_list args,
         fputs("\n", stderr);
     }
     if (disposition == PBRT_ERROR_ABORT) {
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
         __debugbreak();
 #else
         abort();
 #endif
     }
-#ifndef WIN32
+#if !defined(PBRT_IS_WINDOWS)
     free(errorBuf);
 #endif
 }

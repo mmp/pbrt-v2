@@ -23,6 +23,7 @@
 
 
 // core/integrator.cpp*
+#include "stdafx.h"
 #include "integrator.h"
 #include "scene.h"
 #include "intersection.h"

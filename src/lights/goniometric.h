@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_LIGHTS_GONIOMETRIC_H
 #define PBRT_LIGHTS_GONIOMETRIC_H
 

@@ -23,6 +23,7 @@
 
 
 // integrators/ambientocclusion.cpp*
+#include "stdafx.h"
 #include "integrators/ambientocclusion.h"
 #include "paramset.h"
 #include "montecarlo.h"

@@ -23,6 +23,7 @@
 
 
 // accelerators/bvh.cpp*
+#include "stdafx.h"
 #include "accelerators/bvh.h"
 #include "probes.h"
 #include "paramset.h"

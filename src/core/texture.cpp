@@ -23,6 +23,7 @@
 
 
 // core/texture.cpp*
+#include "stdafx.h"
 #include "texture.h"
 #include "shape.h"
 

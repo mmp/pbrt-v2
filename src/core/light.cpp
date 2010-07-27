@@ -23,6 +23,7 @@
 
 
 // core/light.cpp*
+#include "stdafx.h"
 #include "light.h"
 #include "scene.h"
 #include "montecarlo.h"

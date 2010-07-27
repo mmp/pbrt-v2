@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_SHAPES_TRIANGLEMESH_H
 #define PBRT_SHAPES_TRIANGLEMESH_H
 

@@ -23,6 +23,7 @@
 
 
 // filters/mitchell.cpp*
+#include "stdafx.h"
 #include "filters/mitchell.h"
 #include "paramset.h"
 

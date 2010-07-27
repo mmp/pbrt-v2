@@ -23,6 +23,7 @@
 
 
 // textures/imagemap.cpp*
+#include "stdafx.h"
 #include "textures/imagemap.h"
 #include "imageio.h"
 

@@ -23,6 +23,7 @@
 
 
 // materials/substrate.cpp*
+#include "stdafx.h"
 #include "materials/substrate.h"
 #include "spectrum.h"
 #include "reflection.h"

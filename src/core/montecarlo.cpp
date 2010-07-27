@@ -23,6 +23,7 @@
 
 
 // core/montecarlo.cpp*
+#include "stdafx.h"
 #include "montecarlo.h"
 #include "geometry.h"
 #include "shape.h"

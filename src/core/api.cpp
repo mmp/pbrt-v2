@@ -23,6 +23,7 @@
 
 
 // core/api.cpp*
+#include "stdafx.h"
 #include "api.h"
 #include "parallel.h"
 #include "paramset.h"

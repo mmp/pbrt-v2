@@ -23,6 +23,7 @@
 
 
 // filters/sinc.cpp*
+#include "stdafx.h"
 #include "filters/sinc.h"
 #include "paramset.h"
 

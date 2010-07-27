@@ -23,6 +23,7 @@
 
 
 // core/floatfile.cpp*
+#include "stdafx.h"
 #include "floatfile.h"
 #include <ctype.h>
 #include <stdlib.h>

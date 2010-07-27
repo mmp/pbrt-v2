@@ -23,6 +23,7 @@
 
 
 // shapes/cylinder.cpp*
+#include "stdafx.h"
 #include "shapes/cylinder.h"
 #include "paramset.h"
 

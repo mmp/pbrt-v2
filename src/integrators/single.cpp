@@ -23,6 +23,7 @@
 
 
 // integrators/single.cpp*
+#include "stdafx.h"
 #include "integrators/single.h"
 #include "scene.h"
 #include "paramset.h"

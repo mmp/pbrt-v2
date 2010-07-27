@@ -23,6 +23,7 @@
 
 
 // core/quaternion.cpp*
+#include "stdafx.h"
 #include "quaternion.h"
 #include "transform.h"
 

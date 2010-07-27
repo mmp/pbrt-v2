@@ -23,6 +23,7 @@
 
 
 // textures/constant.cpp*
+#include "stdafx.h"
 #include "textures/constant.h"
 
 // ConstantTexture Method Definitions

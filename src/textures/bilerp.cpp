@@ -23,6 +23,7 @@
 
 
 // textures/bilerp.cpp*
+#include "stdafx.h"
 #include "textures/bilerp.h"
 
 // BilerpTexture Method Definitions

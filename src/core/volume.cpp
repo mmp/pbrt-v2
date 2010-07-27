@@ -23,6 +23,7 @@
 
 
 // core/volume.cpp*
+#include "stdafx.h"
 #include "volume.h"
 
 // Volume Scattering Local Definitions

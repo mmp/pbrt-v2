@@ -23,6 +23,7 @@
 
 
 // integrators/whitted.cpp*
+#include "stdafx.h"
 #include "integrators/whitted.h"
 #include "intersection.h"
 #include "paramset.h"

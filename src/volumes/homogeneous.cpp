@@ -23,6 +23,7 @@
 
 
 // volumes/homogeneous.cpp*
+#include "stdafx.h"
 #include "volumes/homogeneous.h"
 #include "paramset.h"
 

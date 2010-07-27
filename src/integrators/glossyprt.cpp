@@ -23,6 +23,7 @@
 
 
 // integrators/glossyprt.cpp*
+#include "stdafx.h"
 #include "integrators/glossyprt.h"
 #include "sh.h"
 #include "light.h"

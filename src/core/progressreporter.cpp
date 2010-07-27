@@ -23,16 +23,17 @@
 
 
 // core/progressreporter.cpp*
+#include "stdafx.h"
 #include "progressreporter.h"
 #include "timer.h"
 #include "parallel.h"
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
 #include <windows.h>
 #else
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <errno.h>
-#endif // !WIN32
+#endif // !PBRT_IS_WINDOWS
 
 // ProgressReporter Method Definitions
 ProgressReporter::ProgressReporter(int tw, const string &title, int barLength)
@@ -107,7 +108,7 @@ void ProgressReporter::Done() {
 
 
 int TerminalWidth() {
-#ifdef WIN32
+#if defined(PBRT_IS_WINDOWS)
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     if (h == INVALID_HANDLE_VALUE || h == NULL) {
         fprintf(stderr, "GetStdHandle() call failed");
@@ -123,7 +124,7 @@ int TerminalWidth() {
         return 80;
     }
     return w.ws_col;
-#endif // WIN32
+#endif // PBRT_IS_WINDOWS
 }
 
 

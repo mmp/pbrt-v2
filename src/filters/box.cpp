@@ -23,6 +23,7 @@
 
 
 // filters/box.cpp*
+#include "stdafx.h"
 #include "filters/box.h"
 #include "paramset.h"
 

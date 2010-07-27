@@ -23,6 +23,7 @@
 
 
 // samplers/random.cpp*
+#include "stdafx.h"
 #include "samplers/random.h"
 #include "montecarlo.h"
 #include "camera.h"

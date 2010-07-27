@@ -23,6 +23,7 @@
 
 
 // core/diffgeom.cpp*
+#include "stdafx.h"
 #include "diffgeom.h"
 #include "transform.h"
 #include "shape.h"

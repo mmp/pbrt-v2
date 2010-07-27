@@ -21,6 +21,10 @@
 
  */
 
+#if defined(_MSC_VER)
+#pragma once
+#endif
+
 #ifndef PBRT_CORE_MONTECARLO_H
 #define PBRT_CORE_MONTECARLO_H
 
@@ -31,7 +35,7 @@
 
 // smallest floating point value less than one; all canonical random samples
 // should be <= this.
-#ifdef WIN32
+#ifdef PBRT_IS_WINDOWS
 // sadly, MSVC2008 (at least) doesn't support hexidecimal fp constants...
 static const float OneMinusEpsilon=0.9999999403953552f;
 #else
