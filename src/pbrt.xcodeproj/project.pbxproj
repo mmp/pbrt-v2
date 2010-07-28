@@ -165,6 +165,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B154B21412001D29009551FC /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
 		B1D8EB54117030DE00A8A49E /* bvh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bvh.cpp; path = accelerators/bvh.cpp; sourceTree = SOURCE_ROOT; };
 		B1D8EB55117030DE00A8A49E /* bvh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bvh.h; path = accelerators/bvh.h; sourceTree = SOURCE_ROOT; };
 		B1D8EB56117030DE00A8A49E /* grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = grid.cpp; path = accelerators/grid.cpp; sourceTree = SOURCE_ROOT; };
@@ -485,6 +486,7 @@
 		B1D8EB67117030F200A8A49E /* core */ = {
 			isa = PBXGroup;
 			children = (
+				B154B21412001D29009551FC /* stdafx.h */,
 				B1D8EB68117030F200A8A49E /* api.cpp */,
 				B1D8EB69117030F200A8A49E /* api.h */,
 				B1D8EB6A117030F200A8A49E /* camera.cpp */,
