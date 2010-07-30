@@ -173,13 +173,16 @@ public:
     }
     CoefficientSpectrum operator/(float a) const {
         Assert(!isnan(a));
-        return *this * (1.f / a);
+        CoefficientSpectrum ret = *this;
+        for (int i = 0; i < nSamples; ++i)
+            ret.c[i] /= a;
+        Assert(!ret.HasNaNs());
+        return ret;
     }
     CoefficientSpectrum &operator/=(float a) {
         Assert(!isnan(a));
-        float inv = 1.f / a;
         for (int i = 0; i < nSamples; ++i)
-            c[i] *= inv;
+            c[i] /= a;
         return *this;
     }
     bool operator==(const CoefficientSpectrum &sp) const {
