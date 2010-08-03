@@ -111,6 +111,11 @@ PerspectiveCamera *CreatePerspectiveCamera(const ParamSet &params,
     // Extract common camera parameters from _ParamSet_
     float shutteropen = params.FindOneFloat("shutteropen", 0.f);
     float shutterclose = params.FindOneFloat("shutterclose", 1.f);
+    if (shutterclose < shutteropen) {
+        Warning("Shutter close time [%f] < shutter open [%f].  Swapping them.",
+                shutterclose, shutteropen);
+        swap(shutterclose, shutteropen);
+    }
     float lensradius = params.FindOneFloat("lensradius", 0.f);
     float focaldistance = params.FindOneFloat("focaldistance", 1e30f);
     float frame = params.FindOneFloat("frameaspectratio",
@@ -140,5 +145,3 @@ PerspectiveCamera *CreatePerspectiveCamera(const ParamSet &params,
     return new PerspectiveCamera(cam2world, screen, shutteropen,
         shutterclose, lensradius, focaldistance, fov, film);
 }
-
-
