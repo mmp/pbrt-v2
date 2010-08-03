@@ -40,8 +40,7 @@
 Spectrum FrDiel(float cosi, float cost, const Spectrum &etai,
                 const Spectrum &etat);
 Spectrum FrCond(float cosi, const Spectrum &n, const Spectrum &k);
-Spectrum FresnelApproxEta(const Spectrum &intensity);
-Spectrum FresnelApproxK(const Spectrum &intensity);
+
 Point BRDFRemap(const Vector &wo, const Vector &wi);
 struct IrregIsotropicBRDFSample {
     IrregIsotropicBRDFSample(const Point &pp, const Spectrum &vv)
