@@ -57,8 +57,14 @@ struct Distribution1D {
 
         // Transform step function integral into CDF
         funcInt = cdf[count];
-        for (int i = 1; i < n+1; ++i)
-            cdf[i] /= funcInt;
+        if (funcInt == 0.f) {
+            for (int i = 1; i < n+1; ++i)
+                cdf[i] = float(i) / float(n);
+        }
+        else {
+            for (int i = 1; i < n+1; ++i)
+                cdf[i] /= funcInt;
+        }
     }
     ~Distribution1D() {
         delete[] func;
