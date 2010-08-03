@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B19397BB12083210008317C5 /* shinymetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B19397B912083210008317C5 /* shinymetal.cpp */; };
 		B1D8EB5A117030DE00A8A49E /* bvh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1D8EB54117030DE00A8A49E /* bvh.cpp */; };
 		B1D8EB5B117030DE00A8A49E /* grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1D8EB56117030DE00A8A49E /* grid.cpp */; };
 		B1D8EB5C117030DE00A8A49E /* kdtreeaccel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1D8EB58117030DE00A8A49E /* kdtreeaccel.cpp */; };
@@ -166,6 +167,8 @@
 
 /* Begin PBXFileReference section */
 		B154B21412001D29009551FC /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
+		B19397B912083210008317C5 /* shinymetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shinymetal.cpp; sourceTree = "<group>"; };
+		B19397BA12083210008317C5 /* shinymetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shinymetal.h; sourceTree = "<group>"; };
 		B1D8EB54117030DE00A8A49E /* bvh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bvh.cpp; path = accelerators/bvh.cpp; sourceTree = SOURCE_ROOT; };
 		B1D8EB55117030DE00A8A49E /* bvh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bvh.h; path = accelerators/bvh.h; sourceTree = SOURCE_ROOT; };
 		B1D8EB56117030DE00A8A49E /* grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = grid.cpp; path = accelerators/grid.cpp; sourceTree = SOURCE_ROOT; };
@@ -658,6 +661,8 @@
 		B1D8EC151170310E00A8A49E /* materials */ = {
 			isa = PBXGroup;
 			children = (
+				B19397B912083210008317C5 /* shinymetal.cpp */,
+				B19397BA12083210008317C5 /* shinymetal.h */,
 				B1D8EC161170310E00A8A49E /* glass.cpp */,
 				B1D8EC171170310E00A8A49E /* glass.h */,
 				B1D8EC181170310E00A8A49E /* kdsubsurface.cpp */,
@@ -965,6 +970,7 @@
 				B1D8ECC71170310E00A8A49E /* homogeneous.cpp in Sources */,
 				B1D8ECC81170310E00A8A49E /* volumegrid.cpp in Sources */,
 				B1E1BB3F1177B63E00337ECE /* pbrtparse.yy in Sources */,
+				B19397BB12083210008317C5 /* shinymetal.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -77,6 +77,7 @@
 #include "materials/plastic.h"
 #include "materials/substrate.h"
 #include "materials/subsurface.h"
+#include "materials/shinymetal.h"
 #include "materials/translucent.h"
 #include "materials/uber.h"
 #include "renderers/aggregatetest.h"
@@ -392,6 +393,8 @@ Reference<Material> MakeMaterial(const string &name,
         material = CreateKdSubsurfaceMaterial(mtl2world, mp);
     else if (name == "measured")
         material = CreateMeasuredMaterial(mtl2world, mp);
+    else if (name == "shinymetal")
+        material = CreateShinyMetalMaterial(mtl2world, mp);
     else
         Warning("Material \"%s\" unknown.", name.c_str());
     mp.ReportUnused();

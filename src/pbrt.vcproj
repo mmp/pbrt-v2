@@ -3757,6 +3757,42 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="materials\shinymetal.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="core\shrots.cpp"
 				>
 				<FileConfiguration
@@ -5044,6 +5080,10 @@
 			</File>
 			<File
 				RelativePath="core\shape.h"
+				>
+			</File>
+			<File
+				RelativePath="materials\shinymetal.h"
 				>
 			</File>
 			<File

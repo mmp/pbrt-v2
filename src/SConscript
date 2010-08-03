@@ -57,7 +57,9 @@ materials_src = [ 'materials/glass.cpp',         'materials/kdsubsurface.cpp',
                   'materials/metal.cpp',         'materials/mirror.cpp',
                   'materials/mixmat.cpp',        'materials/plastic.cpp', 
                   'materials/substrate.cpp',     'materials/subsurface.cpp',
-                  'materials/translucent.cpp',   'materials/uber.cpp' ]
+                  'materials/translucent.cpp',   'materials/uber.cpp',
+                  'materials/shinymetal.cpp',
+                  ]
 renderers_src = [ 'renderers/aggregatetest.cpp',   'renderers/createprobes.cpp',
                   'renderers/metropolis.cpp',      'renderers/samplerrenderer.cpp',
                   'renderers/surfacepoints.cpp' ]
