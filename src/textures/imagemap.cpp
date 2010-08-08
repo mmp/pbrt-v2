@@ -125,7 +125,7 @@ ImageTexture<float, float> *CreateImageFloatTexture(const Transform &tex2world,
     else if (wrap == "clamp") wrapMode = TEXTURE_CLAMP;
     float scale = tp.FindFloat("scale", 1.f);
     float gamma = tp.FindFloat("gamma", 1.f);
-    return new ImageTexture<float, float>(map, tp.FindString("filename"),
+    return new ImageTexture<float, float>(map, tp.FindFilename("filename"),
         trilerp, maxAniso, wrapMode, scale, gamma);
 }
 
@@ -163,7 +163,7 @@ ImageTexture<RGBSpectrum, Spectrum> *CreateImageSpectrumTexture(const Transform 
     else if (wrap == "clamp") wrapMode = TEXTURE_CLAMP;
     float scale = tp.FindFloat("scale", 1.f);
     float gamma = tp.FindFloat("gamma", 1.f);
-    return new ImageTexture<RGBSpectrum, Spectrum>(map, tp.FindString("filename"),
+    return new ImageTexture<RGBSpectrum, Spectrum>(map, tp.FindFilename("filename"),
         trilerp, maxAniso, wrapMode, scale, gamma);
 }
 

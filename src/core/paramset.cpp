@@ -28,6 +28,8 @@
 #include "floatfile.h"
 #include "textures/constant.h"
 
+#include <libgen.h>
+
 // ParamSet Macros
 #define ADD_PARAM_TYPE(T, vec) \
     (vec).push_back(new ParamSetItem<T>(name, (T *)data, nItems))
@@ -372,6 +374,15 @@ string ParamSet::FindOneString(const string &name, const string &d) const {
 }
 
 
+string ParamSet::FindOneFilename(const string &name, const string &d) const {
+  string filename = FindOneString(name, "");
+  if (filename == "")
+    return d;
+  filename = ResolveFilename(filename);
+  return filename;
+}
+
+
 string ParamSet::FindTexture(const string &name) const {
     string d = "";
     LOOKUP_ONE(textures);
@@ -573,6 +584,30 @@ string ParamSet::ToString() const {
         ret += string("] ");
     }
     return ret;
+}
+
+
+void ParamSet::SetCurrentFile(const string& basefile) {
+  // dirname requires a char*, not a const char*, hence the const_cast. It 
+  // doesn't modify it though (according to the docs on OS X).
+  baseDir = dirname(const_cast<char*>(basefile.c_str()));
+}
+
+
+string ParamSet::ResolveFilename(const string& filename) const {
+  if (baseDir.size() == 0 || filename.size() == 0) {
+    return filename;
+  }
+  else if (filename[0] == '/') {
+    return filename;
+  }
+
+  if (baseDir[baseDir.size() - 1] == '/') {
+    return baseDir + filename;
+  }
+  else {
+    return baseDir + "/" + filename;
+  }
 }
 
 

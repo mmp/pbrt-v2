@@ -76,6 +76,7 @@ public:
     Spectrum FindOneSpectrum(const string &,
                              const Spectrum &d) const;
     string FindOneString(const string &, const string &d) const;
+    string FindOneFilename(const string &, const string &d) const;
     string FindTexture(const string &) const;
     const float *FindFloat(const string &, int *nItems) const;
     const int *FindInt(const string &, int *nItems) const;
@@ -88,6 +89,10 @@ public:
     void ReportUnused() const;
     void Clear();
     string ToString() const;
+    
+    void SetCurrentFile(const string &);
+    string ResolveFilename(const string&) const;
+
 private:
     // ParamSet Private Data
     vector<Reference<ParamSetItem<bool> > > bools;
@@ -100,6 +105,7 @@ private:
     vector<Reference<ParamSetItem<string> > > strings;
     vector<Reference<ParamSetItem<string> > > textures;
     static map<string, Spectrum> cachedSpectra;
+    string baseDir;
 };
 
 
@@ -150,6 +156,9 @@ public:
     }
     string FindString(const string &n, const string &d = "") const {
            return geomParams.FindOneString(n, materialParams.FindOneString(n, d));
+    }
+    string FindFilename(const string &n, const string &d = "") const {
+           return geomParams.FindOneFilename(n, materialParams.FindOneFilename(n, d));
     }
     int FindInt(const string &n, int d) const {
            return geomParams.FindOneInt(n, materialParams.FindOneInt(n, d));
