@@ -10,7 +10,7 @@ src/bin
 pbrt.exr
 
 # These files are generated during the build process:
-core/pbrtlex.cpp
-core/pbrtparse.cpp
-core/pbrtparse.cpp
-core/pbrtparse.cpp
+src/core/pbrtlex.cpp
+src/core/pbrtparse.cpp
+src/core/pbrtparse.hh
+src/core/pbrtparse.output
