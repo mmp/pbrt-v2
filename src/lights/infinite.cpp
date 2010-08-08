@@ -177,7 +177,7 @@ InfiniteAreaLight *CreateInfiniteLight(const Transform &light2world,
         const ParamSet &paramSet) {
     Spectrum L = paramSet.FindOneSpectrum("L", Spectrum(1.0));
     Spectrum sc = paramSet.FindOneSpectrum("scale", Spectrum(1.0));
-    string texmap = paramSet.FindOneString("mapname", "");
+    string texmap = paramSet.FindOneFilename("mapname", "");
     int nSamples = paramSet.FindOneInt("nsamples", 1);
     if (PbrtOptions.quickRender) nSamples = max(1, nSamples / 4);
     return new InfiniteAreaLight(light2world, L * sc, nSamples, texmap);
