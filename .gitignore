@@ -2,3 +2,15 @@
 *~
 .sconsign.dblite
 
+# Build folders:
+src/objs
+src/bin
+
+# Common renderer output file:
+pbrt.exr
+
+# These files are generated during the build process:
+core/pbrtlex.cpp
+core/pbrtparse.cpp
+core/pbrtparse.cpp
+core/pbrtparse.cpp
