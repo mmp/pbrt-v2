@@ -745,12 +745,15 @@ void TasksCleanup() {
 #ifdef PBRT_USE_GRAND_CENTRAL_DISPATCH
     return;
 #else // // PBRT_USE_GRAND_CENTRAL_DISPATCH
+    if (!taskQueueMutex || !workerSemaphore)
+        return;
     { MutexLock lock(*taskQueueMutex);
     Assert(taskQueue.size() == 0);
     }
 
     static const int nThreads = NumSystemCores();
-    workerSemaphore->Post(nThreads);
+    if (workerSemaphore != NULL)
+        workerSemaphore->Post(nThreads);
 
     if (threads != NULL) {
 #if !defined(PBRT_IS_WINDOWS)
