@@ -40,7 +40,7 @@ ProgressReporter::ProgressReporter(int tw, const string &title, int barLength)
     : totalWork(tw) {
     if (barLength <= 0)
         barLength = TerminalWidth() - 28;
-    totalPlusses = max(2ul, barLength - title.size());
+    totalPlusses = max(2, barLength - (int)title.size());
     mutex = Mutex::Create();
     plussesPrinted = 0;
     workDone = 0;
