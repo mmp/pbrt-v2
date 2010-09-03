@@ -545,7 +545,7 @@ void MetropolisRenderer::Render(const Scene *scene) {
                 ProgressReporter directProgress(nDirectTasks, "Direct Lighting");
                 for (int i = 0; i < nDirectTasks; ++i)
                     directTasks.push_back(new SamplerRendererTask(scene, this, camera, directProgress,
-                        &sampler, sample, i, nDirectTasks));
+                                                                  &sampler, sample, false, i, nDirectTasks));
                 std::reverse(directTasks.begin(), directTasks.end());
                 EnqueueTasks(directTasks);
                 WaitForAllTasks();

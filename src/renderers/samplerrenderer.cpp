@@ -34,6 +34,20 @@
 #include "camera.h"
 #include "intersection.h"
 
+static uint32_t hash(char *key, uint32_t len)
+{
+    uint32_t   hash, i;
+    for (hash=0, i=0; i<len; ++i) {
+        hash += key[i];
+        hash += (hash << 10);
+        hash ^= (hash >> 6);
+    }
+    hash += (hash << 3);
+    hash ^= (hash >> 11);
+    hash += (hash << 15);
+    return hash;
+} 
+
 // SamplerRendererTask Definitions
 void SamplerRendererTask::Run() {
     PBRT_STARTED_RENDERTASK(taskNum);
@@ -71,6 +85,19 @@ void SamplerRendererTask::Run() {
 
             // Evaluate radiance along camera ray
             PBRT_STARTED_CAMERA_RAY_INTEGRATION(&rays[i], &samples[i]);
+            if (visualizeObjectIds) {
+                if (rayWeight > 0.f && scene->Intersect(rays[i], &isects[i])) {
+                    // random shading based on shape id...
+                    uint32_t ids[2] = { isects[i].shapeId, isects[i].primitiveId };
+                    uint32_t h = hash((char *)ids, sizeof(ids));
+                    float rgb[3] = { (h & 0xff), (h >> 8) & 0xff, (h >> 16) & 0xff };
+                    Ls[i] = Spectrum::FromRGB(rgb);
+                    Ls[i] /= 255.f;
+                }
+                else
+                    Ls[i] = 0.f;
+            }
+            else {
             if (rayWeight > 0.f)
                 Ls[i] = rayWeight * renderer->Li(scene, rays[i], &samples[i], rng,
                                                  arena, &isects[i], &Ts[i]);
@@ -94,6 +121,7 @@ void SamplerRendererTask::Run() {
                 Error("Infinite luminance value returned"
                       "for image sample.  Setting to black.");
                 Ls[i] = Spectrum(0.f);
+            }
             }
             PBRT_FINISHED_CAMERA_RAY_INTEGRATION(&rays[i], &samples[i], &Ls[i]);
         }
@@ -130,11 +158,13 @@ void SamplerRendererTask::Run() {
 
 // SamplerRenderer Method Definitions
 SamplerRenderer::SamplerRenderer(Sampler *s, Camera *c,
-        SurfaceIntegrator *si, VolumeIntegrator *vi) {
+                                 SurfaceIntegrator *si, VolumeIntegrator *vi,
+                                 bool visIds) {
     sampler = s;
     camera = c;
     surfaceIntegrator = si;
     volumeIntegrator = vi;
+    visualizeObjectIds = visIds;
 }
 
 
@@ -168,8 +198,9 @@ void SamplerRenderer::Render(const Scene *scene) {
     vector<Task *> renderTasks;
     for (int i = 0; i < nTasks; ++i)
         renderTasks.push_back(new SamplerRendererTask(scene, this, camera,
-                                  reporter,
-                                    sampler, sample, nTasks-1-i, nTasks));
+                                                      reporter, sampler, sample, 
+                                                      visualizeObjectIds, 
+                                                      nTasks-1-i, nTasks));
     EnqueueTasks(renderTasks);
     WaitForAllTasks();
     for (uint32_t i = 0; i < renderTasks.size(); ++i)

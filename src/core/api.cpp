@@ -1241,6 +1241,7 @@ Renderer *RenderOptions::MakeRenderer() const {
         if (RendererName != "sampler")
             Warning("Renderer type \"%s\" unknown.  Using \"sampler\".",
                     RendererName.c_str());
+        bool visIds = RendererParams.FindOneBool("visualizeobjectids", false);
         RendererParams.ReportUnused();
         Sampler *sampler = MakeSampler(SamplerName, SamplerParams, camera->film, camera);
         if (!sampler) Severe("Unable to create sampler.");
@@ -1252,7 +1253,7 @@ Renderer *RenderOptions::MakeRenderer() const {
             VolIntegratorParams);
         if (!volumeIntegrator) Severe("Unable to create volume integrator.");
         renderer = new SamplerRenderer(sampler, camera, surfaceIntegrator,
-            volumeIntegrator);
+                                       volumeIntegrator, visIds);
         // Warn if no light sources are defined
         if (lights.size() == 0)
             Warning("No light sources defined in scene; "
