@@ -30,6 +30,7 @@
 
 // core/paramset.h*
 #include "pbrt.h"
+#include "fileutil.h"
 #include "geometry.h"
 #include "texture.h"
 #include "spectrum.h"
@@ -91,7 +92,6 @@ public:
     string ToString() const;
     
     void SetCurrentFile(const string &);
-    string ResolveFilename(const string&) const;
 
 private:
     // ParamSet Private Data

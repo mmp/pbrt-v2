@@ -375,15 +375,11 @@ string ParamSet::FindOneString(const string &name, const string &d) const {
 
 
 string ParamSet::FindOneFilename(const string &name, const string &d) const {
-#ifdef PBRT_IS_WINDOWS
-  return FindOneString(name, d);
-#else
   string filename = FindOneString(name, "");
   if (filename == "")
     return d;
-  filename = ResolveFilename(filename);
+  filename = AbsolutePath(ResolveFilename(baseDir, filename));
   return filename;
-#endif
 }
 
 
@@ -592,33 +588,8 @@ string ParamSet::ToString() const {
 
 
 void ParamSet::SetCurrentFile(const string& basefile) {
-  // dirname requires a char*, not a const char*, hence the const_cast. It 
-  // doesn't modify it though (according to the docs on OS X).
-  baseDir = dirname(const_cast<char*>(basefile.c_str()));
+  baseDir = DirectoryContaining(AbsolutePath(basefile));
 }
-
-
-string ParamSet::ResolveFilename(const string& filename) const {
-#ifdef PBRT_IS_WINDOWS
-  // Don't try to resolve filenames under windows yet.
-  return filename;
-#else
-  if (baseDir.size() == 0 || filename.size() == 0) {
-    return filename;
-  }
-  else if (filename[0] == '/') {
-    return filename;
-  }
-
-  if (baseDir[baseDir.size() - 1] == '/') {
-    return baseDir + filename;
-  }
-  else {
-    return baseDir + "/" + filename;
-  }
-#endif
-}
-
 
 
 // TextureParams Method Definitions
