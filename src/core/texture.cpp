@@ -244,6 +244,11 @@ float Turbulence(const Point &P, const Vector &dpdx, const Vector &dpdy,
     float partialOctave = foctaves - octaves;
     sum += o * SmoothStep(.3f, .7f, partialOctave) *
            fabsf(Noise(lambda * P));
+
+    // finally, add in value to account for average value of fabsf(Noise())
+    // (~0.2) for the remaining octaves...
+    sum += (maxOctaves - foctaves) * 0.2f;
+
     return sum;
 }
 

@@ -162,7 +162,7 @@ Spectrum IGIIntegrator::Li(const Scene *scene, const Renderer *renderer,
         G = min(G, gLimit);
         Spectrum f = bsdf->f(wo, wi);
         if (G == 0.f || f.IsBlack()) continue;
-        Spectrum Llight = f * G * vl.pathContrib / virtualLights[lSet].size();
+        Spectrum Llight = f * G * vl.pathContrib / nLightPaths;
         RayDifferential connectRay(p, wi, ray, isect.rayEpsilon,
                                    sqrtf(d2) * (1.f - vl.rayEpsilon));
         Llight *= renderer->Transmittance(scene, connectRay, NULL, rng, arena);
