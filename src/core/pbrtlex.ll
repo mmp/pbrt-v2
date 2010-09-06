@@ -105,17 +105,6 @@ NUMBER [-+]?([0-9]+|(([0-9]+\.[0-9]*)|(\.[0-9]+)))([eE][-+]?[0-9]+)?
 IDENT [a-zA-Z_][a-zA-Z_0-9]*
 %x STR COMMENT INCL INCL_FILE
 %%
-Include { BEGIN(INCL); }
-<INCL>{WHITESPACE} ;
-<INCL>\" { BEGIN(INCL_FILE); }
-<INCL>. { Error( "Illegal character following Include directive" ); }
-<INCL_FILE>\" { BEGIN INITIAL; }
-<INCL_FILE>. { Error( "Illegal character in Include file name" ); }
-<INCL_FILE>[\-a-zA-Z_\.0-9/ \t]+ {
-    BEGIN(INITIAL);
-    include_push(yytext);
-}
-
 
 "#" { BEGIN COMMENT; }
 <COMMENT>. /* eat it up */
@@ -133,6 +122,7 @@ CoordSysTransform       { return COORDSYSTRANSFORM; }
 EndTime                 { return ENDTIME; }
 Film                    { return FILM; }
 Identity                { return IDENTITY; }
+Include                 { return INCLUDE; }
 LightSource             { return LIGHTSOURCE; }
 LookAt                  { return LOOKAT; }
 MakeNamedMaterial       { return MAKENAMEDMATERIAL; }
@@ -205,7 +195,6 @@ int yywrap() {
   std::cerr << "at end of " << current_file << std::endl;
     if (includeStack.size() == 0) return 1;
     include_pop();
-    BEGIN(INCL_FILE);
     return 0;
 }
 
