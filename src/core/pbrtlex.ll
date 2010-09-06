@@ -29,6 +29,7 @@
 
 #include "pbrt.h"
 #include "api.h"
+#include "fileutil.h"
 
 struct ParamArray;
 
@@ -60,23 +61,25 @@ void add_string_char(char c) {
 }
 
 
+#include <iostream>
 
 void include_push(char *filename) {
     if (includeStack.size() > 32)
         Severe("Only 32 levels of nested Include allowed in scene files.");
     IncludeInfo ii;
     extern string current_file;
-    ii.filename = current_file;
+    ii.filename = AbsolutePath(current_file);
     ii.bufState = YY_CURRENT_BUFFER;
     ii.lineNum = line_num;
     includeStack.push_back(ii);
 
-    current_file = filename;
+    current_file = AbsolutePath(ResolveFilename(DirectoryContaining(ii.filename), filename));
+    std::cerr << "pushed. new current_file = " << current_file << std::endl;
     line_num = 1;
 
-    yyin = fopen(filename, "r");
+    yyin = fopen(current_file.c_str(), "r");
     if (!yyin)
-        Severe("Unable to open included scene file \"%s\"", filename);
+        Severe("Unable to open included scene file \"%s\"", current_file.c_str());
     yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
 }
 
@@ -89,6 +92,7 @@ void include_pop() {
     yy_delete_buffer(YY_CURRENT_BUFFER);
     yy_switch_to_buffer(includeStack.back().bufState);
     current_file = includeStack.back().filename;
+    std::cerr << "popped. new current_file = " << current_file << std::endl;
     line_num = includeStack.back().lineNum;
     includeStack.pop_back();
 }
@@ -197,6 +201,8 @@ WorldEnd                { return WORLDEND; }
 . { Error( "Illegal character: %c (0x%x)", yytext[0], int(yytext[0])); }
 %%
 int yywrap() {
+  extern string current_file;
+  std::cerr << "at end of " << current_file << std::endl;
     if (includeStack.size() == 0) return 1;
     include_pop();
     BEGIN(INCL_FILE);
