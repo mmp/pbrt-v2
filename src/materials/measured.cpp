@@ -157,7 +157,7 @@ BSDF *MeasuredMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 MeasuredMaterial *CreateMeasuredMaterial(const Transform &xform,
         const TextureParams &mp) {
     Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
-    return new MeasuredMaterial(mp.FindString("filename"), bumpMap);
+    return new MeasuredMaterial(mp.FindFilename("filename"), bumpMap);
 }
 
 
