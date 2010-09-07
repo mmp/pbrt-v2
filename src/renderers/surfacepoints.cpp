@@ -264,7 +264,7 @@ void FindPoissonPointDistribution(const Point &pCamera, float time,
 SurfacePointsRenderer *CreateSurfacePointsRenderer(const ParamSet &params,
         const Point &pCamera, float time) {
     float minDist = params.FindOneFloat("minsampledistance", .25f);
-    string filename = params.FindOneString("filename", "");
+    string filename = params.FindOneFilename("filename", "");
     if (PbrtOptions.quickRender) { minDist *= 4.f; }
     return new SurfacePointsRenderer(minDist, pCamera, time, filename);
 }

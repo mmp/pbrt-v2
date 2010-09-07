@@ -38,7 +38,7 @@
 
 // UseRadianceProbes Method Definitions
 UseRadianceProbes *CreateRadianceProbesSurfaceIntegrator(const ParamSet &paramSet) {
-    string filename = paramSet.FindOneString("filename", "probes.out");
+    string filename = paramSet.FindOneFilename("filename", "probes.out");
     return new UseRadianceProbes(filename);
 }
 
