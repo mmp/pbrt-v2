@@ -587,10 +587,8 @@ string ParamSet::ToString() const {
 }
 
 
-#include <iostream>
 void ParamSet::SetCurrentFile(const string& basefile) {
   string newBaseDir = DirectoryContaining(AbsolutePath(basefile));
-  std::cerr << "changing baseDir: " << baseDir << " ---> " << newBaseDir << std::endl;
   baseDir = newBaseDir;
 }
 
