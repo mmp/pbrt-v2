@@ -61,8 +61,6 @@ void add_string_char(char c) {
 }
 
 
-#include <iostream>
-
 void include_push(char *filename) {
     if (includeStack.size() > 32)
         Severe("Only 32 levels of nested Include allowed in scene files.");
@@ -74,7 +72,6 @@ void include_push(char *filename) {
     includeStack.push_back(ii);
 
     current_file = AbsolutePath(ResolveFilename(DirectoryContaining(ii.filename), filename));
-    std::cerr << "pushed. new current_file = " << current_file << std::endl;
     line_num = 1;
 
     yyin = fopen(current_file.c_str(), "r");
@@ -92,7 +89,6 @@ void include_pop() {
     yy_delete_buffer(YY_CURRENT_BUFFER);
     yy_switch_to_buffer(includeStack.back().bufState);
     current_file = includeStack.back().filename;
-    std::cerr << "popped. new current_file = " << current_file << std::endl;
     line_num = includeStack.back().lineNum;
     includeStack.pop_back();
 }
@@ -191,8 +187,6 @@ WorldEnd                { return WORLDEND; }
 . { Error( "Illegal character: %c (0x%x)", yytext[0], int(yytext[0])); }
 %%
 int yywrap() {
-  extern string current_file;
-  std::cerr << "at end of " << current_file << std::endl;
     if (includeStack.size() == 0) return 1;
     include_pop();
     return 0;
