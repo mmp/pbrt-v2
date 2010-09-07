@@ -327,7 +327,7 @@ CreateRadianceProbes *CreateRadianceProbesRenderer(const Camera *camera,
     }
     float probeSpacing = params.FindOneFloat("samplespacing", 1.f);
     float time = params.FindOneFloat("time", 0.f);
-    string filename = params.FindOneString("filename", "probes.out");
+    string filename = params.FindOneFilename("filename", "probes.out");
 
     return new CreateRadianceProbes(surf, vol, camera, lmax, probeSpacing,
         bounds, nindir, includeDirect, includeIndirect, time, filename);
