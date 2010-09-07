@@ -1377,6 +1377,42 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="core\fileutil.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="core\filter.cpp"
 				>
 				<FileConfiguration
@@ -4804,6 +4840,10 @@
 			</File>
 			<File
 				RelativePath="textures\fbm.h"
+				>
+			</File>
+			<File
+				RelativePath="core\fileutil.h"
 				>
 			</File>
 			<File
