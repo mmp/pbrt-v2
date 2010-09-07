@@ -66,12 +66,12 @@ void include_push(char *filename) {
         Severe("Only 32 levels of nested Include allowed in scene files.");
     IncludeInfo ii;
     extern string current_file;
-    ii.filename = AbsolutePath(current_file);
+    ii.filename = current_file;
     ii.bufState = YY_CURRENT_BUFFER;
     ii.lineNum = line_num;
     includeStack.push_back(ii);
 
-    current_file = AbsolutePath(ResolveFilename(DirectoryContaining(ii.filename), filename));
+    current_file = AbsolutePath(ResolveFilename(filename));
     line_num = 1;
 
     yyin = fopen(current_file.c_str(), "r");

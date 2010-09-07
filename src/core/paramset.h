@@ -91,8 +91,6 @@ public:
     void Clear();
     string ToString() const;
     
-    void SetCurrentFile(const string &);
-
 private:
     // ParamSet Private Data
     vector<Reference<ParamSetItem<bool> > > bools;
@@ -105,7 +103,6 @@ private:
     vector<Reference<ParamSetItem<string> > > strings;
     vector<Reference<ParamSetItem<string> > > textures;
     static map<string, Spectrum> cachedSpectra;
-    string baseDir;
 };
 
 

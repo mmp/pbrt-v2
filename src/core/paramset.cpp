@@ -28,8 +28,6 @@
 #include "floatfile.h"
 #include "textures/constant.h"
 
-#include <libgen.h>
-
 // ParamSet Macros
 #define ADD_PARAM_TYPE(T, vec) \
     (vec).push_back(new ParamSetItem<T>(name, (T *)data, nItems))
@@ -375,11 +373,11 @@ string ParamSet::FindOneString(const string &name, const string &d) const {
 
 
 string ParamSet::FindOneFilename(const string &name, const string &d) const {
-  string filename = FindOneString(name, "");
-  if (filename == "")
-    return d;
-  filename = AbsolutePath(ResolveFilename(baseDir, filename));
-  return filename;
+    string filename = FindOneString(name, "");
+    if (filename == "")
+        return d;
+    filename = AbsolutePath(ResolveFilename(filename));
+    return filename;
 }
 
 
@@ -584,12 +582,6 @@ string ParamSet::ToString() const {
         ret += string("] ");
     }
     return ret;
-}
-
-
-void ParamSet::SetCurrentFile(const string& basefile) {
-  string newBaseDir = DirectoryContaining(AbsolutePath(basefile));
-  baseDir = newBaseDir;
 }
 
 

@@ -33,11 +33,11 @@ using std::string;
 
 // Platform independent filename-handling functions.
 
-bool IsAbsolutePath(const string& filename);
-string AbsolutePath(const string& filename);
-string ResolveFilename(const string& baseDir, const string& filename);
-string DirectoryContaining(const string& filename);
-
+bool IsAbsolutePath(const string &filename);
+string AbsolutePath(const string &filename);
+string ResolveFilename(const string &filename);
+string DirectoryContaining(const string &filename);
+void SetSearchDirectory(const string &dirname);
 
 #endif // PBRT_CORE_FILEUTIL_H
 

@@ -12,7 +12,8 @@ if has_dtrace == True:
 renderer_src = [ 'main/pbrt.cpp' ]
 
 core_src = [ 'core/api.cpp',           'core/camera.cpp',         'core/diffgeom.cpp',
-             'core/error.cpp',         'core/film.cpp',           'core/filter.cpp',
+             'core/error.cpp',         'core/film.cpp',           'core/fileutil.cpp',
+             'core/filter.cpp',
              'core/floatfile.cpp',     'core/geometry.cpp',       'core/imageio.cpp', 
              'core/integrator.cpp',    'core/intersection.cpp',   'core/light.cpp', 
              'core/material.cpp',      'core/memory.cpp',         'core/montecarlo.cpp',

@@ -651,7 +651,6 @@ static const char *paramTypeToName(int type) {
 
 static void InitParamSet(ParamSet &ps, SpectrumType type) {
     ps.Clear();
-    ps.SetCurrentFile(current_file);
     for (uint32_t i = 0; i < cur_paramlist.size(); ++i) {
         int type;
         string name;

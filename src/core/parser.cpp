@@ -25,6 +25,7 @@
 // core/parser.cpp*
 #include "stdafx.h"
 #include "parser.h"
+#include "fileutil.h"
 
 // Parsing Global Interface
 bool ParseFile(const string &filename) {
@@ -39,8 +40,11 @@ bool ParseFile(const string &filename) {
 
     if (filename == "-")
         yyin = stdin;
-    else
+    else {
         yyin = fopen(filename.c_str(), "r");
+        SetSearchDirectory(DirectoryContaining(filename));
+    }
+
     if (yyin != NULL) {
         current_file = filename;
         if (yyin == stdin) current_file = "<standard input>";
