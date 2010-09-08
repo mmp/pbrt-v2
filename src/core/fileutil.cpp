@@ -21,8 +21,8 @@
 
  */
 
-#include "pbrt.h"
-
+#include "stdafx.h"
+#include "fileutil.h"
 #include <cstdlib>
 #ifndef PBRT_IS_WINDOWS
 #include <libgen.h>
@@ -35,7 +35,7 @@ bool IsAbsolutePath(const string &filename)
 {
     if (filename.size() == 0)
         return false;
-    return (filename[0] == '\\' || filename[0] == '/' || filename.find(':') != filename.end());
+    return (filename[0] == '\\' || filename[0] == '/' || filename.find(':') != string::npos);
 }
 
 
@@ -49,7 +49,7 @@ string AbsolutePath(const string &filename)
 }
 
 
-string ResolveFilename(const string &baseDir, const string &filename)
+string ResolveFilename(const string &filename)
 {
     if (searchDirectory.size() == 0 || filename.size() == 0)
         return filename;
@@ -76,10 +76,9 @@ string DirectoryContaining(const string &filename)
                                 drive, _MAX_DRIVE, dir, _MAX_DIR, NULL, 0, ext, _MAX_EXT );
     if (err == 0) {
         char fullDir[_MAX_PATH];
-        err = _makepath_s(fullDir, _MAX_PATH, drive, dir, NULL, ext);
-        if (err == 0) {
+        err = _makepath_s(fullDir, _MAX_PATH, drive, dir, NULL, NULL);
+        if (err == 0)
             return std::string(fullDir);
-        }
     }
     return filename;
 }
