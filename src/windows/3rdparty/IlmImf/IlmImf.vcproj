@@ -30,7 +30,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Building LUT files..."
-				CommandLine="$(OutDir)\b44ExpLogTable.exe &gt; $(ProjectDir)\b44ExpLogTable.h"
+				CommandLine="&quot;$(OutDir)\b44ExpLogTable.exe&quot; &gt; &quot;$(ProjectDir)\b44ExpLogTable.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -99,7 +99,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Building LUT files..."
-				CommandLine="$(OutDir)\b44ExpLogTable.exe &gt; $(ProjectDir)\b44ExpLogTable.h"
+				CommandLine="&quot;$(OutDir)\b44ExpLogTable.exe&quot; &gt; &quot;$(ProjectDir)\b44ExpLogTable.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -169,7 +169,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Building LUT files..."
-				CommandLine="$(OutDir)\b44ExpLogTable.exe &gt; $(ProjectDir)\b44ExpLogTable.h"
+				CommandLine="&quot;$(OutDir)\b44ExpLogTable.exe&quot; &gt; &quot;$(ProjectDir)\b44ExpLogTable.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -235,7 +235,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Building LUT files..."
-				CommandLine="$(OutDir)\b44ExpLogTable.exe &gt; $(ProjectDir)\b44ExpLogTable.h"
+				CommandLine="&quot;$(OutDir)\b44ExpLogTable.exe&quot; &gt; $(ProjectDir)\b44ExpLogTable.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
