@@ -178,7 +178,7 @@ void SurfacePointTask::Run() {
                 // Store candidate sample point at ray intersection if appropriate
                 if (!hitOnSphere && ray.depth >= 3 &&
                     isect.GetBSSRDF(RayDifferential(ray), arena) != NULL) {
-                    float area = M_PI * minSampleDist * minSampleDist;
+                    float area = M_PI * (minSampleDist / 2.f) * (minSampleDist / 2.f);
                     candidates.push_back(SurfacePoint(hitGeometry.p, hitGeometry.nn,
                                                       area, isect.rayEpsilon));
                 }
