@@ -105,7 +105,7 @@ int RandomSampler::GetMoreSamples(Sample *sample, RNG &rng) {
 
 Sampler *CreateRandomSampler(const ParamSet &params,
                        const Film *film, const Camera *camera) {
-    int ns = params.FindOneInt("nsamples", 4);
+    int ns = params.FindOneInt("pixelsamples", 4);
     int xstart, xend, ystart, yend;
     film->GetSampleExtent(&xstart, &xend, &ystart, &yend);
     return new RandomSampler(xstart, xend, ystart, yend, ns,
