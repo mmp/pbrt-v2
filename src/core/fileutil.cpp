@@ -24,6 +24,7 @@
 #include "stdafx.h"
 #include "fileutil.h"
 #include <cstdlib>
+#include <climits>
 #ifndef PBRT_IS_WINDOWS
 #include <libgen.h>
 #endif
