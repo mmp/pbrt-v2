@@ -35,7 +35,12 @@
 #elif defined(__linux__)
 #define PBRT_IS_LINUX
 #elif defined(__APPLE__)
-#define PBRT_IS_APPLE
+  #define PBRT_IS_APPLE
+  #if !(defined(__i386__) || defined(__amd64__))
+  #define PBRT_IS_APPLE_PPC
+  #else
+  #define PBRT_IS_APPLE_X86
+  #endif
 #elif defined(__OpenBSD__)
 #define PBRT_IS_OPENBSD
 #endif
@@ -51,10 +56,10 @@ using std::string;
 #include <vector>
 using std::vector;
 #include "error.h"
-#if !defined(__APPLE__) && !defined(__OpenBSD__)
+#if !defined(PBRT_IS_APPLE) && !defined(PBRT_IS_OPENBSD)
 #include <malloc.h> // for _alloca, memalign
 #endif
-#if !defined(PBRT_IS_WINDOWS) && !defined(__APPLE__) && !defined(__OpenBSD__)
+#if !defined(PBRT_IS_WINDOWS) && !defined(PBRT_IS_APPLE) && !defined(PBRT_IS_OPENBSD)
 #include <alloca.h>
 #endif
 #include <assert.h>
@@ -82,9 +87,9 @@ using std::sort;
 #pragma warning (disable : 4267) // size_t -> unsigned int conversion
 #endif
 
-#ifdef __linux__
+#ifdef PBRT_IS_LINUX
 #include <stdint.h>
-#endif // __linux__
+#endif // PBRT_IS_LINUX
 #if defined(PBRT_IS_WINDOWS)
 #define isnan _isnan
 #define isinf(f) (!_finite((f)))

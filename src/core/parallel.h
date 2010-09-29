@@ -30,9 +30,10 @@
 
 // core/parallel.h*
 #include "pbrt.h"
-#if defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
+#if defined(PBRT_IS_APPLE_PPC)
 #include <libkern/OSAtomic.h>
-#endif // __APPLE__ and not x86
+#endif // PBRT_IS_APPLE_PPC
+
 #if defined(PBRT_IS_WINDOWS)
 #include <windows.h>
 #else
@@ -79,7 +80,7 @@ inline int32_t AtomicAdd(AtomicInt32 *v, int32_t delta) {
     _ReadWriteBarrier();
     return result + delta;
 #endif
-#elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
+#elif defined(PBRT_IS_APPLE_PPC)
     return OSAtomicAdd32Barrier(delta, v);
 #else
     // Do atomic add with gcc x86 inline assembly
@@ -99,7 +100,7 @@ inline int32_t AtomicCompareAndSwap(AtomicInt32 *v, int32_t newValue, int32_t ol
     PBRT_ATOMIC_MEMORY_OP();
 #if defined(PBRT_IS_WINDOWS)
     return InterlockedCompareExchange(v, newValue, oldValue);
-#elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
+#elif defined(PBRT_IS_APPLE_PPC)
     return OSAtomicCompareAndSwap32Barrier(oldValue, newValue, v);
 #else
     int32_t result;
@@ -117,7 +118,7 @@ inline T *AtomicCompareAndSwapPointer(T **v, T *newValue, T *oldValue) {
     PBRT_ATOMIC_MEMORY_OP();
 #if defined(PBRT_IS_WINDOWS)
     return InterlockedCompareExchange(v, newValue, oldValue);
-#elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
+#elif defined(PBRT_IS_APPLE_PPC)
   #ifdef PBRT_HAS_64_BIT_ATOMICS
     return OSAtomicCompareAndSwap64Barrier(oldValue, newValue, v);
   #else
@@ -145,7 +146,7 @@ inline int64_t AtomicAdd(AtomicInt64 *v, int64_t delta) {
     PBRT_ATOMIC_MEMORY_OP();
 #ifdef PBRT_IS_WINDOWS
     return InterlockedAdd64(v, delta);
-#elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
+#elif defined(PBRT_IS_APPLE_PPC)
     return OSAtomicAdd64Barrier(delta, v);
 #else
     int64_t result;
@@ -163,7 +164,7 @@ inline int64_t AtomicCompareAndSwap(AtomicInt64 *v, int64_t newValue, int64_t ol
     PBRT_ATOMIC_MEMORY_OP();
 #if defined(PBRT_IS_WINDOWS)
     return InterlockedCompareExchange64(v, newValue, oldValue);
-#elif defined(__APPLE__) && !(defined(__i386__) || defined(__amd64__))
+#elif defined(PBRT_IS_APPLE_PPC)
     return OSAtomicCompareAndSwap64Barrier(oldValue, newValue, v);
 #else
     int64_t result;
