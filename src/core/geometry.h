@@ -76,9 +76,6 @@ public:
         x -= v.x; y -= v.y; z -= v.z;
         return *this;
     }
-    bool operator==(const Vector &v) const {
-        return x == v.x && y == v.y && z == v.z;
-    }
     Vector operator*(float f) const { return Vector(f*x, f*y, f*z); }
     
     Vector &operator*=(float f) {
@@ -111,6 +108,13 @@ public:
     float LengthSquared() const { return x*x + y*y + z*z; }
     float Length() const { return sqrtf(LengthSquared()); }
     explicit Vector(const Normal &n);
+
+    bool operator==(const Vector &v) const {
+        return x == v.x && y == v.y && z == v.z;
+    }
+    bool operator!=(const Vector &v) const {
+        return x != v.x || y != v.y || z != v.z;
+    }
 
     // Vector Public Data
     float x, y, z;
@@ -200,6 +204,13 @@ public:
         return isnan(x) || isnan(y) || isnan(z);
     }
 
+    bool operator==(const Point &p) const {
+        return x == p.x && y == p.y && z == p.z;
+    }
+    bool operator!=(const Point &p) const {
+        return x != p.x || y != p.y || z != p.z;
+    }
+
     // Point Public Data
     float x, y, z;
 };
@@ -286,6 +297,13 @@ public:
     float &operator[](int i) {
         Assert(i >= 0 && i <= 2);
         return (&x)[i];
+    }
+
+    bool operator==(const Normal &n) const {
+        return x == n.x && y == n.y && z == n.z;
+    }
+    bool operator!=(const Normal &n) const {
+        return x != n.x || y != n.y || z != n.z;
     }
 
     // Normal Public Data
@@ -414,6 +432,13 @@ public:
     }
     void BoundingSphere(Point *c, float *rad) const;
     bool IntersectP(const Ray &ray, float *hitt0 = NULL, float *hitt1 = NULL) const;
+
+    bool operator==(const BBox &b) const {
+        return b.pMin == pMin && b.pMax == pMax;
+    }
+    bool operator!=(const BBox &b) const {
+        return b.pMin != pMin || b.pMax != pMax;
+    }
 
     // BBox Public Data
     Point pMin, pMax;
