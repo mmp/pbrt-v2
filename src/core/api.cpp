@@ -558,9 +558,7 @@ SurfaceIntegrator *MakeSurfaceIntegrator(const string &name,
 VolumeIntegrator *MakeVolumeIntegrator(const string &name,
         const ParamSet &paramSet) {
     VolumeIntegrator *vi = NULL;
-    if (name == "null")
-        vi = NULL;
-    else if (name == "single")
+    if (name == "single")
         vi = CreateSingleScatteringIntegrator(paramSet);
     else if (name == "emission")
         vi = CreateEmissionVolumeIntegrator(paramSet);
