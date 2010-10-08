@@ -295,7 +295,7 @@ document serves as a comprehensive reference; the pbrt User's Guide (which
 is still yet to be written) will document how to use <tt class="docutils literal"><span class="pre">pbrt</span></tt> with more
 focus on how to achieve certain tasks or how to address various issues in
 the results it renders.</p>
-<p><strong>Note: this document is still in draft form and sections are still, unfortunately, incomplete.  The text is currently complete up to the &quot;Specifying the World&quot; section; in that section, the parameters to the various object implementations are listed correctly, but the accompanying text hasn't been written yet.  I will try to have this all finished by October 1.</strong></p>
+<p><strong>Note: this document is still in draft form and sections are still, unfortunately, incomplete.  The text is currently complete up to the &quot;Materials&quot;; in that section and beyond, the parameters to the various object implementations are listed correctly, but the accompanying text hasn't been written yet.  I will try to have this all finished in the next few days.</strong></p>
 <p>Contents:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#general-structure-of-a-pbrt-input-file">General structure of a pbrt input file</a><ul>
@@ -311,6 +311,7 @@ the results it renders.</p>
 <li><a class="reference internal" href="#renderers">Renderers</a></li>
 <li><a class="reference internal" href="#surface-integrators">Surface Integrators</a></li>
 <li><a class="reference internal" href="#volume-integrators">Volume Integrators</a></li>
+<li><a class="reference internal" href="#accelerators">Accelerators</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#specifying-the-world">Specifying the World</a><ul>
@@ -318,9 +319,10 @@ the results it renders.</p>
 <li><a class="reference internal" href="#shapes">Shapes</a></li>
 <li><a class="reference internal" href="#object-instancing">Object Instancing</a></li>
 <li><a class="reference internal" href="#lights">Lights</a></li>
-<li><a class="reference internal" href="#accelerators">Accelerators</a></li>
+<li><a class="reference internal" href="#area-lights">Area Lights</a></li>
 <li><a class="reference internal" href="#materials">Materials</a></li>
 <li><a class="reference internal" href="#textures">Textures</a></li>
+<li><a class="reference internal" href="#scattering-volumes">Scattering Volumes</a></li>
 </ul>
 </li>
 </ul>
@@ -604,6 +606,7 @@ related to each of the following are set:</p>
 <li><a class="reference internal" href="#renderers">Renderers</a></li>
 <li><a class="reference internal" href="#surface-integrators">Surface Integrators</a></li>
 <li><a class="reference internal" href="#volume-integrators">Volume Integrators</a></li>
+<li><a class="reference internal" href="#accelerators">Accelerators</a></li>
 </ul>
 <div class="section" id="cameras">
 <h2>Cameras</h2>
@@ -2012,64 +2015,226 @@ better resolve fine-scale details in the volume description.</p>
 </tbody>
 </table>
 </div>
+<div class="section" id="accelerators">
+<h2>Accelerators</h2>
+<p>The type of aggregate to use for efficiently finding ray-shape
+intersections is defined with the <tt class="docutils literal"><span class="pre">Accelerator</span></tt> directive:</p>
+<pre class="literal-block">
+Accelerator &quot;kdtree&quot; &quot;float emptybonus&quot; [0.1]
+</pre>
+<p>The default accelerator, &quot;bvh&quot;, is generally a good choice; it is rarely
+worthwhile to specify a different accelerator or to need to change the
+accelerator's parameters to improve performance.</p>
+<p>Three accelerator implementations are available in <tt class="docutils literal"><span class="pre">pbrt</span></tt>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;bvh&quot;</td>
+<td><tt class="docutils literal"><span class="pre">BVHAccel</span></tt></td>
+</tr>
+<tr><td>&quot;grid&quot;</td>
+<td><tt class="docutils literal"><span class="pre">GridAccel</span></tt></td>
+</tr>
+<tr><td>&quot;kdtree&quot;</td>
+<td><tt class="docutils literal"><span class="pre">KdTreeAccel</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;bvh&quot; accelerator, the default, takes just two parameters.  This
+accelerator is efficiently constructed when the scene description is
+processed, while still providing highly efficient ray-shape intersection
+tests.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="10%" />
+<col width="9%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>maxnodeprims</td>
+<td>4</td>
+<td>Maximum number of primitives to allow in a node in the tree.  Once the primitives have been split to groups of
+this size or smaller, a leaf node is created.</td>
+</tr>
+<tr><td>string</td>
+<td>splitmethod</td>
+<td>&quot;sah&quot;</td>
+<td>Method to use to partition the primitives when building the tree.  The default, &quot;sah&quot;, denotes the surface
+area heuristic; the default should almost certainly be used.  The other options--&quot;middle&quot;, which splits each
+node at its midpoint along the split axis, or &quot;equal&quot;, which splits the current group of primitives into
+two equal-sized sets--are slightly more efficient to evaluate at tree construction time, but lead to
+substantially lower-quality hierarchies.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;grid&quot; accelerator takes only a single parameter.  While this
+accelerator is extremely efficient to create, it is substantially lower
+performance than the others at ray-shape intersection time.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="11%" />
+<col width="9%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>bool</td>
+<td>refineimmediately</td>
+<td>false</td>
+<td>If true, primitives are fully refined as soon as they are added to the grid.
+Otherwise, they are not refined until a ray enters a voxel that contains the primitive.</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, the &quot;kdtree&quot; accelerator takes a number of parameters that control
+its construction.  This accelerator takes substantially longer to create
+than &quot;bvh&quot; at scene definition time, but it can be marginally faster at
+finding ray-shape intersections.  It tends to require less memory than
+&quot;bvh&quot;.</p>
+<p>See page 234 of the second edition of the book for the details of the cost
+function used for building kd-trees (and thus the use of some of the the
+various parameters below.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="10%" />
+<col width="9%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>intersectcost</td>
+<td>80</td>
+<td>The value of the cost function that estimates the expected cost of performing a ray-object
+intersection, for use in building the kd-tree.</td>
+</tr>
+<tr><td>integer</td>
+<td>traversalcost</td>
+<td>1</td>
+<td>Estimated cost for traversing a ray through a kd-tree node.</td>
+</tr>
+<tr><td>float</td>
+<td>emptybonus</td>
+<td>0.2</td>
+<td>&quot;Bonus&quot; factor for kd-tree nodes that represent empty space.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxprims</td>
+<td>1</td>
+<td>Maximum number of primitives to store in kd-tree node.  (Not a hard limit; more may be stored if the kd-tree
+can't find splitting planes that reduce the number of primitives when refining a node.)</td>
+</tr>
+<tr><td>integer</td>
+<td>maxdepth</td>
+<td>-1</td>
+<td>Maximum depth of the kd-tree.  If negative, the kd-tree chooses a maximum depth based on the number of
+primitives to be stored in it.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section" id="specifying-the-world">
 <h1>Specifying the World</h1>
+<p>After the camera, film, and rendering options have been set, the
+<tt class="docutils literal"><span class="pre">WorldBegin</span></tt> directive marks the start of the scene definition (the
+&quot;world block&quot;).  In the world block, the lights, materials, and geometric
+shapes that make up the scene are defined.  After <tt class="docutils literal"><span class="pre">WorldBegin</span></tt>, the
+directives described in the <a class="reference internal" href="#specifying-scene-wide-rendering-options">Specifying Scene-Wide Rendering Options</a>
+section are all illegal; an error message will be printed if one is
+encountered.  (Similarly, the directives documented in this section are
+illegal outside of the world block.)  The end of the world block is denoted
+by the <tt class="docutils literal"><span class="pre">WorldEnd</span></tt> directive; when it is encountered, the chosen
+<tt class="docutils literal"><span class="pre">Renderer</span></tt> takes over and does the requested rendering computation.</p>
 <ul class="simple">
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#shapes">Shapes</a></li>
 <li><a class="reference internal" href="#object-instancing">Object Instancing</a></li>
 <li><a class="reference internal" href="#lights">Lights</a></li>
-<li><a class="reference internal" href="#accelerators">Accelerators</a></li>
+<li><a class="reference internal" href="#area-lights">Area Lights</a></li>
 <li><a class="reference internal" href="#materials">Materials</a></li>
 <li><a class="reference internal" href="#textures">Textures</a></li>
+<li><a class="reference internal" href="#scattering-volumes">Scattering Volumes</a></li>
 </ul>
 <div class="section" id="attributes">
 <h2>Attributes</h2>
-<p>The current graphics state and transformation matrix are saved and restored
-using <tt class="docutils literal"><span class="pre">AttributeBegin</span></tt> and <tt class="docutils literal"><span class="pre">AttributeEnd</span></tt>.</p>
-<p>The transformation matrix can be saved and restored independently
-of the graphics state using <tt class="docutils literal"><span class="pre">TransformBegin</span></tt> and
-<tt class="docutils literal"><span class="pre">TransformEnd</span></tt>.</p>
+<p>A number of directives modify the current graphics state--examples include
+the transformation directives (<a class="reference internal" href="#specifying-transformations">Specifying Transformations</a>), and the
+directive that sets the current material.  The current graphics state
+(including the current transformation matrix) can be saved and restored
+using the <tt class="docutils literal"><span class="pre">AttributeBegin</span></tt> and <tt class="docutils literal"><span class="pre">AttributeEnd</span></tt> directives:</p>
+<pre class="literal-block">
+Material &quot;matte&quot;
+AttributeBegin
+   Material &quot;plastic&quot;
+   Shape &quot;sphere&quot;
+AttributeEnd   # back to the &quot;matte&quot; material
+Shape &quot;cone&quot;
+</pre>
+<p>The transformation matrix can be saved and restored independently of the
+graphics state using <tt class="docutils literal"><span class="pre">TransformBegin</span></tt> and <tt class="docutils literal"><span class="pre">TransformEnd</span></tt>.</p>
 <pre class="literal-block">
 Scale 2 2 2
 TransformBegin
     Translate 1 0 1
-    Shape ...
-TransformEnd
+    Shape &quot;sphere&quot;
+TransformEnd   # Translate no longer applies here
 </pre>
-<p>In addition to the current transformation matrix, <tt class="docutils literal"><span class="pre">pbrt</span></tt> stores only the
-reverse-orientation flag and the current material and active textures in
-the graphics state.  The <tt class="docutils literal"><span class="pre">Material</span></tt> statement specifies the plug-in to be
-used for the current material as well as any parameters needed. The
-<tt class="docutils literal"><span class="pre">Texture</span></tt> statement creates named textures for use as parameters to
-materials or other textures.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="61%" />
-<col width="39%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Input File Syntax</th>
-<th class="head">API Call</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>Material</td>
-<td><tt class="docutils literal"><span class="pre">pbrtMaterial()</span></tt></td>
-</tr>
-<tr><td>Texture &quot;name&quot; &quot;type&quot; &quot;class&quot; parameter-list</td>
-<td><tt class="docutils literal"><span class="pre">pbrtTexture()</span></tt></td>
-</tr>
-<tr><td>ReverseOrientation</td>
-<td><tt class="docutils literal"><span class="pre">pbrtReverseOrientation()</span></tt></td>
-</tr>
-</tbody>
-</table>
+<p>In addition to the current transformation matrix and material, the
+reverse-orientation setting, specified by the <tt class="docutils literal"><span class="pre">ReverseOrientation</span></tt>
+directive, is part of the graphics state.  This directive, when active,
+flips the surface normal of the shapes that follow it; it can be useful
+when specifying area light sources, which only emit light from the side
+their surface normal points from, and when specifying transparent
+materials, where the surface normal is used to determine whether rays are
+entering or exiting the refractive medium.</p>
 </div>
 <div class="section" id="shapes">
 <h2>Shapes</h2>
-<p>CTM when created to position in the scene...</p>
+<p>Shapes are specified with the <tt class="docutils literal"><span class="pre">Shape</span></tt> directive; it takes the name of a
+shape implementation and a parameter list used to define the shape's
+properties:</p>
+<blockquote>
+<tt class="docutils literal"><span class="pre">Shape</span></tt> &quot;<em>name</em>&quot; <em>parameter-list</em></blockquote>
+<p>For example,</p>
+<pre class="literal-block">
+Shape &quot;sphere&quot; &quot;float radius&quot; [0.25]
+</pre>
+<p>When a <tt class="docutils literal"><span class="pre">Shape</span></tt> directive is encountered, the current transformation
+matrix defines the object to world transformation for the shape.</p>
+<p>A number of shapes are provided by <tt class="docutils literal"><span class="pre">pbrt</span></tt>; this list shows the mapping
+from shape names to implementation class in the system.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="50%" />
@@ -2113,7 +2278,10 @@ materials or other textures.</p>
 </tr>
 </tbody>
 </table>
-<p>cone</p>
+<p>The extent of the &quot;cone&quot; shape is defined by three parameters; note that
+the cone is oriented along the <em>z</em> axis in object space; the current
+transformation matrix can be used to orient it differently in the scene's
+world space.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -2137,7 +2305,7 @@ materials or other textures.</p>
 <tr><td>float</td>
 <td>height</td>
 <td>1</td>
-<td>The height of the cone along the z axis.</td>
+<td>The height of the cone along the <em>z</em> axis.</td>
 </tr>
 <tr><td>float</td>
 <td>phimax</td>
@@ -2146,7 +2314,8 @@ materials or other textures.</p>
 </tr>
 </tbody>
 </table>
-<p>cylinder</p>
+<p>Similarly, &quot;cylinder&quot; is oriented along the <em>z</em> axis as well.  It takes
+four parameters.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -2184,7 +2353,8 @@ materials or other textures.</p>
 </tr>
 </tbody>
 </table>
-<p>disk</p>
+<p>The &quot;disk&quot; is perpendicular to the <em>z</em> axis, with its center at <em>x=0</em> and
+<em>y=0</em>.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -2222,7 +2392,11 @@ materials or other textures.</p>
 </tr>
 </tbody>
 </table>
-<p>heightfield</p>
+<p>The &quot;heightfield&quot; shape isn't described in the <tt class="docutils literal"><span class="pre">pbrt</span></tt> book text; it's
+essentially a compact way to describe a regular triangulated mesh.  The
+user provides resolutions in the <em>u</em> and <em>v</em> directions and then a series
+of height values.  The height values give the <em>z</em> values for a series of
+vertices over [0,1]^2 in <em>(x,y)</em>.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -2241,16 +2415,17 @@ materials or other textures.</p>
 <tr><td>int</td>
 <td>nu, nv</td>
 <td>none</td>
-<td>&nbsp;</td>
+<td>Number of sample values in each direction.  The total number
+of triangles in the mesh is 2 * (nu-1) * (nv-1).</td>
 </tr>
-<tr><td>float</td>
+<tr><td>float[nu*nv]</td>
 <td>Pz</td>
 <td>none</td>
-<td>&nbsp;</td>
+<td>Array of height values to specify the hieightfield.</td>
 </tr>
 </tbody>
 </table>
-<p>hyperboloid</p>
+<p>&quot;hyperboloid&quot; takes two points to define the line of revolution that sweeps out its surface.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="16%" />
@@ -2283,7 +2458,7 @@ materials or other textures.</p>
 </tr>
 </tbody>
 </table>
-<p>loopsubdiv</p>
+<p>The &quot;loopsubdiv&quot; shape corresponds to a subdivision surface evaluated with Loop's subdivision rules.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="14%" />
@@ -2307,16 +2482,20 @@ materials or other textures.</p>
 <tr><td>integer[n]</td>
 <td>indices</td>
 <td>required--no default</td>
-<td>Indices for the base mesh.  Indexing is the same as for the triangle mesh primitive.</td>
+<td>Indices for the base mesh.  Indexing is the same as for the triangle mesh primitive.
+(See &quot;trianglemesh&quot; below).</td>
 </tr>
 <tr><td>point[n]</td>
 <td>P</td>
 <td>required--no default</td>
-<td>Vertex positions for the base mesh.  This is the same as for the triangle mesh primitive.</td>
+<td>Vertex positions for the base mesh.  This is the same as for the triangle mesh primitive.
+(See &quot;trianglemesh&quot; below).</td>
 </tr>
 </tbody>
 </table>
-<p>nurbs</p>
+<p>&quot;nurbs&quot; can be used to define a NURBS surface.  The current implementation
+does a fixed-rate tessellation, with tesselation rate provided directly by
+the user.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="13%" />
@@ -2354,12 +2533,12 @@ materials or other textures.</p>
 </tr>
 <tr><td>float</td>
 <td>u0, v0</td>
-<td>none---must be specified</td>
+<td>none--must be specified</td>
 <td>Starting u and v parametric coordinates at which to evaluate NURBS.</td>
 </tr>
 <tr><td>float</td>
 <td>u1, v1</td>
-<td>none---must be specified</td>
+<td>none--must be specified</td>
 <td>Ending u and v parametric coordinates at which to evaluate NURBS.</td>
 </tr>
 <tr><td>point[nu*nv]</td>
@@ -2375,7 +2554,7 @@ points.  <tt class="docutils literal"><span class="pre">P</span></tt> gives regu
 </tr>
 </tbody>
 </table>
-<p>paraboloid</p>
+<p>Here are the parameters for &quot;paraboloid&quot;.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="16%" />
@@ -2413,7 +2592,7 @@ points.  <tt class="docutils literal"><span class="pre">P</span></tt> gives regu
 </tr>
 </tbody>
 </table>
-<p>sphere</p>
+<p>And these are the &quot;sphere&quot; parameters.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -2451,13 +2630,29 @@ points.  <tt class="docutils literal"><span class="pre">P</span></tt> gives regu
 </tr>
 </tbody>
 </table>
-<p>trianglemesh</p>
+<p>An arbitrary triangle mesh is defined by the &quot;trianglemesh&quot; shape.  The
+mesh's topology is defined by the <tt class="docutils literal"><span class="pre">indices</span></tt> parameter, which is an array
+of integer indices into the vertex arrays.  Each successive triplet of
+indices defines the offsets to the three vertices of one triangle; thus,
+the length of the <tt class="docutils literal"><span class="pre">indices</span></tt> array must be a multiple of three.</p>
+<p>Here is an example of a small triangle mesh:</p>
+<pre class="literal-block">
+Shape &quot;trianglemesh&quot;  &quot;integer indices&quot; [0 2 1 0 3 2 ]
+    &quot;point P&quot; [550 0 0    0 0 0    0 0 560    550 0 560 ]
+</pre>
+<p>Here, we have an array of four vertices in the <tt class="docutils literal"><span class="pre">P</span></tt> parameter.  The
+<tt class="docutils literal"><span class="pre">indices</span></tt> array defines two triangles that use these vertices--the first
+one has vertex positions (550,0,0), (0,0,560), and (0,0,0).  Note that both
+triangles use vertices 0 and 2.  Because the triangle mesh is specified in
+a way that makes this vertex reuse explicit, the in-memory representation
+of the triangle mesh can be more compact than if each triange had to
+explicitly and privately store all of its per-vertex data.</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="12%" />
-<col width="10%" />
-<col width="13%" />
-<col width="64%" />
+<col width="16%" />
+<col width="14%" />
+<col width="17%" />
+<col width="53%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Type</th>
@@ -2470,20 +2665,19 @@ points.  <tt class="docutils literal"><span class="pre">P</span></tt> gives regu
 <tr><td>integer[n]</td>
 <td>indices</td>
 <td>required--no default</td>
-<td>An array of integer offsets into the <tt class="docutils literal"><span class="pre">P</span></tt> point array.
-The triangles are made up of the vertices numbered 3i, 3(i+1), and 3(i+2).  This array's
-length must be a multiple of 3.</td>
+<td>The array of integer offsets into the per-vertex data arrays
+(<tt class="docutils literal"><span class="pre">P</span></tt>, and any of <tt class="docutils literal"><span class="pre">N</span></tt>, <tt class="docutils literal"><span class="pre">S</span></tt>, or <tt class="docutils literal"><span class="pre">uv</span></tt> that are present.)</td>
 </tr>
 <tr><td>point[n]</td>
 <td>P</td>
 <td>required--no default</td>
-<td>The vertex positions of the triangle mesh.  The order of vertex positions in this array is not important,
-since the triangles will be constructed using the <tt class="docutils literal"><span class="pre">indices</span></tt> array.</td>
+<td>The vertex positions of the triangle mesh.</td>
 </tr>
 <tr><td>normal[n]</td>
 <td>N</td>
 <td>none--optional</td>
-<td>Per-vertex normals.</td>
+<td>Per-vertex normals.  If present, shading normals will be computed
+from these values.</td>
 </tr>
 <tr><td>vector[n]</td>
 <td>S</td>
@@ -2500,20 +2694,43 @@ since the triangles will be constructed using the <tt class="docutils literal"><
 </div>
 <div class="section" id="object-instancing">
 <h2>Object Instancing</h2>
+<p>If a complex object is used repeatedly in a scene, object instancing may be
+desirable; this lets the system store a single instance of the object in
+memory and just record multiple transformations to place it in the scene.
+Object instances are created via named objects.</p>
 <p>To create a named object, its definition should be placed within an
-<tt class="docutils literal"><span class="pre">ObjectBegin</span></tt>/<tt class="docutils literal"><span class="pre">ObjectEnd</span></tt> pair.</p>
+<tt class="docutils literal"><span class="pre">ObjectBegin</span></tt>/<tt class="docutils literal"><span class="pre">ObjectEnd</span></tt> pair:</p>
 <pre class="literal-block">
 ObjectBegin &quot;name&quot;
-Shape ...
-Shape ...
+  Shape ...
+  Shape ...
 ObjectEnd
 </pre>
+<p>When a named object is defined, the current transformation matrix defines
+the transformation from object space to the instance's coordinate space.</p>
+<p>After a named object has been defined, it can be instantiated with the
+<tt class="docutils literal"><span class="pre">ObjectInstance</span></tt> directive.  The current transformation matrix then defines
+the instance space to world space transformation; thus, the final
+transformation for a shape in an object instance definition is the
+composition of the CTM when the instance was defiend and the CTM when the
+instance was instantiated.</p>
+<p>Thus, two instances of an object named &quot;foo&quot; are instantiated in the
+following:</p>
 <pre class="literal-block">
-ObjectInstance &quot;name&quot;
+ObjectInstance &quot;foo&quot;
+Translate 1 0 0
+ObjectInstance &quot;foo&quot;
 </pre>
 </div>
 <div class="section" id="lights">
 <h2>Lights</h2>
+<p>Light sources are of course required to cast illumination in the scene.
+<tt class="docutils literal"><span class="pre">pbrt</span></tt> provides two types of lights: lights that exist in the scene
+without any geometry associated with them, and lights that describe
+emission from one or more shapes in the scene (area lights).</p>
+<p>The first type of light is defined with the <tt class="docutils literal"><span class="pre">LightSource</span></tt> directive.
+There are 6 light sources of this type that are currently available in
+<tt class="docutils literal"><span class="pre">pbrt</span></tt>.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="44%" />
@@ -2545,9 +2762,20 @@ ObjectInstance &quot;name&quot;
 </tr>
 </tbody>
 </table>
-<p>distant</p>
+<p>For example, the following defines a point light source with RGB intensity
+of (0.5, 0.5, 0.5):</p>
+<pre class="literal-block">
+LightSource &quot;point&quot; &quot;rgb I&quot; [ .5 .5 .5 ]
+</pre>
+<p>When a light source definition is encountered, the current transformation
+matrix is used to define the light-to-world transformation.  Many of the
+light sources also take parameters to place it in the scene; both ways of
+placing lights can be useful.</p>
 <p>all lights have a
 spectrum             scale             1 1 1</p>
+<p>The &quot;distant&quot; light source represents a directional light source &quot;at
+infinity&quot;; in other words, it illuminates the scene with light arriving
+from a single direction.  It takes these parameters:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="16%" />
@@ -2566,7 +2794,7 @@ spectrum             scale             1 1 1</p>
 <tr><td>spectrum</td>
 <td>L</td>
 <td>rgb (1 1 1)</td>
-<td>The color of the light.</td>
+<td>The radiance emitted from the light source.</td>
 </tr>
 <tr><td>point</td>
 <td>from</td>
@@ -2582,13 +2810,23 @@ along the z axis.</td>
 </tr>
 </tbody>
 </table>
-<p>goniometric</p>
+<p>The &quot;goniometric&quot; light represents a point light source with
+directionally-varying emission, where the emission distribution is
+represented by a texture map.  This representation can be useful for
+modeling many real-world light sources, where measurements of this
+distribution may be available.</p>
+<p>Given a normalized outgoing direction <em>w</em> from the goniometric light source
+to a point in the scene, the image coordinates in the goniometric diagram
+file are found using a (theta, phi) parameterization in spherical
+coordinates.  Here, the theta angle is measured with respect to the <em>y</em>
+axis, and <em>x</em> and <em>z</em> define phi.  (Elsewhere in <tt class="docutils literal"><span class="pre">pbrt</span></tt>, the <em>z</em> axis is
+generally used to measure theta.)</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="15%" />
-<col width="13%" />
-<col width="15%" />
-<col width="57%" />
+<col width="17%" />
+<col width="14%" />
+<col width="17%" />
+<col width="52%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Type</th>
@@ -2601,16 +2839,26 @@ along the z axis.</td>
 <tr><td>spectrum</td>
 <td>I</td>
 <td>rgb (1 1 1)</td>
-<td>The color of the light.</td>
+<td>A radiant intensity scale-factor; the radiant intensity in a
+particular direction is computed as the product of this value
+and the appropriate value from the goniometric diagram table.</td>
 </tr>
 <tr><td>string</td>
 <td>mapname</td>
 <td>required--no default</td>
-<td>The filename of the goniometric diagram to use for the lighting distribution.</td>
+<td>The filename of the image file that stores a goniometric
+diagram to use for the lighting distribution.</td>
 </tr>
 </tbody>
 </table>
-<p>infinite</p>
+<p>The &quot;infinite&quot; light represents an infinitely far away light source that
+potentially casts illumination from all directions.  It is useful for
+modeling incident light in complex real environments (&quot;HDR lighting&quot;).  It
+takes an environment map with a &quot;latitude-longitude&quot; parameterization,
+where given a direciton vector <em>w</em>, the spherical (theta, phi) coordinates
+are found, and then the <em>u</em> coordinate of the environment map is indexed by
+the phi value and <em>v</em> is indexed by theta.  (If needed, the environment map
+can be reoriented with the light to world transformaiton.)</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="15%" />
@@ -2629,12 +2877,17 @@ along the z axis.</td>
 <tr><td>spectrum</td>
 <td>L</td>
 <td>rgb (1 1 1)</td>
-<td>The color of the light.</td>
+<td>A radiance scale factor for the light; final emitted radiance
+values for a particular direction are computed as the product
+of this value and the radiance value found from the environment map.</td>
 </tr>
 <tr><td>integer</td>
 <td>nsamples</td>
 <td>1</td>
-<td>Suggested number of shadow samples to take when computing illumination from the light.</td>
+<td>Suggested number of shadow samples to take when computing illumination from the light.
+Depending on the number of pixel samples being taken, this value
+may need to be increased to reduce noise in the illumination
+computation for the light.</td>
 </tr>
 <tr><td>string</td>
 <td>mapname</td>
@@ -2644,7 +2897,8 @@ provided, the light will be a solid color.</td>
 </tr>
 </tbody>
 </table>
-<p>point</p>
+<p>&quot;point&quot; defines a simple point light that casts the same amount of
+illumination in all directions.  It takes two paramters:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -2663,7 +2917,7 @@ provided, the light will be a solid color.</td>
 <tr><td>spectrum</td>
 <td>I</td>
 <td>rgb (1 1 1)</td>
-<td>The color of the light.</td>
+<td>The light's emitted radiant intensity.</td>
 </tr>
 <tr><td>point</td>
 <td>from</td>
@@ -2672,45 +2926,15 @@ provided, the light will be a solid color.</td>
 </tr>
 </tbody>
 </table>
-<p>projection</p>
+<p>The &quot;projection&quot; light acts like a slide projector; the given image is used
+to define a 2D emission distribution that is projected with a center of
+projection at the light's position.  Directions outside the frustum of
+light projection receive no emitted illumination.</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="16%" />
-<col width="13%" />
-<col width="16%" />
-<col width="55%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Type</th>
-<th class="head">Name</th>
-<th class="head">Default Value</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>spectrum</td>
-<td>I</td>
-<td>rgb (1 1 1)</td>
-<td>The color of the light.</td>
-</tr>
-<tr><td>float</td>
-<td>fov</td>
-<td>45</td>
-<td>The spread angle of the projected light, along the shorter image axis.</td>
-</tr>
-<tr><td>string</td>
-<td>mapname</td>
-<td>required--no default</td>
-<td>The image to project into the scene.</td>
-</tr>
-</tbody>
-</table>
-<p>spot</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="16%" />
-<col width="13%" />
+<col width="14%" />
 <col width="12%" />
+<col width="14%" />
 <col width="59%" />
 </colgroup>
 <thead valign="bottom">
@@ -2724,7 +2948,46 @@ provided, the light will be a solid color.</td>
 <tr><td>spectrum</td>
 <td>I</td>
 <td>rgb (1 1 1)</td>
-<td>The color of the light.</td>
+<td>Radiant intensity scale factor; the intensity in a given direction
+is the product of this value and the value from the image map
+for the corresponding direction.</td>
+</tr>
+<tr><td>float</td>
+<td>fov</td>
+<td>45</td>
+<td>The spread angle of the projected light, along the shorter image axis.</td>
+</tr>
+<tr><td>string</td>
+<td>mapname</td>
+<td>required--no default</td>
+<td>The image to project into the scene.</td>
+</tr>
+</tbody>
+</table>
+<p>A spotlight is defined by the &quot;spot&quot; light source.  The spotlight is
+defined by a lighting direction and then two angles that specify a cone of
+directions in which light is emitted.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="12%" />
+<col width="14%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>I</td>
+<td>rgb (1 1 1)</td>
+<td>Maximum radiant intensity of the light; this is the emitted radiant intensity
+in the center of the illumination cone.  It falls off to zero outside of the
+cone.</td>
 </tr>
 <tr><td>point</td>
 <td>from, to</td>
@@ -2736,7 +2999,10 @@ pointing down the z axis.</td>
 <tr><td>float</td>
 <td>coneangle</td>
 <td>30</td>
-<td>The angle that the spotlight's cone makes with its primary axis.</td>
+<td>The angle that the spotlight's cone makes with its primary axis.  For directions
+up to this angle from the main axis, the full radiant intensity given by &quot;I&quot;
+is emitted.  After this angle and up to &quot;coneangle&quot; + &quot;conedeltaangle&quot;,
+illumination falls off until it is zero.</td>
 </tr>
 <tr><td>float</td>
 <td>conedeltaangle</td>
@@ -2745,6 +3011,27 @@ pointing down the z axis.</td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="section" id="area-lights">
+<h1>Area Lights</h1>
+<p>Area lights have geometry associated with them; the shape and size of the
+emitting shapes have a substantial effect on the resulting emitted radiance
+distribution.  After an <tt class="docutils literal"><span class="pre">AreaLightSource</span></tt> directive, all subsequent
+shapes emit light from their surfaces according to the distribution defined
+by the given area light implementation.</p>
+<p>The current area light is saved and restored inside attribute blocks; typically
+area light definitions are inside an <tt class="docutils literal"><span class="pre">AttributeBegin</span></tt>/<tt class="docutils literal"><span class="pre">AttributeEnd</span></tt> pair
+in order to control the shapes that they are applied to.</p>
+<pre class="literal-block">
+AttributeBegin
+  AreaLightSource &quot;diffuse&quot; &quot;rgb L&quot; [ .5 .5 .5 ]
+  Translate 0 10 0
+  Shape &quot;sphere&quot; &quot;float radius&quot; [.25]
+AttributeEnd
+# area light is out of scope, subsequent shapes aren't emitters
+</pre>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> currently only includes a single area light implementation, &quot;diffuse&quot;.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="50%" />
@@ -2761,7 +3048,21 @@ pointing down the z axis.</td>
 </tr>
 </tbody>
 </table>
-<p>diffuse</p>
+<p>The &quot;diffuse&quot; area light defines an emitter that emits radiance uniformly
+over all directions in the hemisphere around the surface normal at each
+point on the surface.  Thus, the orientation of the surface normal is
+meaningful; by default, an emitting sphere emits in the directions outside
+the sphere and there's no illumination inside of it.  If this is not the
+desired behavior, the <tt class="docutils literal"><span class="pre">ReverseOrientation</span></tt> directive can be used to flip
+the orientation of the surface normal of subsequent shapes:</p>
+<pre class="literal-block">
+AttributeBegin
+  AreaLightSource &quot;diffuse&quot;
+  ReverseOrientation  # illuminate inside the sphere
+  Shape &quot;sphere&quot;
+AttributeEnd
+</pre>
+<p>The &quot;diffuse&quot; area light takes just two parameters.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="16%" />
@@ -2780,7 +3081,7 @@ pointing down the z axis.</td>
 <tr><td>spectrum</td>
 <td>L</td>
 <td>rgb (1 1 1)</td>
-<td>The color of the light.</td>
+<td>The amount of emitted radiance at each point and emitted direction..</td>
 </tr>
 <tr><td>integer</td>
 <td>nsamples</td>
@@ -2791,133 +3092,10 @@ to but not necessarily equal to this value or may ignore it completely.)</td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="accelerators">
-<h2>Accelerators</h2>
-<p>the default, BVH, is generally the best choice...</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Name</th>
-<th class="head">Implementation Class</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>&quot;bvh&quot;</td>
-<td><tt class="docutils literal"><span class="pre">BVHAccel</span></tt></td>
-</tr>
-<tr><td>&quot;grid&quot;</td>
-<td><tt class="docutils literal"><span class="pre">GridAccel</span></tt></td>
-</tr>
-<tr><td>&quot;kdtree&quot;</td>
-<td><tt class="docutils literal"><span class="pre">KdTreeAccel</span></tt></td>
-</tr>
-</tbody>
-</table>
-<p>bvh</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="18%" />
-<col width="15%" />
-<col width="13%" />
-<col width="54%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Type</th>
-<th class="head">Name</th>
-<th class="head">Default Value</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>integer</td>
-<td>maxnodeprims</td>
-<td>4</td>
-<td>&nbsp;</td>
-</tr>
-<tr><td>string</td>
-<td>splitmethod</td>
-<td>&quot;sah&quot;</td>
-<td>&quot;sah&quot; or &quot;middle&quot; or &quot;equal&quot;</td>
-</tr>
-</tbody>
-</table>
-<p>grid</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="14%" />
-<col width="12%" />
-<col width="10%" />
-<col width="63%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Type</th>
-<th class="head">Name</th>
-<th class="head">Default Value</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>bool</td>
-<td>refineimmediately</td>
-<td>false</td>
-<td>If true, primitives are fully refined as soon as they are added to the grid.
-Otherwise, they are not refined until a ray enters a voxel that contains the primitive.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="12%" />
-<col width="10%" />
-<col width="9%" />
-<col width="69%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Type</th>
-<th class="head">Name</th>
-<th class="head">Default Value</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>integer</td>
-<td>intersectcost</td>
-<td>80</td>
-<td>The value of the cost function that estimates the expected cost of performing a ray-object
-intersection, for use in building the kd-tree (Section XXX).</td>
-</tr>
-<tr><td>integer</td>
-<td>traversalcost</td>
-<td>1</td>
-<td>Estimated cost for traversing a ray through a kd-tree node.</td>
-</tr>
-<tr><td>float</td>
-<td>emptybonus</td>
-<td>0.2</td>
-<td>&quot;Bonus&quot; factor for kd-tree nodes that represent empty space.</td>
-</tr>
-<tr><td>integer</td>
-<td>maxprims</td>
-<td>1</td>
-<td>Maximum number of primitives to store in kd-tree node.  (Not a hard limit; more may be stored if the kd-tree
-can't find splitting planes that reduce the number of primitives when refining a node.)</td>
-</tr>
-<tr><td>integer</td>
-<td>maxdepth</td>
-<td>-1</td>
-<td>Maximum depth of the kd-tree.  If negative, the kd-tree chooses a maximum depth based on the number of
-primitives to be stored in it.</td>
-</tr>
-</tbody>
-</table>
-</div>
 <div class="section" id="materials">
 <h2>Materials</h2>
 <p>MakeNamedMaterial &quot;name&quot; <em>param list</em></p>
+<p>See <a class="reference internal" href="#textures">Textures</a></p>
 <p>fwd ref to textures for specifying parameters....</p>
 <table border="1" class="docutils">
 <colgroup>
