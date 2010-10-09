@@ -1420,7 +1420,8 @@ surface integrators are only used by the <tt class="docutils literal"><span clas
 the surface integrator is ignored.  The default surface integrator is the
 <tt class="docutils literal"><span class="pre">DirectLightingIntegrator</span></tt>:</p>
 <pre class="literal-block">
-SurfaceIntegrator &quot;directlighting&quot; &quot;integer maxdepth&quot; [5] &quot;string strategy&quot; &quot;all&quot;
+SurfaceIntegrator &quot;directlighting&quot; &quot;integer maxdepth&quot; [5]
+    &quot;string strategy&quot; &quot;all&quot;
 </pre>
 <p>A number of other surface integrators are available in the system.</p>
 <table border="1" class="docutils">
@@ -1966,7 +1967,7 @@ of the basic ray tracing algorithm.)</p>
 <h2>Volume Integrators</h2>
 <p><tt class="docutils literal"><span class="pre">pbrt</span></tt> provides two volume integrators; the default is
 <tt class="docutils literal"><span class="pre">EmissionIntegrator</span></tt>, which only accounts for volumetric attenuation and
-emission inside scattering volumes.  The <tt class="docutils literal"><span class="pre">SingleScatteringIntegrator</span></tt>
+emission.  The <tt class="docutils literal"><span class="pre">SingleScatteringIntegrator</span></tt>
 computes the effect of single scattering and can thus render volumetric
 shadows, though it can be substantially more computationally intensive.</p>
 <table border="1" class="docutils">
@@ -2689,6 +2690,15 @@ from these values.</td>
 <td>none--optional</td>
 <td>Per-vertex texture coordinates.</td>
 </tr>
+<tr><td>float texture</td>
+<td>alpha</td>
+<td>none</td>
+<td>Optional &quot;alpha&quot; texture.  (See the <a class="reference internal" href="#textures">Textures</a> section for
+more information about textures in <tt class="docutils literal"><span class="pre">pbrt</span></tt>.)  When provided,
+at any point on the triangle where the alpha texture evaluates
+to have the value zero, the triangle is cut away and any
+ray intersection is ignored.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3094,9 +3104,45 @@ to but not necessarily equal to this value or may ignore it completely.)</td>
 </table>
 <div class="section" id="materials">
 <h2>Materials</h2>
-<p>MakeNamedMaterial &quot;name&quot; <em>param list</em></p>
-<p>See <a class="reference internal" href="#textures">Textures</a></p>
-<p>fwd ref to textures for specifying parameters....</p>
+<p>Materials specify the light scattering properties of surfaces in the scene.
+The <tt class="docutils literal"><span class="pre">Material</span></tt> directive specifies the current material, which then
+applies for all subsequent shape definitions (until the end of the current
+attribute scope or until a new material is defined:</p>
+<pre class="literal-block">
+Material &quot;matte&quot; &quot;rgb Kd&quot; [ .7 .2 .2 ]
+</pre>
+<p>Many parameters to materials are distinctive in that <em>textures</em> can be used
+to specify spatially-varying values for the parameters.  For example, the
+above material definition defines diffuse surface with the same reddish
+color at all points.  Alternatively, we might want to use an image map to
+define the color as a function of <em>(u,v)</em> on the surface.  This is done by
+defining a texture with a user-defined name (below, &quot;lines-tex&quot;), and then
+binding that to the desired parameter of the material.  For example, the
+following sets the &quot;Kd&quot; parameter of the &quot;matte&quot; material to be computed
+via lookups to the &quot;lines.exr&quot; image map.</p>
+<pre class="literal-block">
+Texture &quot;lines-tex&quot; &quot;spectrum&quot; &quot;imagemap&quot; &quot;string filename&quot; &quot;textures/lines.exr&quot;
+Material &quot;matte&quot; &quot;texture Kd&quot; &quot;lines-tex&quot;
+</pre>
+<p>Note that for each parameter (for example, &quot;Kd&quot; in the above), a value for
+the parameter can either be bound with a constant value, in which case the
+given type of the parameter should be &quot;float&quot;, &quot;rgb&quot;, &quot;spectrum&quot;, etc., as
+appropriate, or a texture value, in which case the given type of the
+parameter should be &quot;texture&quot; and the parameter value bound is the name of
+a texture.  (The next section of this document, <a class="reference internal" href="#textures">Textures</a>, describes the
+textures available in <tt class="docutils literal"><span class="pre">pbrt</span></tt> as well as their parameters.)</p>
+<p>Finally, it is sometimes useful to name a material.  A named material is a
+material and a set of parameter bindings (to constant values or to
+textures).  It is defined with the <tt class="docutils literal"><span class="pre">MakeNamedMaterial</span></tt> directive.  A
+named material can be set to be the current material with the
+<tt class="docutils literal"><span class="pre">NamedMaterial</span></tt> directive.</p>
+<pre class="literal-block">
+MakeNamedMaterial &quot;myplastic&quot; &quot;plastic&quot; &quot;float roughness&quot; [0.1]
+Material &quot;matte&quot;  # current material is &quot;matte&quot;
+NamedMaterial &quot;myplastic&quot;  # current material is &quot;plastic&quot; as above
+</pre>
+<p>This table lists the materials available in <tt class="docutils literal"><span class="pre">pbrt</span></tt> and the corresponding
+class in the source code distribution that implements each of them.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="45%" />
@@ -3149,7 +3195,8 @@ to but not necessarily equal to this value or may ignore it completely.)</td>
 </tr>
 </tbody>
 </table>
-<p>everone...</p>
+<p>All of the above materials take a texture that can be used to specify a
+bump map.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3172,7 +3219,10 @@ to but not necessarily equal to this value or may ignore it completely.)</td>
 </tr>
 </tbody>
 </table>
-<p>glass</p>
+<p>The &quot;glass&quot; material has parameters that specify the reflectivity and
+transmissivity.  These values are both modulated by the Fresnel equations
+for dielectric materials, which also ensure energy conservation (as long as
+neither &quot;Kr&quot; nor &quot;Kt&quot; is ever greater than one.)</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3201,17 +3251,26 @@ to but not necessarily equal to this value or may ignore it completely.)</td>
 <tr><td>float texture</td>
 <td>index</td>
 <td>1.5</td>
-<td>The index of refraction.</td>
+<td>The index of refraction of the inside of the object.
+(<tt class="docutils literal"><span class="pre">pbrt</span></tt> implicitly assumes that the exterior of objects
+is a vacuum, with IOR of 1.)</td>
 </tr>
 </tbody>
 </table>
-<p>kdsubsurface</p>
+<p>The &quot;kdsubsurface&quot; material provides a convenient way to specify the
+scattering materials of a material that exhibits subsurface scattering.
+(The parameters to the &quot;subsurface&quot; material, below, are often difficult to
+set to achieve a desired visual result.)  Here, the user can specify a
+diffuse reflection color, &quot;Kd&quot;, and the mean free path--the average
+distance that light travels in the medium before scattering.  (The smaller
+the mean free path, the thicker the medium is.)  These two values are then
+used to derive scattering coefficients for the medium.)</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="18%" />
-<col width="15%" />
-<col width="13%" />
-<col width="54%" />
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Type</th>
@@ -3224,26 +3283,28 @@ to but not necessarily equal to this value or may ignore it completely.)</td>
 <tr><td>spectrum texture</td>
 <td>Kd</td>
 <td>0.5</td>
-<td>&nbsp;</td>
+<td>Diffuse scattering coefficient used to derive scattering properties.</td>
 </tr>
 <tr><td>float texture</td>
 <td>meanfreepath</td>
 <td>1</td>
-<td>&nbsp;</td>
+<td>Average distance light travels in the medium before scattering.</td>
 </tr>
 <tr><td>float texture</td>
 <td>index</td>
 <td>1.3</td>
-<td>&nbsp;</td>
+<td>The index of refraction inside the object.</td>
 </tr>
 <tr><td>spectrum texture</td>
 <td>Kr</td>
 <td>1</td>
-<td>&nbsp;</td>
+<td>Specular reflection term; this coefficient is modulated
+with the dielectric Fresnel equation to give the amount of
+specular reflection.</td>
 </tr>
 </tbody>
 </table>
-<p>matte</p>
+<p>The &quot;matte&quot; material defines an object with simple Lambertian scattering.  It takes two parameters.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -3272,7 +3333,10 @@ If this is zero, the surface exhibits pure Lambertian reflection.</td>
 </tr>
 </tbody>
 </table>
-<p>measured</p>
+<p>The &quot;measured&quot; material can be used with files that store measured
+reflection data.  (<tt class="docutils literal"><span class="pre">pbrt</span></tt> supports two file formats for measured BRDF
+data; see the comments in the file <tt class="docutils literal"><span class="pre">src/materials/measured.cpp</span></tt> for
+discussion of their formats.)</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3291,17 +3355,22 @@ If this is zero, the surface exhibits pure Lambertian reflection.</td>
 <tr><td>string</td>
 <td>filename</td>
 <td>none</td>
-<td>&nbsp;</td>
+<td>Name of file with measured reflection data to be loaded.</td>
 </tr>
 </tbody>
 </table>
-<p>metal</p>
+<p>The &quot;metal&quot; material describes scattering from metals, where the index of
+refraction (eta) and the absorption coefficient (k) describe metals'
+reflectance spectra.  These and a roughness parameter, which adjusts the
+microfacet distributions roughness, describe the overall material.  See the
+<tt class="docutils literal"><span class="pre">scenes/spds/metals</span></tt> directory in the <tt class="docutils literal"><span class="pre">pbrt</span></tt> distribution for spectra of
+the IOR and absorption coefficients of a variety of metals.</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="18%" />
-<col width="15%" />
-<col width="13%" />
-<col width="54%" />
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="58%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Type</th>
@@ -3314,21 +3383,24 @@ If this is zero, the surface exhibits pure Lambertian reflection.</td>
 <tr><td>spectrum texture</td>
 <td>eta</td>
 <td>(copper)</td>
-<td>&nbsp;</td>
+<td>Index of refraction to use in computing the material's reflectance.</td>
 </tr>
 <tr><td>spectrum texture</td>
 <td>k</td>
 <td>(copper)</td>
-<td>&nbsp;</td>
+<td>Absorption coefficient to use in computing the material's reflectance.</td>
 </tr>
 <tr><td>float texture</td>
 <td>roughness</td>
 <td>0.01</td>
-<td>&nbsp;</td>
+<td>Roughness of the material's microfacet distribution.  Smaller values
+become increasingly close to perfect specular reflection.
+This value should be between zero and one.</td>
 </tr>
 </tbody>
 </table>
-<p>mirror</p>
+<p>The &quot;mirror&quot; material is a simple specular reflector.  The amount of
+reflection isn't modified by the Fresnel equations.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3352,13 +3424,15 @@ colored or dim reflections.</td>
 </tr>
 </tbody>
 </table>
-<p>mix</p>
+<p>The &quot;mix&quot; material interpolates between two previously-named materials
+using a texture.  This allows spatially-varying variation between two
+materials.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="19%" />
 <col width="15%" />
 <col width="13%" />
-<col width="53%" />
+<col width="54%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Type</th>
@@ -3371,21 +3445,27 @@ colored or dim reflections.</td>
 <tr><td>spectrum texture</td>
 <td>amount</td>
 <td>0.5</td>
-<td>&nbsp;</td>
+<td>Weighting factor for the blend between materials.  A value
+of zero corresponds to just &quot;namedmaterial1&quot;, a value of one
+corredponds to just &quot;namedmaterial2&quot;, and values in between
+interpolate linearly.</td>
 </tr>
 <tr><td>string</td>
 <td>namedmaterial1</td>
 <td>(none)</td>
-<td>&nbsp;</td>
+<td>Name of first material to be interpolated between.</td>
 </tr>
 <tr><td>string</td>
 <td>namedmaterial2</td>
 <td>(none)</td>
-<td>&nbsp;</td>
+<td>Name of second material to be interpolated between.</td>
 </tr>
 </tbody>
 </table>
-<p>plastic</p>
+<p>&quot;plastic&quot; defines a simple plastic material, described by diffuse and
+specular reflection coefficients as well as a roughness value that
+describes how much variation there is in the microfacet distribution that
+models glossy specular reflection.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3419,7 +3499,10 @@ result in larger, more blurry highlights.</td>
 </tr>
 </tbody>
 </table>
-<p>shinymetal (for backwards compat only)</p>
+<p>The &quot;shinymetal&quot; material is only present for backwards compatibility with
+scenes from <tt class="docutils literal"><span class="pre">pbrt-v1</span></tt>.  It shouldn't be used for any new scenes; the new
+&quot;metal&quot; material provides a much more accurate model of reflection from
+metals.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3452,7 +3535,10 @@ result in larger, more blurry highlights.</td>
 </tr>
 </tbody>
 </table>
-<p>substrate</p>
+<p>The &quot;substrate&quot; material mixes between diffuse and glossy reflection based
+on the viewing angle--this models many realistic materials, which become
+increasingly specular as the viewing angle approaches grazing.  It also
+supports anisotropic microfacet models, with two roughness parameters.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3490,13 +3576,20 @@ result in larger, more blurry highlights.</td>
 </tr>
 </tbody>
 </table>
-<p>subsurface</p>
+<p>The &quot;subsurface&quot; material is another material that describes subsurface
+scattering.  It allows directly setting the absorption coefficient and
+reduced scattering coefficient.  (These values are generally difficult to
+set manually to achieve a desired look; the &quot;kdsubsurface&quot; material is
+usually better for that.  However, if measured data is available, this
+material is the appropriate one.)  This material also supports setting the
+scattering properties using values that have been measured by various
+researchers.</p>
 <table border="1" class="docutils">
 <colgroup>
+<col width="16%" />
+<col width="13%" />
 <col width="17%" />
-<col width="15%" />
-<col width="18%" />
-<col width="50%" />
+<col width="54%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Type</th>
@@ -3509,31 +3602,37 @@ result in larger, more blurry highlights.</td>
 <tr><td>string</td>
 <td>name</td>
 <td>none</td>
-<td>&nbsp;</td>
+<td>Name of measured subsurface scattering coefficients.
+See the file src/core/volume.cpp in the <tt class="docutils literal"><span class="pre">pbrt</span></tt> distribution
+for all of the measurements that are available.</td>
 </tr>
 <tr><td>spectrum texture</td>
 <td>sigma_a</td>
 <td>(.0011, .0024, .014)</td>
-<td>&nbsp;</td>
+<td>Absorption coefficient of the volume, measured in mm^-1.</td>
 </tr>
 <tr><td>spectrum texture</td>
 <td>sigma_prime_s</td>
 <td>(2.55, 3.12, 3.77)</td>
-<td>&nbsp;</td>
+<td>Reduced scattering coefficient of the volume, measured in mm^-1.</td>
 </tr>
 <tr><td>float</td>
 <td>scale</td>
 <td>1</td>
-<td>&nbsp;</td>
+<td>Scale factor that is applied to sigma_a and sigma_prime_s.
+This is particularly useful when the scene is not measured in
+mm and the coefficients need to be scaled accordingly.  For example,
+if the scene is modeled in meters, then a scale factor of 0.001
+would be appropriate.</td>
 </tr>
 <tr><td>float texture</td>
 <td>index</td>
 <td>1.3</td>
-<td>&nbsp;</td>
+<td>Index of refraction of the scattering volume.</td>
 </tr>
 </tbody>
 </table>
-<p>translucent</p>
+<p>The &quot;translucent&quot; material models transmission through thin objects (like leaves).</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3572,17 +3671,19 @@ result in larger, more blurry highlights.</td>
 <tr><td>float texture</td>
 <td>roughness</td>
 <td>0.1</td>
-<td>The roughness of the surface.</td>
+<td>The roughness of the surface.  (This value should be between
+0 and 1).</td>
 </tr>
 </tbody>
 </table>
-<p>uber</p>
+<p>Finally, the &quot;uber&quot; material is a &quot;kitchen sink&quot; material that supports
+diffuse, glossy specular, and specular reflection.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
 <col width="14%" />
 <col width="12%" />
-<col width="58%" />
+<col width="57%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Type</th>
@@ -3615,30 +3716,32 @@ result in larger, more blurry highlights.</td>
 <tr><td>float texture</td>
 <td>index</td>
 <td>1.5</td>
-<td>&nbsp;</td>
+<td>Index of refraction of the surface.  This value is used in
+both the microfacet model for specular reflection as well as for
+computing a Fresnel reflection term for perfect specular reflection.</td>
 </tr>
 <tr><td>spectrum texture</td>
 <td>opacity</td>
 <td>1</td>
-<td>The opacity of the surface.  Note that the <tt class="docutils literal"><span class="pre">uber</span></tt> material transmits
-light without refracting it.</td>
+<td>The opacity of the surface.  Note that when less than one,
+the <tt class="docutils literal"><span class="pre">uber</span></tt> material transmits light without refracting it.</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="textures">
 <h2>Textures</h2>
-<pre class="literal-block">
-Texture &quot;name&quot; &quot;type&quot; &quot;class&quot; parameter-list
-</pre>
-<p>For example (XXX check this XXX)</p>
+<blockquote>
+<tt class="docutils literal"><span class="pre">Texture</span></tt> &quot;<em>name</em>&quot; &quot;<em>type</em>&quot; &quot;<em>class</em>&quot; <tt class="docutils literal"><span class="pre">[</span></tt> <em>parameter-list</em> <tt class="docutils literal"><span class="pre">]</span></tt></blockquote>
+<p>For example,</p>
 <pre class="literal-block">
 Texture &quot;mydiffuse&quot; &quot;spectrum&quot; &quot;imagemap&quot; &quot;string filename&quot; &quot;image.tga&quot;
 Material &quot;matte&quot; &quot;texture Kd&quot; &quot;mydiffuse&quot;
 </pre>
 <p>The <tt class="docutils literal"><span class="pre">Texture</span></tt> statement creates a named texture of a particular type.
-Currently, the only types that are supported are <tt class="docutils literal"><span class="pre">spectrum</span></tt> (<tt class="docutils literal"><span class="pre">color</span></tt> is
-an ok synonym for this) and <tt class="docutils literal"><span class="pre">float</span></tt>.</p>
+Currently, the only types that are supported are <tt class="docutils literal"><span class="pre">spectrum</span></tt> (<tt class="docutils literal"><span class="pre">color</span></tt>
+can be used a synonym for this) and <tt class="docutils literal"><span class="pre">float</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> provides the following texture implementations:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="44%" />
@@ -3691,11 +3794,14 @@ an ok synonym for this) and <tt class="docutils literal"><span class="pre">float
 </tr>
 </tbody>
 </table>
+<p>In the below, note that a number of textures (e.g. &quot;mix&quot;) themselves take
+textures as parameters; thus, one can build up small &quot;trees&quot; of computation
+to compose a series of texture functions.</p>
 <p>Textures can be separated into three categories: any-D, 2D, and 3D.  Any-D
 textures are <tt class="docutils literal"><span class="pre">ConstantTexture</span></tt>, <tt class="docutils literal"><span class="pre">ScaleTexture</span></tt>, and <tt class="docutils literal"><span class="pre">MixTexture</span></tt>.
 These kinds of textures do not have a specific dimensionality and have no
 common arguments.</p>
-<p>2D textures use the (u,v) parametric coordinates on a surface for
+<p>2D textures use the <em>(u,v)</em> parametric coordinates on a surface for
 evaluation.  They are <tt class="docutils literal"><span class="pre">BilerpTexture</span></tt>, <tt class="docutils literal"><span class="pre">ImageTexture</span></tt>, <tt class="docutils literal"><span class="pre">UVTexture</span></tt>,
 <tt class="docutils literal"><span class="pre">CheckerboardTexture</span></tt>, and <tt class="docutils literal"><span class="pre">DotsTexture</span></tt>.  2D textures have the
 following common parameters:</p>
@@ -3751,9 +3857,10 @@ transformation from object space.  They are <tt class="docutils literal"><span c
 that can be either a 2D or 3D texture (see its plug-in specific parameter
 settings in the following).  3D textures have no common parameters.</p>
 <p>Most of the provided textures can generate either <tt class="docutils literal"><span class="pre">Spectrum</span></tt> or
-mono{float} values, which is why many of the following descriptions have
-the <tt class="docutils literal"><span class="pre">spectrum/color/float</span></tt> type.</p>
-<p>constant</p>
+<tt class="docutils literal"><span class="pre">float</span></tt> values, which is why many of the following descriptions have
+the <tt class="docutils literal"><span class="pre">spectrum/float</span></tt> type.</p>
+<p>The &quot;constant&quot; texture is just a convenience that always returns a given
+constant value.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="20%" />
@@ -3776,7 +3883,10 @@ the <tt class="docutils literal"><span class="pre">spectrum/color/float</span></
 </tr>
 </tbody>
 </table>
-<p>scale</p>
+<p>&quot;scale&quot; takes two textures as parameters, evaluates each of them, and
+returns their product.  It is often convenient to scale a texture used as a
+bump map by a constant <tt class="docutils literal"><span class="pre">float</span></tt> value to modulate the perceived height of
+the bumps, for example.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -3799,7 +3909,8 @@ the <tt class="docutils literal"><span class="pre">spectrum/color/float</span></
 </tr>
 </tbody>
 </table>
-<p>mix</p>
+<p>&quot;mix&quot; takes two textures and lienarly interpolates between their values
+according to the &quot;amount&quot; parameter (which may itself be a texture).</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -3832,7 +3943,9 @@ the <tt class="docutils literal"><span class="pre">spectrum/color/float</span></
 </tr>
 </tbody>
 </table>
-<p>bilerp</p>
+<p>&quot;bilerp&quot; bilinearly interpolates between the four textures using the
+<em>(u,v)</em> parametric coordinate.  The <tt class="docutils literal"><span class="pre">v00</span></tt> parameter represents the
+texture to use at <em>(0,0)</em>, and so forth.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="19%" />
@@ -3856,7 +3969,7 @@ They default to 0, 1, 0, and 1, respectively.</td>
 </tr>
 </tbody>
 </table>
-<p>imagemap</p>
+<p>Image maps can be provided with the &quot;imagemap&quot; texture.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="14%" />
@@ -3875,8 +3988,8 @@ They default to 0, 1, 0, and 1, respectively.</td>
 <tr><td>string</td>
 <td>filename</td>
 <td>required--no default</td>
-<td>The filename of the image to load.  Currently <tt class="docutils literal"><span class="pre">pbrt</span></tt> only supports loading
-FIXME OpenEXR files as image textures.</td>
+<td>The filename of the image to load.  Currently <tt class="docutils literal"><span class="pre">pbrt</span></tt> supports
+TGA, PFM, and EXR format images.</td>
 </tr>
 <tr><td>string</td>
 <td>wrap</td>
@@ -3898,9 +4011,20 @@ nearest border texel.</td>
 Otherwise, <tt class="docutils literal"><span class="pre">pbrt</span></tt> uses the EWA algorithm for texture filtering.  EWA
 gives much better results, but is slower.</td>
 </tr>
+<tr><td>float</td>
+<td>scale</td>
+<td>1</td>
+<td>Scale factor to apply to value looked up in texture.</td>
+</tr>
+<tr><td>float</td>
+<td>gamma</td>
+<td>1</td>
+<td>&quot;Gamma&quot; value for optional gamma correction to looked-up values.  This is
+useful for textures that aren't encoded in a linear color space.</td>
+</tr>
 </tbody>
 </table>
-<p>checkerboard</p>
+<p>The &quot;checkerboard&quot; texture is a simple texture that alternates between two other textures.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -3939,7 +4063,7 @@ are &quot;closedform&quot; or &quot;none&quot;.  This parameter is only legal fo
 </tr>
 </tbody>
 </table>
-<p>dots</p>
+<p>The &quot;dots&quot; texture generates a random collection of polka dots.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -3963,7 +4087,9 @@ are 1 and 0, respectively.</td>
 </tr>
 </tbody>
 </table>
-<p>fbm, wrinkled</p>
+<p>&quot;fbm&quot; and &quot;wrinkled&quot; are two textures based on the Perlin noise function.
+They are 3D textures, so the scale of the features of the texture can be
+adjusted by setting accordingly the CTM when the texture is defined.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -3991,7 +4117,8 @@ are 1 and 0, respectively.</td>
 </tr>
 </tbody>
 </table>
-<p>marble</p>
+<p>Finally, &quot;marble&quot; is a simple approximation to a layered marble texture,
+based on using Perlin noise to create stochastic variation in the result.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />
@@ -4032,6 +4159,9 @@ are 1 and 0, respectively.</td>
 </div>
 <div class="section" id="scattering-volumes">
 <h2>Scattering Volumes</h2>
+<p>Finally, there are three scattering volume implementations available for
+specifying spatially-varying scattering volumes to model objects like smoke
+and clouds or atmospheric scattering.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="42%" />
@@ -4054,7 +4184,8 @@ are 1 and 0, respectively.</td>
 </tr>
 </tbody>
 </table>
-<p>all</p>
+<p>All of these take a number of common parameters.  (And for the
+&quot;homogeneous&quot; volume, these are the only parameters available.)</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -4102,7 +4233,9 @@ are 1 and 0, respectively.</td>
 </tr>
 </tbody>
 </table>
-<p>exponential</p>
+<p>The &quot;exponential&quot; volume decreases the density of the volume as a function
+of height.  See the discussion of its implementation on page 594 of the
+second edition of &quot;Physically Based Rendering&quot;.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="18%" />
@@ -4121,7 +4254,7 @@ are 1 and 0, respectively.</td>
 <tr><td>float</td>
 <td>a,b</td>
 <td>1</td>
-<td>The parameters in the exponential volume' ae^(-bh) formula.</td>
+<td>The parameters in the exponential volume' a e^(-bh) formula.</td>
 </tr>
 <tr><td>vector</td>
 <td>updir</td>
@@ -4130,7 +4263,10 @@ are 1 and 0, respectively.</td>
 </tr>
 </tbody>
 </table>
-<p>volumegrid</p>
+<p>And the &quot;volumegrid&quot; allows specification of a sampled volume density on a
+regular grid.  Final scattering properties at points inside the volume are
+computed by trilinearly interpolating the adjacent sample values and then
+scaling the sigma_a, sigma_s, etc., parameter values by the result.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="17%" />

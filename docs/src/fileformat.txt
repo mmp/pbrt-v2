@@ -574,7 +574,7 @@ of Gaussian falloff; see page 397 for more information.
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
 ==================== ================= ============== ===========================================================
-float                alpha             2              \alpha controls the falloff rate of the Gaussian filter.  Smaller
+float                alpha             2              alpha controls the falloff rate of the Gaussian filter.  Smaller
                                                       values give a blurrier image.
 ==================== ================= ============== ===========================================================
 
@@ -1327,6 +1327,11 @@ normal[n]            N                 none--optional        Per-vertex normals.
                                                              from these values.
 vector[n]            S                 none--optional        Per-vertex tangents.
 float[2*n]           uv                none--optional        Per-vertex texture coordinates.
+float texture        alpha             none                  Optional "alpha" texture.  (See the `Textures`_ section for
+                                                             more information about textures in ``pbrt``.)  When provided,
+                                                             at any point on the triangle where the alpha texture evaluates
+                                                             to have the value zero, the triangle is cut away and any
+                                                             ray intersection is ignored.
 ==================== ================= ===================== ===========================================================
 
 
@@ -1574,11 +1579,53 @@ integer              nsamples          1              Suggested number of shadow
 Materials
 _________
 
-MakeNamedMaterial "name" *param list*
+Materials specify the light scattering properties of surfaces in the scene.
+The ``Material`` directive specifies the current material, which then
+applies for all subsequent shape definitions (until the end of the current
+attribute scope or until a new material is defined:
 
-See `Textures`_
+::
 
-fwd ref to textures for specifying parameters....
+  Material "matte" "rgb Kd" [ .7 .2 .2 ]
+
+Many parameters to materials are distinctive in that *textures* can be used
+to specify spatially-varying values for the parameters.  For example, the
+above material definition defines diffuse surface with the same reddish
+color at all points.  Alternatively, we might want to use an image map to
+define the color as a function of *(u,v)* on the surface.  This is done by
+defining a texture with a user-defined name (below, "lines-tex"), and then
+binding that to the desired parameter of the material.  For example, the
+following sets the "Kd" parameter of the "matte" material to be computed
+via lookups to the "lines.exr" image map.
+
+::
+
+  Texture "lines-tex" "spectrum" "imagemap" "string filename" "textures/lines.exr"
+  Material "matte" "texture Kd" "lines-tex"
+
+Note that for each parameter (for example, "Kd" in the above), a value for
+the parameter can either be bound with a constant value, in which case the
+given type of the parameter should be "float", "rgb", "spectrum", etc., as
+appropriate, or a texture value, in which case the given type of the
+parameter should be "texture" and the parameter value bound is the name of
+a texture.  (The next section of this document, `Textures`_, describes the
+textures available in ``pbrt`` as well as their parameters.)
+
+Finally, it is sometimes useful to name a material.  A named material is a
+material and a set of parameter bindings (to constant values or to
+textures).  It is defined with the ``MakeNamedMaterial`` directive.  A
+named material can be set to be the current material with the
+``NamedMaterial`` directive.
+
+::
+
+  MakeNamedMaterial "myplastic" "plastic" "float roughness" [0.1]
+  Material "matte"  # current material is "matte"
+  NamedMaterial "myplastic"  # current material is "plastic" as above
+
+
+This table lists the materials available in ``pbrt`` and the corresponding
+class in the source code distribution that implements each of them.
 
 ==================== ====================
 Name                 Implementation Class
@@ -1598,7 +1645,8 @@ Name                 Implementation Class
 "uber"               ``UberMaterial``
 ==================== ====================
 
-everone...
+All of the above materials take a texture that can be used to specify a
+bump map.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1606,30 +1654,42 @@ Type                 Name              Default Value  Description
 float texture        bumpmap           None           The floating-point texture to be used as a bump map.
 ==================== ================= ============== ===========================================================
 
-
-glass
+The "glass" material has parameters that specify the reflectivity and
+transmissivity.  These values are both modulated by the Fresnel equations
+for dielectric materials, which also ensure energy conservation (as long as
+neither "Kr" nor "Kt" is ever greater than one.)
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
 ==================== ================= ============== ===========================================================
 spectrum texture     Kr                1              The reflectivity of the surface.
 spectrum texture     Kt                1              The transmissivity of the surface.
-float texture        index             1.5            The index of refraction.
+float texture        index             1.5            The index of refraction of the inside of the object.
+                                                      (``pbrt`` implicitly assumes that the exterior of objects
+                                                      is a vacuum, with IOR of 1.)
 ==================== ================= ============== ===========================================================
 
-kdsubsurface
+The "kdsubsurface" material provides a convenient way to specify the
+scattering materials of a material that exhibits subsurface scattering.
+(The parameters to the "subsurface" material, below, are often difficult to
+set to achieve a desired visual result.)  Here, the user can specify a
+diffuse reflection color, "Kd", and the mean free path--the average
+distance that light travels in the medium before scattering.  (The smaller
+the mean free path, the thicker the medium is.)  These two values are then
+used to derive scattering coefficients for the medium.)
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
 ==================== ================= ============== ===========================================================
-spectrum texture     Kd                0.5            
-float texture        meanfreepath      1              
-float texture        index             1.3
-spectrum texture     Kr                1
+spectrum texture     Kd                0.5            Diffuse scattering coefficient used to derive scattering properties.
+float texture        meanfreepath      1              Average distance light travels in the medium before scattering.
+float texture        index             1.3            The index of refraction inside the object.
+spectrum texture     Kr                1              Specular reflection term; this coefficient is modulated
+                                                      with the dielectric Fresnel equation to give the amount of
+                                                      specular reflection.
 ==================== ================= ============== ===========================================================
 
-
-matte
+The "matte" material defines an object with simple Lambertian scattering.  It takes two parameters.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1639,25 +1699,36 @@ float texture        sigma             0              The sigma parameter for th
                                                       If this is zero, the surface exhibits pure Lambertian reflection.
 ==================== ================= ============== ===========================================================
 
-measured
+The "measured" material can be used with files that store measured
+reflection data.  (``pbrt`` supports two file formats for measured BRDF
+data; see the comments in the file ``src/materials/measured.cpp`` for
+discussion of their formats.)
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
 ==================== ================= ============== ===========================================================
-string               filename          none
+string               filename          none           Name of file with measured reflection data to be loaded. 
 ==================== ================= ============== ===========================================================
 
-metal
+The "metal" material describes scattering from metals, where the index of
+refraction (eta) and the absorption coefficient (k) describe metals'
+reflectance spectra.  These and a roughness parameter, which adjusts the
+microfacet distributions roughness, describe the overall material.  See the
+``scenes/spds/metals`` directory in the ``pbrt`` distribution for spectra of
+the IOR and absorption coefficients of a variety of metals.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
 ==================== ================= ============== ===========================================================
-spectrum texture     eta               (copper)
-spectrum texture     k                 (copper)
-float texture        roughness         0.01
+spectrum texture     eta               (copper)       Index of refraction to use in computing the material's reflectance.
+spectrum texture     k                 (copper)       Absorption coefficient to use in computing the material's reflectance.
+float texture        roughness         0.01           Roughness of the material's microfacet distribution.  Smaller values
+                                                      become increasingly close to perfect specular reflection.
+                                                      This value should be between zero and one.
 ==================== ================= ============== ===========================================================
 
-mirror
+The "mirror" material is a simple specular reflector.  The amount of
+reflection isn't modified by the Fresnel equations.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1666,18 +1737,25 @@ spectrum texture     Kr                0.9            The reflectivity of the mi
                                                       colored or dim reflections.
 ==================== ================= ============== ===========================================================
 
-mix
+The "mix" material interpolates between two previously-named materials
+using a texture.  This allows spatially-varying variation between two
+materials.
 
 ===================== ================= ============== ===========================================================
 Type                  Name              Default Value  Description
 ===================== ================= ============== ===========================================================
-spectrum texture      amount            0.5
-string                namedmaterial1    (none)
-string                namedmaterial2    (none)
+spectrum texture      amount            0.5            Weighting factor for the blend between materials.  A value
+                                                       of zero corresponds to just "namedmaterial1", a value of one
+                                                       corredponds to just "namedmaterial2", and values in between
+                                                       interpolate linearly.
+string                namedmaterial1    (none)         Name of first material to be interpolated between.
+string                namedmaterial2    (none)         Name of second material to be interpolated between.
 ===================== ================= ============== ===========================================================
 
-
-plastic
+"plastic" defines a simple plastic material, described by diffuse and
+specular reflection coefficients as well as a roughness value that
+describes how much variation there is in the microfacet distribution that
+models glossy specular reflection.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1688,8 +1766,10 @@ float texture        roughness         0.1            The roughness of the surfa
                                                       result in larger, more blurry highlights.
 ==================== ================= ============== ===========================================================
 
-
-shinymetal (for backwards compat only)
+The "shinymetal" material is only present for backwards compatibility with
+scenes from ``pbrt-v1``.  It shouldn't be used for any new scenes; the new
+"metal" material provides a much more accurate model of reflection from
+metals.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1699,7 +1779,10 @@ spectrum texture     Ks                1              The coefficient of glossy 
 spectrum texture     Kr                1              The coefficient of specular reflection.
 ==================== ================= ============== ===========================================================
 
-substrate
+The "substrate" material mixes between diffuse and glossy reflection based
+on the viewing angle--this models many realistic materials, which become
+increasingly specular as the viewing angle approaches grazing.  It also
+supports anisotropic microfacet models, with two roughness parameters.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1710,19 +1793,32 @@ float texture        uroughness        0.1            The roughness of the surfa
 float texture        vroughness        0.1            The roughness of the surface in the v direction.
 ==================== ================= ============== ===========================================================
 
-subsurface
+The "subsurface" material is another material that describes subsurface
+scattering.  It allows directly setting the absorption coefficient and
+reduced scattering coefficient.  (These values are generally difficult to
+set manually to achieve a desired look; the "kdsubsurface" material is
+usually better for that.  However, if measured data is available, this
+material is the appropriate one.)  This material also supports setting the
+scattering properties using values that have been measured by various
+researchers.
 
 ==================== ================= ===================== ===========================================================
 Type                 Name              Default Value         Description
 ==================== ================= ===================== ===========================================================
-string               name              none
-spectrum texture     sigma_a           (.0011, .0024, .014)
-spectrum texture     sigma_prime_s     (2.55, 3.12, 3.77)
-float                scale             1
-float texture        index             1.3
+string               name              none                  Name of measured subsurface scattering coefficients.
+                                                             See the file src/core/volume.cpp in the ``pbrt`` distribution
+                                                             for all of the measurements that are available.
+spectrum texture     sigma_a           (.0011, .0024, .014)  Absorption coefficient of the volume, measured in mm^-1.
+spectrum texture     sigma_prime_s     (2.55, 3.12, 3.77)    Reduced scattering coefficient of the volume, measured in mm^-1.
+float                scale             1                     Scale factor that is applied to sigma_a and sigma_prime_s.
+                                                             This is particularly useful when the scene is not measured in
+                                                             mm and the coefficients need to be scaled accordingly.  For example,
+                                                             if the scene is modeled in meters, then a scale factor of 0.001
+                                                             would be appropriate.
+float texture        index             1.3                   Index of refraction of the scattering volume.
 ==================== ================= ===================== ===========================================================
 
-translucent
+The "translucent" material models transmission through thin objects (like leaves).
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1731,10 +1827,12 @@ spectrum texture     Kd                0.25           The coefficient of diffuse
 spectrum texture     Ks                0.25           The coefficient of specular reflection and transmission.
 spectrum texture     reflect           0.5            Fraction of light reflected.
 spectrum texture     transmit          0.5            Fraction of light transmitted.
-float texture        roughness         0.1            The roughness of the surface.
+float texture        roughness         0.1            The roughness of the surface.  (This value should be between
+                                                      0 and 1).
 ==================== ================= ============== ===========================================================
 
-uber
+Finally, the "uber" material is a "kitchen sink" material that supports
+diffuse, glossy specular, and specular reflection.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1743,20 +1841,20 @@ spectrum texture     Kd                0.25           The coefficient of diffuse
 spectrum texture     Ks                0.25           The coefficient of glossy reflection.
 spectrum texture     Kr                0              The coefficient of specular reflection.
 float texture        roughness         0.1            The roughness of the surface.
-float texture        index             1.5
-spectrum texture     opacity           1              The opacity of the surface.  Note that the ``uber`` material transmits 
-                                                      light without refracting it.
+float texture        index             1.5            Index of refraction of the surface.  This value is used in
+                                                      both the microfacet model for specular reflection as well as for
+                                                      computing a Fresnel reflection term for perfect specular reflection.
+spectrum texture     opacity           1              The opacity of the surface.  Note that when less than one,
+                                                      the ``uber`` material transmits light without refracting it.
 ==================== ================= ============== ===========================================================
 
 
 Textures
 ________
 
-::
+   ``Texture`` "*name*" "*type*" "*class*" ``[`` *parameter-list* ``]``
 
-   Texture "name" "type" "class" parameter-list
-
-For example (XXX check this XXX)
+For example,
 
 ::
 
@@ -1764,8 +1862,10 @@ For example (XXX check this XXX)
     Material "matte" "texture Kd" "mydiffuse"
 
 The ``Texture`` statement creates a named texture of a particular type.
-Currently, the only types that are supported are ``spectrum`` (``color`` is
-an ok synonym for this) and ``float``. 
+Currently, the only types that are supported are ``spectrum`` (``color``
+can be used a synonym for this) and ``float``.
+
+``pbrt`` provides the following texture implementations:
 
 ==================== ====================
 Name                 Implementation Class
@@ -1785,12 +1885,16 @@ Name                 Implementation Class
 "wrinkled"           ``WrinkledTexture``
 ==================== ====================
 
+In the below, note that a number of textures (e.g. "mix") themselves take
+textures as parameters; thus, one can build up small "trees" of computation
+to compose a series of texture functions.
+
 Textures can be separated into three categories: any-D, 2D, and 3D.  Any-D
 textures are ``ConstantTexture``, ``ScaleTexture``, and ``MixTexture``.
 These kinds of textures do not have a specific dimensionality and have no
 common arguments.
 
-2D textures use the (u,v) parametric coordinates on a surface for
+2D textures use the *(u,v)* parametric coordinates on a surface for
 evaluation.  They are ``BilerpTexture``, ``ImageTexture``, ``UVTexture``,
 ``CheckerboardTexture``, and ``DotsTexture``.  2D textures have the
 following common parameters:
@@ -1820,10 +1924,11 @@ that can be either a 2D or 3D texture (see its plug-in specific parameter
 settings in the following).  3D textures have no common parameters.
 
 Most of the provided textures can generate either ``Spectrum`` or
-\mono{float} values, which is why many of the following descriptions have
-the ``spectrum/color/float`` type.
+``float`` values, which is why many of the following descriptions have
+the ``spectrum/float`` type.
 
-constant 
+The "constant" texture is just a convenience that always returns a given
+constant value.
 
 ====================== ================= ============== ===========================================================
 Type                   Name              Default Value  Description
@@ -1831,7 +1936,10 @@ Type                   Name              Default Value  Description
 spectrum/float texture value             1              The constant value of this texture.
 ====================== ================= ============== ===========================================================
 
-scale
+"scale" takes two textures as parameters, evaluates each of them, and
+returns their product.  It is often convenient to scale a texture used as a
+bump map by a constant ``float`` value to modulate the perceived height of
+the bumps, for example.
 
 ====================== ================= ============== ===========================================================
 Type                   Name              Default Value  Description
@@ -1839,7 +1947,8 @@ Type                   Name              Default Value  Description
 spectrum/float texture tex1, tex2        1              These two textures will be multiplied together by the ``ScaleTexture``.
 ====================== ================= ============== ===========================================================
 
-mix
+"mix" takes two textures and lienarly interpolates between their values
+according to the "amount" parameter (which may itself be a texture).
 
 ====================== ================= ============== ===========================================================
 Type                   Name              Default Value  Description
@@ -1849,7 +1958,9 @@ spectrum/float texture tex2              1              The other texture to be 
 float texture          amount            0.5            The amount to use when linearly interpolating between the two mix textures.
 ====================== ================= ============== ===========================================================
 
-bilerp
+"bilerp" bilinearly interpolates between the four textures using the
+*(u,v)* parametric coordinate.  The ``v00`` parameter represents the
+texture to use at *(0,0)*, and so forth.
 
 ====================== ================== =============== ===========================================================
 Type                   Name               Default Value   Description
@@ -1858,13 +1969,13 @@ spectrum/float texture v00, v01, v10, v11 see description The four values to be 
                                                           They default to 0, 1, 0, and 1, respectively.
 ====================== ================== =============== ===========================================================
 
-imagemap
+Image maps can be provided with the "imagemap" texture.
 
 ==================== ================= ==================== ===========================================================
 Type                 Name              Default Value        Description
 ==================== ================= ==================== ===========================================================
-string               filename          required--no default The filename of the image to load.  Currently ``pbrt`` only supports loading
-                                                            FIXME OpenEXR files as image textures.
+string               filename          required--no default The filename of the image to load.  Currently ``pbrt`` supports
+                                                            TGA, PFM, and EXR format images.
 string               wrap              "repeat"             What to do with texture coordinates that fall outside the legal [0,1] range.
                                                             Legal values are "repeat", which simply tiles the texture; "black", which
                                                             returns black when outside the legal range; and "clamp", which always returns the
@@ -1873,9 +1984,12 @@ float                maxanisotropy     8                    The maximum elliptic
 bool                 trilinear         false                If true, perform trilinear interpolation when looking up pixel values.
                                                             Otherwise, ``pbrt`` uses the EWA algorithm for texture filtering.  EWA
                                                             gives much better results, but is slower.
+float                scale             1                    Scale factor to apply to value looked up in texture.
+float                gamma             1                    "Gamma" value for optional gamma correction to looked-up values.  This is 
+                                                            useful for textures that aren't encoded in a linear color space.
 ==================== ================= ==================== ===========================================================
 
-checkerboard
+The "checkerboard" texture is a simple texture that alternates between two other textures.
 
 ====================== ================= ============== ===========================================================
 Type                   Name              Default Value  Description
@@ -1887,7 +2001,7 @@ string                 aamode            "closedform"   Set the antialiasing mod
                                                         are "closedform" or "none".  This parameter is only legal for 2D checkerboards.
 ====================== ================= ============== ===========================================================
 
-dots
+The "dots" texture generates a random collection of polka dots.
 
 ====================== ================= =============== ===========================================================
 Type                   Name              Default Value   Description
@@ -1896,7 +2010,9 @@ spectrum/float texture inside, outside   see description The textures to use for
                                                          are 1 and 0, respectively.
 ====================== ================= =============== ===========================================================
 
-fbm, wrinkled
+"fbm" and "wrinkled" are two textures based on the Perlin noise function.
+They are 3D textures, so the scale of the features of the texture can be
+adjusted by setting accordingly the CTM when the texture is defined.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1905,7 +2021,8 @@ integer              octaves           8              The maximum number of octa
 float                roughness         0.5            The "bumpiness" of the resulting texture.
 ==================== ================= ============== ===========================================================
 
-marble
+Finally, "marble" is a simple approximation to a layered marble texture,
+based on using Perlin noise to create stochastic variation in the result.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1920,6 +2037,10 @@ float                variation         0.2            A scaling factor to apply 
 Scattering Volumes
 __________________
 
+Finally, there are three scattering volume implementations available for
+specifying spatially-varying scattering volumes to model objects like smoke
+and clouds or atmospheric scattering.
+
 ==================== ====================
 Name                 Implementation Class
 ==================== ====================
@@ -1928,7 +2049,8 @@ Name                 Implementation Class
 "volumegrid"         ``VolumeGridDensity``
 ==================== ====================
 
-all
+All of these take a number of common parameters.  (And for the
+"homogeneous" volume, these are the only parameters available.)
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
@@ -1941,16 +2063,21 @@ point                p0                0 0 0          One corner of the volume's
 point                p1                1 1 1          The other corner of the volume's bounding box.
 ==================== ================= ============== ===========================================================
 
-exponential
+The "exponential" volume decreases the density of the volume as a function
+of height.  See the discussion of its implementation on page 594 of the
+second edition of "Physically Based Rendering".
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
 ==================== ================= ============== ===========================================================
-float                a,b               1              The parameters in the exponential volume' ae^(-bh) formula.
+float                a,b               1              The parameters in the exponential volume' a e^(-bh) formula.
 vector               updir             (0,1,0)        The "up" direction along which to compute height.
 ==================== ================= ============== ===========================================================
 
-volumegrid
+And the "volumegrid" allows specification of a sampled volume density on a
+regular grid.  Final scattering properties at points inside the volume are
+computed by trilinearly interpolating the adjacent sample values and then
+scaling the sigma_a, sigma_s, etc., parameter values by the result.
 
 ==================== ================= ============== ===========================================================
 Type                 Name              Default Value  Description
