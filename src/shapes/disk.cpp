@@ -71,10 +71,12 @@ bool Disk::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
 
     // Find parametric representation of disk hit
     float u = phi / phiMax;
-    float v = 1.f - ((sqrtf(dist2)-innerRadius) /
-                     (radius-innerRadius));
+    float oneMinusV = ((sqrtf(dist2)-innerRadius) /
+                       (radius-innerRadius));
+    float invOneMinusV = (oneMinusV > 0.f) ? (1.f / oneMinusV) : 0.f;
+    float v = 1.f - oneMinusV;
     Vector dpdu(-phiMax * phit.y, phiMax * phit.x, 0.);
-    Vector dpdv(-phit.x / (1-v), -phit.y / (1-v), 0.);
+    Vector dpdv(-phit.x * invOneMinusV, -phit.y * invOneMinusV, 0.);
     dpdu *= phiMax * INV_TWOPI;
     dpdv *= (radius - innerRadius) / radius;
     Normal dndu(0,0,0), dndv(0,0,0);
