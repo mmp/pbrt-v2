@@ -106,7 +106,7 @@ private:
 };
 
 
-void RejectionSampleDisk(float u1, float u2, float *x, float *y);
+void RejectionSampleDisk(float *x, float *y, RNG &rng);
 Vector UniformSampleHemisphere(float u1, float u2);
 float  UniformHemispherePdf();
 Vector UniformSampleSphere(float u1, float u2);
