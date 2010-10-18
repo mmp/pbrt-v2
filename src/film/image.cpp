@@ -28,9 +28,6 @@
 #include "spectrum.h"
 #include "parallel.h"
 #include "imageio.h"
-#ifdef PBRT_HAS_LIBSDL
-#include "SDL.h"
-#endif // PBRT_HAS_LIBSDL
 
 // ImageFilm Method Definitions
 ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
@@ -64,32 +61,8 @@ ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
 
     // Possibly open window for image display
     if (openWindow || PbrtOptions.openWindow) {
-#ifdef PBRT_HAS_LIBSDL
-        SDL_Init(SDL_INIT_VIDEO);
-        SDL_WM_SetCaption(filename.c_str(), filename.c_str());
-        sdlWindow = SDL_SetVideoMode(xPixelCount, yPixelCount, 32, SDL_SWSURFACE);
-        if (sdlWindow == NULL)
-            Error("Unable to create window to display image");
-        if (SDL_LockSurface(sdlWindow) == -1)
-            Error("Unable to lock surface for image display");
-        else {
-            for (int y = 0; y < yPixelCount; ++y) {
-                for (int x = 0; x < xPixelCount; ++x) {
-                    uint32_t *bufp = (uint32_t *)sdlWindow->pixels + y*sdlWindow->pitch/4 + x;
-                    *bufp = SDL_MapRGB(sdlWindow->format, 64, 64, 64);
-                }
-            }
-            SDL_UnlockSurface(sdlWindow);
-            SDL_UpdateRect(sdlWindow, 0, 0, xPixelCount, yPixelCount);
-        }
-#else
         Warning("Support for opening image display window not available in this build.");
-#endif // PBRT_HAS_LIBSDL
     }
-#ifdef PBRT_HAS_LIBSDL
-    else
-        sdlWindow = NULL;
-#endif // PBRT_HAS_LIBSDL
 }
 
 
@@ -234,64 +207,6 @@ void ImageFilm::WriteImage(float splatScale) {
 
 void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
     float splatScale) {
-#ifdef PBRT_HAS_LIBSDL
-    if (!sdlWindow) return;
-    // Compute window coordinates for pixels to update
-    x0 -= xPixelStart;
-    x1 -= xPixelStart;
-    y0 -= yPixelStart;
-    y1 -= yPixelStart;
-    x0 = Clamp(x0, 0, xPixelCount);
-    x1 = Clamp(x1, 0, xPixelCount);
-    y0 = Clamp(y0, 0, yPixelCount);
-    y1 = Clamp(y1, 0, yPixelCount);
-    uint32_t *pix = new uint32_t[(x1-x0)*(y1-y0)];
-    uint32_t *pp = pix;
-    for (int y = y0; y < y1; ++y) {
-        for (int x = x0; x < x1; ++x) {
-            // Compute weighted pixel value and update window pixel
-            Pixel &pixel = (*pixels)(x, y);
-            float rgb[3];
-            XYZToRGB(pixel.Lxyz, rgb);
-            float weightSum = pixel.weightSum;
-            if (weightSum != 0.f) {
-                float invWt = 1.f / weightSum;
-                rgb[0] *= invWt;
-                rgb[1] *= invWt;
-                rgb[2] *= invWt;
-            }
-            float splatRGB[3];
-            XYZToRGB(pixel.splatXYZ, splatRGB);
-            rgb[0] += splatScale * splatRGB[0];
-            rgb[1] += splatScale * splatRGB[1];
-            rgb[2] += splatScale * splatRGB[2];
-            
-            *pp++ = SDL_MapRGB(sdlWindow->format,
-                uint8_t(Clamp(powf(rgb[0], 1./1.8), 0.f, 1.f) * 255),
-                uint8_t(Clamp(powf(rgb[1], 1./1.8), 0.f, 1.f) * 255),
-                uint8_t(Clamp(powf(rgb[2], 1./1.8), 0.f, 1.f) * 255));
-        }
-    }
-    // Update window pixels, redraw
-    if (SDL_LockSurface(sdlWindow) == -1) { }
-    pp=pix;
-    for (int y = y0; y < y1; ++y) {
-        for (int x = x0; x < x1; ++x) {
-            uint32_t *bufp = (uint32_t *)sdlWindow->pixels + y*sdlWindow->pitch/4 + x;
-            *bufp = *pp++;
-        }
-    }
-    SDL_UnlockSurface(sdlWindow);
-    SDL_UpdateRect(sdlWindow, x0, y0, x1-x0, y1-y0);
-    delete[] pix;
-#if 0
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT)
-            SDL_Quit();
-    }
-#endif
-#endif // PBRT_HAS_LIBSDL
 }
 
 

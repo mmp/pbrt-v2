@@ -34,7 +34,10 @@
 
 // DifferentialGeometry Declarations
 struct DifferentialGeometry {
-    DifferentialGeometry() { u = v = 0.; shape = NULL; }
+    DifferentialGeometry() { 
+        u = v = dudx = dvdx = dudy = dvdy = 0.; 
+        shape = NULL; 
+    }
     // DifferentialGeometry Public Methods
     DifferentialGeometry(const Point &P, const Vector &DPDU,
             const Vector &DPDV, const Normal &DNDU,

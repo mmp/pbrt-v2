@@ -147,21 +147,22 @@ void ParamSet::AddSampledSpectrumFiles(const string &name, const char **names,
     EraseSpectrum(name);
     Spectrum *s = new Spectrum[nItems];
     for (int i = 0; i < nItems; ++i) {
-        if (cachedSpectra.find(names[i]) != cachedSpectra.end()) {
-            s[i] = cachedSpectra[names[i]];
+        string fn = AbsolutePath(ResolveFilename(names[i]));
+        if (cachedSpectra.find(fn) != cachedSpectra.end()) {
+            s[i] = cachedSpectra[fn];
             continue;
         }
 
         vector<float> vals;
-        if (!ReadFloatFile(names[i], &vals)) {
-            Warning("Unable to read SPD file \"%s\".  Using black distribution.",
-                    names[i]);
+        if (!ReadFloatFile(fn.c_str(), &vals)) {
+            Warning("Unable to read SPD file \"%s\".  Using black distribution.", 
+                    fn.c_str());
             s[i] = Spectrum(0.);
         }
         else {
             if (vals.size() % 2) {
                 Warning("Extra value found in spectrum file \"%s\". "
-                        "Ignoring it.", names[i]);
+                        "Ignoring it.", fn.c_str());
             }
             vector<float> wls, v;
             for (uint32_t j = 0; j < vals.size() / 2; ++j) {
@@ -170,7 +171,7 @@ void ParamSet::AddSampledSpectrumFiles(const string &name, const char **names,
             }
             s[i] = Spectrum::FromSampled(&wls[0], &v[0], wls.size());
         }
-        cachedSpectra[names[i]] = s[i];
+        cachedSpectra[fn] = s[i];
     }
 
     spectra.push_back(new ParamSetItem<Spectrum>(name, s, nItems));

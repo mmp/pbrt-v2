@@ -463,7 +463,7 @@ void RWMutexLock::DowngradeToRead() {
 #endif 
 #if !defined(PBRT_IS_WINDOWS)
 Semaphore::Semaphore() {
-#ifdef __OpenBSD__
+#ifdef PBRT_IS_OPENBSD
     sem = (sem_t *)malloc(sizeof(sem_t));
     if (!sem)
         Severe("Error from sem_open");
@@ -476,7 +476,7 @@ Semaphore::Semaphore() {
     sem = sem_open(name, O_CREAT, S_IRUSR|S_IWUSR, 0);
     if (!sem)
         Severe("Error from sem_open: %s", strerror(errno));
-#endif // !__OpenBSD__
+#endif // !PBRT_IS_OPENBSD
 }
 
 
@@ -495,7 +495,7 @@ int Semaphore::count = 0;
 #endif // !PBRT_IS_WINDOWS
 #if !defined(PBRT_IS_WINDOWS)
 Semaphore::~Semaphore() {
-#ifdef __OpenBSD__
+#ifdef PBRT_IS_OPENBSD
     int err = sem_destroy(sem);
     free((void *)sem);
     sem = NULL;
@@ -505,7 +505,7 @@ Semaphore::~Semaphore() {
     int err;
     if ((err = sem_close(sem)) != 0)
         Severe("Error from sem_close: %s", strerror(err));
-#endif // !__OpenBSD__
+#endif // !PBRT_IS_OPENBSD
 }
 
 
@@ -873,11 +873,11 @@ int NumSystemCores() {
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
     return sysinfo.dwNumberOfProcessors;
-#elif defined(__linux__)
+#elif defined(PBRT_IS_LINUX)
     return sysconf(_SC_NPROCESSORS_ONLN);
 #else
     // mac/bsds
-#ifdef __OpenBSD__
+#ifdef PBRT_IS_OPENBSD
     int mib[2] = { CTL_HW, HW_NCPU };
 #else
     int mib[2];

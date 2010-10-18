@@ -34,9 +34,6 @@
 #include "sampler.h"
 #include "filter.h"
 #include "paramset.h"
-#ifdef PBRT_HAS_LIBSDL
-struct SDL_Surface;
-#endif // PBRT_HAS_LIBSDL
 
 // ImageFilm Declarations
 class ImageFilm : public Film {
@@ -60,9 +57,6 @@ private:
     Filter *filter;
     float cropWindow[4];
     string filename;
-    #ifdef PBRT_HAS_LIBSDL
-    SDL_Surface *sdlWindow;
-    #endif // PBRT_HAS_LIBSDL
     int xPixelStart, yPixelStart, xPixelCount, yPixelCount;
     struct Pixel {
         Pixel() {

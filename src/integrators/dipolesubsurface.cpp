@@ -143,12 +143,12 @@ struct DiffusionReflectance {
         sigma_tr = Sqrt(3.f * sigma_a * sigmap_t);
         alphap = sigmap_s / sigmap_t;
         zpos = Spectrum(1.f) / sigmap_t;
-        zneg = zpos * (1.f + (4.f/3.f) * A);
+        zneg = -zpos * (1.f + (4.f/3.f) * A);
     }
     Spectrum operator()(float d2) const {
         Spectrum dpos = Sqrt(Spectrum(d2) + zpos * zpos);
         Spectrum dneg = Sqrt(Spectrum(d2) + zneg * zneg);
-        Spectrum Rd = (1.f / (4.f * M_PI)) *
+        Spectrum Rd = (alphap / (4.f * M_PI)) *
             ((zpos * (dpos * sigma_tr + Spectrum(1.f)) *
               Exp(-sigma_tr * dpos)) / (dpos * dpos * dpos) -
              (zneg * (dneg * sigma_tr + Spectrum(1.f)) *

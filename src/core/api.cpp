@@ -558,9 +558,7 @@ SurfaceIntegrator *MakeSurfaceIntegrator(const string &name,
 VolumeIntegrator *MakeVolumeIntegrator(const string &name,
         const ParamSet &paramSet) {
     VolumeIntegrator *vi = NULL;
-    if (name == "null")
-        vi = NULL;
-    else if (name == "single")
+    if (name == "single")
         vi = CreateSingleScatteringIntegrator(paramSet);
     else if (name == "emission")
         vi = CreateEmissionVolumeIntegrator(paramSet);
@@ -916,7 +914,7 @@ void pbrtTexture(const string &name, const string &type,
                                                          curTransform[0], tp);
         if (ft) graphicsState.floatTextures[name] = ft;
     }
-    else if (type == "color")  {
+    else if (type == "color" || type == "spectrum")  {
         // Create _color_ texture and store in _spectrumTextures_
         if (graphicsState.spectrumTextures.find(name) != graphicsState.spectrumTextures.end())
             Info("Texture \"%s\" being redefined", name.c_str());

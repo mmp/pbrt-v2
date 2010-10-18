@@ -28,9 +28,6 @@
 #include "probes.h"
 #include "parser.h"
 #include "parallel.h"
-#ifdef PBRT_HAS_LIBSDL
-#include "SDL_main.h"
-#endif // PBRT_HAS_LIBSDL
 
 // main program
 int main(int argc, char *argv[]) {
@@ -43,14 +40,8 @@ int main(int argc, char *argv[]) {
         else if (!strcmp(argv[i], "--quick")) options.quickRender = true;
         else if (!strcmp(argv[i], "--quiet")) options.quiet = true;
         else if (!strcmp(argv[i], "--verbose")) options.verbose = true;
-#ifdef PBRT_HAS_LIBSDL
-        else if (!strcmp(argv[i], "--window")) options.openWindow = true;
-#endif
         else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
             printf("usage: pbrt [--ncores n] [--outfile filename] [--quick] [--quiet] "
-#ifdef PBRT_HAS_LIBSDL
-                   "[--window] "
-#endif
                    "[--verbose] [--help] <filename.pbrt> ...\n");
             return 0;
         }

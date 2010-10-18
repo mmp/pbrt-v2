@@ -1,0 +1,4301 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>The pbrt Input File Format</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 5196 2007-06-03 20:25:28Z wiemann $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left {
+  clear: left }
+
+img.align-right {
+  clear: right }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font-family: serif ;
+  font-size: 100% }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="the-pbrt-input-file-format">
+<h1 class="title">The pbrt Input File Format</h1>
+
+<!-- ..image:: images/biohazard.png -->
+<p>This document is a reference to the file format used in the <tt class="docutils literal"><span class="pre">pbrt</span></tt>
+rendering system described in the &quot;Physically Based Rendering&quot; book; see
+the <a class="reference external" href="http://pbrt.org/">pbrt website</a> for more information about <tt class="docutils literal"><span class="pre">pbrt</span></tt>.  Note that this
+document serves as a comprehensive reference; the pbrt User's Guide (which
+is still yet to be written) will document how to use <tt class="docutils literal"><span class="pre">pbrt</span></tt> with more
+focus on how to achieve certain tasks or how to address various issues in
+the results it renders.</p>
+<p><strong>Note: this document is still in draft form and sections are still, unfortunately, incomplete.  The text is currently complete up to the &quot;Materials&quot;; in that section and beyond, the parameters to the various object implementations are listed correctly, but the accompanying text hasn't been written yet.  I will try to have this all finished in the next few days.</strong></p>
+<p>Contents:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#general-structure-of-a-pbrt-input-file">General structure of a pbrt input file</a><ul>
+<li><a class="reference internal" href="#parameter-lists">Parameter Lists</a></li>
+<li><a class="reference internal" href="#specifying-transformations">Specifying Transformations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specifying-scene-wide-rendering-options">Specifying Scene-Wide Rendering Options</a><ul>
+<li><a class="reference internal" href="#cameras">Cameras</a></li>
+<li><a class="reference internal" href="#samplers">Samplers</a></li>
+<li><a class="reference internal" href="#film">Film</a></li>
+<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#renderers">Renderers</a></li>
+<li><a class="reference internal" href="#surface-integrators">Surface Integrators</a></li>
+<li><a class="reference internal" href="#volume-integrators">Volume Integrators</a></li>
+<li><a class="reference internal" href="#accelerators">Accelerators</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specifying-the-world">Specifying the World</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#shapes">Shapes</a></li>
+<li><a class="reference internal" href="#object-instancing">Object Instancing</a></li>
+<li><a class="reference internal" href="#lights">Lights</a></li>
+<li><a class="reference internal" href="#area-lights">Area Lights</a></li>
+<li><a class="reference internal" href="#materials">Materials</a></li>
+<li><a class="reference internal" href="#textures">Textures</a></li>
+<li><a class="reference internal" href="#scattering-volumes">Scattering Volumes</a></li>
+</ul>
+</li>
+</ul>
+<p>The scene description files used by <tt class="docutils literal"><span class="pre">pbrt</span></tt> are plain text files.  The
+file format was designed so that it would be both easy to parse and easy
+for applications to generate from their own internal representations of
+scenes.  While a binary file format would result in smaller files and
+faster parsing, a human-readable format is far easier to edit by hand.  The
+input file parser is very simple. It contains no logic about the validity
+of any statement beyond its basic syntax; it just calls the corresponding
+API function.  (There was no reason for the parsers to duplicate all of the
+error-checking logic in the API implementation.)</p>
+<p>A <tt class="docutils literal"><span class="pre">pbrt</span></tt> scene file consists of a series of statements; different
+statements specify the geometry and light sources in the scene and set
+overall rendering parameters (such as which light transport algorithm to
+use or the image resolution.)  Each statement in these files corresponds
+directly to a <tt class="docutils literal"><span class="pre">pbrt</span></tt> API function from Appendix B in the &quot;Physically
+Based Rendering&quot; book.  For example, when the <tt class="docutils literal"><span class="pre">WorldBegin</span></tt> statement
+appears in the input, the <tt class="docutils literal"><span class="pre">pbrtWorldBegin()</span></tt> function is called.  To best
+understand this document, you should already be familiar with the concepts
+introduced in Appendix B, though we will try to re-introduce some key
+concepts from that appendix here.</p>
+<p>Here is a short example of a <tt class="docutils literal"><span class="pre">pbrt</span></tt> input file: Between the start of the
+file and the <tt class="docutils literal"><span class="pre">WorldBegin</span></tt> statement, overall options for rendering the
+scene are specified, including the camera type and position, the sampler
+definition, and information about the image to be generated.  After
+<tt class="docutils literal"><span class="pre">WorldBegin</span></tt>, the lights, geometry, and scattering volumes (if any) in
+the scene are defined, up until the <tt class="docutils literal"><span class="pre">WorldEnd</span></tt> statement, which causes
+the image to be rendered.  The hash character <tt class="docutils literal"><span class="pre">#</span></tt> denotes that the rest
+of the line is a comment and should be ignored by the parser.</p>
+<pre class="literal-block">
+LookAt 0 10 100   0 -1 0 0 1 0
+Camera &quot;perspective&quot; &quot;float fov&quot; [30]
+PixelFilter &quot;mitchell&quot; &quot;float xwidth&quot; [2] &quot;float ywidth&quot; [2]
+Sampler &quot;bestcandidate&quot;
+Film &quot;image&quot; &quot;string filename&quot; [&quot;simple.exr&quot;]
+     &quot;integer xresolution&quot; [200] &quot;integer yresolution&quot; [200]
+
+WorldBegin
+AttributeBegin
+  CoordSysTransform &quot;camera&quot;
+  LightSource &quot;distant&quot;
+              &quot;point from&quot; [0 0 0] &quot;point to&quot;   [0 0 1]
+              &quot;rgb L&quot;    [3 3 3]
+AttributeEnd
+
+AttributeBegin
+  Rotate 135 1 0 0
+  Texture &quot;checks&quot; &quot;spectrum&quot; &quot;checkerboard&quot;
+          &quot;float uscale&quot; [4] &quot;float vscale&quot; [4]
+          &quot;rgb tex1&quot; [1 0 0] &quot;rgb tex2&quot; [0 0 1]
+  Material &quot;matte&quot;
+           &quot;texture Kd&quot; &quot;checks&quot;
+  Shape &quot;disk&quot; &quot;float radius&quot; [20] &quot;float height&quot; [-1]
+AttributeEnd
+WorldEnd
+</pre>
+<div class="section" id="general-structure-of-a-pbrt-input-file">
+<h1>General structure of a pbrt input file</h1>
+<p>A scene description file starts with a series of directives that describe
+the camera, film, and sampling and light transport algorithms to use in
+rendering the scene.  These are followed by the <tt class="docutils literal"><span class="pre">WorldBegin</span></tt> directive;
+after <tt class="docutils literal"><span class="pre">WorldBegin</span></tt>, the world definition block starts, and it is no
+longer legal to specify different definitions of any of the objects defined
+in the initial section of the file.  However, lights, materials, textures,
+shapes, and volumetric scattering regions can be defined inside the world
+block (and can only be defined inside the world block).  The world block
+ends with the <tt class="docutils literal"><span class="pre">WorldEnd</span></tt> directive; when this is encountered, the
+<tt class="docutils literal"><span class="pre">Renderer</span></tt> defined to render the scene takes control and does the
+required rendering computation.</p>
+<p>The following section, <a class="reference internal" href="#specifying-scene-wide-rendering-options">Specifying Scene-Wide Rendering Options</a>,
+documents the directives that are valid outside of the world definition
+block.  The subsequent section, <a class="reference internal" href="#specifying-the-world">Specifying the World</a>, documents the
+directives for defining the shapes, materials, lights, etc., that define
+the scene.</p>
+<p>Some of the statements in the input file, such as <tt class="docutils literal"><span class="pre">WorldBegin</span></tt>,
+<tt class="docutils literal"><span class="pre">AttributeEnd</span></tt>, and so on, have no additional arguments.  Others, such as
+those related to specifying transformations, such as <tt class="docutils literal"><span class="pre">Rotate</span></tt> and
+<tt class="docutils literal"><span class="pre">LookAt</span></tt>, take a predetermined number of arguments of predetermined
+type.  (For example, <tt class="docutils literal"><span class="pre">Translate</span></tt> is followed by three floating-point
+values that give the x, y, and z components of the translation vector.  The
+remainder of the statements take a variable number of arguments and are of
+the form</p>
+<blockquote>
+<em>identifier</em> &quot;<em>type</em>&quot; <em>parameter-list</em></blockquote>
+<p>For example, the <tt class="docutils literal"><span class="pre">Shape</span></tt> identifier describes a shape to be added to the
+scene, where the type of shape to create is given by a string
+(e.g. &quot;sphere&quot;) and is followed a list of shape-specific parameters that
+define the shape.  For example,</p>
+<pre class="literal-block">
+Shape &quot;sphere&quot; &quot;float radius&quot; [5]
+</pre>
+<p>defines a sphere of radius 5.  (See <a class="reference internal" href="#shapes">Shapes</a> for documentation of the
+parmeters taken by the various shapes implemented in <tt class="docutils literal"><span class="pre">pbrt</span></tt>.)</p>
+<p>Here, the &quot;type&quot; string gives the name of the particular shape, etc.,
+implementation to use, and <em>parameter-list</em> gives the parameters to pass to
+the plug-in.  With this design, the parser doesn't need to know anything
+about the semantics of the parameters; it just needs to know how to parse
+parameter lists and how to initialize a <tt class="docutils literal"><span class="pre">ParamSet</span></tt> from them (The
+<tt class="docutils literal"><span class="pre">ParamSet</span></tt> class is described on page 1047 of the PBR book).</p>
+<p>Almost all directives in a <tt class="docutils literal"><span class="pre">pbrt</span></tt> input file have a direct correspondence
+with a function in the <tt class="docutils literal"><span class="pre">pbrt</span></tt> API, defined in the files <tt class="docutils literal"><span class="pre">core/api.h</span></tt>
+and <tt class="docutils literal"><span class="pre">core/api.cpp</span></tt>.  The only input file directive that does not directly
+correspond to a function in the API is the <tt class="docutils literal"><span class="pre">Include</span></tt> statement, which
+allows other input files to be parsed.  <tt class="docutils literal"><span class="pre">Include</span></tt> behaves similarly to
+the <tt class="docutils literal"><span class="pre">#include</span></tt> directive in C++, except that only the directory that the
+currently-being-processed input file is searched for matching filenames.
+Of course, a complete pathname or a path relative to the current directory
+can be specified if appropriate.</p>
+<pre class="literal-block">
+Include &quot;geometry/car.pbrt&quot;
+</pre>
+<div class="section" id="parameter-lists">
+<h2>Parameter Lists</h2>
+<p>Variable-length lists of named parameters and their values are the key
+meeting ground between the parsing system and the objects that are created
+to represent the scene.  Each of these lists holds an arbitrary number of
+name/value pairs, with the name in quotation marks and the value or values
+in square brackets:</p>
+<blockquote>
+&quot;<em>type</em> <em>name</em>&quot; <tt class="docutils literal"><span class="pre">[</span></tt> <em>value or values</em> <tt class="docutils literal"><span class="pre">]</span></tt></blockquote>
+<p>For example,</p>
+<pre class="literal-block">
+&quot;float fov&quot; [30]
+</pre>
+<p>specifies a parameter &quot;fov&quot; that is a single floating-point
+value, with value 30. Or,</p>
+<pre class="literal-block">
+&quot;float cropwindow&quot; [0 .5 0 .25]
+</pre>
+<p>specifies that &quot;cropwindow&quot; is a floating-point array with the given four
+values.  Notice that values are enclosed in square brackets.  Single values
+(such as the &quot;30&quot; in the &quot;fov&quot; example above) may be provided with or
+without square brackets enclosing them, though arrays of values always must
+be enclosed in square brackets.</p>
+<p>The type of each parameter must always be given along with its name;
+<tt class="docutils literal"><span class="pre">pbrt</span></tt> has no built-in knowledge of any parameter names.  This simplifies
+the parsing system, although it does create a small extra burden for the
+creator of the input file.</p>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> supports seven basic parameter types: <tt class="docutils literal"><span class="pre">integer</span></tt>, <tt class="docutils literal"><span class="pre">float</span></tt>,
+<tt class="docutils literal"><span class="pre">point</span></tt>, <tt class="docutils literal"><span class="pre">vector</span></tt>, <tt class="docutils literal"><span class="pre">normal</span></tt>, <tt class="docutils literal"><span class="pre">spectrum</span></tt>, <tt class="docutils literal"><span class="pre">bool</span></tt>, and <tt class="docutils literal"><span class="pre">string</span></tt>.
+The <tt class="docutils literal"><span class="pre">point</span></tt>, <tt class="docutils literal"><span class="pre">vector</span></tt>, and <tt class="docutils literal"><span class="pre">normal</span></tt> types all take three
+floating-point values to specify each value. <tt class="docutils literal"><span class="pre">string</span></tt> parameters must be
+inside quotation marks, and <tt class="docutils literal"><span class="pre">bool</span></tt> parameters are set with the strings
+<tt class="docutils literal"><span class="pre">&quot;true&quot;</span></tt> and <tt class="docutils literal"><span class="pre">&quot;false&quot;</span></tt>, quotation marks included.</p>
+<pre class="literal-block">
+&quot;string filename&quot; &quot;foo.exr&quot;
+&quot;point origin&quot; [ 0 1 2 ]
+&quot;normal N&quot; [ 0 1 0  0 0 1 ] # array of 2 normal values
+&quot;bool renderquickly&quot; &quot;true&quot;
+</pre>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> provides a number of ways of specifying spectral values in scene
+description files.  RGB values are commonly used, though see Section 5.2.2
+on page 273 of the second edition of &quot;Physically Based Rendering&quot; for
+discussion of the shortcomings of this representation.  RGB color values
+can be specified with the <tt class="docutils literal"><span class="pre">rgb</span></tt> type.  (<tt class="docutils literal"><span class="pre">color</span></tt> is also supported as a
+synonym for this):</p>
+<pre class="literal-block">
+&quot;rgb Kd&quot; [ .2 .5 .3 ]
+</pre>
+<p>specifies the RGB color with red equal to 0.2 and so forth.  The
+<tt class="docutils literal"><span class="pre">FromRGB()</span></tt> method of the <tt class="docutils literal"><span class="pre">Spectrum</span></tt> implementation being used is used
+to convert the given RGB colors to the current spectral representation.</p>
+<p>Alternatively, XYZ colors can be used to specify a spectrum:</p>
+<pre class="literal-block">
+&quot;xyz Kd&quot; [ .4 .6 .7 ]
+</pre>
+<p>General sampled SPDs are specified with a series of (wavelength, value)
+pairs, where wavelengths are specified in nm.  These SPDs are resampled to
+the current spectral representation with its <tt class="docutils literal"><span class="pre">FromSampled()</span></tt> method.  For
+example,</p>
+<pre class="literal-block">
+&quot;spectrum Kd&quot; [ 300 .3  400 .6   410 .65  415 .8  500 .2  600 .1 ]
+</pre>
+<p>specifies a piecewise-linar SPD with a value of 0.3 at 300nm, 0.6 and
+400nm, and so forth.  Since complex sampled SPDs may have many values, they
+can also be provided through a separate file:</p>
+<pre class="literal-block">
+&quot;spectrum Kd&quot; &quot;filename&quot;
+</pre>
+<p>Where the filename specifies the path to a plain text file with pairs of
+floating-point (wavelength, value) as above.  The parser for these files
+allows uses <tt class="docutils literal"><span class="pre">#</span></tt> to denote a comment that goes to the end of the current
+line.  See the directory <tt class="docutils literal"><span class="pre">scenes/spds</span></tt> in the <tt class="docutils literal"><span class="pre">pbrt</span></tt> distribution for
+examples.</p>
+<p>Finally, SPDs of blackbody emitters can be specified with two
+floating-point values, one giving the blackbody temperature in Kelvin, and
+the second giving a scale factor.  See the <a class="reference external" href="http://en.wikipedia.org/wiki/Black_body">Wikipedia article</a> on blackbody
+emitters for more information and the formula used to compute the SPD from
+the blackbody temperature:</p>
+<pre class="literal-block">
+&quot;blackbody L&quot; [ 6500 1 ] # daylight, approximately
+</pre>
+</div>
+<div class="section" id="specifying-transformations">
+<h2>Specifying Transformations</h2>
+<p>A series of directives modify the current transformation marix (CTM).  (See
+Section B.2.2 on page 1053 for more information about how the CTM is
+maintined during scene description.)  When the scene's camera is specified,
+the CTM gives the world to camera transformation; when a light or shape is
+created, the CTM specifies the transformation from object space to world
+space.</p>
+<p>When parsing begins, the CTM is the identity transformation; furthermore,
+it is is reset to the identity when the <tt class="docutils literal"><span class="pre">WorldBegin</span></tt> directive is
+encountered.  The following directives change the CTM; they are shown with
+the corresponding <tt class="docutils literal"><span class="pre">pbrt</span></tt> API call:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="59%" />
+<col width="41%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Input File Syntax</th>
+<th class="head">API Call</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal"><span class="pre">Identity</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">pbrtIdentity()</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">Translate</span></tt> <em>x y z</em></td>
+<td><tt class="docutils literal"><span class="pre">pbrtTranslate()</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">Scale</span></tt> <em>x y z</em></td>
+<td><tt class="docutils literal"><span class="pre">pbrtScale()</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">Rotate</span></tt> <em>angle x y z</em></td>
+<td><tt class="docutils literal"><span class="pre">pbrtRotate()</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">LookAt</span></tt> <em>ex ey ez lx ly lz ux uy uz</em></td>
+<td><tt class="docutils literal"><span class="pre">pbrtLookAt()</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">CoordinateSystem</span></tt> &quot;<em>name</em>&quot;</td>
+<td><tt class="docutils literal"><span class="pre">pbrtCoordinateSystem()</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">CoordSysTransform</span></tt> &quot;<em>name</em>&quot;</td>
+<td><tt class="docutils literal"><span class="pre">pbrtCoordSysTransform()</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">Transform</span></tt> <em>m00 ... m33</em></td>
+<td><tt class="docutils literal"><span class="pre">pbrtTransform()</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">ConcatTransform</span></tt> <em>m00 .. m33</em></td>
+<td><tt class="docutils literal"><span class="pre">pbrtConcatTransform()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>For example, <tt class="docutils literal"><span class="pre">Translate</span></tt> takes three floating-point values, <em>x</em>, <em>y</em>, and
+<em>z</em>, and the corresponding values are passed to the <tt class="docutils literal"><span class="pre">pbrtTranslate()</span></tt> API
+call, which in turn modifies the CTM by setting it to the product of the
+CTM with the matrix representing the given translation.</p>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> supports animated transformations by allowing two transformation
+matrices to be specified at different times.  The <tt class="docutils literal"><span class="pre">TransformTimes</span></tt>
+directive, which must be outside of the world definition block, defines these
+two times with floating-point vaues:</p>
+<blockquote>
+<tt class="docutils literal"><span class="pre">TransformTimes</span></tt> <em>start</em> <em>end</em></blockquote>
+<p>Then, the <tt class="docutils literal"><span class="pre">ActiveTransform</span></tt> directive indicates whether subsequent
+directives that modify the CTM should apply to the transformation at the
+starting time, the transformation at the ending time, or both.  The default
+is that both matrices should be updated:</p>
+<pre class="literal-block">
+Translate 1 0 0  # applies to both, by default
+ActiveTransform StartTime
+Rotate 90 1 0 0
+ActiveTransform EndTime
+Rotate 120 0 1 0
+ActiveTransform All
+</pre>
+</div>
+</div>
+<div class="section" id="specifying-scene-wide-rendering-options">
+<h1>Specifying Scene-Wide Rendering Options</h1>
+<p>This section describes rendering options that must be specified before the
+<tt class="docutils literal"><span class="pre">WorldBegin</span></tt> statement.  The following sub-sections describe how options
+related to each of the following are set:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#cameras">Cameras</a></li>
+<li><a class="reference internal" href="#samplers">Samplers</a></li>
+<li><a class="reference internal" href="#film">Film</a></li>
+<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#renderers">Renderers</a></li>
+<li><a class="reference internal" href="#surface-integrators">Surface Integrators</a></li>
+<li><a class="reference internal" href="#volume-integrators">Volume Integrators</a></li>
+<li><a class="reference internal" href="#accelerators">Accelerators</a></li>
+</ul>
+<div class="section" id="cameras">
+<h2>Cameras</h2>
+<p>The <tt class="docutils literal"><span class="pre">Camera</span></tt> directive specifies the camera used for viewing the scene. <a class="footnote-reference" href="#id2" id="id1">[1]</a>
+For example,</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>The camera is used when <tt class="docutils literal"><span class="pre">pbrt</span></tt> is used to render an actual image. However, some of <tt class="docutils literal"><span class="pre">pbrt</span></tt>'s <tt class="docutils literal"><span class="pre">Renderer</span></tt> implementations compute other quantities--for example, <tt class="docutils literal"><span class="pre">AggregateTest</span></tt> tests ray tracing acceleration structures and <tt class="docutils literal"><span class="pre">CreateRadianceProbes</span></tt> computes spherical harmonic radiance probes at a grid of locations--neither one of these uses the camera.  See the section on <a class="reference internal" href="#renderers">Renderers</a> for more discussion.</td></tr>
+</tbody>
+</table>
+<pre class="literal-block">
+Camera &quot;perspective&quot; &quot;float fov&quot; [60]
+</pre>
+<p>When the <tt class="docutils literal"><span class="pre">Camera</span></tt> directive is encountered in an input file, the current
+transformation matrix is used to initialize the world-to-camera
+transformation.</p>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> provides three camera implementations:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;environment&quot;</td>
+<td><tt class="docutils literal"><span class="pre">EnvironmentCamera</span></tt></td>
+</tr>
+<tr><td>&quot;orthographic&quot;</td>
+<td><tt class="docutils literal"><span class="pre">OrthoCamera</span></tt></td>
+</tr>
+<tr><td>&quot;perspective&quot;</td>
+<td><tt class="docutils literal"><span class="pre">PerspectiveCamera</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The default camera is a <tt class="docutils literal"><span class="pre">PerspectiveCamera</span></tt> with the default values
+listed below (90 degree field of view, etc.)</p>
+<p>A number of parameters are common to all cameras in <tt class="docutils literal"><span class="pre">pbrt</span></tt>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="16%" />
+<col width="13%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>shutteropen</td>
+<td>0</td>
+<td>The time at which the virtual camera shutter opens.</td>
+</tr>
+<tr><td>float</td>
+<td>shutterclose</td>
+<td>1</td>
+<td>The time at which the virtual camera shutter closes.</td>
+</tr>
+<tr><td>float</td>
+<td>frameaspectratio</td>
+<td>(see description)</td>
+<td>The aspect ratio of the film.  By default, this is computed from
+the x and y resolutions of the film, but it can be overridden if desired.</td>
+</tr>
+<tr><td>float[4]</td>
+<td>screenwindow</td>
+<td>(see description)</td>
+<td>The bounds of the film plane in screen space.  By default, this
+is [-1,1] along the shorter image axis and is set proportionally along the
+longer axis.</td>
+</tr>
+</tbody>
+</table>
+<p>(The <tt class="docutils literal"><span class="pre">EnvironmentCamera</span></tt> takes no additional parameters beyond these.)</p>
+<p><tt class="docutils literal"><span class="pre">PerspectiveCamera</span></tt> and <tt class="docutils literal"><span class="pre">OrthoCamera</span></tt> support images rendered with
+depth of field.  They both use the following two parmaeters to set the lens
+focus, etc.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="16%" />
+<col width="13%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>lensradius</td>
+<td>0</td>
+<td>The radius of the lens.  Used to render scenes with depth of field
+and focus effects. The default value yields a pinhole camera.</td>
+</tr>
+<tr><td>float</td>
+<td>focaldistance</td>
+<td>10^30</td>
+<td>The focal distance of the lens.  If &quot;lensradius&quot; is zero, this has
+no effect.  Otherwise, it specifies the distance from the camera origin
+to the focal plane.</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, the perspective camera has two (semi-redundant) parameters for
+setting the camera's field of view.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="16%" />
+<col width="13%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>fov</td>
+<td>90</td>
+<td>Specifies the field of view for the perspective camera.  This is
+the spread angle of the viewing frustum along the narrower of the
+image's width and height.</td>
+</tr>
+<tr><td>float</td>
+<td>halffov</td>
+<td>n/a</td>
+<td>For convenience to some programs that export from modeling systems, the
+camera's field of view can also be specified via the half-angle between
+the view direction and the edge of the viewing frustum.  If this parameter
+isn't provided, then <tt class="docutils literal"><span class="pre">fov</span></tt> is used to set the field of view instead.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="samplers">
+<h2>Samplers</h2>
+<p>The <tt class="docutils literal"><span class="pre">Sampler</span></tt> generates samples for the image, time, lens, and Monte
+Carlo integration.  A number of implementations are provided; the default
+is &quot;lowdiscrepancy&quot;--the <tt class="docutils literal"><span class="pre">LDSampler</span></tt>.  Note that the sampler is only used
+if <tt class="docutils literal"><span class="pre">SamplerRenderer</span></tt> is the <tt class="docutils literal"><span class="pre">Renderer</span></tt> being used to render the scene;
+other renderers have their own sample generation mechanisms internally
+and/or don't need samples in this manner (e.g. <tt class="docutils literal"><span class="pre">AggregateTest</span></tt>).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;adaptive&quot;</td>
+<td><tt class="docutils literal"><span class="pre">AdaptiveSampler</span></tt></td>
+</tr>
+<tr><td>&quot;bestcandidate&quot;</td>
+<td><tt class="docutils literal"><span class="pre">BestCandidateSampler</span></tt></td>
+</tr>
+<tr><td>&quot;halton&quot;</td>
+<td><tt class="docutils literal"><span class="pre">HaltonSampler</span></tt> <a class="footnote-reference" href="#sososamp" id="id3">[2]</a></td>
+</tr>
+<tr><td>&quot;lowdiscrepancy&quot;</td>
+<td><tt class="docutils literal"><span class="pre">LDSampler</span></tt></td>
+</tr>
+<tr><td>&quot;random&quot;</td>
+<td><tt class="docutils literal"><span class="pre">RandomSampler</span></tt> <a class="footnote-reference" href="#badsamp" id="id4">[3]</a></td>
+</tr>
+<tr><td>&quot;stratified&quot;</td>
+<td><tt class="docutils literal"><span class="pre">StratifiedSampler</span></tt> <a class="footnote-reference" href="#sososamp" id="id5">[2]</a></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="sososamp" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id5">2</a>)</em> The <tt class="docutils literal"><span class="pre">HaltonSampler</span></tt> and <tt class="docutils literal"><span class="pre">StratifiedSampler</span></tt> are not as effective as the <tt class="docutils literal"><span class="pre">LDSampler</span></tt>, <tt class="docutils literal"><span class="pre">AdaptiveSampler</span></tt>, or <tt class="docutils literal"><span class="pre">BestCandidateSampler</span></tt>; the sample points they generate aren't as good and thus more samples will generally be required to get a similar result.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="badsamp" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>The <tt class="docutils literal"><span class="pre">RandomSampler</span></tt> generates particularly ineffective sampling patterns.  It is really only useful for comparison against more sophisticated approaches and shouldn't otherwise be used.</td></tr>
+</tbody>
+</table>
+<p>The <tt class="docutils literal"><span class="pre">AdaptiveSampler</span></tt> takes a minimum number of samples in each pixel and
+then performs a test to see if, according to some metric, they vary
+excessively.  If so, it takes a higher number of samples.  The underlying
+sample generation algorithms are based on the low-discrepancy patterns used
+by the <tt class="docutils literal"><span class="pre">LDSampler</span></tt>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>minsamples</td>
+<td>4</td>
+<td>This is the initial number of samples taken inside each pixel area.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxsamples</td>
+<td>32</td>
+<td>If the variation test indicates that this is a complex pixel
+area, then this number of samples is taken.</td>
+</tr>
+<tr><td>string</td>
+<td>method</td>
+<td>contrast</td>
+<td>This parameter sets which test to use to see if a pixel is
+varying excessively.  The two supported values are &quot;contrast&quot;,
+which indicates that the color contrast between the sample values
+should be compared toa threshold, and &quot;shapeid&quot;, which indicates
+that if different shapes are visible in the pixel area, additional
+samples should be taken.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;bestcandidate&quot;, &quot;lowdiscrepancy&quot;, &quot;halton&quot;, and &quot;random&quot; samplers all take a single parameter, &quot;pixelsamples&quot;,
+which sets the number of samples to take in each pixel area.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>pixelsamples</td>
+<td>4</td>
+<td>The number of samples to take, per pixel.  Note that the
+number of samples is taken per pixel on average; depending on
+the actual sampling algorithm being used, individual
+pixel areas may have slightly more or slightly fewer.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;stratified&quot; sampler has three parameters that control its behavior.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="13%" />
+<col width="11%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>bool</td>
+<td>jitter</td>
+<td>&quot;true&quot;</td>
+<td>Whether or not the generated samples should be jittered inside each stratum;
+this is generally only worth setting to &quot;false&quot; for comparisons
+between jittered and uniform sampling--uniform sampling will
+almost always give a worse result.</td>
+</tr>
+<tr><td>integer</td>
+<td>xsamples</td>
+<td>2</td>
+<td>The number of samples per pixel to take in the x direction.</td>
+</tr>
+<tr><td>integer</td>
+<td>ysamples</td>
+<td>2</td>
+<td>The number of samples per pixel to take in the y direction.
+In general, &quot;xsamples&quot; and &quot;ysamples&quot; should be set to the
+same value for best results.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="film">
+<h2>Film</h2>
+<p>The <tt class="docutils literal"><span class="pre">Film</span></tt> directive specifies the characteristics of the image being generated by the renderer.
+Note that only the <tt class="docutils literal"><span class="pre">SamplerRenderer</span></tt> and the <tt class="docutils literal"><span class="pre">MetropolisRenderer</span></tt> use the film; the other
+renderers don't generate an image per se and thus ignore the film definition.</p>
+<p>The only <tt class="docutils literal"><span class="pre">Film</span></tt> implementation currently available in <tt class="docutils literal"><span class="pre">pbrt</span></tt> is
+<tt class="docutils literal"><span class="pre">ImageFilm</span></tt> which is specified as <tt class="docutils literal"><span class="pre">&quot;image&quot;</span></tt> in input files.  For example:</p>
+<pre class="literal-block">
+Film &quot;image&quot; &quot;string filename&quot; [&quot;out.exr&quot;]
+             &quot;float cropwindow&quot; [ .2 .5 .3 .8 ]
+</pre>
+<p>The &quot;image&quot; film takes a handful of parameters:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>xresolution</td>
+<td>640</td>
+<td>The number of pixels in the x direction.</td>
+</tr>
+<tr><td>integer</td>
+<td>yresolution</td>
+<td>480</td>
+<td>The number of pixels in the y direction.</td>
+</tr>
+<tr><td>float[4]</td>
+<td>cropwindow</td>
+<td>[ 0 1 0 1 ]</td>
+<td>The subregion of the image to render.  The four values specified
+should be fractions in the range [0,1], and they represent x_min,
+x_max, y_min, and y_max, respectively.
+These values are in normalized device coordinates, with (0,0) in the
+upper-left corner of the image.</td>
+</tr>
+<tr><td>string</td>
+<td>filename</td>
+<td>&quot;pbrt.exr&quot;</td>
+<td>The output filename.  The <tt class="docutils literal"><span class="pre">ImageFilm</span></tt> uses the suffix of the
+given filename to determine the image file format to use.  All builds
+of <tt class="docutils literal"><span class="pre">pbrt</span></tt> support PFM and TGA format images; those configured to use
+the OpenEXR libraries support EXR as well.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="filters">
+<h2>Filters</h2>
+<p>The implementation of <tt class="docutils literal"><span class="pre">ImageFilm</span></tt> uses an instance of the abstract
+<tt class="docutils literal"><span class="pre">Filter</span></tt> class to filter sample values to compute final pixel values.
+(Thus, as only the <tt class="docutils literal"><span class="pre">SamplerRenderer</span></tt> and the <tt class="docutils literal"><span class="pre">MetropolisRenderer</span></tt> use
+<tt class="docutils literal"><span class="pre">ImageFilm</span></tt>, the filter setting is only relevant when one of those
+renderers is being used.</p>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> provides a number of filter implementations, listed below.  The
+default is &quot;box&quot;; while the box filter has a number of known shortcomings,
+it is the most effective filter when the low-discrepancy sampler is being
+used (recall the illustration in Figure 7.37 on page 392 of PBR).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;box&quot;</td>
+<td><tt class="docutils literal"><span class="pre">BoxFilter</span></tt></td>
+</tr>
+<tr><td>&quot;gaussian&quot;</td>
+<td><tt class="docutils literal"><span class="pre">GaussianFilter</span></tt></td>
+</tr>
+<tr><td>&quot;mitchell&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MitchellFilter</span></tt></td>
+</tr>
+<tr><td>&quot;sinc&quot;</td>
+<td><tt class="docutils literal"><span class="pre">LanczosSincFilter</span></tt></td>
+</tr>
+<tr><td>&quot;triangle&quot;</td>
+<td><tt class="docutils literal"><span class="pre">TriangleFilter</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>All filter implementations take two parameters that set the filter width in each direction.  Typically,
+these two parameters will have the same value.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="14%" />
+<col width="22%" />
+<col width="48%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>xwidth</td>
+<td>2 (0.5 for box, 4 for sinc)</td>
+<td>The width of the filter in the x direction.</td>
+</tr>
+<tr><td>float</td>
+<td>ywidth</td>
+<td>2 (0.5 for box, 4 for sinc)</td>
+<td>The width of the filter in the y direction.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;gaussian&quot; filter takes an additional parameter that adjusts the rate
+of Gaussian falloff; see page 397 for more information.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="15%" />
+<col width="12%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>alpha</td>
+<td>2</td>
+<td>alpha controls the falloff rate of the Gaussian filter.  Smaller
+values give a blurrier image.</td>
+</tr>
+</tbody>
+</table>
+<p>Two parameters set the shape of the &quot;mitchell&quot; filter; see the equation on the top of page 400.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>B</td>
+<td>1/3</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>float</td>
+<td>C</td>
+<td>1/3</td>
+<td>These parameters control the shape of the Mitchell filter.  The best
+results are generally obtained when B+2C=1.</td>
+</tr>
+</tbody>
+</table>
+<p>Finally the sinc filter takes a value tau that sets the number of cycles of the sinc function.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>tau</td>
+<td>3</td>
+<td>tau controls how many cycles the sinc function passes through before
+it is clamped to zero by the windowing function.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="renderers">
+<h2>Renderers</h2>
+<p>The renderer, defined with the <tt class="docutils literal"><span class="pre">Renderer</span></tt> directive, selects the
+rendering algorithm used to render the scene. <a class="footnote-reference" href="#id7" id="id6">[4]</a>   For example:</p>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[4]</a></td><td><tt class="docutils literal"><span class="pre">pbrt</span></tt> sometimes has a somewhat broad uage for &quot;render the scene&quot; in that some of the <tt class="docutils literal"><span class="pre">Renderer</span></tt> implementations don't actually generate images.</td></tr>
+</tbody>
+</table>
+<pre class="literal-block">
+Renderer &quot;metropolis&quot; &quot;integer samplesperpixel&quot; [4096]
+</pre>
+<p>The default renderer is &quot;sampler&quot;, corresponding to the
+<tt class="docutils literal"><span class="pre">SamplerRenderer</span></tt>.  The following <tt class="docutils literal"><span class="pre">Renderer</span></tt> implementations are
+currently available in <tt class="docutils literal"><span class="pre">pbrt</span></tt>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;aggregatetest&quot;</td>
+<td><tt class="docutils literal"><span class="pre">AggregateTest</span></tt></td>
+</tr>
+<tr><td>&quot;createprobes&quot;</td>
+<td><tt class="docutils literal"><span class="pre">CreateRadianceProbes</span></tt></td>
+</tr>
+<tr><td>&quot;metropolis&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MetropolisRenderer</span></tt></td>
+</tr>
+<tr><td>&quot;sampler&quot;</td>
+<td><tt class="docutils literal"><span class="pre">SamplerRenderer</span></tt></td>
+</tr>
+<tr><td>&quot;surfacepoints&quot;</td>
+<td><tt class="docutils literal"><span class="pre">SurfacePointsRenderer</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;aggregatetest&quot; renderer is one that doesn't create an image.  Instead,
+it traces a number of random rays using the current acceleration structure
+(see <a class="reference internal" href="#accelerators">Accelerators</a> for information about how the accelerators are
+selected) and checks the results to the result from an exhaustive
+intersection of each ray with all of the triangles in the scene.  This
+renderer can thus be used to find bugs in the implementation of
+accelerators; see Section 4.6 on page 245 for more information.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>niters</td>
+<td>100000</td>
+<td>Number of random rays to generate to use for testing the aggregate.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;createprobes&quot; renderer computes a series of spherical harmonic radiance probes;
+see Section 17.3 on page 956 for more information.  This renderer uses whichever surface and volume integrators are specified
+in the input file; see the following sections, <a class="reference internal" href="#surface-integrators">Surface Integrators</a> and <a class="reference internal" href="#volume-integrators">Volume Integrators</a> for more information.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="12%" />
+<col width="10%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float[6]</td>
+<td>bounds</td>
+<td>(none)</td>
+<td>Bounding box (x0, y0, z0) - (x1, y1, z2) within which to compute radiance
+probes.  If this is not specified, then the entire scene bounding box is used.</td>
+</tr>
+<tr><td>bool</td>
+<td>directlighting</td>
+<td>true</td>
+<td>Determines whether direct illumination should be included in the computed
+incident radiance function.  Some applications only include indirect
+radiance in the probes and use conventional techniques to render
+direct illumination.</td>
+</tr>
+<tr><td>string</td>
+<td>filename</td>
+<td>&quot;probes.out&quot;</td>
+<td>Filename of file in which to store SH coefficients of radiance probes.</td>
+</tr>
+<tr><td>bool</td>
+<td>indirectlighting</td>
+<td>true</td>
+<td>In a similar fashion, this parameter determines whether indirect illumination
+should be included in the radiance probes.</td>
+</tr>
+<tr><td>integer</td>
+<td>lmax</td>
+<td>4</td>
+<td>Number of spherical harmonic bands to use to represent the incident radiance function.</td>
+</tr>
+<tr><td>integer</td>
+<td>indirectsamples</td>
+<td>512</td>
+<td>Number of Monte Carlo samples to use to compute indirect illumination at each
+probe point.</td>
+</tr>
+<tr><td>float</td>
+<td>samplespacing</td>
+<td>1</td>
+<td>Desired, in world space distance, between the radiance probes.  The resolution of
+the grid of sample points is set so that the distance between samples is no greater
+than this distance along any of the <em>x</em>, <em>y</em>, or <em>z</em> axes.</td>
+</tr>
+<tr><td>float</td>
+<td>time</td>
+<td>&nbsp;</td>
+<td>Time at which to sample the incident radiance to compute the probes.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;metropolis&quot; renderer implements the Metropolis light transport
+algorithm; it is defined in Section 15.7 of the PBR book.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="15%" />
+<col width="10%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>largestepprobability</td>
+<td>0.25</td>
+<td>Probability of the mutation strategy proposing a mutation where all of the sample
+values are replaced with completely new samples (versus a &quot;small step&quot; where the
+current sample values are only perturbed).  In general, this value should be in
+the range 0.05 and 0.5.  For scenes with particularly difficult-to-sample light
+transport paths, lower values may be more effective.</td>
+</tr>
+<tr><td>integer</td>
+<td>samplesperpixel</td>
+<td>100</td>
+<td>Average number of samples per pixel to take.  (In other words, the total number of
+samples taken is the product of the image resolution and this parameter's value.)</td>
+</tr>
+<tr><td>integer</td>
+<td>bootstrapsamples</td>
+<td>100000</td>
+<td>Number of Monte Carlo samples to take to compute the estimate of the overall
+image brightness.  For scenes with difficut-to-sample light transport paths,
+increasing this value may give better results, particularly when rendering
+animations.  (Otherwise, if there is too much variance in this estimate, some
+frames may be too bright and others too dark.)</td>
+</tr>
+<tr><td>integer</td>
+<td>directsamples</td>
+<td>4</td>
+<td>If direct lighting is being performed separately from Metropolis sampling, this
+gives the number of samples per pixel to take to compute the direct lighting
+component.</td>
+</tr>
+<tr><td>bool</td>
+<td>dodirectseparately</td>
+<td>true</td>
+<td>Whether or not direct lighting should be included Metropolis sampling.  For scenes
+where the direct lighting is handled well with conventional techniques, then it
+will often be more efficient to handle it separately, allowing the use of
+variance reduction approaches like low-discrepancy sampling patterns.  For
+scenes with difficult-to-sample direct lighting, it's better to use Metropolis
+for this as well.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxconsecutiverejects</td>
+<td>512</td>
+<td>Maximum number of repeated rejections of a proposed sample mutation.  If this
+many rejections occur in a row, the next sample is unconditionally accepted.
+This can prevent the system from getting stuck in a subset of the overall path
+space.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxdepth</td>
+<td>7</td>
+<td>Maximum number of light scattering bounces to follow when tracing paths through
+the scene.</td>
+</tr>
+<tr><td>bool</td>
+<td>bidirectional</td>
+<td>true</td>
+<td>Indicates whether bidirectional path tracing should be used (versus standard
+path tracing.)  It's almost always worthwhile to use bidirectional path tracing.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;sampler&quot; renderer uses the defined <tt class="docutils literal"><span class="pre">Sampler</span></tt> to provide samples that
+it in turn uses to generate camera rays and then call the
+<tt class="docutils literal"><span class="pre">SurfaceIntegrator</span></tt> and <tt class="docutils literal"><span class="pre">VolumeIntegrator</span></tt> to compute the radiance
+along those rays.  This is the default renderer in the system.  In general,
+parameters that control its operation are set indirectly via parameters to
+the <tt class="docutils literal"><span class="pre">Sampler</span></tt>, <tt class="docutils literal"><span class="pre">SurfaceIntegrator</span></tt>, and <tt class="docutils literal"><span class="pre">VolumeIntegrator</span></tt>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="15%" />
+<col width="11%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>bool</td>
+<td>visualizeobjectids</td>
+<td>&quot;false&quot;</td>
+<td>This renderer can optionally ignore the surface and volume integrators
+and randomly shade objects based on their shape and primitive id
+values.  This can be useful to visualize the tessellation of
+complex objects and search for problems in geometric models.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;surfacepoints&quot; renderer computes a set of sample points on the
+surfaces of objects in the scene that have BSSRDF materials (i.e. that
+exhibit subsurface scattering).  These sample points are distributed on the
+surface according to a Poisson sphere criterion so that no two of them are
+too close together.  Because the generation of these points can be
+computationally complex, it's often worth doing it in a preprocess; the
+<tt class="docutils literal"><span class="pre">DipoleSubsurfaceIntegrator</span></tt> can then read these files of sample points
+and use them at rendering time.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>minsampledistance</td>
+<td>0.25</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>string</td>
+<td>filename</td>
+<td>(none)</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="surface-integrators">
+<h2>Surface Integrators</h2>
+<p>The surface integrator implements the light transport algorithm that
+computes reflected radiance from surfaces in the scene.  Recall that
+surface integrators are only used by the <tt class="docutils literal"><span class="pre">SamplerRenderer</span></tt> and
+<tt class="docutils literal"><span class="pre">CreateRadianceProbes</span></tt> renderer; if another renderer is specified, then
+the surface integrator is ignored.  The default surface integrator is the
+<tt class="docutils literal"><span class="pre">DirectLightingIntegrator</span></tt>:</p>
+<pre class="literal-block">
+SurfaceIntegrator &quot;directlighting&quot; &quot;integer maxdepth&quot; [5]
+    &quot;string strategy&quot; &quot;all&quot;
+</pre>
+<p>A number of other surface integrators are available in the system.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;ambientocclusion&quot;</td>
+<td><tt class="docutils literal"><span class="pre">AmbientOcclusionIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;diffuseprt&quot;</td>
+<td><tt class="docutils literal"><span class="pre">DiffusePRTIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;dipolesubsurface&quot;</td>
+<td><tt class="docutils literal"><span class="pre">DipoleSubsurfaceIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;directlighting</td>
+<td><tt class="docutils literal"><span class="pre">DirectLightingIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;glossyprt&quot;</td>
+<td><tt class="docutils literal"><span class="pre">GlossyPRTIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;igi&quot;</td>
+<td><tt class="docutils literal"><span class="pre">IGIIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;irradiancecache&quot;</td>
+<td><tt class="docutils literal"><span class="pre">IrradianceCacheIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;path&quot;</td>
+<td><tt class="docutils literal"><span class="pre">PathIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;photonmap&quot;</td>
+<td><tt class="docutils literal"><span class="pre">PhotonIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;useprobes&quot;</td>
+<td><tt class="docutils literal"><span class="pre">UseRadianceProbes</span></tt></td>
+</tr>
+<tr><td>&quot;whitted&quot;</td>
+<td><tt class="docutils literal"><span class="pre">WhittedIntegrator</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>A greyscale ambient occlusion image is computed by the &quot;ambientocclusion&quot;
+integrator; it takes a number of samples over the hemisphere of each
+visible point and computes the fraction of them that are unoccluded.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>nsamples</td>
+<td>2048</td>
+<td>Number of samples to take in computing the ambient
+occlusion value.  Lower values will be faster, but may
+lead to noisy images.</td>
+</tr>
+<tr><td>float</td>
+<td>maxdist</td>
+<td>(infinite)</td>
+<td>Distance beyond which to ignore any intersections for the
+ambient occlusion computation.  Often, considering only
+nearby occluders gives good results and can be much more
+efficient, as the rays to be traced are shorter.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;diffuseprt&quot; integrator implements the diffuse precomputed radiance
+transfer algorithm implemented in Section 17.4 of PBR.  At each point, it
+projects the transfer function (Equation 17.20) into the SH basis and uses
+the efficient dual-product integral approach to compute the reflected light
+due to incident illumination.  (Recall that in practice, one would
+generally want to precompute the projection of the transfer function and
+store it and then do the reflected light computation in real-time.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>lmax</td>
+<td>4</td>
+<td>Maximum spherical harmonic band <em>l</em> to use; the total
+number of SH coefficients used at each point will be
+(lmax+1)*(lmax+1).</td>
+</tr>
+<tr><td>integer</td>
+<td>nsamples</td>
+<td>4096</td>
+<td>Number of Monte Carlo samples to use when computing the
+projection of the transfer function T (Equation 17.20)
+into the spherical harmonics basis.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;dipolesubsurface&quot; integrator implements the subsurface scattering
+rendering algorithm described in Section 16.5.  It is otherwise similar to
+the direct lighting integrator, in that it follows specularly reflected and
+transmitted rays and uses standard algorithms to compute direct lighting.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>maxdepth</td>
+<td>5</td>
+<td>The maximum recursion depth for specular reflection and
+transmission.</td>
+</tr>
+<tr><td>float</td>
+<td>maxerror</td>
+<td>0.05</td>
+<td>Maximum value of the error term used to determine whether
+to traverse deeper into the irradiance sample octree
+or to use the current node for illumination.  (This is the
+<tt class="docutils literal"><span class="pre">maxError</span></tt> value in the second code fragment from the
+top of page 911.)</td>
+</tr>
+<tr><td>float</td>
+<td>minsampledistance</td>
+<td>0.25</td>
+<td>Minimum distance between the point samples generated on
+translucent objects at which to compute the incident
+irradiance.  In general, this value should be around half
+of the mean free path of light inside the scattering medium.
+The value of this parameter is ignored if the &quot;pointsfile&quot;
+parameter is provided.</td>
+</tr>
+<tr><td>string</td>
+<td>pointsfile</td>
+<td>(none)</td>
+<td>File from which to read precomputed sample points (as
+generated by the <tt class="docutils literal"><span class="pre">SurfacePointsRenderer</span></tt>, for example.)
+If a file is provided, the points to be used will be read
+from the file.  Otherwise, the point generation step will
+be performed using the provided &quot;minsampledistance&quot; before
+rendering.</td>
+</tr>
+</tbody>
+</table>
+<p>There are two parameters for the &quot;directlighting&quot; integrator.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="13%" />
+<col width="11%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>maxdepth</td>
+<td>5</td>
+<td>The maximum recursion depth.</td>
+</tr>
+<tr><td>string</td>
+<td>strategy</td>
+<td>&quot;all&quot;</td>
+<td>The strategy to use for sampling direct lighting.  Valid options are
+&quot;all&quot;, which samples all the lights uniformly and averages their
+contributions, and &quot;one&quot;, which chooses a single light uniformly at random.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;glossyprt&quot; integrator implements the glossy precomputed radiance
+transfer algorithm described in Section 17.5 of PBR.  As with the
+&quot;diffuseprt&quot; integrator, it both computes the SH representation of
+scattering at each point and then computes the effect of this scattering
+with the light in the scene.  In general, one would precompute the
+scattering properties and then compute the scattering in a real-time
+renderer.</p>
+<p>Furthermore, note that this integrator ignores the properties of the
+materials bound to objects in the scene but instead uses a simple
+parameterized material model for all scene objects.  The reasons for this,
+and alternative approaches are discussed at the top of page 980.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="12%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>lmax</td>
+<td>4</td>
+<td>Maximum SH band number <em>l</em> to use.  Given a particular value of
+lmax, (lmax+1)*(lmax+1) SH coefficients will be used.</td>
+</tr>
+<tr><td>integer</td>
+<td>nsamples</td>
+<td>4096</td>
+<td>Number of Monte Carlo samples to use in the various
+computations projecting quantities into SH.</td>
+</tr>
+<tr><td>spectrum</td>
+<td>Kd</td>
+<td>0.5</td>
+<td>Diffuse reflectance spectrum of surfaces.</td>
+</tr>
+<tr><td>spectrum</td>
+<td>Ks</td>
+<td>0.25</td>
+<td>Glossy reflectance of surfaces.</td>
+</tr>
+<tr><td>float</td>
+<td>roughness</td>
+<td>0.1</td>
+<td>Surface roughness, for use with the Blinn microfacet
+distributions.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;instant global illumination&quot; algorithm is implemented by the &quot;igi&quot; integrator.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>maxdepth</td>
+<td>5</td>
+<td>The maximum recursion depth for specular reflection and
+transmission.</td>
+</tr>
+<tr><td>integer</td>
+<td>nlights</td>
+<td>64</td>
+<td>The number of virtual light paths to follow for each of the
+light sets.  The more paths followed, the better the result
+in general, though the longer rendering takes.</td>
+</tr>
+<tr><td>integer</td>
+<td>nsets</td>
+<td>4</td>
+<td>The number of independent virtual light sets to compute.
+In general, this number should be equal to the number of
+pixel samples taken by the sampler; this should ensure that
+in each pixel area, each of the light sets is used exactly
+one time.  If this number is larger than the number of pixel
+samples, the image may be noisy, as different pixels will
+use different virtual lights.</td>
+</tr>
+<tr><td>float</td>
+<td>rrthreshold</td>
+<td>0.0001</td>
+<td>Russian roulette threshold for terminating shadow rays that
+connect the point being shaded to a virtual light source.</td>
+</tr>
+<tr><td>float</td>
+<td>glimit</td>
+<td>10</td>
+<td>Maximum allowed value of the geometric coupling term G;
+see Equations 15.11 through 15.12 on pages 782-783.
+If images have unexpected bright regions, reducing this value
+should cause them to disappear.</td>
+</tr>
+<tr><td>integer</td>
+<td>gathersamples</td>
+<td>16</td>
+<td>Number of &quot;final gather&quot; samples to take at points where the
+G limit was applied.</td>
+</tr>
+</tbody>
+</table>
+<p>The irradiance caching integrator is used when the &quot;irradiancecache&quot; <tt class="docutils literal"><span class="pre">SurfaceIntegrator</span></tt> is specified.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="14%" />
+<col width="11%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>minweight</td>
+<td>0.5</td>
+<td>Minimum weight for the interpolated irradiance samples.  If the
+sum of interpolated sample weights is less than this value, a
+new sample is computed.</td>
+</tr>
+<tr><td>float</td>
+<td>minpixelspacing</td>
+<td>2.5</td>
+<td>Minimum distance, in pixels, between irradiance samples.  No
+samples nearer this distance will be generated.</td>
+</tr>
+<tr><td>float</td>
+<td>maxpixelspacing</td>
+<td>15</td>
+<td>Maximum distance, in pixels, between irradiance samples.  Even
+if the other error terms indicate that a sample can be used at
+a point being shaded, if it is more than this many pixels away
+on the image plane, it is ignored.</td>
+</tr>
+<tr><td>float</td>
+<td>maxangledifference</td>
+<td>10</td>
+<td>Maximum allowed difference in the angle between the surface
+normal at an irradiance lookup point and the surface normal
+of an irradiance sample.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxspeculardepth</td>
+<td>5</td>
+<td>Maximum recursion depth for tracing specular reflection and refraction rays.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxindirectdepth</td>
+<td>3</td>
+<td>Maximum recursion depth for tracing paths to compute irradiance estimates.</td>
+</tr>
+<tr><td>integer</td>
+<td>nsamples</td>
+<td>4096</td>
+<td>How many rays are used to estimate the irradiance value at a point.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;path&quot; integrator takes just a single parameter.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>maxdepth</td>
+<td>5</td>
+<td>The maximum length of a path.</td>
+</tr>
+</tbody>
+</table>
+<p>Photon mapping is implemented by the &quot;photonmap&quot; integrator.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="12%" />
+<col width="9%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>causticphotons</td>
+<td>20,000</td>
+<td>The number of photons required to build the caustic photon map.  The more caustic photons traced,
+the more accurately caustics will be represented in the scene, though the more memory will be
+required to store them.</td>
+</tr>
+<tr><td>integer</td>
+<td>indirectphotons</td>
+<td>100,000</td>
+<td>The number of photons required to build the indirect illumination map.  As with caustic photons,
+increasing the number of photons improves the result at the cost of more memory.</td>
+</tr>
+<tr><td>integer</td>
+<td>nused</td>
+<td>50</td>
+<td>The number of photons to use in density estimation.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxspeculardepth</td>
+<td>5</td>
+<td>The maximum number of levels of specular reflection and refraction.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxphotondepth</td>
+<td>5</td>
+<td>The maximum number of levels of scattering to follow when tracing photon paths from light sources.</td>
+</tr>
+<tr><td>float</td>
+<td>maxdist</td>
+<td>0.1</td>
+<td>The maximum distance between a point being shaded and a photon that can contribute to that point.</td>
+</tr>
+<tr><td>bool</td>
+<td>finalgather</td>
+<td>true</td>
+<td>If true, do a final gather when estimating the indirect illumination.  Otherwise, just use the
+photon map at the hit point.  (In general, final gathering gives substantially better results,
+but is much more computationally intensive.)</td>
+</tr>
+<tr><td>integer</td>
+<td>finalgathersamples</td>
+<td>32</td>
+<td>Number of samples to use when performing the final gather.  In general, a few thousand or so final
+gather samples are needed in each pixel area to give good results.  However, it's the product of the
+number of pixel samples and the number of final gather samples that matters; for 32 or 64 pixel samples
+at each pixel, this default generlaly works well.</td>
+</tr>
+<tr><td>float</td>
+<td>gatherangle</td>
+<td>10</td>
+<td>The photons around the point being shaded are used to construct an importance sampling distribution
+for final gathering by computing small cones around the incident direction of each one.  (The notion
+being that these directions indicate the important directions for incident indirect illumination
+at the point.)  This parameter sets the spread angle of these cones.  Too narrow an angle may
+miss important indirect illumination directions, while too wide an angle may reduce the effectiveness
+of this small optimization.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;useprobes&quot; integrator uses a set of radiance probes encoded in
+spherical harmonics, such as those computed by the <tt class="docutils literal"><span class="pre">CreateRadianceProbes</span></tt>
+renderer.  At each point being shaded, it computes the diffuse reflectance
+and then uses the SH convolution formula to compute the outgoing scattered
+radiance due to the incident illumination in the scene.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>string</td>
+<td>filename</td>
+<td>&quot;probes.out&quot;</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;whitted&quot; integrator takes a single parameter that sets the maximum ray
+tree depth.  In general, the &quot;directlighting&quot; integrator should be used in
+preference to the &quot;whitted&quot; integrator, as it uses better sampling
+algorithms for direct lighting from area light sources.  (The &quot;whitted&quot;
+integrator is simplified in this respect for better clarity of presentation
+of the basic ray tracing algorithm.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>maxdepth</td>
+<td>5</td>
+<td>The maximum recursion depth.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="volume-integrators">
+<h2>Volume Integrators</h2>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> provides two volume integrators; the default is
+<tt class="docutils literal"><span class="pre">EmissionIntegrator</span></tt>, which only accounts for volumetric attenuation and
+emission.  The <tt class="docutils literal"><span class="pre">SingleScatteringIntegrator</span></tt>
+computes the effect of single scattering and can thus render volumetric
+shadows, though it can be substantially more computationally intensive.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;emission&quot;</td>
+<td><tt class="docutils literal"><span class="pre">EmissionIntegrator</span></tt></td>
+</tr>
+<tr><td>&quot;single&quot;</td>
+<td><tt class="docutils literal"><span class="pre">SingleScatteringIntegrator</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Both volume integrators take a single parameter, which specifies the
+distance in world space along the ray to go forward at each step.  In
+general, smaller values will cause rendering to take longer, but will
+better resolve fine-scale details in the volume description.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>stepsize</td>
+<td>1</td>
+<td>The stepping distance along a ray when doing ray marching.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="accelerators">
+<h2>Accelerators</h2>
+<p>The type of aggregate to use for efficiently finding ray-shape
+intersections is defined with the <tt class="docutils literal"><span class="pre">Accelerator</span></tt> directive:</p>
+<pre class="literal-block">
+Accelerator &quot;kdtree&quot; &quot;float emptybonus&quot; [0.1]
+</pre>
+<p>The default accelerator, &quot;bvh&quot;, is generally a good choice; it is rarely
+worthwhile to specify a different accelerator or to need to change the
+accelerator's parameters to improve performance.</p>
+<p>Three accelerator implementations are available in <tt class="docutils literal"><span class="pre">pbrt</span></tt>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;bvh&quot;</td>
+<td><tt class="docutils literal"><span class="pre">BVHAccel</span></tt></td>
+</tr>
+<tr><td>&quot;grid&quot;</td>
+<td><tt class="docutils literal"><span class="pre">GridAccel</span></tt></td>
+</tr>
+<tr><td>&quot;kdtree&quot;</td>
+<td><tt class="docutils literal"><span class="pre">KdTreeAccel</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;bvh&quot; accelerator, the default, takes just two parameters.  This
+accelerator is efficiently constructed when the scene description is
+processed, while still providing highly efficient ray-shape intersection
+tests.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="10%" />
+<col width="9%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>maxnodeprims</td>
+<td>4</td>
+<td>Maximum number of primitives to allow in a node in the tree.  Once the primitives have been split to groups of
+this size or smaller, a leaf node is created.</td>
+</tr>
+<tr><td>string</td>
+<td>splitmethod</td>
+<td>&quot;sah&quot;</td>
+<td>Method to use to partition the primitives when building the tree.  The default, &quot;sah&quot;, denotes the surface
+area heuristic; the default should almost certainly be used.  The other options--&quot;middle&quot;, which splits each
+node at its midpoint along the split axis, or &quot;equal&quot;, which splits the current group of primitives into
+two equal-sized sets--are slightly more efficient to evaluate at tree construction time, but lead to
+substantially lower-quality hierarchies.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;grid&quot; accelerator takes only a single parameter.  While this
+accelerator is extremely efficient to create, it is substantially lower
+performance than the others at ray-shape intersection time.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="11%" />
+<col width="9%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>bool</td>
+<td>refineimmediately</td>
+<td>false</td>
+<td>If true, primitives are fully refined as soon as they are added to the grid.
+Otherwise, they are not refined until a ray enters a voxel that contains the primitive.</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, the &quot;kdtree&quot; accelerator takes a number of parameters that control
+its construction.  This accelerator takes substantially longer to create
+than &quot;bvh&quot; at scene definition time, but it can be marginally faster at
+finding ray-shape intersections.  It tends to require less memory than
+&quot;bvh&quot;.</p>
+<p>See page 234 of the second edition of the book for the details of the cost
+function used for building kd-trees (and thus the use of some of the the
+various parameters below.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="10%" />
+<col width="9%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>intersectcost</td>
+<td>80</td>
+<td>The value of the cost function that estimates the expected cost of performing a ray-object
+intersection, for use in building the kd-tree.</td>
+</tr>
+<tr><td>integer</td>
+<td>traversalcost</td>
+<td>1</td>
+<td>Estimated cost for traversing a ray through a kd-tree node.</td>
+</tr>
+<tr><td>float</td>
+<td>emptybonus</td>
+<td>0.2</td>
+<td>&quot;Bonus&quot; factor for kd-tree nodes that represent empty space.</td>
+</tr>
+<tr><td>integer</td>
+<td>maxprims</td>
+<td>1</td>
+<td>Maximum number of primitives to store in kd-tree node.  (Not a hard limit; more may be stored if the kd-tree
+can't find splitting planes that reduce the number of primitives when refining a node.)</td>
+</tr>
+<tr><td>integer</td>
+<td>maxdepth</td>
+<td>-1</td>
+<td>Maximum depth of the kd-tree.  If negative, the kd-tree chooses a maximum depth based on the number of
+primitives to be stored in it.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="specifying-the-world">
+<h1>Specifying the World</h1>
+<p>After the camera, film, and rendering options have been set, the
+<tt class="docutils literal"><span class="pre">WorldBegin</span></tt> directive marks the start of the scene definition (the
+&quot;world block&quot;).  In the world block, the lights, materials, and geometric
+shapes that make up the scene are defined.  After <tt class="docutils literal"><span class="pre">WorldBegin</span></tt>, the
+directives described in the <a class="reference internal" href="#specifying-scene-wide-rendering-options">Specifying Scene-Wide Rendering Options</a>
+section are all illegal; an error message will be printed if one is
+encountered.  (Similarly, the directives documented in this section are
+illegal outside of the world block.)  The end of the world block is denoted
+by the <tt class="docutils literal"><span class="pre">WorldEnd</span></tt> directive; when it is encountered, the chosen
+<tt class="docutils literal"><span class="pre">Renderer</span></tt> takes over and does the requested rendering computation.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#shapes">Shapes</a></li>
+<li><a class="reference internal" href="#object-instancing">Object Instancing</a></li>
+<li><a class="reference internal" href="#lights">Lights</a></li>
+<li><a class="reference internal" href="#area-lights">Area Lights</a></li>
+<li><a class="reference internal" href="#materials">Materials</a></li>
+<li><a class="reference internal" href="#textures">Textures</a></li>
+<li><a class="reference internal" href="#scattering-volumes">Scattering Volumes</a></li>
+</ul>
+<div class="section" id="attributes">
+<h2>Attributes</h2>
+<p>A number of directives modify the current graphics state--examples include
+the transformation directives (<a class="reference internal" href="#specifying-transformations">Specifying Transformations</a>), and the
+directive that sets the current material.  The current graphics state
+(including the current transformation matrix) can be saved and restored
+using the <tt class="docutils literal"><span class="pre">AttributeBegin</span></tt> and <tt class="docutils literal"><span class="pre">AttributeEnd</span></tt> directives:</p>
+<pre class="literal-block">
+Material &quot;matte&quot;
+AttributeBegin
+   Material &quot;plastic&quot;
+   Shape &quot;sphere&quot;
+AttributeEnd   # back to the &quot;matte&quot; material
+Shape &quot;cone&quot;
+</pre>
+<p>The transformation matrix can be saved and restored independently of the
+graphics state using <tt class="docutils literal"><span class="pre">TransformBegin</span></tt> and <tt class="docutils literal"><span class="pre">TransformEnd</span></tt>.</p>
+<pre class="literal-block">
+Scale 2 2 2
+TransformBegin
+    Translate 1 0 1
+    Shape &quot;sphere&quot;
+TransformEnd   # Translate no longer applies here
+</pre>
+<p>In addition to the current transformation matrix and material, the
+reverse-orientation setting, specified by the <tt class="docutils literal"><span class="pre">ReverseOrientation</span></tt>
+directive, is part of the graphics state.  This directive, when active,
+flips the surface normal of the shapes that follow it; it can be useful
+when specifying area light sources, which only emit light from the side
+their surface normal points from, and when specifying transparent
+materials, where the surface normal is used to determine whether rays are
+entering or exiting the refractive medium.</p>
+</div>
+<div class="section" id="shapes">
+<h2>Shapes</h2>
+<p>Shapes are specified with the <tt class="docutils literal"><span class="pre">Shape</span></tt> directive; it takes the name of a
+shape implementation and a parameter list used to define the shape's
+properties:</p>
+<blockquote>
+<tt class="docutils literal"><span class="pre">Shape</span></tt> &quot;<em>name</em>&quot; <em>parameter-list</em></blockquote>
+<p>For example,</p>
+<pre class="literal-block">
+Shape &quot;sphere&quot; &quot;float radius&quot; [0.25]
+</pre>
+<p>When a <tt class="docutils literal"><span class="pre">Shape</span></tt> directive is encountered, the current transformation
+matrix defines the object to world transformation for the shape.</p>
+<p>A number of shapes are provided by <tt class="docutils literal"><span class="pre">pbrt</span></tt>; this list shows the mapping
+from shape names to implementation class in the system.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;cone&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Cone</span></tt></td>
+</tr>
+<tr><td>&quot;cylinder&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Cylinder</span></tt></td>
+</tr>
+<tr><td>&quot;disk&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Disk</span></tt></td>
+</tr>
+<tr><td>&quot;hyperboloid&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Hyperboloid</span></tt></td>
+</tr>
+<tr><td>&quot;heightfield&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Heightfield</span></tt></td>
+</tr>
+<tr><td>&quot;loopsubdiv&quot;</td>
+<td><tt class="docutils literal"><span class="pre">LoopSubdiv</span></tt></td>
+</tr>
+<tr><td>&quot;nurbs&quot;</td>
+<td><tt class="docutils literal"><span class="pre">NURBS</span></tt></td>
+</tr>
+<tr><td>&quot;paraboloid&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Paraboloid</span></tt></td>
+</tr>
+<tr><td>&quot;sphere&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Sphere</span></tt></td>
+</tr>
+<tr><td>&quot;trianglemesh&quot;</td>
+<td><tt class="docutils literal"><span class="pre">TriangleMesh</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The extent of the &quot;cone&quot; shape is defined by three parameters; note that
+the cone is oriented along the <em>z</em> axis in object space; the current
+transformation matrix can be used to orient it differently in the scene's
+world space.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="15%" />
+<col width="12%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>radius</td>
+<td>1</td>
+<td>The cone's radius.</td>
+</tr>
+<tr><td>float</td>
+<td>height</td>
+<td>1</td>
+<td>The height of the cone along the <em>z</em> axis.</td>
+</tr>
+<tr><td>float</td>
+<td>phimax</td>
+<td>360</td>
+<td>The maximum extent of the cone in phi (in spherical coordinates).</td>
+</tr>
+</tbody>
+</table>
+<p>Similarly, &quot;cylinder&quot; is oriented along the <em>z</em> axis as well.  It takes
+four parameters.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>radius</td>
+<td>1</td>
+<td>The cylinder's radius.</td>
+</tr>
+<tr><td>float</td>
+<td>zmin</td>
+<td>-1</td>
+<td>The height of the cylinder's bottom along the z axis.</td>
+</tr>
+<tr><td>float</td>
+<td>zmax</td>
+<td>1</td>
+<td>The height of the cylinder's top along the z axis.</td>
+</tr>
+<tr><td>float</td>
+<td>phimax</td>
+<td>360</td>
+<td>The maximum extent of the cylinder in phi (in spherical coordinates).</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;disk&quot; is perpendicular to the <em>z</em> axis, with its center at <em>x=0</em> and
+<em>y=0</em>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>height</td>
+<td>0</td>
+<td>The location of the disk along the z axis.</td>
+</tr>
+<tr><td>float</td>
+<td>radius</td>
+<td>1</td>
+<td>The outer radius of the disk.</td>
+</tr>
+<tr><td>float</td>
+<td>innerradius</td>
+<td>0</td>
+<td>The inner radius of the disk  (if nonzero, the disk is an annulus).</td>
+</tr>
+<tr><td>float</td>
+<td>phimax</td>
+<td>360</td>
+<td>The maximum extent of the disk in phi (in spherical coordinates).</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;heightfield&quot; shape isn't described in the <tt class="docutils literal"><span class="pre">pbrt</span></tt> book text; it's
+essentially a compact way to describe a regular triangulated mesh.  The
+user provides resolutions in the <em>u</em> and <em>v</em> directions and then a series
+of height values.  The height values give the <em>z</em> values for a series of
+vertices over [0,1]^2 in <em>(x,y)</em>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>int</td>
+<td>nu, nv</td>
+<td>none</td>
+<td>Number of sample values in each direction.  The total number
+of triangles in the mesh is 2 * (nu-1) * (nv-1).</td>
+</tr>
+<tr><td>float[nu*nv]</td>
+<td>Pz</td>
+<td>none</td>
+<td>Array of height values to specify the hieightfield.</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;hyperboloid&quot; takes two points to define the line of revolution that sweeps out its surface.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="14%" />
+<col width="11%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>point</td>
+<td>p1</td>
+<td>0 0 0</td>
+<td>The first end point of the hyperboloid's line of revolution.</td>
+</tr>
+<tr><td>point</td>
+<td>p2</td>
+<td>1 1 1</td>
+<td>The second end point of the hyperboloid's line of revolution.</td>
+</tr>
+<tr><td>float</td>
+<td>phimax</td>
+<td>360</td>
+<td>The maximum extent of the hyperboloid in phi (in spherical coordinates).</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;loopsubdiv&quot; shape corresponds to a subdivision surface evaluated with Loop's subdivision rules.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="12%" />
+<col width="14%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>nlevels</td>
+<td>3</td>
+<td>The number of levels of refinement to compute in the subdivision algorithm.</td>
+</tr>
+<tr><td>integer[n]</td>
+<td>indices</td>
+<td>required--no default</td>
+<td>Indices for the base mesh.  Indexing is the same as for the triangle mesh primitive.
+(See &quot;trianglemesh&quot; below).</td>
+</tr>
+<tr><td>point[n]</td>
+<td>P</td>
+<td>required--no default</td>
+<td>Vertex positions for the base mesh.  This is the same as for the triangle mesh primitive.
+(See &quot;trianglemesh&quot; below).</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;nurbs&quot; can be used to define a NURBS surface.  The current implementation
+does a fixed-rate tessellation, with tesselation rate provided directly by
+the user.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="11%" />
+<col width="15%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>nu, nv</td>
+<td>none--must be specified</td>
+<td>Number of control points for NURBS patch in the u and v parametric directions.</td>
+</tr>
+<tr><td>integer</td>
+<td>uorder, vorder</td>
+<td>see description</td>
+<td>Order of NURBS surface in u and v directions.  (Order is equal to one plus the surface's degree.)</td>
+</tr>
+<tr><td>float[nu+uorder]</td>
+<td>uknots</td>
+<td>none--must be specified</td>
+<td>Knot vector for NURBS in the u direction.</td>
+</tr>
+<tr><td>float[nv+vorder]</td>
+<td>vknots</td>
+<td>none--must be specified</td>
+<td>Knot vector for NURBS in the v direction.</td>
+</tr>
+<tr><td>float</td>
+<td>u0, v0</td>
+<td>none--must be specified</td>
+<td>Starting u and v parametric coordinates at which to evaluate NURBS.</td>
+</tr>
+<tr><td>float</td>
+<td>u1, v1</td>
+<td>none--must be specified</td>
+<td>Ending u and v parametric coordinates at which to evaluate NURBS.</td>
+</tr>
+<tr><td>point[nu*nv]</td>
+<td>P</td>
+<td>none</td>
+<td>Either the <tt class="docutils literal"><span class="pre">P</span></tt> or <tt class="docutils literal"><span class="pre">Pw</span></tt> parameter must be specified to give the surface's control
+points.  <tt class="docutils literal"><span class="pre">P</span></tt> gives regular control points.</td>
+</tr>
+<tr><td>float[4*nu*nv]</td>
+<td>Pw</td>
+<td>none</td>
+<td>Specifies rational control points, with an additional per-vertex weight value.</td>
+</tr>
+</tbody>
+</table>
+<p>Here are the parameters for &quot;paraboloid&quot;.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="14%" />
+<col width="11%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>radius</td>
+<td>1</td>
+<td>The paraboloid's radius.</td>
+</tr>
+<tr><td>float</td>
+<td>zmin</td>
+<td>0</td>
+<td>The height of the lower clipping plane along the z axis.</td>
+</tr>
+<tr><td>float</td>
+<td>zmax</td>
+<td>1</td>
+<td>The height of the upper clipping plane along the z axis.</td>
+</tr>
+<tr><td>float</td>
+<td>phimax</td>
+<td>360</td>
+<td>The maximum extent of the paraboloid along phi (in spherical coordinates).</td>
+</tr>
+</tbody>
+</table>
+<p>And these are the &quot;sphere&quot; parameters.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>radius</td>
+<td>1</td>
+<td>The sphere's radius.</td>
+</tr>
+<tr><td>float</td>
+<td>zmin</td>
+<td>radius</td>
+<td>The height of the lower clipping plane along the z axis.</td>
+</tr>
+<tr><td>float</td>
+<td>zmax</td>
+<td>radius</td>
+<td>The height of the upper clipping plane along the z axis.</td>
+</tr>
+<tr><td>float</td>
+<td>phimax</td>
+<td>360</td>
+<td>The maximum extent of the sphere in phi (in spherical coordinates).</td>
+</tr>
+</tbody>
+</table>
+<p>An arbitrary triangle mesh is defined by the &quot;trianglemesh&quot; shape.  The
+mesh's topology is defined by the <tt class="docutils literal"><span class="pre">indices</span></tt> parameter, which is an array
+of integer indices into the vertex arrays.  Each successive triplet of
+indices defines the offsets to the three vertices of one triangle; thus,
+the length of the <tt class="docutils literal"><span class="pre">indices</span></tt> array must be a multiple of three.</p>
+<p>Here is an example of a small triangle mesh:</p>
+<pre class="literal-block">
+Shape &quot;trianglemesh&quot;  &quot;integer indices&quot; [0 2 1 0 3 2 ]
+    &quot;point P&quot; [550 0 0    0 0 0    0 0 560    550 0 560 ]
+</pre>
+<p>Here, we have an array of four vertices in the <tt class="docutils literal"><span class="pre">P</span></tt> parameter.  The
+<tt class="docutils literal"><span class="pre">indices</span></tt> array defines two triangles that use these vertices--the first
+one has vertex positions (550,0,0), (0,0,560), and (0,0,0).  Note that both
+triangles use vertices 0 and 2.  Because the triangle mesh is specified in
+a way that makes this vertex reuse explicit, the in-memory representation
+of the triangle mesh can be more compact than if each triange had to
+explicitly and privately store all of its per-vertex data.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="14%" />
+<col width="17%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer[n]</td>
+<td>indices</td>
+<td>required--no default</td>
+<td>The array of integer offsets into the per-vertex data arrays
+(<tt class="docutils literal"><span class="pre">P</span></tt>, and any of <tt class="docutils literal"><span class="pre">N</span></tt>, <tt class="docutils literal"><span class="pre">S</span></tt>, or <tt class="docutils literal"><span class="pre">uv</span></tt> that are present.)</td>
+</tr>
+<tr><td>point[n]</td>
+<td>P</td>
+<td>required--no default</td>
+<td>The vertex positions of the triangle mesh.</td>
+</tr>
+<tr><td>normal[n]</td>
+<td>N</td>
+<td>none--optional</td>
+<td>Per-vertex normals.  If present, shading normals will be computed
+from these values.</td>
+</tr>
+<tr><td>vector[n]</td>
+<td>S</td>
+<td>none--optional</td>
+<td>Per-vertex tangents.</td>
+</tr>
+<tr><td>float[2*n]</td>
+<td>uv</td>
+<td>none--optional</td>
+<td>Per-vertex texture coordinates.</td>
+</tr>
+<tr><td>float texture</td>
+<td>alpha</td>
+<td>none</td>
+<td>Optional &quot;alpha&quot; texture.  (See the <a class="reference internal" href="#textures">Textures</a> section for
+more information about textures in <tt class="docutils literal"><span class="pre">pbrt</span></tt>.)  When provided,
+at any point on the triangle where the alpha texture evaluates
+to have the value zero, the triangle is cut away and any
+ray intersection is ignored.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="object-instancing">
+<h2>Object Instancing</h2>
+<p>If a complex object is used repeatedly in a scene, object instancing may be
+desirable; this lets the system store a single instance of the object in
+memory and just record multiple transformations to place it in the scene.
+Object instances are created via named objects.</p>
+<p>To create a named object, its definition should be placed within an
+<tt class="docutils literal"><span class="pre">ObjectBegin</span></tt>/<tt class="docutils literal"><span class="pre">ObjectEnd</span></tt> pair:</p>
+<pre class="literal-block">
+ObjectBegin &quot;name&quot;
+  Shape ...
+  Shape ...
+ObjectEnd
+</pre>
+<p>When a named object is defined, the current transformation matrix defines
+the transformation from object space to the instance's coordinate space.</p>
+<p>After a named object has been defined, it can be instantiated with the
+<tt class="docutils literal"><span class="pre">ObjectInstance</span></tt> directive.  The current transformation matrix then defines
+the instance space to world space transformation; thus, the final
+transformation for a shape in an object instance definition is the
+composition of the CTM when the instance was defiend and the CTM when the
+instance was instantiated.</p>
+<p>Thus, two instances of an object named &quot;foo&quot; are instantiated in the
+following:</p>
+<pre class="literal-block">
+ObjectInstance &quot;foo&quot;
+Translate 1 0 0
+ObjectInstance &quot;foo&quot;
+</pre>
+</div>
+<div class="section" id="lights">
+<h2>Lights</h2>
+<p>Light sources are of course required to cast illumination in the scene.
+<tt class="docutils literal"><span class="pre">pbrt</span></tt> provides two types of lights: lights that exist in the scene
+without any geometry associated with them, and lights that describe
+emission from one or more shapes in the scene (area lights).</p>
+<p>The first type of light is defined with the <tt class="docutils literal"><span class="pre">LightSource</span></tt> directive.
+There are 6 light sources of this type that are currently available in
+<tt class="docutils literal"><span class="pre">pbrt</span></tt>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;distant&quot;</td>
+<td><tt class="docutils literal"><span class="pre">DistantLight</span></tt></td>
+</tr>
+<tr><td>&quot;goniometric&quot;</td>
+<td><tt class="docutils literal"><span class="pre">GonioPhotometricLight</span></tt></td>
+</tr>
+<tr><td>&quot;infinite&quot;</td>
+<td><tt class="docutils literal"><span class="pre">InfiniteAreaLight</span></tt></td>
+</tr>
+<tr><td>&quot;point&quot;</td>
+<td><tt class="docutils literal"><span class="pre">PointLight</span></tt></td>
+</tr>
+<tr><td>&quot;projection&quot;</td>
+<td><tt class="docutils literal"><span class="pre">ProjectionLight</span></tt></td>
+</tr>
+<tr><td>&quot;spot&quot;</td>
+<td><tt class="docutils literal"><span class="pre">SpotLight</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>For example, the following defines a point light source with RGB intensity
+of (0.5, 0.5, 0.5):</p>
+<pre class="literal-block">
+LightSource &quot;point&quot; &quot;rgb I&quot; [ .5 .5 .5 ]
+</pre>
+<p>When a light source definition is encountered, the current transformation
+matrix is used to define the light-to-world transformation.  Many of the
+light sources also take parameters to place it in the scene; both ways of
+placing lights can be useful.</p>
+<p>all lights have a
+spectrum             scale             1 1 1</p>
+<p>The &quot;distant&quot; light source represents a directional light source &quot;at
+infinity&quot;; in other words, it illuminates the scene with light arriving
+from a single direction.  It takes these parameters:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="13%" />
+<col width="11%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>L</td>
+<td>rgb (1 1 1)</td>
+<td>The radiance emitted from the light source.</td>
+</tr>
+<tr><td>point</td>
+<td>from</td>
+<td>(0,0,0)</td>
+<td>&quot;from&quot; and &quot;to&quot; define the direction vector along which illumination
+from the light arrives at the scene.  The defaults give a light that shines
+along the z axis.</td>
+</tr>
+<tr><td>point</td>
+<td>to</td>
+<td>(0,0,1)</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;goniometric&quot; light represents a point light source with
+directionally-varying emission, where the emission distribution is
+represented by a texture map.  This representation can be useful for
+modeling many real-world light sources, where measurements of this
+distribution may be available.</p>
+<p>Given a normalized outgoing direction <em>w</em> from the goniometric light source
+to a point in the scene, the image coordinates in the goniometric diagram
+file are found using a (theta, phi) parameterization in spherical
+coordinates.  Here, the theta angle is measured with respect to the <em>y</em>
+axis, and <em>x</em> and <em>z</em> define phi.  (Elsewhere in <tt class="docutils literal"><span class="pre">pbrt</span></tt>, the <em>z</em> axis is
+generally used to measure theta.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="17%" />
+<col width="52%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>I</td>
+<td>rgb (1 1 1)</td>
+<td>A radiant intensity scale-factor; the radiant intensity in a
+particular direction is computed as the product of this value
+and the appropriate value from the goniometric diagram table.</td>
+</tr>
+<tr><td>string</td>
+<td>mapname</td>
+<td>required--no default</td>
+<td>The filename of the image file that stores a goniometric
+diagram to use for the lighting distribution.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;infinite&quot; light represents an infinitely far away light source that
+potentially casts illumination from all directions.  It is useful for
+modeling incident light in complex real environments (&quot;HDR lighting&quot;).  It
+takes an environment map with a &quot;latitude-longitude&quot; parameterization,
+where given a direciton vector <em>w</em>, the spherical (theta, phi) coordinates
+are found, and then the <em>u</em> coordinate of the environment map is indexed by
+the phi value and <em>v</em> is indexed by theta.  (If needed, the environment map
+can be reoriented with the light to world transformaiton.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="12%" />
+<col width="10%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>L</td>
+<td>rgb (1 1 1)</td>
+<td>A radiance scale factor for the light; final emitted radiance
+values for a particular direction are computed as the product
+of this value and the radiance value found from the environment map.</td>
+</tr>
+<tr><td>integer</td>
+<td>nsamples</td>
+<td>1</td>
+<td>Suggested number of shadow samples to take when computing illumination from the light.
+Depending on the number of pixel samples being taken, this value
+may need to be increased to reduce noise in the illumination
+computation for the light.</td>
+</tr>
+<tr><td>string</td>
+<td>mapname</td>
+<td>none</td>
+<td>The environment map to use for the infinite area light.  If this is not
+provided, the light will be a solid color.</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;point&quot; defines a simple point light that casts the same amount of
+illumination in all directions.  It takes two paramters:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>I</td>
+<td>rgb (1 1 1)</td>
+<td>The light's emitted radiant intensity.</td>
+</tr>
+<tr><td>point</td>
+<td>from</td>
+<td>0 0 0</td>
+<td>The location of the light.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;projection&quot; light acts like a slide projector; the given image is used
+to define a 2D emission distribution that is projected with a center of
+projection at the light's position.  Directions outside the frustum of
+light projection receive no emitted illumination.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="12%" />
+<col width="14%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>I</td>
+<td>rgb (1 1 1)</td>
+<td>Radiant intensity scale factor; the intensity in a given direction
+is the product of this value and the value from the image map
+for the corresponding direction.</td>
+</tr>
+<tr><td>float</td>
+<td>fov</td>
+<td>45</td>
+<td>The spread angle of the projected light, along the shorter image axis.</td>
+</tr>
+<tr><td>string</td>
+<td>mapname</td>
+<td>required--no default</td>
+<td>The image to project into the scene.</td>
+</tr>
+</tbody>
+</table>
+<p>A spotlight is defined by the &quot;spot&quot; light source.  The spotlight is
+defined by a lighting direction and then two angles that specify a cone of
+directions in which light is emitted.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="12%" />
+<col width="14%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>I</td>
+<td>rgb (1 1 1)</td>
+<td>Maximum radiant intensity of the light; this is the emitted radiant intensity
+in the center of the illumination cone.  It falls off to zero outside of the
+cone.</td>
+</tr>
+<tr><td>point</td>
+<td>from, to</td>
+<td>see description</td>
+<td>Two points defining the lighting vector.  The defaults are
+(0,0,0) and (0,0,1), respectively.  This gives a light that is
+pointing down the z axis.</td>
+</tr>
+<tr><td>float</td>
+<td>coneangle</td>
+<td>30</td>
+<td>The angle that the spotlight's cone makes with its primary axis.  For directions
+up to this angle from the main axis, the full radiant intensity given by &quot;I&quot;
+is emitted.  After this angle and up to &quot;coneangle&quot; + &quot;conedeltaangle&quot;,
+illumination falls off until it is zero.</td>
+</tr>
+<tr><td>float</td>
+<td>conedeltaangle</td>
+<td>5</td>
+<td>The angle at which the spotlight intensity begins to fall off at the edges.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="area-lights">
+<h1>Area Lights</h1>
+<p>Area lights have geometry associated with them; the shape and size of the
+emitting shapes have a substantial effect on the resulting emitted radiance
+distribution.  After an <tt class="docutils literal"><span class="pre">AreaLightSource</span></tt> directive, all subsequent
+shapes emit light from their surfaces according to the distribution defined
+by the given area light implementation.</p>
+<p>The current area light is saved and restored inside attribute blocks; typically
+area light definitions are inside an <tt class="docutils literal"><span class="pre">AttributeBegin</span></tt>/<tt class="docutils literal"><span class="pre">AttributeEnd</span></tt> pair
+in order to control the shapes that they are applied to.</p>
+<pre class="literal-block">
+AttributeBegin
+  AreaLightSource &quot;diffuse&quot; &quot;rgb L&quot; [ .5 .5 .5 ]
+  Translate 0 10 0
+  Shape &quot;sphere&quot; &quot;float radius&quot; [.25]
+AttributeEnd
+# area light is out of scope, subsequent shapes aren't emitters
+</pre>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> currently only includes a single area light implementation, &quot;diffuse&quot;.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;diffuse&quot;</td>
+<td><tt class="docutils literal"><span class="pre">DiffuseAreaLight</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;diffuse&quot; area light defines an emitter that emits radiance uniformly
+over all directions in the hemisphere around the surface normal at each
+point on the surface.  Thus, the orientation of the surface normal is
+meaningful; by default, an emitting sphere emits in the directions outside
+the sphere and there's no illumination inside of it.  If this is not the
+desired behavior, the <tt class="docutils literal"><span class="pre">ReverseOrientation</span></tt> directive can be used to flip
+the orientation of the surface normal of subsequent shapes:</p>
+<pre class="literal-block">
+AttributeBegin
+  AreaLightSource &quot;diffuse&quot;
+  ReverseOrientation  # illuminate inside the sphere
+  Shape &quot;sphere&quot;
+AttributeEnd
+</pre>
+<p>The &quot;diffuse&quot; area light takes just two parameters.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="13%" />
+<col width="11%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>L</td>
+<td>rgb (1 1 1)</td>
+<td>The amount of emitted radiance at each point and emitted direction..</td>
+</tr>
+<tr><td>integer</td>
+<td>nsamples</td>
+<td>1</td>
+<td>Suggested number of shadow samples to take when
+computing illumination from the light.  (Integrators may use a value close
+to but not necessarily equal to this value or may ignore it completely.)</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="materials">
+<h2>Materials</h2>
+<p>Materials specify the light scattering properties of surfaces in the scene.
+The <tt class="docutils literal"><span class="pre">Material</span></tt> directive specifies the current material, which then
+applies for all subsequent shape definitions (until the end of the current
+attribute scope or until a new material is defined:</p>
+<pre class="literal-block">
+Material &quot;matte&quot; &quot;rgb Kd&quot; [ .7 .2 .2 ]
+</pre>
+<p>Many parameters to materials are distinctive in that <em>textures</em> can be used
+to specify spatially-varying values for the parameters.  For example, the
+above material definition defines diffuse surface with the same reddish
+color at all points.  Alternatively, we might want to use an image map to
+define the color as a function of <em>(u,v)</em> on the surface.  This is done by
+defining a texture with a user-defined name (below, &quot;lines-tex&quot;), and then
+binding that to the desired parameter of the material.  For example, the
+following sets the &quot;Kd&quot; parameter of the &quot;matte&quot; material to be computed
+via lookups to the &quot;lines.exr&quot; image map.</p>
+<pre class="literal-block">
+Texture &quot;lines-tex&quot; &quot;spectrum&quot; &quot;imagemap&quot; &quot;string filename&quot; &quot;textures/lines.exr&quot;
+Material &quot;matte&quot; &quot;texture Kd&quot; &quot;lines-tex&quot;
+</pre>
+<p>Note that for each parameter (for example, &quot;Kd&quot; in the above), a value for
+the parameter can either be bound with a constant value, in which case the
+given type of the parameter should be &quot;float&quot;, &quot;rgb&quot;, &quot;spectrum&quot;, etc., as
+appropriate, or a texture value, in which case the given type of the
+parameter should be &quot;texture&quot; and the parameter value bound is the name of
+a texture.  (The next section of this document, <a class="reference internal" href="#textures">Textures</a>, describes the
+textures available in <tt class="docutils literal"><span class="pre">pbrt</span></tt> as well as their parameters.)</p>
+<p>Finally, it is sometimes useful to name a material.  A named material is a
+material and a set of parameter bindings (to constant values or to
+textures).  It is defined with the <tt class="docutils literal"><span class="pre">MakeNamedMaterial</span></tt> directive.  A
+named material can be set to be the current material with the
+<tt class="docutils literal"><span class="pre">NamedMaterial</span></tt> directive.</p>
+<pre class="literal-block">
+MakeNamedMaterial &quot;myplastic&quot; &quot;plastic&quot; &quot;float roughness&quot; [0.1]
+Material &quot;matte&quot;  # current material is &quot;matte&quot;
+NamedMaterial &quot;myplastic&quot;  # current material is &quot;plastic&quot; as above
+</pre>
+<p>This table lists the materials available in <tt class="docutils literal"><span class="pre">pbrt</span></tt> and the corresponding
+class in the source code distribution that implements each of them.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;glass&quot;</td>
+<td><tt class="docutils literal"><span class="pre">GlassMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;kdsubsurface&quot;</td>
+<td><tt class="docutils literal"><span class="pre">KdSubsurfaceMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;matte&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MatteMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;measured&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MeasuredMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;metal&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MetalMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;mirror&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MirrorMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;mix&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MixMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;plastic&quot;</td>
+<td><tt class="docutils literal"><span class="pre">PlasticMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;shinymetal&quot;</td>
+<td><tt class="docutils literal"><span class="pre">ShinyMetal</span></tt></td>
+</tr>
+<tr><td>&quot;substrate&quot;</td>
+<td><tt class="docutils literal"><span class="pre">SubstrateMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;subsurface &quot;</td>
+<td><tt class="docutils literal"><span class="pre">SubsurfaceMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;translucent&quot;</td>
+<td><tt class="docutils literal"><span class="pre">TranslucentMaterial</span></tt></td>
+</tr>
+<tr><td>&quot;uber&quot;</td>
+<td><tt class="docutils literal"><span class="pre">UberMaterial</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>All of the above materials take a texture that can be used to specify a
+bump map.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float texture</td>
+<td>bumpmap</td>
+<td>None</td>
+<td>The floating-point texture to be used as a bump map.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;glass&quot; material has parameters that specify the reflectivity and
+transmissivity.  These values are both modulated by the Fresnel equations
+for dielectric materials, which also ensure energy conservation (as long as
+neither &quot;Kr&quot; nor &quot;Kt&quot; is ever greater than one.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>Kr</td>
+<td>1</td>
+<td>The reflectivity of the surface.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Kt</td>
+<td>1</td>
+<td>The transmissivity of the surface.</td>
+</tr>
+<tr><td>float texture</td>
+<td>index</td>
+<td>1.5</td>
+<td>The index of refraction of the inside of the object.
+(<tt class="docutils literal"><span class="pre">pbrt</span></tt> implicitly assumes that the exterior of objects
+is a vacuum, with IOR of 1.)</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;kdsubsurface&quot; material provides a convenient way to specify the
+scattering materials of a material that exhibits subsurface scattering.
+(The parameters to the &quot;subsurface&quot; material, below, are often difficult to
+set to achieve a desired visual result.)  Here, the user can specify a
+diffuse reflection color, &quot;Kd&quot;, and the mean free path--the average
+distance that light travels in the medium before scattering.  (The smaller
+the mean free path, the thicker the medium is.)  These two values are then
+used to derive scattering coefficients for the medium.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>Kd</td>
+<td>0.5</td>
+<td>Diffuse scattering coefficient used to derive scattering properties.</td>
+</tr>
+<tr><td>float texture</td>
+<td>meanfreepath</td>
+<td>1</td>
+<td>Average distance light travels in the medium before scattering.</td>
+</tr>
+<tr><td>float texture</td>
+<td>index</td>
+<td>1.3</td>
+<td>The index of refraction inside the object.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Kr</td>
+<td>1</td>
+<td>Specular reflection term; this coefficient is modulated
+with the dielectric Fresnel equation to give the amount of
+specular reflection.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;matte&quot; material defines an object with simple Lambertian scattering.  It takes two parameters.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="15%" />
+<col width="12%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>Kd</td>
+<td>0.5</td>
+<td>The diffuse reflectivity of the surface.</td>
+</tr>
+<tr><td>float texture</td>
+<td>sigma</td>
+<td>0</td>
+<td>The sigma parameter for the Oren-Nayar model, in degrees.
+If this is zero, the surface exhibits pure Lambertian reflection.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;measured&quot; material can be used with files that store measured
+reflection data.  (<tt class="docutils literal"><span class="pre">pbrt</span></tt> supports two file formats for measured BRDF
+data; see the comments in the file <tt class="docutils literal"><span class="pre">src/materials/measured.cpp</span></tt> for
+discussion of their formats.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>string</td>
+<td>filename</td>
+<td>none</td>
+<td>Name of file with measured reflection data to be loaded.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;metal&quot; material describes scattering from metals, where the index of
+refraction (eta) and the absorption coefficient (k) describe metals'
+reflectance spectra.  These and a roughness parameter, which adjusts the
+microfacet distributions roughness, describe the overall material.  See the
+<tt class="docutils literal"><span class="pre">scenes/spds/metals</span></tt> directory in the <tt class="docutils literal"><span class="pre">pbrt</span></tt> distribution for spectra of
+the IOR and absorption coefficients of a variety of metals.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>eta</td>
+<td>(copper)</td>
+<td>Index of refraction to use in computing the material's reflectance.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>k</td>
+<td>(copper)</td>
+<td>Absorption coefficient to use in computing the material's reflectance.</td>
+</tr>
+<tr><td>float texture</td>
+<td>roughness</td>
+<td>0.01</td>
+<td>Roughness of the material's microfacet distribution.  Smaller values
+become increasingly close to perfect specular reflection.
+This value should be between zero and one.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;mirror&quot; material is a simple specular reflector.  The amount of
+reflection isn't modified by the Fresnel equations.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="12%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>Kr</td>
+<td>0.9</td>
+<td>The reflectivity of the mirror.  This value can be used to make
+colored or dim reflections.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;mix&quot; material interpolates between two previously-named materials
+using a texture.  This allows spatially-varying variation between two
+materials.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>amount</td>
+<td>0.5</td>
+<td>Weighting factor for the blend between materials.  A value
+of zero corresponds to just &quot;namedmaterial1&quot;, a value of one
+corredponds to just &quot;namedmaterial2&quot;, and values in between
+interpolate linearly.</td>
+</tr>
+<tr><td>string</td>
+<td>namedmaterial1</td>
+<td>(none)</td>
+<td>Name of first material to be interpolated between.</td>
+</tr>
+<tr><td>string</td>
+<td>namedmaterial2</td>
+<td>(none)</td>
+<td>Name of second material to be interpolated between.</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;plastic&quot; defines a simple plastic material, described by diffuse and
+specular reflection coefficients as well as a roughness value that
+describes how much variation there is in the microfacet distribution that
+models glossy specular reflection.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>Kd</td>
+<td>0.25</td>
+<td>The diffuse reflectivity of the surface.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Ks</td>
+<td>0.25</td>
+<td>The specular reflectivity of the surface.</td>
+</tr>
+<tr><td>float texture</td>
+<td>roughness</td>
+<td>0.1</td>
+<td>The roughness of the surface, from 0 to 1.  Larger values
+result in larger, more blurry highlights.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;shinymetal&quot; material is only present for backwards compatibility with
+scenes from <tt class="docutils literal"><span class="pre">pbrt-v1</span></tt>.  It shouldn't be used for any new scenes; the new
+&quot;metal&quot; material provides a much more accurate model of reflection from
+metals.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float texture</td>
+<td>roughness</td>
+<td>0.1</td>
+<td>The roughness of the surface.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Ks</td>
+<td>1</td>
+<td>The coefficient of glossy reflection.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Kr</td>
+<td>1</td>
+<td>The coefficient of specular reflection.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;substrate&quot; material mixes between diffuse and glossy reflection based
+on the viewing angle--this models many realistic materials, which become
+increasingly specular as the viewing angle approaches grazing.  It also
+supports anisotropic microfacet models, with two roughness parameters.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>Kd</td>
+<td>0.5</td>
+<td>The coefficient of diffuse reflection.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Ks</td>
+<td>0.5</td>
+<td>The coefficient of specular reflection.</td>
+</tr>
+<tr><td>float texture</td>
+<td>uroughness</td>
+<td>0.1</td>
+<td>The roughness of the surface in the u direction.</td>
+</tr>
+<tr><td>float texture</td>
+<td>vroughness</td>
+<td>0.1</td>
+<td>The roughness of the surface in the v direction.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;subsurface&quot; material is another material that describes subsurface
+scattering.  It allows directly setting the absorption coefficient and
+reduced scattering coefficient.  (These values are generally difficult to
+set manually to achieve a desired look; the &quot;kdsubsurface&quot; material is
+usually better for that.  However, if measured data is available, this
+material is the appropriate one.)  This material also supports setting the
+scattering properties using values that have been measured by various
+researchers.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="13%" />
+<col width="17%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>string</td>
+<td>name</td>
+<td>none</td>
+<td>Name of measured subsurface scattering coefficients.
+See the file src/core/volume.cpp in the <tt class="docutils literal"><span class="pre">pbrt</span></tt> distribution
+for all of the measurements that are available.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>sigma_a</td>
+<td>(.0011, .0024, .014)</td>
+<td>Absorption coefficient of the volume, measured in mm^-1.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>sigma_prime_s</td>
+<td>(2.55, 3.12, 3.77)</td>
+<td>Reduced scattering coefficient of the volume, measured in mm^-1.</td>
+</tr>
+<tr><td>float</td>
+<td>scale</td>
+<td>1</td>
+<td>Scale factor that is applied to sigma_a and sigma_prime_s.
+This is particularly useful when the scene is not measured in
+mm and the coefficients need to be scaled accordingly.  For example,
+if the scene is modeled in meters, then a scale factor of 0.001
+would be appropriate.</td>
+</tr>
+<tr><td>float texture</td>
+<td>index</td>
+<td>1.3</td>
+<td>Index of refraction of the scattering volume.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;translucent&quot; material models transmission through thin objects (like leaves).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>Kd</td>
+<td>0.25</td>
+<td>The coefficient of diffuse reflection and transmission.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Ks</td>
+<td>0.25</td>
+<td>The coefficient of specular reflection and transmission.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>reflect</td>
+<td>0.5</td>
+<td>Fraction of light reflected.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>transmit</td>
+<td>0.5</td>
+<td>Fraction of light transmitted.</td>
+</tr>
+<tr><td>float texture</td>
+<td>roughness</td>
+<td>0.1</td>
+<td>The roughness of the surface.  (This value should be between
+0 and 1).</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, the &quot;uber&quot; material is a &quot;kitchen sink&quot; material that supports
+diffuse, glossy specular, and specular reflection.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum texture</td>
+<td>Kd</td>
+<td>0.25</td>
+<td>The coefficient of diffuse reflection.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Ks</td>
+<td>0.25</td>
+<td>The coefficient of glossy reflection.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>Kr</td>
+<td>0</td>
+<td>The coefficient of specular reflection.</td>
+</tr>
+<tr><td>float texture</td>
+<td>roughness</td>
+<td>0.1</td>
+<td>The roughness of the surface.</td>
+</tr>
+<tr><td>float texture</td>
+<td>index</td>
+<td>1.5</td>
+<td>Index of refraction of the surface.  This value is used in
+both the microfacet model for specular reflection as well as for
+computing a Fresnel reflection term for perfect specular reflection.</td>
+</tr>
+<tr><td>spectrum texture</td>
+<td>opacity</td>
+<td>1</td>
+<td>The opacity of the surface.  Note that when less than one,
+the <tt class="docutils literal"><span class="pre">uber</span></tt> material transmits light without refracting it.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="textures">
+<h2>Textures</h2>
+<blockquote>
+<tt class="docutils literal"><span class="pre">Texture</span></tt> &quot;<em>name</em>&quot; &quot;<em>type</em>&quot; &quot;<em>class</em>&quot; <tt class="docutils literal"><span class="pre">[</span></tt> <em>parameter-list</em> <tt class="docutils literal"><span class="pre">]</span></tt></blockquote>
+<p>For example,</p>
+<pre class="literal-block">
+Texture &quot;mydiffuse&quot; &quot;spectrum&quot; &quot;imagemap&quot; &quot;string filename&quot; &quot;image.tga&quot;
+Material &quot;matte&quot; &quot;texture Kd&quot; &quot;mydiffuse&quot;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">Texture</span></tt> statement creates a named texture of a particular type.
+Currently, the only types that are supported are <tt class="docutils literal"><span class="pre">spectrum</span></tt> (<tt class="docutils literal"><span class="pre">color</span></tt>
+can be used a synonym for this) and <tt class="docutils literal"><span class="pre">float</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">pbrt</span></tt> provides the following texture implementations:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;bilerp&quot;</td>
+<td><tt class="docutils literal"><span class="pre">BilerpTexture</span></tt></td>
+</tr>
+<tr><td>&quot;checkerboard&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Checkerboard2DTexture</span></tt></td>
+</tr>
+<tr><td>&quot;checkerboard&quot;</td>
+<td><tt class="docutils literal"><span class="pre">Checkerboard3DTexture</span></tt></td>
+</tr>
+<tr><td>&quot;constant&quot;</td>
+<td><tt class="docutils literal"><span class="pre">ConstantTexture</span></tt></td>
+</tr>
+<tr><td>&quot;dots&quot;</td>
+<td><tt class="docutils literal"><span class="pre">DotsTexture</span></tt></td>
+</tr>
+<tr><td>&quot;fbm&quot;</td>
+<td><tt class="docutils literal"><span class="pre">FBmTexture</span></tt></td>
+</tr>
+<tr><td>&quot;imagemap&quot;</td>
+<td><tt class="docutils literal"><span class="pre">ImageTexture</span></tt></td>
+</tr>
+<tr><td>&quot;marble&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MarbleTexture</span></tt></td>
+</tr>
+<tr><td>&quot;mix&quot;</td>
+<td><tt class="docutils literal"><span class="pre">MixTexture</span></tt></td>
+</tr>
+<tr><td>&quot;scale&quot;</td>
+<td><tt class="docutils literal"><span class="pre">ScaleTexture</span></tt></td>
+</tr>
+<tr><td>&quot;uv&quot;</td>
+<td><tt class="docutils literal"><span class="pre">UVTexture</span></tt></td>
+</tr>
+<tr><td>&quot;windy&quot;</td>
+<td><tt class="docutils literal"><span class="pre">WindyTexture</span></tt></td>
+</tr>
+<tr><td>&quot;wrinkled&quot;</td>
+<td><tt class="docutils literal"><span class="pre">WrinkledTexture</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>In the below, note that a number of textures (e.g. &quot;mix&quot;) themselves take
+textures as parameters; thus, one can build up small &quot;trees&quot; of computation
+to compose a series of texture functions.</p>
+<p>Textures can be separated into three categories: any-D, 2D, and 3D.  Any-D
+textures are <tt class="docutils literal"><span class="pre">ConstantTexture</span></tt>, <tt class="docutils literal"><span class="pre">ScaleTexture</span></tt>, and <tt class="docutils literal"><span class="pre">MixTexture</span></tt>.
+These kinds of textures do not have a specific dimensionality and have no
+common arguments.</p>
+<p>2D textures use the <em>(u,v)</em> parametric coordinates on a surface for
+evaluation.  They are <tt class="docutils literal"><span class="pre">BilerpTexture</span></tt>, <tt class="docutils literal"><span class="pre">ImageTexture</span></tt>, <tt class="docutils literal"><span class="pre">UVTexture</span></tt>,
+<tt class="docutils literal"><span class="pre">CheckerboardTexture</span></tt>, and <tt class="docutils literal"><span class="pre">DotsTexture</span></tt>.  2D textures have the
+following common parameters:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="12%" />
+<col width="11%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>string</td>
+<td>mapping</td>
+<td>&quot;uv&quot;</td>
+<td>A string specifying the kind of texture coordinate mapping to use.
+Legal values are: &quot;uv&quot;, &quot;spherical&quot;, &quot;cylindrical&quot;, or &quot;planar&quot;.</td>
+</tr>
+<tr><td>float</td>
+<td>uscale, vscale</td>
+<td>1</td>
+<td>Scaling factors to be applied to the u and v texture coordinates, respectively.
+These parameters are only meaningful if the texture coordinate mapping type
+has been set to &quot;uv&quot;.</td>
+</tr>
+<tr><td>float</td>
+<td>udelta, vdelta</td>
+<td>0</td>
+<td>An offset to be applied to the u and v texture coordinates, respectively.
+These parameters are only meaningful if the texture coordinate mapping type has been
+set to &quot;uv&quot; or &quot;planar&quot;.</td>
+</tr>
+<tr><td>vector</td>
+<td>v1, v2</td>
+<td>see description</td>
+<td>v1 and v2 are two vectors that define a planar mapping.  The defaults are
+(1,0,0) and (0,1,0), respectively.  These parameters are only meaningful if the
+texture coordinate mapping type has been set to &quot;planar&quot;.</td>
+</tr>
+</tbody>
+</table>
+<p>3D textures use a texture space point location to evaluate themselves.  The
+current transformation matrix at the time they are created gives the
+transformation from object space.  They are <tt class="docutils literal"><span class="pre">CheckerboardTexture</span></tt>,
+<tt class="docutils literal"><span class="pre">FBmTexture</span></tt>, <tt class="docutils literal"><span class="pre">WrinkledTexture</span></tt>, <tt class="docutils literal"><span class="pre">MarbleTexture</span></tt>, and
+<tt class="docutils literal"><span class="pre">WindyTexture</span></tt>.  Note that <tt class="docutils literal"><span class="pre">CheckerboardTexture</span></tt> is the only texture
+that can be either a 2D or 3D texture (see its plug-in specific parameter
+settings in the following).  3D textures have no common parameters.</p>
+<p>Most of the provided textures can generate either <tt class="docutils literal"><span class="pre">Spectrum</span></tt> or
+<tt class="docutils literal"><span class="pre">float</span></tt> values, which is why many of the following descriptions have
+the <tt class="docutils literal"><span class="pre">spectrum/float</span></tt> type.</p>
+<p>The &quot;constant&quot; texture is just a convenience that always returns a given
+constant value.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="15%" />
+<col width="13%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum/float texture</td>
+<td>value</td>
+<td>1</td>
+<td>The constant value of this texture.</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;scale&quot; takes two textures as parameters, evaluates each of them, and
+returns their product.  It is often convenient to scale a texture used as a
+bump map by a constant <tt class="docutils literal"><span class="pre">float</span></tt> value to modulate the perceived height of
+the bumps, for example.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="14%" />
+<col width="11%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum/float texture</td>
+<td>tex1, tex2</td>
+<td>1</td>
+<td>These two textures will be multiplied together by the <tt class="docutils literal"><span class="pre">ScaleTexture</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;mix&quot; takes two textures and lienarly interpolates between their values
+according to the &quot;amount&quot; parameter (which may itself be a texture).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="13%" />
+<col width="11%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum/float texture</td>
+<td>tex1</td>
+<td>0</td>
+<td>One of the two textures to be mixed.</td>
+</tr>
+<tr><td>spectrum/float texture</td>
+<td>tex2</td>
+<td>1</td>
+<td>The other texture to be mixed.  These two textures must be of the same type.</td>
+</tr>
+<tr><td>float texture</td>
+<td>amount</td>
+<td>0.5</td>
+<td>The amount to use when linearly interpolating between the two mix textures.</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;bilerp&quot; bilinearly interpolates between the four textures using the
+<em>(u,v)</em> parametric coordinate.  The <tt class="docutils literal"><span class="pre">v00</span></tt> parameter represents the
+texture to use at <em>(0,0)</em>, and so forth.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="16%" />
+<col width="13%" />
+<col width="52%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum/float texture</td>
+<td>v00, v01, v10, v11</td>
+<td>see description</td>
+<td>The four values to be bilinearly interpolated between.
+They default to 0, 1, 0, and 1, respectively.</td>
+</tr>
+</tbody>
+</table>
+<p>Image maps can be provided with the &quot;imagemap&quot; texture.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="12%" />
+<col width="14%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>string</td>
+<td>filename</td>
+<td>required--no default</td>
+<td>The filename of the image to load.  Currently <tt class="docutils literal"><span class="pre">pbrt</span></tt> supports
+TGA, PFM, and EXR format images.</td>
+</tr>
+<tr><td>string</td>
+<td>wrap</td>
+<td>&quot;repeat&quot;</td>
+<td>What to do with texture coordinates that fall outside the legal [0,1] range.
+Legal values are &quot;repeat&quot;, which simply tiles the texture; &quot;black&quot;, which
+returns black when outside the legal range; and &quot;clamp&quot;, which always returns the
+nearest border texel.</td>
+</tr>
+<tr><td>float</td>
+<td>maxanisotropy</td>
+<td>8</td>
+<td>The maximum elliptical eccentricity for the EWA algorithm.</td>
+</tr>
+<tr><td>bool</td>
+<td>trilinear</td>
+<td>false</td>
+<td>If true, perform trilinear interpolation when looking up pixel values.
+Otherwise, <tt class="docutils literal"><span class="pre">pbrt</span></tt> uses the EWA algorithm for texture filtering.  EWA
+gives much better results, but is slower.</td>
+</tr>
+<tr><td>float</td>
+<td>scale</td>
+<td>1</td>
+<td>Scale factor to apply to value looked up in texture.</td>
+</tr>
+<tr><td>float</td>
+<td>gamma</td>
+<td>1</td>
+<td>&quot;Gamma&quot; value for optional gamma correction to looked-up values.  This is
+useful for textures that aren't encoded in a linear color space.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;checkerboard&quot; texture is a simple texture that alternates between two other textures.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="13%" />
+<col width="11%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>dimension</td>
+<td>2</td>
+<td>Sets the dimension of the checkerboard texture.  Legal values are 2 and 3.</td>
+</tr>
+<tr><td>spectrum/float texture</td>
+<td>tex1</td>
+<td>1</td>
+<td>The texture to use for even checks.</td>
+</tr>
+<tr><td>spectrum/float texture</td>
+<td>tex2</td>
+<td>0</td>
+<td>The texture to use for odd checks.</td>
+</tr>
+<tr><td>string</td>
+<td>aamode</td>
+<td>&quot;closedform&quot;</td>
+<td>Set the antialiasing mode for the checkerboard texture.  Legal values
+are &quot;closedform&quot; or &quot;none&quot;.  This parameter is only legal for 2D checkerboards.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;dots&quot; texture generates a random collection of polka dots.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="13%" />
+<col width="12%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum/float texture</td>
+<td>inside, outside</td>
+<td>see description</td>
+<td>The textures to use for coloring the dots and the background.  The defaults
+are 1 and 0, respectively.</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;fbm&quot; and &quot;wrinkled&quot; are two textures based on the Perlin noise function.
+They are 3D textures, so the scale of the features of the texture can be
+adjusted by setting accordingly the CTM when the texture is defined.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>octaves</td>
+<td>8</td>
+<td>The maximum number of octaves of noise to use in spectral synthesis.</td>
+</tr>
+<tr><td>float</td>
+<td>roughness</td>
+<td>0.5</td>
+<td>The &quot;bumpiness&quot; of the resulting texture.</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, &quot;marble&quot; is a simple approximation to a layered marble texture,
+based on using Perlin noise to create stochastic variation in the result.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="14%" />
+<col width="12%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>octaves</td>
+<td>8</td>
+<td>The maximum number of octaves of noise to use in spectral synthesis.</td>
+</tr>
+<tr><td>float</td>
+<td>roughness</td>
+<td>0.5</td>
+<td>The &quot;bumpiness&quot; of the resulting texture.</td>
+</tr>
+<tr><td>float</td>
+<td>scale</td>
+<td>1</td>
+<td>A scaling factor to apply to the noise function inputs.</td>
+</tr>
+<tr><td>float</td>
+<td>variation</td>
+<td>0.2</td>
+<td>A scaling factor to apply to the noise function output.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="scattering-volumes">
+<h2>Scattering Volumes</h2>
+<p>Finally, there are three scattering volume implementations available for
+specifying spatially-varying scattering volumes to model objects like smoke
+and clouds or atmospheric scattering.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Implementation Class</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&quot;exponential&quot;</td>
+<td><tt class="docutils literal"><span class="pre">ExponentialDensity</span></tt></td>
+</tr>
+<tr><td>&quot;homogeneous&quot;</td>
+<td><tt class="docutils literal"><span class="pre">HomogeneousVolumeDensity</span></tt></td>
+</tr>
+<tr><td>&quot;volumegrid&quot;</td>
+<td><tt class="docutils literal"><span class="pre">VolumeGridDensity</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>All of these take a number of common parameters.  (And for the
+&quot;homogeneous&quot; volume, these are the only parameters available.)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>spectrum</td>
+<td>sigma_a</td>
+<td>0</td>
+<td>The absorption cross section.</td>
+</tr>
+<tr><td>spectrum</td>
+<td>sigma_s</td>
+<td>0</td>
+<td>The scattering cross section.</td>
+</tr>
+<tr><td>float</td>
+<td>g</td>
+<td>0</td>
+<td>The phase function asymmetry parameter.</td>
+</tr>
+<tr><td>spectrum</td>
+<td>Le</td>
+<td>0</td>
+<td>The volume's emission spectrum.</td>
+</tr>
+<tr><td>point</td>
+<td>p0</td>
+<td>0 0 0</td>
+<td>One corner of the volume's bounding box.</td>
+</tr>
+<tr><td>point</td>
+<td>p1</td>
+<td>1 1 1</td>
+<td>The other corner of the volume's bounding box.</td>
+</tr>
+</tbody>
+</table>
+<p>The &quot;exponential&quot; volume decreases the density of the volume as a function
+of height.  See the discussion of its implementation on page 594 of the
+second edition of &quot;Physically Based Rendering&quot;.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="13%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>float</td>
+<td>a,b</td>
+<td>1</td>
+<td>The parameters in the exponential volume' a e^(-bh) formula.</td>
+</tr>
+<tr><td>vector</td>
+<td>updir</td>
+<td>(0,1,0)</td>
+<td>The &quot;up&quot; direction along which to compute height.</td>
+</tr>
+</tbody>
+</table>
+<p>And the &quot;volumegrid&quot; allows specification of a sampled volume density on a
+regular grid.  Final scattering properties at points inside the volume are
+computed by trilinearly interpolating the adjacent sample values and then
+scaling the sigma_a, sigma_s, etc., parameter values by the result.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="15%" />
+<col width="12%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Name</th>
+<th class="head">Default Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>integer</td>
+<td>nx,ny,nz</td>
+<td>1</td>
+<td>The number of voxels in the x, y, and z directions, respectively.</td>
+</tr>
+<tr><td>float[nx*ny*nz]</td>
+<td>density</td>
+<td>0</td>
+<td>The array of density values.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</body>
+</html>
