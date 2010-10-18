@@ -10,30 +10,12 @@ about issues with building pbrt to authors@pbrt.org.)
 
 --- Windows ---
 
-Under Windows, first install the "flex" and "bison" packages from the
-Cygwin set of tools (http://cygwin.com).  You need to explicitly select
-"devel/bison" and "devel/flex" to be installed by the Cygwin installer;
-they aren't installed by default.
+Please see the file README_BUILDING_MSVC2008.txt or
+README_BUILDING_MSVC2010.txt, as appropriate for the version of Visual
+Studio you're using.
 
-The provided MSVC solution file for pbrt assumes that the Cygwin
-installation is c:\cygwin; if it's not installed there, you'll need to
-modify their custom build rules.  Right click on "pbrt" in the Solution
-Explorer and choose "Custom Build Rules".  Click on "Bison/Flex" in the
-list of available rule files and choose "Modify Rule File...".  Finally,
-select each of the two custom build rules in turn and choose "Modify Build
-Rule...", changing the "Command Line" property for each one to point to the
-actual locations of bison.exe and flex.exe.
-
-Next, compile the OpenEXR libraries; their source code as well as a custom
-solution file to build them is provided in
-src/windows/3rdparty/3rdparty.sln.  Build whichever of the Debug/Release,
-x86/x64 variants you need.  The built libraries will be automatically
-stored in the directories where the main pbrt build rules will look for
-them.
-
-The system should then compile cleanly from the provided MSVC solution
-file, src/pbrt.sln.  The solution file supports both 32-bit and 64-bit
-builds, with both Debug and Release configurations.
+There is not currently support for building pbrt with the Cygwin gcc
+compiler, but patches would be happily accepted.
 
 --- Linux ---
 
