@@ -13,16 +13,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\windows/3rdparty.vs2010">
+    <Filter Include="Header Files\3rdparty">
       <UniqueIdentifier>{9115ac5f-f819-4655-9466-22d0f091ce35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2">
+    <Filter Include="Header Files\3rdparty\ilmbase-1.0.2">
       <UniqueIdentifier>{89af9220-58e5-4492-89d3-e2143f6d5de7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\windows/3rdparty.vs2010\openexr-1.7.0">
+    <Filter Include="Header Files\3rdparty\openexr-1.7.0">
       <UniqueIdentifier>{d16cf2d9-d9f8-4195-a4e1-997c1615aa22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\windows/3rdparty.vs2010\zlib-1.2.5">
+    <Filter Include="Header Files\3rdparty\zlib-1.2.5">
       <UniqueIdentifier>{69729e76-fdae-4ecc-9c53-ab79bd2504ef}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\accelerators">
@@ -64,16 +64,16 @@
     <Filter Include="Header Files\volumes">
       <UniqueIdentifier>{498370d0-70f4-4274-a6e9-9be720f9a3f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\windows/3rdparty.vs2010">
+    <Filter Include="Source Files\3rdparty">
       <UniqueIdentifier>{d4f5dfb7-cbf1-415d-85a4-b958517617bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2">
+    <Filter Include="Source Files\3rdparty\ilmbase-1.0.2">
       <UniqueIdentifier>{3f1dfdeb-99e2-48cd-b36a-569a75fc65ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\windows/3rdparty.vs2010\zlib-1.2.5">
+    <Filter Include="Source Files\3rdparty\zlib-1.2.5">
       <UniqueIdentifier>{20d8ca10-5d5c-4e7c-97e8-0674b6c39a7c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\windows/3rdparty.vs2010\openexr-1.7.0">
+    <Filter Include="Source Files\3rdparty\openexr-1.7.0">
       <UniqueIdentifier>{098cc465-c8ff-4fc1-9f2c-1ad5217188ef}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\accelerators">
@@ -115,394 +115,394 @@
     <Filter Include="Source Files\renderers">
       <UniqueIdentifier>{235343bb-d3b9-4dc4-9fc6-01bd150ac539}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\windows/3rdparty.vs2010\tiff-3.9.4">
+    <Filter Include="Header Files\3rdparty\tiff-3.9.4">
       <UniqueIdentifier>{eafdd1c6-3a63-497e-a02d-2a59d4fbe254}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\windows/3rdparty.vs2010\tiff-3.9.4">
+    <Filter Include="Source Files\3rdparty\tiff-3.9.4">
       <UniqueIdentifier>{cb4e6ae4-62ac-4eb3-afbd-99ce385b8ee3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\half.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\half.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\halfFunction.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\halfFunction.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\halfLimits.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\halfLimits.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\Iex.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\Iex.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IexBaseExc.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexBaseExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IexErrnoExc.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexErrnoExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IexMacros.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexMacros.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IexMathExc.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexMathExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IexThrowErrnoExc.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexThrowErrnoExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmBaseConfig.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmBaseConfig.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThread.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmThread.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadMutex.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmThreadMutex.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadPool.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmThreadPool.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadSemaphore.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphore.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathBox.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathBox.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathBoxAlgo.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathBoxAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathColor.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathColor.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathColorAlgo.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathColorAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathEuler.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathEuler.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathExc.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathFrame.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathFrame.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathFrustum.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathFrustum.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathFun.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathFun.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathGL.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathGL.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathGLU.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathGLU.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathHalfLimits.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathHalfLimits.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathInt64.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathInt64.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathInterval.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathInterval.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathLimits.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathLimits.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathLine.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathLine.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathLineAlgo.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathLineAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathMath.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathMath.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathMatrix.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathMatrix.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathMatrixAlgo.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathMatrixAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathPlane.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathPlane.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathPlatform.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathPlatform.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathQuat.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathQuat.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathRandom.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathRandom.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathRoots.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathRoots.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathShear.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathShear.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathSphere.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathSphere.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathVec.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathVec.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathVecAlgo.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathVecAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\zutil.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\zutil.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\zlib.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\zlib.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\zconf.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\zconf.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\trees.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\trees.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\inftrees.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\inftrees.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\inflate.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\inflate.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\inffixed.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\inffixed.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\inffast.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\inffast.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\gzguts.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\gzguts.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\deflate.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\deflate.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\zlib-1.2.5\crc32.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\crc32.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\b44ExpLogTable.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\b44ExpLogTable.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfAcesFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfAcesFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfArray.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfArray.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfAutoArray.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfAutoArray.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfB44Compressor.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfB44Compressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfBoxAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfBoxAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfChannelList.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfChannelList.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfChannelListAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfChannelListAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfCheckedArithmetic.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCheckedArithmetic.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfChromaticities.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfChromaticities.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfChromaticitiesAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfChromaticitiesAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfCompression.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCompression.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfCompressionAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCompressionAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfCompressor.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCompressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfConvert.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfConvert.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfCRgbaFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCRgbaFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfDoubleAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfDoubleAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfEnvmap.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfEnvmap.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfEnvmapAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfEnvmapAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfFloatAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfFloatAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfFrameBuffer.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfFrameBuffer.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfFramesPerSecond.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfFramesPerSecond.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfHeader.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfHeader.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfHuf.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfHuf.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfInputFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfInputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfInt64.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfInt64.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfIntAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfIntAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfIO.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfIO.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfKeyCode.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfKeyCode.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfKeyCodeAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfKeyCodeAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfLineOrder.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfLineOrder.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfLineOrderAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfLineOrderAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfLut.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfLut.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfMatrixAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfMatrixAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfMisc.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfMisc.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfMultiView.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfMultiView.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfName.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfName.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfOpaqueAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfOpaqueAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfOutputFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfOutputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPixelType.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPixelType.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPizCompressor.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPizCompressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPreviewImage.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPreviewImage.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPreviewImageAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPreviewImageAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPxr24Compressor.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPxr24Compressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRational.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRational.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRationalAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRationalAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRgba.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRgba.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRgbaFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRgbaFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRgbaYca.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRgbaYca.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRleCompressor.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRleCompressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfScanLineInputFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfScanLineInputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfStandardAttributes.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfStandardAttributes.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfStdIO.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfStdIO.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfStringAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfStringAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfStringVectorAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfStringVectorAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTestFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTestFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfThreading.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfThreading.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTileDescription.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTileDescription.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTileDescriptionAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTileDescriptionAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTiledInputFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTiledInputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTiledMisc.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTiledMisc.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTiledOutputFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTiledOutputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTiledRgbaFile.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTiledRgbaFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTileOffsets.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTileOffsets.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTimeCode.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTimeCode.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTimeCodeAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTimeCodeAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfVecAttribute.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfVecAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfVersion.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfVersion.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfWav.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfWav.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfXdr.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfXdr.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfZipCompressor.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfZipCompressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\openexr-1.7.0\OpenEXRConfig.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\OpenEXRConfig.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
     </ClInclude>
     <ClInclude Include="..\accelerators\bvh.h">
       <Filter>Header Files\accelerators</Filter>
@@ -867,337 +867,337 @@
     <ClInclude Include="..\renderers\surfacepoints.h">
       <Filter>Header Files\renderers</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\uvcode.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\uvcode.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tiffvers.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffvers.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tiffiop.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffiop.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tiffio.hxx">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffio.hxx">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tiffio.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffio.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tiff.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiff.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_predict.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_predict.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_fax3.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_fax3.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_dir.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_dir.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_config.wince.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_config.wince.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_config.vc.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_config.vc.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\t4.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\t4.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tiffconf.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffconf.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
-    <ClInclude Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_config.h">
-      <Filter>Header Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_config.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\half.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\half.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IexBaseExc.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IexBaseExc.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IexThrowErrnoExc.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IexThrowErrnoExc.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThread.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThread.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadMutex.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadMutex.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadMutexPosix.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadMutexPosix.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadMutexWin32.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadMutexWin32.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadPool.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadPool.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadPosix.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadPosix.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadSemaphore.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphore.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadSemaphorePosix.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphorePosix.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadSemaphorePosixCompat.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphorePosixCompat.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadSemaphoreWin32.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphoreWin32.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\IlmThreadWin32.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadWin32.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathBox.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathBox.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathColorAlgo.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathColorAlgo.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathFun.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathFun.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathMatrixAlgo.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathMatrixAlgo.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathRandom.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathRandom.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathShear.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathShear.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\ilmbase-1.0.2\ImathVec.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\ilmbase-1.0.2</Filter>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathVec.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfAcesFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfAcesFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfB44Compressor.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfB44Compressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfBoxAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfBoxAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfChannelList.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfChannelList.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfChannelListAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfChannelListAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfChromaticities.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfChromaticities.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfChromaticitiesAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfChromaticitiesAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfCompressionAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfCompressionAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfCompressor.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfCompressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfConvert.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfConvert.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfCRgbaFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfCRgbaFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfDoubleAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfDoubleAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfEnvmap.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfEnvmap.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfEnvmapAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfEnvmapAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfFloatAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfFloatAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfFrameBuffer.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfFrameBuffer.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfFramesPerSecond.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfFramesPerSecond.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfHeader.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfHeader.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfHuf.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfHuf.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfInputFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfInputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfIntAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfIntAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfIO.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfIO.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfKeyCode.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfKeyCode.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfKeyCodeAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfKeyCodeAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfLineOrderAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfLineOrderAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfLut.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfLut.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfMatrixAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfMatrixAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfMisc.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfMisc.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfMultiView.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfMultiView.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfOpaqueAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfOpaqueAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfOutputFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfOutputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPizCompressor.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfPizCompressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPreviewImage.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfPreviewImage.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPreviewImageAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfPreviewImageAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfPxr24Compressor.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfPxr24Compressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRational.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRational.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRationalAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRationalAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRgbaFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRgbaFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRgbaYca.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRgbaYca.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfRleCompressor.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRleCompressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfScanLineInputFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfScanLineInputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfStandardAttributes.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfStandardAttributes.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfStdIO.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfStdIO.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfStringAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfStringAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfStringVectorAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfStringVectorAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTestFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTestFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfThreading.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfThreading.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTileDescriptionAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTileDescriptionAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTiledInputFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTiledInputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTiledMisc.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTiledMisc.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTiledOutputFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTiledOutputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTiledRgbaFile.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTiledRgbaFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTileOffsets.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTileOffsets.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTimeCode.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTimeCode.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfTimeCodeAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTimeCodeAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfVecAttribute.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfVecAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfVersion.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfVersion.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfWav.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfWav.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\openexr-1.7.0\ImfZipCompressor.cpp">
-      <Filter>Source Files\windows/3rdparty.vs2010\openexr-1.7.0</Filter>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfZipCompressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\zutil.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\zutil.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\uncompr.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\uncompr.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\trees.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\trees.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\inftrees.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\inftrees.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\inflate.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\inflate.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\inffast.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\inffast.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\infback.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\infback.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\gzwrite.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\gzwrite.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\gzread.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\gzread.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\gzlib.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\gzlib.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\gzclose.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\gzclose.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\deflate.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\deflate.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\crc32.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\crc32.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\compress.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\compress.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\zlib-1.2.5\adler32.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\zlib-1.2.5</Filter>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\adler32.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
     </ClCompile>
     <ClCompile Include="..\accelerators\bvh.cpp">
       <Filter>Source Files\accelerators</Filter>
@@ -1556,122 +1556,122 @@
     <ClCompile Include="..\core\pbrtparse.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_stream.cxx">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_stream.cxx">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_zip.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_zip.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_write.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_write.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_win32.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_win32.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_warning.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_warning.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_version.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_version.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_tile.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_tile.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_thunder.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_thunder.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_swab.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_swab.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_strip.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_strip.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_read.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_read.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_print.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_print.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_predict.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_predict.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_pixarlog.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_pixarlog.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_packbits.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_packbits.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_open.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_open.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_ojpeg.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_ojpeg.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_next.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_next.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_lzw.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_lzw.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_luv.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_luv.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_jpeg.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_jpeg.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_jbig.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_jbig.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_getimage.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_getimage.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_flush.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_flush.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_fax3sm.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_fax3sm.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_fax3.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_fax3.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_extension.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_extension.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_error.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_error.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_dumpmode.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dumpmode.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_dirwrite.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dirwrite.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_dirread.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dirread.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_dirinfo.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dirinfo.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_dir.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dir.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_compress.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_compress.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_color.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_color.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_codec.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_codec.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_close.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_close.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\tif_aux.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_aux.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
-    <ClCompile Include="..\windows/3rdparty.vs2010\tiff-3.9.4\mkg3states.c">
-      <Filter>Source Files\windows/3rdparty.vs2010\tiff-3.9.4</Filter>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\mkg3states.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

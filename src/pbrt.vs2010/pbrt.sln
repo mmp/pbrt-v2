@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpbrt", "libpbrt.vcxproj", "{2E030F4C-B2AE-476C-8E40-A326B3840F6C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bsdftest", "bsdftest.vcxproj", "{1790BD0A-D24B-4629-A169-95DAB1F98329}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbrt", "pbrt.vcxproj", "{7C350267-019A-43D2-BA77-0B3DF4C94EB8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2E030F4C-B2AE-476C-8E40-A326B3840F6C} = {2E030F4C-B2AE-476C-8E40-A326B3840F6C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbrt", "pbrt.vcxproj", "{7C350267-019A-43D2-BA77-0B3DF4C94EB8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpbrt", "libpbrt.vcxproj", "{2E030F4C-B2AE-476C-8E40-A326B3840F6C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bsdftest", "bsdftest.vcxproj", "{1790BD0A-D24B-4629-A169-95DAB1F98329}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2E030F4C-B2AE-476C-8E40-A326B3840F6C} = {2E030F4C-B2AE-476C-8E40-A326B3840F6C}
 	EndProjectSection
@@ -36,11 +36,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ply2pbrt", "ply2pbrt.vcxproj", "{1ACF1F21-F836-4C94-B64D-8FDD938863FE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2E030F4C-B2AE-476C-8E40-A326B3840F6C} = {2E030F4C-B2AE-476C-8E40-A326B3840F6C}
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1289566D-5F11-4C58-826A-927DC787A352}"
-	ProjectSection(SolutionItems) = preProject
-		README.txt = README.txt
 	EndProjectSection
 EndProject
 Global

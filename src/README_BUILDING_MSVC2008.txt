@@ -1,27 +1,71 @@
-Building PBRT with MSVC 2008
+BUILDING PBRT:
 
-First install the "flex" and "bison" packages from the Cygwin set of
-tools (http://cygwin.com).  You need to explicitly select
-"devel/bison" and "devel/flex" to be installed by the Cygwin
-installer; they aren't installed by default.
+1) Open the src/pbrt.vs2008/pbrt.sln Visual Studio solution file.
+2) Select either Debug or Release, and x86 (win32) or x64.
+3) Build the solution.
 
-The provided MSVC solution file for pbrt, src/pbrt.sln, assumes that
-the Cygwin installation is c:\cygwin; if it's not installed there,
-you'll need to modify their custom build rules.  Right click on "pbrt"
-in the Solution Explorer and choose "Custom Build Rules".  Click on
-"Bison/Flex" in the list of available rule files and choose "Modify
-Rule File...".  Finally, select each of the two custom build rules in
-turn and choose "Modify Build Rule...", changing the "Command Line"
-property for each one to point to the actual locations of bison.exe
-and flex.exe.
 
-Next, compile the OpenEXR libraries; their source code as well as a
-custom solution file to build them is provided in
-src/windows/3rdparty.vs2008/3rdparty.sln.  Build whichever of the
-Debug/Release, x86/x64 variants you need.  The built libraries will be
-automatically stored in the directories where the main pbrt build
-rules will look for them.
+RUNNING PBRT:
 
-The system should then compile cleanly from the provided MSVC solution
-file, src/pbrt.sln.  The solution file supports both 32-bit and 64-bit
-builds, with both Debug and Release configurations.
+1) Run the desired executable or program in the top-level bin/ directory
+   of the pbrt distribution (<pbrt-dist>/bin).
+
+DEBUGGING PBRT:
+
+1) Select the Debug configuration for either the x86 or x64 platform.
+2) Start the program in Visual Studio with debugging.
+
+CLEANING UP:
+
+1) Run cleanup.bat in the top-level directory of the pbrt distribution
+   (<pbrt-dist>/cleanup.bat).
+
+MODIFYING THE PBRT PARSING CODE:
+
+
+If you need to modify the pbrt parsing code, follow these steps first:
+
+1) Install Bison and Flex programs if they are not already installed.
+   Choose either Cygwin or GnuWin32; either one will work.
+   
+   IMPORTANT NOTE:
+   Do not install under "Program Files" or "Program Files (x86)".
+   The installation path should not contain any spaces.
+   Use C:\cygwin or C:\gnuwin32, for example.
+
+   Option A: GnuWin32 <http://gnuwin32.sourceforge.net/>
+
+      Install Bison and Flex via setup packages.
+
+   Option B: Cygwin <http://www.cygwin.com/>
+
+      Install Cygwin with Bison and Flex packages.
+      These may not be selected by default,
+      so be sure to select them.
+
+
+2) Add Bison and Flex executable paths to the system PATH
+   so that they can be run from any directory or location.
+
+   a) Right-click "My Computer" or "Computer".
+
+   b) Click Properties.
+
+   c) Click "Advanced system settings" or "System Properties".
+
+   d) Click the Advanced tab.
+
+   e) Click the "Environment Variables..." button.
+
+   f) Add the path(s) of the Flex and Bison programs to the PATH
+      variable, under the system variables group box.
+      Use the semi-colon (;) character to separate path items.
+
+      Example path to add: C:\gnuwin32\bin;
+
+   g) Press the OK button.
+
+   h) Press the OK button.
+
+   i) Either log off and log back on the computer, or restart it
+      for the updated PATH to take effect.

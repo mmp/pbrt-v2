@@ -70,28 +70,28 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../bin/</OutDir>
     <IntDir>../../tmp/$(ProjectName)/</IntDir>
-    <IncludePath>../;../core/;../windows/3rdparty.vs2010/;../windows/3rdparty.vs2010/ilmbase-1.0.2;../windows/3rdparty.vs2010/openexr-1.7.0;../windows/3rdparty.vs2010/zlib-1.2.5;../windows/3rdparty.vs2010/tiff-3.9.4;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <IncludePath>../;../core/;../3rdparty/;../3rdparty/ilmbase-1.0.2;../3rdparty/openexr-1.7.0;../3rdparty/zlib-1.2.5;../3rdparty/tiff-3.9.4;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
     <LibraryPath>../../lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../bin/</OutDir>
     <IntDir>../../tmp/$(ProjectName)/</IntDir>
-    <IncludePath>../;../core/;../windows/3rdparty.vs2010/;../windows/3rdparty.vs2010/ilmbase-1.0.2;../windows/3rdparty.vs2010/openexr-1.7.0;../windows/3rdparty.vs2010/zlib-1.2.5;../windows/3rdparty.vs2010/tiff-3.9.4;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <IncludePath>../;../core/;../3rdparty/;../3rdparty/ilmbase-1.0.2;../3rdparty/openexr-1.7.0;../3rdparty/zlib-1.2.5;../3rdparty/tiff-3.9.4;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
     <LibraryPath>../../lib;$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>../../bin/</OutDir>
     <IntDir>../../tmp/$(ProjectName)/</IntDir>
-    <IncludePath>../;../core/;../windows/3rdparty.vs2010/;../windows/3rdparty.vs2010/ilmbase-1.0.2;../windows/3rdparty.vs2010/openexr-1.7.0;../windows/3rdparty.vs2010/zlib-1.2.5;../windows/3rdparty.vs2010/tiff-3.9.4;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <IncludePath>../;../core/;../3rdparty/;../3rdparty/ilmbase-1.0.2;../3rdparty/openexr-1.7.0;../3rdparty/zlib-1.2.5;../3rdparty/tiff-3.9.4;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
     <LibraryPath>../../lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>../../bin/</OutDir>
     <IntDir>../../tmp/$(ProjectName)/</IntDir>
-    <IncludePath>../;../core/;../windows/3rdparty.vs2010/;../windows/3rdparty.vs2010/ilmbase-1.0.2;../windows/3rdparty.vs2010/openexr-1.7.0;../windows/3rdparty.vs2010/zlib-1.2.5;../windows/3rdparty.vs2010/tiff-3.9.4;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
+    <IncludePath>../;../core/;../3rdparty/;../3rdparty/ilmbase-1.0.2;../3rdparty/openexr-1.7.0;../3rdparty/zlib-1.2.5;../3rdparty/tiff-3.9.4;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
     <LibraryPath>../../lib;$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir)lib\x64;</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
