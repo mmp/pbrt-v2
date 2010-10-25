@@ -156,8 +156,9 @@ Spectrum SpecularTransmission::Sample_f(const Vector &wo,
     float sintOverSini = eta;
     *wi = Vector(sintOverSini * -wo.x, sintOverSini * -wo.y, cost);
     *pdf = 1.f;
-    Spectrum F = fresnel.Evaluate(CosTheta(wo));
-    return /*(ei*ei)/(et*et) * */ (Spectrum(1.)-F) * T /
+
+    Spectrum F = FrDiel(AbsCosTheta(wo), fabsf(cost), ei, et);
+    return (ei*ei)/(et*et) * (Spectrum(1.)-F) * T /
         AbsCosTheta(*wi);
 }
 
