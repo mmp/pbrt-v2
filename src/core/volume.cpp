@@ -147,7 +147,9 @@ float PhaseHG(const Vector &w, const Vector &wp, float g) {
 
 
 float PhaseSchlick(const Vector &w, const Vector &wp, float g) {
-    float k = 1.55f * g - .55f * g * g * g;
+    // improved g->k mapping derived by Thies Heidecke
+    // see http://pbrt.org/bugtracker/view.php?id=102
+    float k = 1.45352f * g - 0.45352f * g * g * g;
     float kcostheta = k * Dot(w, wp);
     return 1.f / (4.f * M_PI) *
         (1.f - k*k) / ((1.f - kcostheta) * (1.f - kcostheta));
