@@ -317,7 +317,7 @@ float BxDF::Pdf(const Vector &wo, const Vector &wi) const {
 
 float BRDFToBTDF::Pdf(const Vector &wo,
         const Vector &wi) const {
-    return brdf->Pdf(wo, -wi);
+    return brdf->Pdf(wo, otherHemisphere(wi));
 }
 
 
