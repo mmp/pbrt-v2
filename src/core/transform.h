@@ -298,7 +298,6 @@ public:
     }
     static void Decompose(const Matrix4x4 &m, Vector *T, Quaternion *R, Matrix4x4 *S);
     void Interpolate(float time, Transform *t) const;
-    void InterpolateInverse(float time, Transform *t) const;
     void operator()(const Ray &r, Ray *tr) const;
     void operator()(const RayDifferential &r, RayDifferential *tr) const;
     Point operator()(float time, const Point &p) const;
