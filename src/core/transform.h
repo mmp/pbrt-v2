@@ -110,6 +110,9 @@ public:
     friend Transform Inverse(const Transform &t) {
         return Transform(t.mInv, t.m);
     }
+    friend Transform Transpose(const Transform &t) {
+        return Transform(Transpose(t.m), Transpose(t.mInv));
+    }
     bool operator==(const Transform &t) const {
         return t.m == m && t.mInv == mInv;
     }
