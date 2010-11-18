@@ -175,8 +175,8 @@ core/pbrtlex.cpp: core/pbrtlex.ll core/pbrtparse.cpp
 core/pbrtparse.cpp: core/pbrtparse.yy
 	@echo "YACC'ing pbrtparse.yy"
 	@$(YACC) -o $@ core/pbrtparse.yy
-	@if [ -e core/pbrtparse.cpp.h ]; then /bin/mv core/pbrtparse.cpp.h core/pbrtparse.hh; fi
-	@if [ -e core/pbrtparse.hpp ]; then /bin/mv core/pbrtparse.hpp core/pbrtparse.hh; fi
+	@if [ -e core/pbrtparse.cpp.h ]; then /bin/mv core/pbrtparse.cpp.h core/pbrtparse.hpp; fi
+	@if [ -e core/pbrtparse.hh ]; then /bin/mv core/pbrtparse.hh core/pbrtparse.hpp; fi
 
 ifeq ($(HAVE_DTRACE),1)
 core/dtrace.h: core/dtrace.d

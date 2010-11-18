@@ -38,10 +38,8 @@ struct ParamArray;
 #pragma warning(disable:4065)
 #pragma warning(disable:4018)
 #pragma warning(disable:4996)
-#include "pbrtparse.hpp"
-#else
-#include "pbrtparse.hh"
 #endif
+#include "pbrtparse.hpp"
 
 struct IncludeInfo {
     string filename;
