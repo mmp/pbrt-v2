@@ -110,6 +110,9 @@ public:
     friend Transform Inverse(const Transform &t) {
         return Transform(t.mInv, t.m);
     }
+    friend Transform Transpose(const Transform &t) {
+        return Transform(Transpose(t.m), Transpose(t.mInv));
+    }
     bool operator==(const Transform &t) const {
         return t.m == m && t.mInv == mInv;
     }
@@ -298,7 +301,6 @@ public:
     }
     static void Decompose(const Matrix4x4 &m, Vector *T, Quaternion *R, Matrix4x4 *S);
     void Interpolate(float time, Transform *t) const;
-    void InterpolateInverse(float time, Transform *t) const;
     void operator()(const Ray &r, Ray *tr) const;
     void operator()(const RayDifferential &r, RayDifferential *tr) const;
     Point operator()(float time, const Point &p) const;
