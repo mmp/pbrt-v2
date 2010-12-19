@@ -321,12 +321,26 @@ NURBS *CreateNURBSShape(const Transform *o2w, const Transform *w2o,
     const float *P = (const float *)params.FindPoint("P", &npts);
     if (!P) {
         P = params.FindFloat("Pw", &npts);
+        if (!P) {
+            Error("Must provide control points via \"P\" or \"Pw\" parameter to "
+                  "NURBS shape.");
+            return NULL;
+        }
+        if ((npts % 4) != 0) {
+            Error("Number of \"Pw\" control points provided to NURBS shape must be "
+                  "multiple of four");
+            return NULL;
+        }
+
         npts /= 4;
-        if (!P) return NULL;
         isHomogeneous = true;
     }
-    Assert(P);
-    Assert(npts == nu*nv);
+    if (npts != nu*nv) {
+        Error("NURBS shape was expecting %dx%d=%d control points, was given %d",
+              nu, nv, nu*nv, npts);
+        return NULL;
+    }
+
     return new NURBS(o2w, w2o, ReverseOrientation, nu, uorder, uknots, u0, u1,
                          nv, vorder, vknots, v0, v1, (float *)P,
                          isHomogeneous);
