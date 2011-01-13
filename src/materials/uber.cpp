@@ -67,6 +67,10 @@ BSDF *UberMaterial::GetBSDF(const DifferentialGeometry &dgGeom, const Differenti
         bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(kr, fresnel));
     }
 
+    Spectrum kt = op * Kt->Evaluate(dgs).Clamp();
+    if (!kt.IsBlack())
+        bsdf->Add(BSDF_ALLOC(arena, SpecularTransmission)(kt, e, 1.f));
+
     return bsdf;
 }
 
@@ -76,11 +80,12 @@ UberMaterial *CreateUberMaterial(const Transform &xform,
     Reference<Texture<Spectrum> > Kd = mp.GetSpectrumTexture("Kd", Spectrum(0.25f));
     Reference<Texture<Spectrum> > Ks = mp.GetSpectrumTexture("Ks", Spectrum(0.25f));
     Reference<Texture<Spectrum> > Kr = mp.GetSpectrumTexture("Kr", Spectrum(0.f));
+    Reference<Texture<Spectrum> > Kt = mp.GetSpectrumTexture("Kt", Spectrum(0.f));
     Reference<Texture<float> > roughness = mp.GetFloatTexture("roughness", .1f);
     Reference<Texture<float> > eta = mp.GetFloatTexture("index", 1.5f);
     Reference<Texture<Spectrum> > opacity = mp.GetSpectrumTexture("opacity", 1.f);
     Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
-    return new UberMaterial(Kd, Ks, Kr, roughness, opacity, eta, bumpMap);
+    return new UberMaterial(Kd, Ks, Kr, Kt, roughness, opacity, eta, bumpMap);
 }
 
 
