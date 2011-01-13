@@ -105,7 +105,7 @@ if len(exr_libs) > 0:
                                    LIBS = env_libs + exr_libs)
     output['bsdftest'] = env.Program('bsdftest', [ 'tools/bsdftest.cpp' ] + 
                                      output['pbrt_lib'], 
-                                     LIBS = env_libs + exr_libs)
+                                     LIBS = env_libs + exr_libs + parallel_libs)
     output['defaults'] = output['defaults'] +  \
         [ output['exrdiff'], output['exravg'], output['bsdftest'] ]
 
