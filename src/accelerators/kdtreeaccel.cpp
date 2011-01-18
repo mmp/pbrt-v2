@@ -300,7 +300,7 @@ bool KdTreeAccel::Intersect(const Ray &ray,
             // Get node children pointers for ray
             const KdAccelNode *firstChild, *secondChild;
             int belowFirst = (ray.o[axis] <  node->SplitPos()) ||
-                             (ray.o[axis] == node->SplitPos() && ray.d[axis] >= 0);
+                             (ray.o[axis] == node->SplitPos() && ray.d[axis] <= 0);
             if (belowFirst) {
                 firstChild = node + 1;
                 secondChild = &nodes[node->AboveChild()];
@@ -431,7 +431,7 @@ bool KdTreeAccel::IntersectP(const Ray &ray) const {
             // Get node children pointers for ray
             const KdAccelNode *firstChild, *secondChild;
             int belowFirst = (ray.o[axis] <  node->SplitPos()) ||
-                             (ray.o[axis] == node->SplitPos() && ray.d[axis] >= 0);
+                             (ray.o[axis] == node->SplitPos() && ray.d[axis] <= 0);
             if (belowFirst) {
                 firstChild = node + 1;
                 secondChild = &nodes[node->AboveChild()];
