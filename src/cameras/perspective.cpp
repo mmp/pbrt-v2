@@ -47,7 +47,7 @@ float PerspectiveCamera::GenerateRay(const CameraSample &sample,
     Point Pras(sample.imageX, sample.imageY, 0);
     Point Pcamera;
     RasterToCamera(Pras, &Pcamera);
-    *ray = Ray(Point(0,0,0), Vector(Pcamera), 0.f, INFINITY);
+    *ray = Ray(Point(0,0,0), Normalize(Vector(Pcamera)), 0.f, INFINITY);
     // Modify ray for depth of field
     if (lensRadius > 0.) {
         // Sample point on lens
