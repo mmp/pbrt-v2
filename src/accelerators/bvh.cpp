@@ -249,7 +249,11 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
                                                       &buildData[end-1]+1,
                                                       CompareToMid(dim, pmid));
             mid = midPtr - &buildData[0];
-            break;
+            if (mid != start && mid != end)
+                // for lots of prims with large overlapping bounding boxes, this
+                // may fail to partition; in that case don't break and fall through
+                // to SPLIT_EQUAL_COUNTS
+                break;
         }
         case SPLIT_EQUAL_COUNTS: {
             // Partition primitives into equally-sized subsets
