@@ -335,6 +335,7 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
                         orderedPrims.push_back(primitives[primNum]);
                     }
                     node->InitLeaf(firstPrimOffset, nPrimitives, bbox);
+                    return node;
                 }
             }
             break;
