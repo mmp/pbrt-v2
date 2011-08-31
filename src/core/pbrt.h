@@ -22,6 +22,7 @@
  */
 
 #if defined(_MSC_VER)
+#define NOMINMAX 
 #pragma once
 #endif
 
