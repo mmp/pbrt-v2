@@ -712,10 +712,16 @@ static bool WriteImagePFM(const string &filename, const float *rgb,
     if (fprintf(fp, "%f\n", scale) < 0)
         goto fail;
 
-    // write the data
+    // write the data from bottom left to upper right as specified by 
+    // http://netpbm.sourceforge.net/doc/pfm.html
+    // The raster is a sequence of pixels, packed one after another, with no
+    // delimiters of any kind. They are grouped by row, with the pixels in each
+    // row ordered left to right and the rows ordered bottom to top.
     nFloats = 3 * width * height;
-    if (fwrite(rgb, sizeof(float), nFloats, fp) < nFloats)
-        goto fail;
+    for (int j=height-1; j>=0; j--) {
+	if (fwrite(rgb + j*width*3, sizeof(float), width*3, fp) < width*3)
+	    goto fail;
+    }
 
     fclose(fp);
     return true;
