@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
         if (diffImage) diffImage[i] = fabsf(im1[i] - im2[i]);
 	if (im1[i] == 0 && im2[i] == 0) 
 	    continue;
-        if ((i % 4) == 0) // alpha channel
+        if ((i % 4) == 3) // alpha channel
             continue;
 
         sum1 += im1[i];
