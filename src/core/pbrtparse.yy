@@ -301,7 +301,7 @@ paramlist_init: %prec HIGH_PRECEDENCE
 {
     for (uint32_t i = 0; i < cur_paramlist.size(); ++i) {
         if (cur_paramlist[i].isString) {
-            for (uint32_t j = 0; j < cur_paramlist[i].size; ++j)
+            for (uint32_t j = 0; j < (uint32_t)cur_paramlist[i].size; ++j)
                 free(((char **)cur_paramlist[i].arg)[j]);
         }
     }
