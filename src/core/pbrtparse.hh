@@ -1,9 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.4.2.  */
+/* A Bison parser, made by GNU Bison 2.5.  */
 
-/* Skeleton interface for Bison's Yacc-like parsers in C
+/* Bison interface for Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989-1990, 2000-2006, 2009-2010 Free Software
-   Foundation, Inc.
+      Copyright (C) 1984, 1989-1990, 2000-2011 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -94,8 +93,8 @@
 typedef union YYSTYPE
 {
 
-/* Line 1685 of yacc.c  */
-#line 148 "..\\core\\pbrtparse.yy"
+/* Line 2132 of yacc.c  */
+#line 148 "core/pbrtparse.yy"
 
 char string[1024];
 float num;
@@ -103,8 +102,8 @@ ParamArray *ribarray;
 
 
 
-/* Line 1685 of yacc.c  */
-#line 108 "..\\core\\pbrtparse.hpp"
+/* Line 2132 of yacc.c  */
+#line 107 "core/pbrtparse.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

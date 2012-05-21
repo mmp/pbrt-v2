@@ -156,11 +156,15 @@ objs/pbrt.o: main/pbrt.cpp
 	@echo "Building object $@"
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-objs/%.o: tools/%.cpp
+objs/tools_%.o: tools/%.cpp
 	@echo "Building object $@"
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-bin/%: objs/%.o objs/libpbrt.a 
+bin/pbrt: objs/main_pbrt.o objs/libpbrt.a
+	@echo "Linking $@"
+	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+
+bin/%: objs/tools_%.o objs/libpbrt.a 
 	@echo "Linking $@"
 	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
@@ -175,8 +179,8 @@ core/pbrtlex.cpp: core/pbrtlex.ll core/pbrtparse.cpp
 core/pbrtparse.cpp: core/pbrtparse.yy
 	@echo "YACC'ing pbrtparse.yy"
 	@$(YACC) -o $@ core/pbrtparse.yy
-	@if [ -e core/pbrtparse.cpp.h ]; then /bin/mv core/pbrtparse.cpp.h core/pbrtparse.hpp; fi
-	@if [ -e core/pbrtparse.hh ]; then /bin/mv core/pbrtparse.hh core/pbrtparse.hpp; fi
+	@if [ -e core/pbrtparse.cpp.h ]; then /bin/mv core/pbrtparse.cpp.h core/pbrtparse.hh; fi
+	@if [ -e core/pbrtparse.hpp ]; then /bin/mv core/pbrtparse.hpp core/pbrtparse.hh; fi
 
 ifeq ($(HAVE_DTRACE),1)
 core/dtrace.h: core/dtrace.d

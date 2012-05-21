@@ -12,7 +12,7 @@ flex_args = -o$(core_dir)\pbrtlex.cpp $(core_dir)\pbrtlex.ll
 .PHONY : $(core_dir)\pbrtparse.cpp $(core_dir)\pbrtlex.cpp
 
 
-$(core_dir)\pbrtparse.cpp : $(core_dir)\pbrtparse.yy
+$(core_dir)\pbrtparse.cpp $(core_dir)\pbrtparse.hpp : $(core_dir)\pbrtparse.yy
 	if exist $(bison_cygwin_bin) \
 	( \
 		$(bison_cygwin_bin) $(bison_args) \
@@ -22,7 +22,10 @@ $(core_dir)\pbrtparse.cpp : $(core_dir)\pbrtparse.yy
 		$(bison_bin) $(bison_args) \
 	)
 
-$(core_dir)\pbrtlex.cpp : $(core_dir)\pbrtlex.ll
+$(core_dir)\pbrtparse.hh : $(core_dir)\pbrtparse.hpp
+	ren $(core_dir)\pbrtparse.hpp $(core_dir)\pbrtparse.hh
+
+$(core_dir)\pbrtlex.cpp $(core_dir)\pbrtparse.hh : $(core_dir)\pbrtlex.ll
 	if exist $(flex_cygwin_bin) \
 	( \
 		$(flex_cygwin_bin) $(flex_args) \

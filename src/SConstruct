@@ -51,7 +51,7 @@ env = Environment(CCFLAGS = [ '-Wall', '-g' ],
                   CPPPATH = [ '#core', '#', '.' ] + tiff_includes,
                   LIBPATH = tiff_libdir,
                   YACCFLAGS = [ '-d', '-v', '-t' ],
-                  YACCHXXFILESUFFIX = '.hh',
+                  YACCHXXFILESUFFIX = '.hpp',
                   ENV = { 'PATH' : [ '/usr/local/bin', '/usr/bin', '/bin', 
                                      '/usr/sbin', '/sbin' ] })
 if build_64bit:
