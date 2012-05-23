@@ -751,7 +751,7 @@ Global PBRT_EXE_PATH = "C:\\Program Files\\Graphics\\Autodesk\\3ds Max 2010\\exp
 		format "LookAt  0.205405 -0.288824 0.173344  -0.383984 0.413583 -0.225712  -0.256508 0.305694 0.916927 \n"to:out_file
 		format "Camera \"perspective\" \"float fov\" [43.0236]  \"float shutteropen\" [0]   \"float shutterclose\" [1] \n"  to:out_file
 		format "Film \"image\" \"integer xresolution\"  [%]  \"integer yresolution\"  [%]   \"string filename\"  [\"preview.exr\"]\n"  Res Res  to:out_file
-		format "PixelFilter \"mitchell\"  \"float xwidth\" [0.5]  \"float ywidth\" [0.5]   \"float B\" [0.67]  \"float C\" [0.165] \n"  to:out_file
+		format "PixelFilter \"mitchell\" \n"  to:out_file
 
 		
 		if RendMode == 1 do ( -- Direct Lighting	
