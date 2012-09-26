@@ -91,7 +91,7 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
     if (!suffix)
         Error("No suffix in measured BRDF filename \"%s\".  "
               "Can't determine file type (.brdf / .merl)", filename.c_str());
-    if (!strcmp(suffix, ".brdf") || !strcmp(suffix, ".BRDF")) {
+    else if (!strcmp(suffix, ".brdf") || !strcmp(suffix, ".BRDF")) {
         // Load $(\theta, \phi)$ measured BRDF data
         if (loadedThetaPhi.find(filename) != loadedThetaPhi.end()) {
             thetaPhiData = loadedThetaPhi[filename];

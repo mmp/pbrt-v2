@@ -44,7 +44,7 @@
 
 static uint32_t hash(char *key, uint32_t len)
 {
-    uint32_t   hash, i;
+    uint32_t hash = 0, i;
     for (hash=0, i=0; i<len; ++i) {
         hash += key[i];
         hash += (hash << 10);
