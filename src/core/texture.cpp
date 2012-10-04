@@ -219,7 +219,7 @@ float FBm(const Point &P, const Vector &dpdx, const Vector &dpdy,
           float omega, int maxOctaves) {
     // Compute number of octaves for antialiased FBm
     float s2 = max(dpdx.LengthSquared(), dpdy.LengthSquared());
-    float foctaves = min((float)maxOctaves, 1.f - .5f * Log2(s2));
+    float foctaves = min((float)maxOctaves, max(0.f, -1.f - .5f * Log2(s2)));
     int octaves = Floor2Int(foctaves);
 
     // Compute sum of octaves of noise for FBm
@@ -239,7 +239,7 @@ float Turbulence(const Point &P, const Vector &dpdx, const Vector &dpdy,
                  float omega, int maxOctaves) {
     // Compute number of octaves for antialiased FBm
     float s2 = max(dpdx.LengthSquared(), dpdy.LengthSquared());
-    float foctaves = min((float)maxOctaves, 1.f - .5f * Log2(s2));
+    float foctaves = min((float)maxOctaves, max(0.f, -1.f - .5f * Log2(s2)));
     int octaves = Floor2Int(foctaves);
 
     // Compute sum of octaves of noise for turbulence
