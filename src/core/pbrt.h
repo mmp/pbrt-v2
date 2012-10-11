@@ -83,14 +83,14 @@ using std::sort;
 #include <float.h>
 #define isnan _isnan
 #define isinf(f) (!_finite((f)))
-#define int8_t __int8
-#define uint8_t unsigned __int8
-#define int16_t __int16
-#define uint16_t unsigned __int16
-#define int32_t __int32
-#define uint32_t unsigned __int32
-#define int64_t __int64
-#define uint64_t unsigned __int64
+typedef __int8 int8_t;
+typedef unsigned __int8 uint8_t;
+typedef __int16 int16_t;
+typedef unsigned __int16 uint16_t;
+typedef __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
 #pragma warning (disable : 4305) // double constant assigned to float
 #pragma warning (disable : 4244) // int -> float conversion
 #pragma warning (disable : 4267) // size_t -> unsigned int conversion
