@@ -115,7 +115,7 @@ bool Cone::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
     Vector d2Pduu = -phiMax * phiMax *
                     Vector(phit.x, phit.y, 0.);
     Vector d2Pduv = phiMax / (1.f - v) *
-                    Vector(-phit.y, -phit.x, 0.);
+                    Vector(phit.y, -phit.x, 0.);
     Vector d2Pdvv(0, 0, 0);
 
     // Compute coefficients for fundamental forms
