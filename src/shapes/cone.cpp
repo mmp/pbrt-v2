@@ -202,9 +202,8 @@ bool Cone::IntersectP(const Ray &r) const {
 
 
 float Cone::Area() const {
-    return phiMax*height*height*
-        sqrtf((height*height)+
-              (radius*radius))/(2.0f*radius);
+    return radius * sqrtf((height*height)+(radius*radius)) *
+        phiMax / 2.f;
 }
 
 
