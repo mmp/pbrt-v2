@@ -73,6 +73,7 @@ extern const float CIE_X[nCIESamples];
 extern const float CIE_Y[nCIESamples];
 extern const float CIE_Z[nCIESamples];
 extern const float CIE_lambda[nCIESamples];
+static const float CIE_Y_integral = 106.856895;
 static const int nRGB2SpectSamples = 32;
 extern const float RGB2SpectLambda[nRGB2SpectSamples];
 extern const float RGBRefl2SpectWhite[nRGB2SpectSamples];
@@ -296,7 +297,6 @@ public:
                                             wl0, wl1);
             Z.c[i] = AverageSpectrumSamples(CIE_lambda, CIE_Z, nCIESamples,
                                             wl0, wl1);
-            yint += Y.c[i];
         }
 
         // Compute RGB to spectrum functions for _SampledSpectrum_
@@ -343,15 +343,18 @@ public:
             xyz[1] += Y.c[i] * c[i];
             xyz[2] += Z.c[i] * c[i];
         }
-        xyz[0] /= yint;
-        xyz[1] /= yint;
-        xyz[2] /= yint;
+        float scale = float(sampledLambdaEnd - sampledLambdaStart) /
+            float(CIE_Y_integral * nSpectralSamples);
+        xyz[0] *= scale;
+        xyz[1] *= scale;
+        xyz[2] *= scale;
     }
     float y() const {
         float yy = 0.f;
         for (int i = 0; i < nSpectralSamples; ++i)
             yy += Y.c[i] * c[i];
-        return yy / yint;
+        return yy * float(sampledLambdaEnd - sampledLambdaStart) /
+            float(CIE_Y_integral * nSpectralSamples);
     }
     void ToRGB(float rgb[3]) const {
         float xyz[3];
@@ -371,7 +374,6 @@ public:
 private:
     // SampledSpectrum Private Data
     static SampledSpectrum X, Y, Z;
-    static float yint;
     static SampledSpectrum rgbRefl2SpectWhite, rgbRefl2SpectCyan;
     static SampledSpectrum rgbRefl2SpectMagenta, rgbRefl2SpectYellow;
     static SampledSpectrum rgbRefl2SpectRed, rgbRefl2SpectGreen;

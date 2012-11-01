@@ -629,7 +629,6 @@ const float CIE_lambda[nCIESamples] = {
 SampledSpectrum SampledSpectrum::X;
 SampledSpectrum SampledSpectrum::Y;
 SampledSpectrum SampledSpectrum::Z;
-float SampledSpectrum::yint;
 SampledSpectrum SampledSpectrum::rgbRefl2SpectWhite;
 SampledSpectrum SampledSpectrum::rgbRefl2SpectCyan;
 SampledSpectrum SampledSpectrum::rgbRefl2SpectMagenta;
