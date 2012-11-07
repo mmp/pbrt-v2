@@ -36,7 +36,11 @@ ARCH = $(shell uname)
 
 LEX=flex
 YACC=bison -d -v -t
-LEXLIB = -lfl
+ifeq ($(ARCH),OpenBSD)
+    LEXLIB = -ll
+else
+    LEBLIB = -lfl
+endif
 
 ifeq ($(HAVE_DTRACE),1)
     DEFS += -DPBRT_PROBES_DTRACE

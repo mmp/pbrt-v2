@@ -96,9 +96,9 @@ typedef unsigned __int64 uint64_t;
 #pragma warning (disable : 4267) // size_t -> unsigned int conversion
 #endif
 
-#ifdef PBRT_IS_LINUX
+#if defined(PBRT_IS_LINUX) || defined(PBRT_IS_APPLE)
 #include <stdint.h>
-#endif // PBRT_IS_LINUX
+#endif // PBRT_IS_LINUX || PBRT_IS_APPLE
 #if defined(PBRT_IS_WINDOWS)
 #define isnan _isnan
 #define isinf(f) (!_finite((f)))
