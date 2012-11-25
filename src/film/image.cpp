@@ -219,7 +219,16 @@ void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
 
 
 ImageFilm *CreateImageFilm(const ParamSet &params, Filter *filter) {
-    string filename = params.FindOneString("filename", PbrtOptions.imageFile);
+    string filename = params.FindOneString("filename", "");
+    if (PbrtOptions.imageFile != "") {
+        if (filename != "") {
+            Warning("Output filename supplied on command line, \"%s\", ignored "
+                    "due to filename provided in scene description file, \"%s\".",
+                    PbrtOptions.imageFile.c_str(), filename.c_str());
+        }
+        else
+            filename = PbrtOptions.imageFile;
+    }
     if (filename == "")
 #ifdef PBRT_HAS_OPENEXR
         filename = "pbrt.exr";
