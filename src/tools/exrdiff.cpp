@@ -94,12 +94,13 @@ int main(int argc, char *argv[])
         (tol > 0. && 100.f * fabs(avgDelta) > tol)) {
 	printf("%s %s\n\tImages differ: %d big (%.2f%%), %d small (%.2f%%)\n"
                "\tavg 1 = %g, avg2 = %g (%f%% delta)\n"
-               "\tMSE = %g\n",
+               "\tMSE = %g, RMS = %.3f%%\n",
                imageFile1, imageFile2,
                bigDiff, 100.f * float(bigDiff) / (3 * r1[0] * r1[1]),
                smallDiff, 100.f * float(smallDiff) / (3 * r1[0] * r1[1]),
                avg1, avg2, 100. * avgDelta,
-               mse / (3. * r1[0] * r1[1]));
+               mse / (3. * r1[0] * r1[1]),
+               100. * sqrt(mse / (3. * r1[0] * r1[1])));
         if (outfile)
             WriteEXR(outfile, diffImage, r1[0], r1[1]);
         return 1;
