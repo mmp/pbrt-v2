@@ -231,7 +231,7 @@ write_lrt(void)
   int i,j;
 
   printf ("Shape \"trianglemesh\" \n");
-  printf ("  \"vertex point P\" [\n");
+  printf ("  \"point P\" [\n");
   for (i = 0; i < nverts; i++)
     printf ("    %g %g %g\n", vlist[i]->x, vlist[i]->y, vlist[i]->z);
   printf ("  ]\n");
@@ -239,7 +239,7 @@ write_lrt(void)
   /* if we have them, write surface normals */
 
   if (has_normals) {
-    printf ("\"vertex normal N\" [\n");
+    printf ("\"normal N\" [\n");
     for (i = 0; i < nverts; i++)
       printf ("    %g %g %g\n", vlist[i]->nx, vlist[i]->ny, vlist[i]->nz);
     printf ("  ]\n");
