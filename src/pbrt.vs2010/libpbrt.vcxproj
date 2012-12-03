@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -176,6 +176,7 @@
     <ClInclude Include="..\core\floatfile.h" />
     <ClInclude Include="..\core\geometry.h" />
     <ClInclude Include="..\core\imageio.h" />
+    <ClInclude Include="..\core\targa.h" />
     <ClInclude Include="..\core\integrator.h" />
     <ClInclude Include="..\core\intersection.h" />
     <ClInclude Include="..\core\kdtree.h" />
@@ -434,6 +435,7 @@
     <ClCompile Include="..\core\floatfile.cpp" />
     <ClCompile Include="..\core\geometry.cpp" />
     <ClCompile Include="..\core\imageio.cpp" />
+    <ClCompile Include="..\core\targa.c" />
     <ClCompile Include="..\core\integrator.cpp" />
     <ClCompile Include="..\core\intersection.cpp" />
     <ClCompile Include="..\core\light.cpp" />

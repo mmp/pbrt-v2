@@ -22,7 +22,8 @@ core_src = [ 'core/api.cpp',           'core/camera.cpp',         'core/diffgeom
              'core/quaternion.cpp',    'core/reflection.cpp',     'core/renderer.cpp',
              'core/rng.cpp',           'core/sampler.cpp',        'core/scene.cpp',
              'core/sh.cpp',            'core/shrots.cpp',         'core/shape.cpp',
-             'core/spectrum.cpp',      'core/texture.cpp',        'core/timer.cpp', 
+             'core/spectrum.cpp',      'core/targa.c',
+             'core/texture.cpp',       'core/timer.cpp', 
              'core/transform.cpp',     'core/volume.cpp' ]
 
 parser_flex = env.CXXFile('core/pbrtlex.ll')

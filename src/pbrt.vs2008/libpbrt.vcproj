@@ -920,6 +920,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\core\targa.c"
+					>
+				</File>
+				<File
 					RelativePath="..\core\integrator.cpp"
 					>
 				</File>
@@ -2039,6 +2043,10 @@
 				</File>
 				<File
 					RelativePath="..\core\imageio.h"
+					>
+				</File>
+				<File
+					RelativePath="..\core\targa.h"
 					>
 				</File>
 				<File
