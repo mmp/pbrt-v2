@@ -53,7 +53,6 @@ public:
     Sampler *GetSubSampler(int num, int count);
 private:
     // RandomSampler Private Data
-    bool jitterSamples;
     int xPos, yPos, nSamples;
     float *imageSamples, *lensSamples, *timeSamples;
     int samplePos;
