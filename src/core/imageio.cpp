@@ -433,7 +433,7 @@ static bool WriteImagePFM(const string &filename, const float *rgb,
     // row ordered left to right and the rows ordered bottom to top.
     nFloats = 3 * width * height;
     for (int j=height-1; j>=0; j--) {
-        if (fwrite(rgb + j*width*3, sizeof(float), width*3, fp) < width*3)
+        if (fwrite(rgb + j*width*3, sizeof(float), width*3, fp) < (size_t)(width*3))
             goto fail;
     }
 
