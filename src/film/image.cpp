@@ -36,6 +36,7 @@
 #include "spectrum.h"
 #include "parallel.h"
 #include "imageio.h"
+#include <sys/mman.h>
 
 // ImageFilm Method Definitions
 ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
@@ -69,8 +70,36 @@ ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
 
     // Possibly open window for image display
     if (openWindow || PbrtOptions.openWindow) {
-        Warning("Support for opening image display window not available in this build.");
+        int displayFD = -1;
+        int *mem = NULL;
+#define MAX_RES 4096
+        int displayIntsSize = 4 * (2 + MAX_RES * MAX_RES);
+
+        Assert(xResolution * yResolution < MAX_RES * MAX_RES);
+        displayFD = open("pbrt.display", O_RDWR | O_CREAT, 0644);
+        if (displayFD < 0) {
+            perror("open");
+            exit(1);
+        }
+
+        if (ftruncate(displayFD, displayIntsSize) < 0) {
+            perror("ftruncate");
+            exit(1);
+        }
+
+        mem = (int *)mmap(NULL, displayIntsSize, PROT_WRITE, MAP_SHARED, displayFD, 0);
+        if (mem == MAP_FAILED) {
+            perror("mmap");
+            exit(1);
+        }
+        
+        mem[0] = xResolution;
+        mem[1] = yResolution;
+        image8 = (uint8_t *)&mem[2];
+        memset(image8, 128, 3 * xResolution * yResolution);
     }
+    else
+        image8 = NULL;
 }
 
 
@@ -175,6 +204,28 @@ void ImageFilm::GetPixelExtent(int *xstart, int *xend,
 }
 
 
+void ImageFilm::getPixelRGB(int x, int y, float splatScale, float *rgb) const {
+    // Convert pixel XYZ color to RGB
+    XYZToRGB((*pixels)(x, y).Lxyz, rgb);
+
+    // Normalize pixel with weight sum
+    float weightSum = (*pixels)(x, y).weightSum;
+    if (weightSum != 0.f) {
+        float invWt = 1.f / weightSum;
+        rgb[0] = max(0.f, rgb[0] * invWt);
+        rgb[1] = max(0.f, rgb[1] * invWt);
+        rgb[2] = max(0.f, rgb[2] * invWt);
+    }
+
+    // Add splat value at pixel
+    float splatRGB[3];
+    XYZToRGB((*pixels)(x, y).splatXYZ, splatRGB);
+    rgb[0] += splatScale * splatRGB[0];
+    rgb[1] += splatScale * splatRGB[1];
+    rgb[2] += splatScale * splatRGB[2];
+}
+
+
 void ImageFilm::WriteImage(float splatScale) {
     // Convert image to RGB and compute final pixel values
     int nPix = xPixelCount * yPixelCount;
@@ -182,24 +233,7 @@ void ImageFilm::WriteImage(float splatScale) {
     int offset = 0;
     for (int y = 0; y < yPixelCount; ++y) {
         for (int x = 0; x < xPixelCount; ++x) {
-            // Convert pixel XYZ color to RGB
-            XYZToRGB((*pixels)(x, y).Lxyz, &rgb[3*offset]);
-
-            // Normalize pixel with weight sum
-            float weightSum = (*pixels)(x, y).weightSum;
-            if (weightSum != 0.f) {
-                float invWt = 1.f / weightSum;
-                rgb[3*offset  ] = max(0.f, rgb[3*offset  ] * invWt);
-                rgb[3*offset+1] = max(0.f, rgb[3*offset+1] * invWt);
-                rgb[3*offset+2] = max(0.f, rgb[3*offset+2] * invWt);
-            }
-
-            // Add splat value at pixel
-            float splatRGB[3];
-            XYZToRGB((*pixels)(x, y).splatXYZ, splatRGB);
-            rgb[3*offset  ] += splatScale * splatRGB[0];
-            rgb[3*offset+1] += splatScale * splatRGB[1];
-            rgb[3*offset+2] += splatScale * splatRGB[2];
+            getPixelRGB(x, y, splatScale, &rgb[3*offset]);
             ++offset;
         }
     }
@@ -214,7 +248,24 @@ void ImageFilm::WriteImage(float splatScale) {
 
 
 void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
-    float splatScale) {
+                              float splatScale) {
+    if (image8 == NULL)
+        return;
+
+    for (int y = y0; y < y1; ++y) {
+        for (int x = x0; x < x1; ++x) {
+            float rgb[3];
+            getPixelRGB(x - xPixelStart, y - yPixelStart, splatScale, rgb);
+
+            for (int i = 0; i < 3; ++i)
+                rgb[i] = powf(Clamp(rgb[i], 0.f, 1.f), 1.f/2.2f);
+
+            int offset = x + y * xResolution;
+            image8[3*offset] = (uint8_t)(255.f * rgb[0]);
+            image8[3*offset+1] = (uint8_t)(255.f * rgb[1]);
+            image8[3*offset+2] = (uint8_t)(255.f * rgb[2]);
+        }
+    }
 }
 
 

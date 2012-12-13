@@ -61,6 +61,8 @@ public:
     void WriteImage(float splatScale);
     void UpdateDisplay(int x0, int y0, int x1, int y1, float splatScale);
 private:
+    void getPixelRGB(int x, int y, float splatScale, float *rgb) const;
+
     // ImageFilm Private Data
     Filter *filter;
     float cropWindow[4];
@@ -78,6 +80,7 @@ private:
     };
     BlockedArray<Pixel> *pixels;
     float *filterTable;
+    uint8_t *image8;
 };
 
 
