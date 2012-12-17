@@ -65,7 +65,7 @@ MatteMaterial *CreateMatteMaterial(const Transform &xform,
         const TextureParams &mp) {
     Reference<Texture<Spectrum> > Kd = mp.GetSpectrumTexture("Kd", Spectrum(0.5f));
     Reference<Texture<float> > sigma = mp.GetFloatTexture("sigma", 0.f);
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new MatteMaterial(Kd, sigma, bumpMap);
 }
 

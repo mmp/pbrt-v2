@@ -82,7 +82,7 @@ TranslucentMaterial *CreateTranslucentMaterial(const Transform &xform,
     Reference<Texture<Spectrum> > reflect = mp.GetSpectrumTexture("reflect", Spectrum(0.5f));
     Reference<Texture<Spectrum> > transmit = mp.GetSpectrumTexture("transmit", Spectrum(0.5f));
     Reference<Texture<float> > roughness = mp.GetFloatTexture("roughness", .1f);
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new TranslucentMaterial(Kd, Ks, roughness, reflect, transmit, bumpMap);
 }
 

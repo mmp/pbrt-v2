@@ -92,7 +92,7 @@ UberMaterial *CreateUberMaterial(const Transform &xform,
     Reference<Texture<float> > roughness = mp.GetFloatTexture("roughness", .1f);
     Reference<Texture<float> > eta = mp.GetFloatTexture("index", 1.5f);
     Reference<Texture<Spectrum> > opacity = mp.GetSpectrumTexture("opacity", 1.f);
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new UberMaterial(Kd, Ks, Kr, Kt, roughness, opacity, eta, bumpMap);
 }
 

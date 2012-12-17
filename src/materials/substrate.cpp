@@ -63,7 +63,7 @@ SubstrateMaterial *CreateSubstrateMaterial(const Transform &xform,
     Reference<Texture<Spectrum> > Ks = mp.GetSpectrumTexture("Ks", Spectrum(.5f));
     Reference<Texture<float> > uroughness = mp.GetFloatTexture("uroughness", .1f);
     Reference<Texture<float> > vroughness = mp.GetFloatTexture("vroughness", .1f);
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new SubstrateMaterial(Kd, Ks, uroughness, vroughness, bumpMap);
 }
 

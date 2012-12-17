@@ -630,3 +630,19 @@ Reference<Texture<float> > TextureParams::GetFloatTexture(const string &n,
 }
 
 
+Reference<Texture<float> > TextureParams::GetFloatTextureOrNull(const string &n) const {
+    string name = geomParams.FindTexture(n);
+    if (name == "")
+        name = materialParams.FindTexture(n);
+    if (name == "")
+        return NULL;
+    if (floatTextures.find(name) != floatTextures.end())
+        return floatTextures[name];
+    else {
+        Error("Couldn't find float texture named \"%s\" for parameter \"%s\"",
+              name.c_str(), n.c_str());
+        return NULL;
+    }
+}
+
+

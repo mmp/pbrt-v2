@@ -78,6 +78,6 @@ ShinyMetalMaterial *CreateShinyMetalMaterial(const Transform &xform,
     Reference<Texture<Spectrum> > Kr = mp.GetSpectrumTexture("Kr", Spectrum(1.f));
     Reference<Texture<Spectrum> > Ks = mp.GetSpectrumTexture("Ks", Spectrum(1.f));
     Reference<Texture<float> > roughness = mp.GetFloatTexture("roughness", .1f);
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new ShinyMetalMaterial(Ks, roughness, Kr, bumpMap);
 }

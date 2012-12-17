@@ -103,7 +103,7 @@ MetalMaterial *CreateMetalMaterial(const Transform &xform, const TextureParams &
     Reference<Texture<Spectrum> > k = mp.GetSpectrumTexture("k", copperK);
 
     Reference<Texture<float> > roughness = mp.GetFloatTexture("roughness", .01f);
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new MetalMaterial(eta, k, roughness, bumpMap);
 }
 

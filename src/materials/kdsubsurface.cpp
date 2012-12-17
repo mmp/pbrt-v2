@@ -79,7 +79,7 @@ KdSubsurfaceMaterial *CreateKdSubsurfaceMaterial(const Transform &xform,
     Reference<Texture<float> > mfp = mp.GetFloatTexture("meanfreepath", 1.f);
     Reference<Texture<float> > ior = mp.GetFloatTexture("index", 1.3f);
     Reference<Texture<Spectrum> > kr = mp.GetSpectrumTexture("Kr", Spectrum(1.f));
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new KdSubsurfaceMaterial(kd, kr, mfp, ior, bumpMap);
 }
 

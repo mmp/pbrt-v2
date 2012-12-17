@@ -82,7 +82,7 @@ SubsurfaceMaterial *CreateSubsurfaceMaterial(const Transform &xform,
     sigma_prime_s = mp.GetSpectrumTexture("sigma_prime_s", sps);
     Reference<Texture<float> > ior = mp.GetFloatTexture("index", 1.3f);
     Reference<Texture<Spectrum> > Kr = mp.GetSpectrumTexture("Kr", Spectrum(1.f));
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new SubsurfaceMaterial(scale, Kr, sigma_a, sigma_prime_s, ior, bumpMap);
 }
 
