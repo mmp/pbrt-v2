@@ -63,7 +63,7 @@ GlassMaterial *CreateGlassMaterial(const Transform &xform,
     Reference<Texture<Spectrum> > Kr = mp.GetSpectrumTexture("Kr", Spectrum(1.f));
     Reference<Texture<Spectrum> > Kt = mp.GetSpectrumTexture("Kt", Spectrum(1.f));
     Reference<Texture<float> > index = mp.GetFloatTexture("index", 1.5f);
-    Reference<Texture<float> > bumpMap = mp.GetFloatTexture("bumpmap", 0.f);
+    Reference<Texture<float> > bumpMap = mp.GetFloatTextureOrNull("bumpmap");
     return new GlassMaterial(Kr, Kt, index, bumpMap);
 }
 
