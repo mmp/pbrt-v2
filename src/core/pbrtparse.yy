@@ -49,7 +49,8 @@ string current_file;
 #define YYMAXDEPTH 100000000
 
 void yyerror(const char *str) {
-    Severe("Parsing error: %s", str);
+    Error("Parsing error: %s", str);
+    exit(1);
 }
 
 

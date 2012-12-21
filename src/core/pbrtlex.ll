@@ -68,22 +68,30 @@ void add_string_char(char c) {
 
 
 void include_push(char *filename) {
-    if (includeStack.size() > 32)
-        Severe("Only 32 levels of nested Include allowed in scene files.");
-    IncludeInfo ii;
-    extern string current_file;
-    ii.filename = current_file;
-    ii.bufState = YY_CURRENT_BUFFER;
-    ii.lineNum = line_num;
-    includeStack.push_back(ii);
+    if (includeStack.size() > 32) {
+        Error("Only 32 levels of nested Include allowed in scene files.");
+        exit(1);
+    }
 
-    current_file = AbsolutePath(ResolveFilename(filename));
-    line_num = 1;
+    string new_file = AbsolutePath(ResolveFilename(filename));
 
-    yyin = fopen(current_file.c_str(), "r");
-    if (!yyin)
-        Severe("Unable to open included scene file \"%s\"", current_file.c_str());
-    yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+    FILE *f = fopen(new_file.c_str(), "r");
+    if (!f)
+        Error("Unable to open included scene file \"%s\"", new_file.c_str());
+    else {
+        extern string current_file;
+        IncludeInfo ii;
+        ii.filename = current_file;
+        ii.bufState = YY_CURRENT_BUFFER;
+        ii.lineNum = line_num;
+        includeStack.push_back(ii);
+
+        yyin = f;
+        current_file = new_file;
+        line_num = 1;
+
+        yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+    }
 }
 
 

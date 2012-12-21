@@ -43,6 +43,7 @@
 #include "intersection.h"
 #include "paramset.h"
 #include "montecarlo.h"
+#include <sys/errno.h>
 
 // UseRadianceProbes Method Definitions
 UseRadianceProbes *CreateRadianceProbesSurfaceIntegrator(const ParamSet &paramSet) {
@@ -61,16 +62,20 @@ UseRadianceProbes::UseRadianceProbes(const string &filename) {
                    &includeIndirectInProbes) != 3 ||
             fscanf(f, "%d %d %d", &nProbes[0], &nProbes[1], &nProbes[2]) != 3 ||
             fscanf(f, "%f %f %f %f %f %f", &bbox.pMin.x, &bbox.pMin.y, &bbox.pMin.z,
-                &bbox.pMax.x, &bbox.pMax.y, &bbox.pMax.z) != 6)
-            Severe("Error reading data from radiance probe file \"%s\"", filename.c_str());
+                   &bbox.pMax.x, &bbox.pMax.y, &bbox.pMax.z) != 6) {
+            Error("Error reading data from radiance probe file \"%s\"", filename.c_str());
+            exit(1);
+        }
     
         c_in = new Spectrum[SHTerms(lmax) * nProbes[0] * nProbes[1] * nProbes[2]];
         int offset = 0;
         for (int i = 0; i < nProbes[0] * nProbes[1] * nProbes[2]; ++i) {
             for (int j = 0; j < SHTerms(lmax); ++j)
-                if (!c_in[offset++].Read(f))
-                    Severe("Error reading data from radiance probe file \"%s\"",
+                if (!c_in[offset++].Read(f)) {
+                    Error("Error reading data from radiance probe file \"%s\"",
                         filename.c_str());
+                    exit(1);
+                }
         }
         fclose(f);
     }

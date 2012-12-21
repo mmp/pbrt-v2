@@ -99,14 +99,19 @@ MeasuredMaterial::MeasuredMaterial(const string &filename,
         }
         
         vector<float> values;
-        if (!ReadFloatFile(filename.c_str(), &values))
+        if (!ReadFloatFile(filename.c_str(), &values)) {
             Error("Unable to read BRDF data from file \"%s\"", filename.c_str());
+            return;
+        }
         
         uint32_t pos = 0;
         int numWls = int(values[pos++]);
-        if ((values.size() - 1 - numWls) % (4 + numWls) != 0)
+        if ((values.size() - 1 - numWls) % (4 + numWls) != 0) {
             Error("Excess or insufficient data in theta, phi BRDF file \"%s\"",
                   filename.c_str());
+            return;
+        }
+
         vector<float> wls;
         for (int i = 0; i < numWls; ++i)
             wls.push_back(values[pos++]);

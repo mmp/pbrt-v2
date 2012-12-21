@@ -44,6 +44,7 @@
 #include "volume.h"
 #include "paramset.h"
 #include "montecarlo.h"
+#include <sys/errno.h>
 
 // CreateRadianceProbes Local Declarations
 class CreateRadProbeTask : public Task {
@@ -206,13 +207,20 @@ void CreateRadianceProbes::Render(const Scene *scene) {
         if (fprintf(f, "%d %d %d\n", lmax, includeDirectInProbes?1:0, includeIndirectInProbes?1:0) < 0 ||
             fprintf(f, "%d %d %d\n", nProbes[0], nProbes[1], nProbes[2]) < 0 ||
             fprintf(f, "%f %f %f %f %f %f\n", bbox.pMin.x, bbox.pMin.y, bbox.pMin.z,
-              bbox.pMax.x, bbox.pMax.y, bbox.pMax.z) < 0)
-            Severe("Error writing radiance file \"%s\"", filename.c_str());
+                    bbox.pMax.x, bbox.pMax.y, bbox.pMax.z) < 0) {
+            Error("Error writing radiance file \"%s\" (%s)", filename.c_str(),
+                  strerror(errno));
+            exit(1);
+        }
+
         for (int i = 0; i < nProbes[0] * nProbes[1] * nProbes[2]; ++i) {
             for (int j = 0; j < SHTerms(lmax); ++j) {
                 fprintf(f, "  ");
-                if (c_in[i][j].Write(f) == false)
-                    Severe("Error writing radiance file \"%s\"", filename.c_str());
+                if (c_in[i][j].Write(f) == false) {
+                    Error("Error writing radiance file \"%s\" (%s)", filename.c_str(),
+                          strerror(errno));
+                    exit(1);
+                }
                 fprintf(f, "\n");
             }
             fprintf(f, "\n");

@@ -138,8 +138,11 @@ int main() {
 
     // Write sample table to disk
     FILE *f = fopen("sampledata.out", "w");
-    if (f == NULL)
-        Severe("Couldn't open sampledata.out for writing.");
+    if (f == NULL) {
+        Error("Couldn't open sampledata.out for writing. (%s)", strerror(errno));
+        return 1;
+    }
+
     fprintf(f, "\n/* Automatically generated %dx%d sample "
             "table (%s @a %s) */\n\n",
             SQRT_SAMPLE_TABLE_SIZE, SQRT_SAMPLE_TABLE_SIZE,

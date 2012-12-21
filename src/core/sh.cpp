@@ -171,9 +171,12 @@ static inline float lambda(float l) {
 
 // Spherical Harmonics Definitions
 void SHEvaluate(const Vector &w, int lmax, float *out) {
-    if (lmax > 28)
-        Severe("SHEvaluate() runs out of numerical precision for lmax > 28. "
+    if (lmax > 28) {
+        Error("SHEvaluate() runs out of numerical precision for lmax > 28. "
                "If you need more bands, try recompiling using doubles.");
+        exit(1);
+    }
+
     // Compute Legendre polynomial values for $\cos\theta$
     Assert(w.Length() > .995f && w.Length() < 1.005f);
     legendrep(w.z, lmax, out);

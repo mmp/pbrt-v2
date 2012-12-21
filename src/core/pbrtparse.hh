@@ -94,7 +94,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2136 of yacc.c  */
-#line 156 "build/darwin-release/core/pbrtparse.yy"
+#line 157 "build/darwin-debug/core/pbrtparse.yy"
 
 char string[1024];
 float num;
@@ -103,7 +103,7 @@ ParamArray *ribarray;
 
 
 /* Line 2136 of yacc.c  */
-#line 107 "build/darwin-release/core/pbrtparse.hh"
+#line 107 "build/darwin-debug/core/pbrtparse.hh"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
