@@ -75,7 +75,8 @@ public:
         if (!extent.Inside(WorldToVolume(p))) return 0.;
         return PhaseHG(wi, wo, g);
     }
-    Spectrum tau(const Ray &ray, float, float) const {
+    Spectrum tau(const Ray &r, float, float) const {
+        Ray ray = WorldToVolume(r);
         float t0, t1;
         if (!IntersectP(ray, &t0, &t1)) return 0.;
         return Distance(ray(t0), ray(t1)) * (sig_a + sig_s);
