@@ -103,7 +103,10 @@ Spectrum SingleScatteringIntegrator::Li(const Scene *scene, const Renderer *rend
         // Possibly terminate ray marching if transmittance is small
         if (Tr.y() < 1e-3) {
             const float continueProb = .5f;
-            if (rng.RandomFloat() > continueProb) break;
+            if (rng.RandomFloat() > continueProb) {
+                Tr = 0.f;
+                break;
+            }
             Tr /= continueProb;
         }
 
