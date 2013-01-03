@@ -44,7 +44,11 @@
 #include "volume.h"
 #include "paramset.h"
 #include "montecarlo.h"
+#if defined(PBRT_IS_WINDOWS) || defined(PBRT_IS_LINUX)
+#include <errno.h>
+#else
 #include <sys/errno.h>
+#endif
 
 // CreateRadianceProbes Local Declarations
 class CreateRadProbeTask : public Task {
