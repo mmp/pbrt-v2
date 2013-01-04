@@ -43,7 +43,11 @@
 #include "intersection.h"
 #include "paramset.h"
 #include "montecarlo.h"
+#if defined(PBRT_IS_WINDOWS) || defined(PBRT_IS_LINUX)
+#include <errno.h>
+#else
 #include <sys/errno.h>
+#endif
 
 // UseRadianceProbes Method Definitions
 UseRadianceProbes *CreateRadianceProbesSurfaceIntegrator(const ParamSet &paramSet) {
