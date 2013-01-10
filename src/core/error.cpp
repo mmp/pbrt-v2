@@ -50,7 +50,33 @@ const char *findWordEnd(const char *buf) {
 
 // Error Reporting Functions
 static void processError(const char *format, va_list args,
-        const char *message, int disposition) {
+        const char *errorType, int disposition) {
+    // Report error
+    if (disposition == PBRT_ERROR_IGNORE)
+        return;
+
+    // Build up an entire formatted error string and print it all at once;
+    // this way, if multiple threads are printing messages at once, they
+    // don't get jumbled up...
+    std::string errorString;
+
+    // Print line and position in input file, if available
+    extern int line_num;
+    if (line_num != 0) {
+        extern string current_file;
+        errorString += current_file;
+        char buf[16];
+        sprintf(buf, "(%d): ", line_num);
+        errorString += buf;
+    }
+
+    // PBRT_ERROR_CONTINUE, PBRT_ERROR_ABORT
+    // Print formatted error message
+    int width = max(20, TerminalWidth() - 2);
+    errorString += errorType;
+    errorString += ": ";
+    int column = errorString.size();
+
 #if !defined(PBRT_IS_WINDOWS)
     char *errorBuf;
     if (vasprintf(&errorBuf, format, args) == -1) {
@@ -61,41 +87,29 @@ static void processError(const char *format, va_list args,
     char errorBuf[2048];
     vsnprintf_s(errorBuf, sizeof(errorBuf), _TRUNCATE, format, args);
 #endif
-    // Report error
-    if (disposition == PBRT_ERROR_IGNORE)
-        return;
-    else {
-        // PBRT_ERROR_CONTINUE, PBRT_ERROR_ABORT
-        // Print formatted error message
-        extern int line_num;
-        int column = 0;
-        int width = max(20, TerminalWidth() - 2);
-        if (line_num != 0) {
-            extern string current_file;
-            column += fprintf(stderr, "%s(%d): ", current_file.c_str(), line_num);
-        }
-        fputs(message, stderr);
-        fputs(": ", stderr);
-        column += strlen(message) + 2;
-        const char *msgPos = errorBuf;
-        while (true) {
-            while (*msgPos != '\0' && isspace(*msgPos))
-                ++msgPos;
-            if (*msgPos == '\0')
-                break;
 
-            const char *wordEnd = findWordEnd(msgPos);
-            if (column + wordEnd - msgPos > width)
-                column = fprintf(stderr, "\n    ");
-            while (msgPos != wordEnd) {
-                fputc(*msgPos++, stderr);
-                ++column;
-            }
-            fputc(' ', stderr);
+    const char *msgPos = errorBuf;
+    while (true) {
+        while (*msgPos != '\0' && isspace(*msgPos))
+            ++msgPos;
+        if (*msgPos == '\0')
+            break;
+
+        const char *wordEnd = findWordEnd(msgPos);
+        if (column + wordEnd - msgPos > width) {
+            errorString += "\n    ";
+            column = 4;
+        }
+        while (msgPos != wordEnd) {
+            errorString += *msgPos++;
             ++column;
         }
-        fputs("\n", stderr);
+        errorString += ' ';
+        ++column;
     }
+
+    fprintf(stderr, "%s\n", errorString.c_str());
+
     if (disposition == PBRT_ERROR_ABORT) {
 #if defined(PBRT_IS_WINDOWS)
         __debugbreak();
