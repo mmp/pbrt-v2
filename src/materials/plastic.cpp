@@ -50,14 +50,18 @@ BSDF *PlasticMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
         dgs = dgShading;
     BSDF *bsdf = BSDF_ALLOC(arena, BSDF)(dgs, dgGeom.nn);
     Spectrum kd = Kd->Evaluate(dgs).Clamp();
-    BxDF *diff = BSDF_ALLOC(arena, Lambertian)(kd);
-    Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
+    if (!kd.IsBlack()) {
+        BxDF *diff = BSDF_ALLOC(arena, Lambertian)(kd);
+        bsdf->Add(diff);
+    }
     Spectrum ks = Ks->Evaluate(dgs).Clamp();
-    float rough = roughness->Evaluate(dgs);
-    BxDF *spec = BSDF_ALLOC(arena, Microfacet)
-                   (ks, fresnel, BSDF_ALLOC(arena, Blinn)(1.f / rough));
-    bsdf->Add(diff);
-    bsdf->Add(spec);
+    if (!ks.IsBlack()) {
+        Fresnel *fresnel = BSDF_ALLOC(arena, FresnelDielectric)(1.5f, 1.f);
+        float rough = roughness->Evaluate(dgs);
+        BxDF *spec = BSDF_ALLOC(arena, Microfacet)
+                       (ks, fresnel, BSDF_ALLOC(arena, Blinn)(1.f / rough));
+        bsdf->Add(spec);
+    }
     return bsdf;
 }
 

@@ -53,10 +53,12 @@ BSDF *MatteMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
     // Evaluate textures for _MatteMaterial_ material and allocate BRDF
     Spectrum r = Kd->Evaluate(dgs).Clamp();
     float sig = Clamp(sigma->Evaluate(dgs), 0.f, 90.f);
-    if (sig == 0.)
-        bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
-    else
-        bsdf->Add(BSDF_ALLOC(arena, OrenNayar)(r, sig));
+    if (!r.IsBlack()) {
+        if (sig == 0.)
+            bsdf->Add(BSDF_ALLOC(arena, Lambertian)(r));
+        else
+            bsdf->Add(BSDF_ALLOC(arena, OrenNayar)(r, sig));
+    }
     return bsdf;
 }
 

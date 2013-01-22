@@ -66,10 +66,14 @@ BSDF *ShinyMetalMaterial::GetBSDF(const DifferentialGeometry &dgGeom,
 
     MicrofacetDistribution *md = BSDF_ALLOC(arena, Blinn)(1.f / rough);
     Spectrum k = 0.;
-    Fresnel *frMf = BSDF_ALLOC(arena, FresnelConductor)(FresnelApproxEta(spec), k);
-    Fresnel *frSr = BSDF_ALLOC(arena, FresnelConductor)(FresnelApproxEta(R), k);
-    bsdf->Add(BSDF_ALLOC(arena, Microfacet)(1., frMf, md));
-    bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(1., frSr));
+    if (!spec.IsBlack()) {
+        Fresnel *frMf = BSDF_ALLOC(arena, FresnelConductor)(FresnelApproxEta(spec), k);
+        bsdf->Add(BSDF_ALLOC(arena, Microfacet)(1., frMf, md));
+    }
+    if (!R.IsBlack()) {
+        Fresnel *frSr = BSDF_ALLOC(arena, FresnelConductor)(FresnelApproxEta(R), k);
+        bsdf->Add(BSDF_ALLOC(arena, SpecularReflection)(1., frSr));
+    }
     return bsdf;
 }
 

@@ -52,7 +52,8 @@ BSDF *SubstrateMaterial::GetBSDF(const DifferentialGeometry &dgGeom, const Diffe
     float u = nu->Evaluate(dgs);
     float v = nv->Evaluate(dgs);
 
-    bsdf->Add(BSDF_ALLOC(arena, FresnelBlend)(d, s, BSDF_ALLOC(arena, Anisotropic)(1.f/u, 1.f/v)));
+    if (!d.IsBlack() || !s.IsBlack())
+        bsdf->Add(BSDF_ALLOC(arena, FresnelBlend)(d, s, BSDF_ALLOC(arena, Anisotropic)(1.f/u, 1.f/v)));
     return bsdf;
 }
 
