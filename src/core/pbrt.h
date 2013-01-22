@@ -305,7 +305,7 @@ inline int Ceil2Int(float val) {
 inline bool Quadratic(float A, float B, float C, float *t0, float *t1) {
     // Find quadratic discriminant
     float discrim = B * B - 4.f * A * C;
-    if (discrim <= 0.) return false;
+    if (discrim < 0.) return false;
     float rootDiscrim = sqrtf(discrim);
 
     // Compute quadratic _t_ values
