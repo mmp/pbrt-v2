@@ -50,7 +50,7 @@ public:
 
     void Seed(uint32_t seed) const;
     float RandomFloat() const;
-    unsigned long RandomUInt() const;
+    uint32_t RandomUInt() const;
 
 private:
     static const int N = 624;

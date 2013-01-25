@@ -67,7 +67,7 @@ float RNG::RandomFloat() const
 
 
 // Random Number Functions
-unsigned long RNG::RandomUInt() const
+uint32_t RNG::RandomUInt() const
 {
     unsigned long y;
     static unsigned long mag01[2]={0x0UL, MATRIX_A};

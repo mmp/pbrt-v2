@@ -118,10 +118,10 @@ void Octree<NodeData>::addPrivate(
     bool x[2] = { dataBound.pMin.x <= pMid.x, dataBound.pMax.x > pMid.x };
     bool y[2] = { dataBound.pMin.y <= pMid.y, dataBound.pMax.y > pMid.y };
     bool z[2] = { dataBound.pMin.z <= pMid.z, dataBound.pMax.z > pMid.z };
-    bool over[8] = { x[0] & y[0] & z[0], x[0] & y[0] & z[1],
-                     x[0] & y[1] & z[0], x[0] & y[1] & z[1],
-                     x[1] & y[0] & z[0], x[1] & y[0] & z[1],
-                     x[1] & y[1] & z[0], x[1] & y[1] & z[1] };
+    bool over[8] = { bool(x[0] & y[0] & z[0]), bool(x[0] & y[0] & z[1]),
+                     bool(x[0] & y[1] & z[0]), bool(x[0] & y[1] & z[1]),
+                     bool(x[1] & y[0] & z[0]), bool(x[1] & y[0] & z[1]),
+                     bool(x[1] & y[1] & z[0]), bool(x[1] & y[1] & z[1]) };
     for (int child = 0; child < 8; ++child) {
         if (!over[child]) continue;
         // Allocate octree node if needed and continue recursive traversal

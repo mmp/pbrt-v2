@@ -98,7 +98,8 @@ void SamplerRendererTask::Run() {
                     // random shading based on shape id...
                     uint32_t ids[2] = { isects[i].shapeId, isects[i].primitiveId };
                     uint32_t h = hash((char *)ids, sizeof(ids));
-                    float rgb[3] = { (h & 0xff), (h >> 8) & 0xff, (h >> 16) & 0xff };
+                    float rgb[3] = { float(h & 0xff), float((h >> 8) & 0xff),
+                                     float((h >> 16) & 0xff) };
                     Ls[i] = Spectrum::FromRGB(rgb);
                     Ls[i] /= 255.f;
                 }
