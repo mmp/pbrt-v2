@@ -71,7 +71,7 @@ float OrthoCamera::GenerateRay(const CameraSample &sample, Ray *ray) const {
         ray->o = Point(lensU, lensV, 0.f);
         ray->d = Normalize(Pfocus - ray->o);
     }
-    ray->time = Lerp(sample.time, shutterOpen, shutterClose);
+    ray->time = sample.time;
     CameraToWorld(*ray, ray);
     return 1.f;
 }
@@ -103,7 +103,7 @@ float OrthoCamera::GenerateRayDifferential(const CameraSample &sample,
         ray->o = Point(lensU, lensV, 0.f);
         ray->d = Normalize(Pfocus - ray->o);
     }
-    ray->time = Lerp(sample.time, shutterOpen, shutterClose);
+    ray->time = sample.time;
     ray->rxOrigin = ray->o + dxCamera;
     ray->ryOrigin = ray->o + dyCamera;
     ray->rxDirection = ray->ryDirection = ray->d;

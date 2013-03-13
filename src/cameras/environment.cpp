@@ -39,13 +39,12 @@
 // EnvironmentCamera Method Definitions
 float EnvironmentCamera::GenerateRay(const CameraSample &sample,
                                      Ray *ray) const {
-    float time = Lerp(sample.time, shutterOpen, shutterClose);
     // Compute environment camera ray direction
     float theta = M_PI * sample.imageY / film->yResolution;
     float phi = 2 * M_PI * sample.imageX / film->xResolution;
     Vector dir(sinf(theta) * cosf(phi), cosf(theta),
                sinf(theta) * sinf(phi));
-    *ray = Ray(Point(0,0,0), dir, 0.f, INFINITY, time);
+    *ray = Ray(Point(0,0,0), dir, 0.f, INFINITY, sample.time);
     CameraToWorld(*ray, ray);
     return 1.f;
 }

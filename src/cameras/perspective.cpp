@@ -72,7 +72,7 @@ float PerspectiveCamera::GenerateRay(const CameraSample &sample,
         ray->o = Point(lensU, lensV, 0.f);
         ray->d = Normalize(Pfocus - ray->o);
     }
-    ray->time = Lerp(sample.time, shutterOpen, shutterClose);
+    ray->time = sample.time;
     CameraToWorld(*ray, ray);
     return 1.f;
 }
@@ -107,7 +107,7 @@ float PerspectiveCamera::GenerateRayDifferential(const CameraSample &sample,
     ray->rxOrigin = ray->ryOrigin = ray->o;
     ray->rxDirection = Normalize(Vector(Pcamera) + dxCamera);
     ray->ryDirection = Normalize(Vector(Pcamera) + dyCamera);
-    ray->time = Lerp(sample.time, shutterOpen, shutterClose);
+    ray->time = sample.time;
     CameraToWorld(*ray, ray);
     ray->hasDifferentials = true;
     return 1.f;
