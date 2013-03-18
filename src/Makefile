@@ -178,7 +178,7 @@ bin/%: objs/tools_%.o objs/libpbrt.a
 	@echo "Linking $@"
 	@$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-bin/exrtotiff: objs/exrtotiff.o 
+bin/exrtotiff: objs/tools_exrtotiff.o 
 	@echo "Linking $@"
 	@$(CXX) $(CXXFLAGS) -o $@ $^ $(TIFF_LIBDIR) -ltiff $(LIBS) 
 
