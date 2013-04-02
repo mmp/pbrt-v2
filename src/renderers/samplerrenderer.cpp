@@ -152,7 +152,7 @@ void SamplerRendererTask::Run() {
 
     // Clean up after _SamplerRendererTask_ is done with its image region
     camera->film->UpdateDisplay(sampler->xPixelStart,
-        sampler->yPixelStart, sampler->xPixelEnd+1, sampler->yPixelEnd+1);
+        sampler->yPixelStart, sampler->xPixelEnd, sampler->yPixelEnd);
     delete sampler;
     delete[] samples;
     delete[] rays;

@@ -28,6 +28,9 @@ tiff_includes = [ ]
 tiff_libdir = [ ]
 Export('tiff_libs')
 
+glfw_libs = [ 'glfw' ]
+Export('glfw_libs')
+
 ######################################################################
 ## Configure generic environment
 
@@ -54,6 +57,7 @@ env = Environment(CCFLAGS = [ '-Wall', '-g' ],
                   YACCHXXFILESUFFIX = '.hpp',
                   ENV = { 'PATH' : [ '/usr/local/bin', '/usr/bin', '/bin', 
                                      '/usr/sbin', '/sbin' ] })
+env['FRAMEWORKS'] = [ 'OpenGL', 'AppKit', 'Carbon' ]
 if build_64bit:
     env.Append(CCFLAGS = [ '-m64' ],
                LINKFLAGS = [ '-m64' ])

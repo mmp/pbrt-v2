@@ -3,7 +3,7 @@
 import sys
 arch = sys.platform
 
-Import('env', 'has_dtrace', 'parallel_libs', 'exr_libs', 'tiff_libs')
+Import('env', 'has_dtrace', 'parallel_libs', 'exr_libs', 'tiff_libs', 'glfw_libs')
 
 if has_dtrace == True:
     env.DTrace('core/dtrace.h', 'core/dtrace.d')
@@ -98,6 +98,9 @@ if arch == 'win32':
                       'mt.exe /outputresource:"$TARGET;#1" /manifest "${TARGET}.manifest" /nologo')
 output['defaults'] = [ output['pbrt' ] ]
 
+output['pbrtdisplay'] = env.Program('pbrtdisplay', [ 'tools/pbrtdisplay.cpp' ],
+                                    LIBS = env_libs + glfw_libs)
+output['defaults'] = output['defaults'] + output['pbrtdisplay']
 
 if len(exr_libs) > 0:
     output['exrdiff'] = env.Program('exrdiff', [ 'tools/exrdiff.cpp' ], 
