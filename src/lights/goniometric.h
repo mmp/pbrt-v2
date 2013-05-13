@@ -60,7 +60,7 @@ public:
         float phi   = SphericalPhi(wp);
         float s = phi * INV_TWOPI, t = theta * INV_PI;
         return (mipmap == NULL) ? 1.f :
-               Spectrum(mipmap->Lookup(s, t, SPECTRUM_ILLUMINANT));
+            Spectrum(mipmap->Lookup(s, t), SPECTRUM_ILLUMINANT);
     }
     Spectrum Power(const Scene *) const;
     Spectrum Sample_L(const Scene *scene, const LightSample &ls, float u1, float u2,
