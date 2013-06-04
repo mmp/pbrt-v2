@@ -219,6 +219,9 @@ void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
 
 
 ImageFilm *CreateImageFilm(const ParamSet &params, Filter *filter) {
+    // Intentionally use FindOneString() rather than FindOneFilename() here
+    // so that the rendered image is left in the working directory, rather
+    // than the directory the scene file lives in.
     string filename = params.FindOneString("filename", "");
     if (PbrtOptions.imageFile != "") {
         if (filename != "") {

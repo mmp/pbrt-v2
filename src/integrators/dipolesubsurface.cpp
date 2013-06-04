@@ -351,7 +351,7 @@ DipoleSubsurfaceIntegrator *CreateDipoleSubsurfaceIntegrator(const ParamSet &par
     int maxDepth = params.FindOneInt("maxdepth", 5);
     float maxError = params.FindOneFloat("maxerror", .05f);
     float minDist = params.FindOneFloat("minsampledistance", .25f);
-    string pointsfile = params.FindOneString("pointsfile", "");
+    string pointsfile = params.FindOneFilename("pointsfile", "");
     if (PbrtOptions.quickRender) { maxError *= 4.f; minDist *= 4.f; }
     return new DipoleSubsurfaceIntegrator(maxDepth, maxError, minDist, pointsfile);
 }
