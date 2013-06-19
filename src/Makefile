@@ -97,6 +97,7 @@ dirs:
 $(LIBOBJS): $(HEADERS)
 
 .PHONY: dirs tools 
+.SECONDARY:
 
 objs/libpbrt.a: $(LIBOBJS)
 	@echo "Building the core rendering library (libpbrt.a)"
