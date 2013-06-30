@@ -143,13 +143,13 @@ bool Triangle::Intersect(const Ray &ray, float *tHit, float *rayEpsilon,
     float invDivisor = 1.f / divisor;
 
     // Compute first barycentric coordinate
-    Vector d = ray.o - p1;
-    float b1 = Dot(d, s1) * invDivisor;
+    Vector s = ray.o - p1;
+    float b1 = Dot(s, s1) * invDivisor;
     if (b1 < 0. || b1 > 1.)
         return false;
 
     // Compute second barycentric coordinate
-    Vector s2 = Cross(d, e1);
+    Vector s2 = Cross(s, e1);
     float b2 = Dot(ray.d, s2) * invDivisor;
     if (b2 < 0. || b1 + b2 > 1.)
         return false;
