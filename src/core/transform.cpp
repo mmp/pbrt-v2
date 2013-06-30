@@ -391,7 +391,8 @@ void AnimatedTransform::Interpolate(float time, Transform *t) const {
 
 BBox AnimatedTransform::MotionBounds(const BBox &b,
                                      bool useInverse) const {
-    if (!actuallyAnimated) return Inverse(*startTransform)(b);
+    if (!actuallyAnimated) 
+      return useInverse ? Inverse(*startTransform)(b) : (*startTransform)(b);
     BBox ret;
     const int nSteps = 128;
     for (int i = 0; i < nSteps; ++i) {
