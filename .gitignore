@@ -14,3 +14,14 @@ pbrt.exr
 #src/core/pbrtparse.cpp
 #src/core/pbrtparse.hh
 src/core/pbrtparse.output
+
+# Visual studio files
+src/pbrt.vs*/*.sdf
+src/pbrt.vs*/*.opensdf
+src/pbrt.vs*/ipch
+src/pbrt.vs*/*.suo
+
+# VS Build folders
+tmp/
+bin/
+lib/

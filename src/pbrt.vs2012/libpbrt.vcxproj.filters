@@ -1,0 +1,1694 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\3rdparty">
+      <UniqueIdentifier>{9115ac5f-f819-4655-9466-22d0f091ce35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3rdparty\ilmbase-1.0.2">
+      <UniqueIdentifier>{89af9220-58e5-4492-89d3-e2143f6d5de7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3rdparty\openexr-1.7.0">
+      <UniqueIdentifier>{d16cf2d9-d9f8-4195-a4e1-997c1615aa22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3rdparty\zlib-1.2.5">
+      <UniqueIdentifier>{69729e76-fdae-4ecc-9c53-ab79bd2504ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\accelerators">
+      <UniqueIdentifier>{ba10bcf2-6846-4115-a609-8476db10d4bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cameras">
+      <UniqueIdentifier>{c4a46f68-504d-4267-9970-6ab0ac1ca374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\core">
+      <UniqueIdentifier>{82b22c89-ac4f-467c-9c3c-1263a782309c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\film">
+      <UniqueIdentifier>{4db93821-adc6-44b0-93a5-225439f9aa1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\filters">
+      <UniqueIdentifier>{67f1d988-cd7d-4b4e-bf94-75e082464d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\integrators">
+      <UniqueIdentifier>{a3e86551-9f8e-4975-8a88-84de3064548c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lights">
+      <UniqueIdentifier>{4e1b3e89-0546-4d22-9104-d4af8d4b55f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\materials">
+      <UniqueIdentifier>{8338ae8b-b9f1-4fcf-8096-93d0321fcdd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\renderers">
+      <UniqueIdentifier>{8da48b9f-42f2-4be9-8595-76c7bbf602e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\samplers">
+      <UniqueIdentifier>{d924108d-0f68-4af3-aac2-1fdfd613eeff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\shapes">
+      <UniqueIdentifier>{8967299c-2a8b-497d-bcf6-8cbcad913f73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\textures">
+      <UniqueIdentifier>{97e9711f-c64b-435b-99da-91ddf798f175}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\volumes">
+      <UniqueIdentifier>{498370d0-70f4-4274-a6e9-9be720f9a3f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rdparty">
+      <UniqueIdentifier>{d4f5dfb7-cbf1-415d-85a4-b958517617bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rdparty\ilmbase-1.0.2">
+      <UniqueIdentifier>{3f1dfdeb-99e2-48cd-b36a-569a75fc65ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rdparty\zlib-1.2.5">
+      <UniqueIdentifier>{20d8ca10-5d5c-4e7c-97e8-0674b6c39a7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rdparty\openexr-1.7.0">
+      <UniqueIdentifier>{098cc465-c8ff-4fc1-9f2c-1ad5217188ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\accelerators">
+      <UniqueIdentifier>{a9ef6ed8-d6b5-410d-aa88-d4917c4d3aa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cameras">
+      <UniqueIdentifier>{86f1ea0a-eb6f-4c1a-b3a5-e4b82a15c753}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\core">
+      <UniqueIdentifier>{c6309fb5-cb15-400c-84b9-e78be4c79413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\film">
+      <UniqueIdentifier>{a2878cce-2350-46a4-a4ba-cd79706001b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\filters">
+      <UniqueIdentifier>{0f026584-4a57-4215-8dfa-76bfd32a497d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\integrators">
+      <UniqueIdentifier>{71b4955c-2ed7-44b3-83d2-17647191982f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lights">
+      <UniqueIdentifier>{5725bbed-5eaa-4f3b-a9e4-c02c036d6f44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\materials">
+      <UniqueIdentifier>{11943fd8-8175-4f33-9bb8-712888854866}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\volumes">
+      <UniqueIdentifier>{8cca5758-85e8-456c-8f80-d0597b027658}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\textures">
+      <UniqueIdentifier>{976b6b5f-93b3-4e96-a6a6-94722a7720c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shapes">
+      <UniqueIdentifier>{654ece26-4802-4d5d-aa72-cccb37651c07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\samplers">
+      <UniqueIdentifier>{7be8205b-0b9b-473e-99f0-546f527cf610}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\renderers">
+      <UniqueIdentifier>{235343bb-d3b9-4dc4-9fc6-01bd150ac539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3rdparty\tiff-3.9.4">
+      <UniqueIdentifier>{eafdd1c6-3a63-497e-a02d-2a59d4fbe254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3rdparty\tiff-3.9.4">
+      <UniqueIdentifier>{cb4e6ae4-62ac-4eb3-afbd-99ce385b8ee3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\half.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\halfFunction.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\halfLimits.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\Iex.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexBaseExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexErrnoExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexMacros.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexMathExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IexThrowErrnoExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmBaseConfig.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmThread.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmThreadMutex.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmThreadPool.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphore.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathBox.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathBoxAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathColor.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathColorAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathEuler.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathExc.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathFrame.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathFrustum.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathFun.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathGL.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathGLU.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathHalfLimits.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathInt64.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathInterval.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathLimits.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathLine.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathLineAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathMath.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathMatrix.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathMatrixAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathPlane.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathPlatform.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathQuat.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathRandom.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathRoots.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathShear.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathSphere.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathVec.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\ilmbase-1.0.2\ImathVecAlgo.h">
+      <Filter>Header Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\zutil.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\zlib.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\zconf.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\trees.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\inftrees.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\inflate.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\inffixed.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\inffast.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\gzguts.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\deflate.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\zlib-1.2.5\crc32.h">
+      <Filter>Header Files\3rdparty\zlib-1.2.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\b44ExpLogTable.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfAcesFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfArray.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfAutoArray.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfB44Compressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfBoxAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfChannelList.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfChannelListAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCheckedArithmetic.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfChromaticities.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfChromaticitiesAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCompression.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCompressionAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCompressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfConvert.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfCRgbaFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfDoubleAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfEnvmap.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfEnvmapAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfFloatAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfFrameBuffer.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfFramesPerSecond.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfHeader.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfHuf.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfInputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfInt64.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfIntAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfIO.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfKeyCode.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfKeyCodeAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfLineOrder.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfLineOrderAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfLut.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfMatrixAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfMisc.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfMultiView.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfName.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfOpaqueAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfOutputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPixelType.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPizCompressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPreviewImage.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPreviewImageAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfPxr24Compressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRational.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRationalAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRgba.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRgbaFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRgbaYca.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfRleCompressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfScanLineInputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfStandardAttributes.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfStdIO.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfStringAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfStringVectorAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTestFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfThreading.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTileDescription.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTileDescriptionAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTiledInputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTiledMisc.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTiledOutputFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTiledRgbaFile.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTileOffsets.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTimeCode.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfTimeCodeAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfVecAttribute.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfVersion.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfWav.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfXdr.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\ImfZipCompressor.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\openexr-1.7.0\OpenEXRConfig.h">
+      <Filter>Header Files\3rdparty\openexr-1.7.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\accelerators\bvh.h">
+      <Filter>Header Files\accelerators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\accelerators\grid.h">
+      <Filter>Header Files\accelerators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\accelerators\kdtreeaccel.h">
+      <Filter>Header Files\accelerators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cameras\environment.h">
+      <Filter>Header Files\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cameras\orthographic.h">
+      <Filter>Header Files\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cameras\perspective.h">
+      <Filter>Header Files\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\api.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\camera.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\diffgeom.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\error.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\fileutil.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\film.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\filter.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\floatfile.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\geometry.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\imageio.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\integrator.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\intersection.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kdtree.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\light.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\material.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\memory.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mipmap.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\montecarlo.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\octree.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\parallel.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\paramset.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\parser.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pbrt.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\primitive.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\probes.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\progressreporter.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\quaternion.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\reflection.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\renderer.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\rng.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\sampler.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\scene.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\sh.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\shape.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\spectrum.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\stdafx.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\texture.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\timer.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\transform.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\volume.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\film\image.h">
+      <Filter>Header Files\film</Filter>
+    </ClInclude>
+    <ClInclude Include="..\filters\box.h">
+      <Filter>Header Files\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\filters\gaussian.h">
+      <Filter>Header Files\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\filters\mitchell.h">
+      <Filter>Header Files\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\filters\sinc.h">
+      <Filter>Header Files\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\filters\triangle.h">
+      <Filter>Header Files\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\ambientocclusion.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\diffuseprt.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\dipolesubsurface.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\directlighting.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\emission.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\glossyprt.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\igi.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\irradiancecache.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\path.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\photonmap.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\single.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\useprobes.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\integrators\whitted.h">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lights\diffuse.h">
+      <Filter>Header Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lights\distant.h">
+      <Filter>Header Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lights\goniometric.h">
+      <Filter>Header Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lights\infinite.h">
+      <Filter>Header Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lights\point.h">
+      <Filter>Header Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lights\projection.h">
+      <Filter>Header Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lights\spot.h">
+      <Filter>Header Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\glass.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\kdsubsurface.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\matte.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\measured.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\metal.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\mirror.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\mixmat.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\plastic.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\shinymetal.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\substrate.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\subsurface.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\translucent.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\materials\uber.h">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\volumes\exponential.h">
+      <Filter>Header Files\volumes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\volumes\homogeneous.h">
+      <Filter>Header Files\volumes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\volumes\volumegrid.h">
+      <Filter>Header Files\volumes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\bilerp.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\checkerboard.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\constant.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\dots.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\fbm.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\imagemap.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\marble.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\mix.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\scale.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\uv.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\windy.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\textures\wrinkled.h">
+      <Filter>Header Files\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\cone.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\cylinder.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\disk.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\heightfield.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\hyperboloid.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\loopsubdiv.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\nurbs.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\paraboloid.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\sphere.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shapes\trianglemesh.h">
+      <Filter>Header Files\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\samplers\adaptive.h">
+      <Filter>Header Files\samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\samplers\bestcandidate.h">
+      <Filter>Header Files\samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\samplers\halton.h">
+      <Filter>Header Files\samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\samplers\lowdiscrepancy.h">
+      <Filter>Header Files\samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\samplers\random.h">
+      <Filter>Header Files\samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\samplers\stratified.h">
+      <Filter>Header Files\samplers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderers\aggregatetest.h">
+      <Filter>Header Files\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderers\createprobes.h">
+      <Filter>Header Files\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderers\metropolis.h">
+      <Filter>Header Files\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderers\samplerrenderer.h">
+      <Filter>Header Files\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\renderers\surfacepoints.h">
+      <Filter>Header Files\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\uvcode.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffvers.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffiop.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffio.hxx">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffio.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiff.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_predict.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_fax3.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_dir.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_config.wince.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_config.vc.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\t4.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tiffconf.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\tiff-3.9.4\tif_config.h">
+      <Filter>Header Files\3rdparty\tiff-3.9.4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\targa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\half.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IexBaseExc.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IexThrowErrnoExc.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThread.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadMutex.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadMutexPosix.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadMutexWin32.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadPool.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadPosix.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphore.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphorePosix.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphorePosixCompat.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadSemaphoreWin32.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\IlmThreadWin32.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathBox.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathColorAlgo.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathFun.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathMatrixAlgo.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathRandom.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathShear.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\ilmbase-1.0.2\ImathVec.cpp">
+      <Filter>Source Files\3rdparty\ilmbase-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfAcesFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfB44Compressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfBoxAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfChannelList.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfChannelListAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfChromaticities.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfChromaticitiesAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfCompressionAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfCompressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfConvert.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfCRgbaFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfDoubleAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfEnvmap.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfEnvmapAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfFloatAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfFrameBuffer.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfFramesPerSecond.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfHeader.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfHuf.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfInputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfIntAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfIO.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfKeyCode.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfKeyCodeAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfLineOrderAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfLut.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfMatrixAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfMisc.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfMultiView.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfOpaqueAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfOutputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfPizCompressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfPreviewImage.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfPreviewImageAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfPxr24Compressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRational.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRationalAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRgbaFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRgbaYca.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfRleCompressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfScanLineInputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfStandardAttributes.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfStdIO.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfStringAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfStringVectorAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTestFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfThreading.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTileDescriptionAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTiledInputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTiledMisc.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTiledOutputFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTiledRgbaFile.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTileOffsets.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTimeCode.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfTimeCodeAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfVecAttribute.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfVersion.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfWav.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\openexr-1.7.0\ImfZipCompressor.cpp">
+      <Filter>Source Files\3rdparty\openexr-1.7.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\zutil.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\uncompr.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\trees.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\inftrees.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\inflate.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\inffast.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\infback.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\gzwrite.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\gzread.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\gzlib.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\gzclose.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\deflate.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\crc32.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\compress.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\zlib-1.2.5\adler32.c">
+      <Filter>Source Files\3rdparty\zlib-1.2.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\accelerators\bvh.cpp">
+      <Filter>Source Files\accelerators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\accelerators\grid.cpp">
+      <Filter>Source Files\accelerators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\accelerators\kdtreeaccel.cpp">
+      <Filter>Source Files\accelerators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cameras\environment.cpp">
+      <Filter>Source Files\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cameras\orthographic.cpp">
+      <Filter>Source Files\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cameras\perspective.cpp">
+      <Filter>Source Files\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\api.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\camera.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\diffgeom.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\error.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\fileutil.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\film.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\filter.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\floatfile.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\geometry.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\imageio.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\integrator.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\intersection.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\light.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\material.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\memory.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\montecarlo.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\parallel.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\paramset.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\parser.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\primitive.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\probes.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\progressreporter.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\quaternion.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\reflection.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\renderer.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\rng.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\sampler.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\scene.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\sh.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\shape.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\shrots.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\spectrum.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\texture.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\timer.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\transform.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\volume.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\film\image.cpp">
+      <Filter>Source Files\film</Filter>
+    </ClCompile>
+    <ClCompile Include="..\filters\box.cpp">
+      <Filter>Source Files\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\filters\gaussian.cpp">
+      <Filter>Source Files\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\filters\mitchell.cpp">
+      <Filter>Source Files\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\filters\sinc.cpp">
+      <Filter>Source Files\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\filters\triangle.cpp">
+      <Filter>Source Files\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\ambientocclusion.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\diffuseprt.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\dipolesubsurface.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\directlighting.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\emission.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\glossyprt.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\igi.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\irradiancecache.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\path.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\photonmap.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\single.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\useprobes.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\integrators\whitted.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lights\diffuse.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lights\distant.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lights\goniometric.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lights\infinite.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lights\point.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lights\projection.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lights\spot.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\glass.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\kdsubsurface.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\matte.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\measured.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\metal.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\mirror.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\mixmat.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\plastic.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\shinymetal.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\substrate.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\subsurface.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\translucent.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\materials\uber.cpp">
+      <Filter>Source Files\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderers\aggregatetest.cpp">
+      <Filter>Source Files\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderers\createprobes.cpp">
+      <Filter>Source Files\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderers\metropolis.cpp">
+      <Filter>Source Files\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderers\samplerrenderer.cpp">
+      <Filter>Source Files\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\renderers\surfacepoints.cpp">
+      <Filter>Source Files\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\samplers\adaptive.cpp">
+      <Filter>Source Files\samplers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\samplers\bestcandidate.cpp">
+      <Filter>Source Files\samplers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\samplers\halton.cpp">
+      <Filter>Source Files\samplers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\samplers\lowdiscrepancy.cpp">
+      <Filter>Source Files\samplers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\samplers\random.cpp">
+      <Filter>Source Files\samplers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\samplers\stratified.cpp">
+      <Filter>Source Files\samplers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\cone.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\cylinder.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\disk.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\heightfield.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\hyperboloid.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\loopsubdiv.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\nurbs.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\paraboloid.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\sphere.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shapes\trianglemesh.cpp">
+      <Filter>Source Files\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\bilerp.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\checkerboard.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\constant.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\dots.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\fbm.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\imagemap.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\marble.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\mix.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\scale.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\uv.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\windy.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\textures\wrinkled.cpp">
+      <Filter>Source Files\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="..\volumes\exponential.cpp">
+      <Filter>Source Files\volumes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\volumes\homogeneous.cpp">
+      <Filter>Source Files\volumes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\volumes\volumegrid.cpp">
+      <Filter>Source Files\volumes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pbrtlex.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pbrtparse.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_stream.cxx">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_zip.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_write.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_win32.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_warning.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_version.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_tile.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_thunder.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_swab.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_strip.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_read.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_print.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_predict.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_pixarlog.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_packbits.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_open.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_ojpeg.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_next.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_lzw.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_luv.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_jpeg.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_jbig.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_getimage.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_flush.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_fax3sm.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_fax3.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_extension.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_error.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dumpmode.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dirwrite.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dirread.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dirinfo.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_dir.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_compress.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_color.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_codec.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_close.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\tif_aux.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\tiff-3.9.4\mkg3states.c">
+      <Filter>Source Files\3rdparty\tiff-3.9.4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\targa.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\core\pbrtlex.ll">
+      <Filter>Source Files\core</Filter>
+    </None>
+    <None Include="..\core\pbrtparse.yy">
+      <Filter>Source Files\core</Filter>
+    </None>
+  </ItemGroup>
+</Project>
