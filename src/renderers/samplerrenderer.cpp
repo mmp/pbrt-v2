@@ -122,12 +122,12 @@ void SamplerRendererTask::Run() {
                 Ls[i] = Spectrum(0.f);
             }
             else if (Ls[i].y() < -1e-5) {
-                Error("Negative luminance value, %f, returned"
+                Error("Negative luminance value, %f, returned "
                       "for image sample.  Setting to black.", Ls[i].y());
                 Ls[i] = Spectrum(0.f);
             }
             else if (isinf(Ls[i].y())) {
-                Error("Infinite luminance value returned"
+                Error("Infinite luminance value returned "
                       "for image sample.  Setting to black.");
                 Ls[i] = Spectrum(0.f);
             }
