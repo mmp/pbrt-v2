@@ -5,6 +5,7 @@
 # Build folders:
 src/objs
 src/bin
+src/build
 
 # Common renderer output file:
 pbrt.exr
