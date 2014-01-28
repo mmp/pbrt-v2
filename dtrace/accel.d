@@ -21,6 +21,17 @@ BVH
 
 #pragma D option quiet
 
+#define SAFE_ZERO(x) ((x) > 0 ? (x) : 0xffffffffffffffff)
+
+#define PCT_INT(x, y) ((100*(x))/SAFE_ZERO(y))
+#define PCT_FRAC2(x, y) (((10000*(x))/SAFE_ZERO(y)) - 100 * PCT_INT(x,y))
+#define PCT_PARTS(x, y) PCT_INT(x, y), PCT_FRAC2(x, y)
+#define PCT_FMT "%3d.%02d%%"
+
+#define RATIO_INT(x, y) ((x)/SAFE_ZERO(y))
+#define RATIO_FRAC2(x, y) (((100*(x))/SAFE_ZERO(y)) - 100 * RATIO_INT(x,y))
+#define RATIO_PARTS(x, y) RATIO_INT(x, y), RATIO_FRAC2(x, y)
+
 uint64_t kd_intersectionp_tests, kd_intersectionp_hits, kd_intersectionp_primitive_tests;
 uint64_t kd_intersectionp_leaf, kd_intersectionp_interior;
 
