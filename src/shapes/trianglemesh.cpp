@@ -360,7 +360,7 @@ void Triangle::GetShadingGeometry(const Transform &obj2world,
     else
         dndu = dndv = Normal(0,0,0);
     *dgShading = DifferentialGeometry(dg.p, ss, ts,
-        (*ObjectToWorld)(dndu), (*ObjectToWorld)(dndv),
+        obj2world(dndu), obj2world(dndv),
         dg.u, dg.v, dg.shape);
     dgShading->dudx = dg.dudx;  dgShading->dvdx = dg.dvdx;
     dgShading->dudy = dg.dudy;  dgShading->dvdy = dg.dvdy;
