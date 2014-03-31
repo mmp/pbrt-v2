@@ -106,7 +106,7 @@ void IGIIntegrator::Preprocess(const Scene *scene, const Camera *camera,
                                              lightSampDir[2*sampOffset+1],
                                              camera->shutterOpen, &ray, &Nl, &pdf);
             if (pdf == 0.f || alpha.IsBlack()) continue;
-            alpha /= pdf * lightPdf;
+            alpha *= AbsDot(Nl, ray.d) / (pdf * lightPdf);
             Intersection isect;
             while (scene->Intersect(ray, &isect) && !alpha.IsBlack()) {
                 // Create virtual light and sample new ray for path
