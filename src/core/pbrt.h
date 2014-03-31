@@ -267,7 +267,7 @@ inline int Log2Int(float v) {
 
 
 inline bool IsPowerOf2(int v) {
-    return (v & (v - 1)) == 0;
+    return v && !(v & (v - 1));
 }
 
 

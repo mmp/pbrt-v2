@@ -35,6 +35,7 @@
 #include <climits>
 #ifndef PBRT_IS_WINDOWS
 #include <libgen.h>
+#include <string.h>
 #endif
 
 static string searchDirectory;
@@ -125,9 +126,9 @@ string ResolveFilename(const string &filename)
 
 string DirectoryContaining(const string &filename)
 {
-    // dirname requires a char*, not a const char*, hence the const_cast. It 
-    // doesn't modify it though (according to the docs on OS X).
-    string result = dirname(const_cast<char*>(filename.c_str()));
+    char* t = strdup(filename.c_str());
+    string result = dirname(t);
+    free(t);
     return result;
 }
 
