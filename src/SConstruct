@@ -89,6 +89,8 @@ if has_dtrace:
     debug_env.Append(CPPDEFINES = [ 'PBRT_PROBES_DTRACE' ])
 else:
     debug_env.Append(CPPDEFINES = [ 'PBRT_PROBES_NONE' ])
+if (arch == 'darwin'):
+    debug_env.Append(CPPFLAGS = [ '-Wno-mismatched-tags' ])
 build_envs['debug'] = debug_env
 
 release_env = env.Clone()
