@@ -80,7 +80,7 @@ LIBOBJS += $(addprefix objs/, $(subst /,_,$(LIB_CXXSRCS:.cpp=.o)))
 
 HEADERS = $(wildcard */*.h)
 
-TOOLS = bin/bsdftest bin/exravg bin/exrdiff
+TOOLS = bin/bsdftest bin/exravg bin/exrdiff bin/obj2pbrt
 ifeq ($(HAVE_LIBTIFF),1)
     TOOLS += bin/exrtotiff
 endif

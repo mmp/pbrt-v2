@@ -96,7 +96,10 @@ output['pbrt'] = env.Program('pbrt', renderer_src + output['pbrt_lib'],
 if arch == 'win32':
     env.AddPostAction(output['pbrt'], 
                       'mt.exe /outputresource:"$TARGET;#1" /manifest "${TARGET}.manifest" /nologo')
-output['defaults'] = [ output['pbrt' ] ]
+
+output['obj2pbrt'] = env.Program('obj2pbrt', [ 'tools/obj2pbrt.cpp' ])
+
+output['defaults'] = [ output['pbrt'], output['obj2pbrt'] ]
 
 
 if len(exr_libs) > 0:
