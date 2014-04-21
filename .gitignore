@@ -21,6 +21,7 @@ src/pbrt.vs*/*.sdf
 src/pbrt.vs*/*.opensdf
 src/pbrt.vs*/ipch
 src/pbrt.vs*/*.suo
+src/pbrt.vs*/*.user
 
 # VS Build folders
 tmp/
