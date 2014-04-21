@@ -11,9 +11,10 @@ src/build
 pbrt.exr
 
 # These files are generated during the build process:
-#src/core/pbrtlex.cpp
-#src/core/pbrtparse.cpp
+src/core/pbrtlex.cpp
+src/core/pbrtparse.cpp
 #src/core/pbrtparse.hh
+src/core/pbrtparse.hpp
 src/core/pbrtparse.output
 
 # Visual studio files
