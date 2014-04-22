@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbrt", "pbrt.vcxproj", "{7C350267-019A-43D2-BA77-0B3DF4C94EB8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2E030F4C-B2AE-476C-8E40-A326B3840F6C} = {2E030F4C-B2AE-476C-8E40-A326B3840F6C}
