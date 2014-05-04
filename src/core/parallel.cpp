@@ -491,7 +491,7 @@ Semaphore::Semaphore() {
 #endif // !PBRT_IS_WINDOWS
 #if defined(PBRT_IS_WINDOWS)
 Semaphore::Semaphore() {
-    handle = CreateSemaphore(NULL, 0, 65535,  NULL);
+    handle = CreateSemaphore(NULL, 0, LONG_MAX,  NULL);
     if (!handle)
         Severe("Error from CreateSemaphore: %d", GetLastError());
 }
