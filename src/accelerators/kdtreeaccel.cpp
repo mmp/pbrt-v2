@@ -79,7 +79,7 @@ struct BoundEdge {
     }
     float t;
     int primNum;
-    enum { START = 1, END = 0 } type;
+    enum { START, END } type;
 };
 
 
