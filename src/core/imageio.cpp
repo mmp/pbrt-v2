@@ -119,30 +119,19 @@ using namespace Imath;
 // EXR Function Definitions
 static RGBSpectrum *ReadImageEXR(const string &name, int *width, int *height) {
     try {
-    InputFile file(name.c_str());
-    Box2i dw = file.header().dataWindow();
-    *width  = dw.max.x - dw.min.x + 1;
+    RgbaInputFile file (name.c_str());
+    Box2i dw = file.dataWindow();
+    *width = dw.max.x - dw.min.x + 1;
     *height = dw.max.y - dw.min.y + 1;
-
-    half *rgb = new half[3 * *width * *height];
-
-    FrameBuffer frameBuffer;
-    frameBuffer.insert("R", Slice(HALF, (char *)rgb,
-        3*sizeof(half), *width * 3 * sizeof(half), 1, 1, 0.0));
-    frameBuffer.insert("G", Slice(HALF, (char *)rgb+sizeof(half),
-        3*sizeof(half), *width * 3 * sizeof(half), 1, 1, 0.0));
-    frameBuffer.insert("B", Slice(HALF, (char *)rgb+2*sizeof(half),
-        3*sizeof(half), *width * 3 * sizeof(half), 1, 1, 0.0));
-
-    file.setFrameBuffer(frameBuffer);
+    std::vector<Rgba> pixels(*width * *height);
+    file.setFrameBuffer(&pixels[0] - dw.min.x - dw.min.y * *width, 1, *width);
     file.readPixels(dw.min.y, dw.max.y);
 
     RGBSpectrum *ret = new RGBSpectrum[*width * *height];
     for (int i = 0; i < *width * *height; ++i) {
-        float frgb[3] = { rgb[3*i], rgb[3*i+1], rgb[3*i+2] };
+        float frgb[3] = { pixels[i].r, pixels[i].g, pixels[i].b };
         ret[i] = RGBSpectrum::FromRGB(frgb);
     }
-    delete[] rgb;
     Info("Read EXR image %s (%d x %d)", name.c_str(), *width, *height);
     return ret;
     } catch (const std::exception &e) {
