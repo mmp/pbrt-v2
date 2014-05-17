@@ -104,9 +104,31 @@ float OrthoCamera::GenerateRayDifferential(const CameraSample &sample,
         ray->d = Normalize(Pfocus - ray->o);
     }
     ray->time = sample.time;
-    ray->rxOrigin = ray->o + dxCamera;
-    ray->ryOrigin = ray->o + dyCamera;
-    ray->rxDirection = ray->ryDirection = ray->d;
+    // Compute ray differentials for _OrthoCamera_
+    if (lensRadius > 0) {
+        // Compute _OrthoCamera_ ray differentials with defocus blur
+
+        // Sample point on lens
+        float lensU, lensV;
+        ConcentricSampleDisk(sample.lensU, sample.lensV, &lensU, &lensV);
+        lensU *= lensRadius;
+        lensV *= lensRadius;
+
+        float ft = focalDistance / ray->d.z;
+
+        Point pFocus = Pcamera + dxCamera + (ft * Vector(0, 0, 1));
+        ray->rxOrigin = Point(lensU, lensV, 0.f);
+        ray->rxDirection = Normalize(pFocus - ray->rxOrigin);
+
+        pFocus = Pcamera + dyCamera + (ft * Vector(0, 0, 1));
+        ray->ryOrigin = Point(lensU, lensV, 0.f);
+        ray->ryDirection = Normalize(pFocus - ray->ryOrigin);
+    }
+    else {
+        ray->rxOrigin = ray->o + dxCamera;
+        ray->ryOrigin = ray->o + dyCamera;
+        ray->rxDirection = ray->ryDirection = ray->d;
+    }
     ray->hasDifferentials = true;
     CameraToWorld(*ray, ray);
     return 1.f;
