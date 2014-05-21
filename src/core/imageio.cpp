@@ -36,6 +36,9 @@
 #include "spectrum.h"
 #include "targa.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 // ImageIO Local Declarations
 static RGBSpectrum *ReadImageEXR(const string &name, int *width, int *height);
 static void WriteImageEXR(const string &name, float *pixels,
@@ -96,6 +99,26 @@ void WriteImage(const string &name, float *pixels, float *alpha, int xRes,
         if (!strcmp(name.c_str() + suffixOffset, ".pfm") ||
             !strcmp(name.c_str() + suffixOffset, ".PFM")) {
             WriteImagePFM(name, pixels, xRes, yRes);
+            return;
+        }
+        if (!strcmp(name.c_str() + suffixOffset, ".png") ||
+            !strcmp(name.c_str() + suffixOffset, ".PNG")) {
+            uint8_t *rgb8 = new uint8_t[3 * xRes * yRes];
+            uint8_t *dst = rgb8;
+            for (int y = 0; y < yRes; ++y) {
+                for (int x = 0; x < xRes; ++x) {
+#define TO_BYTE(v) (uint8_t(Clamp(255.f * powf((v), 1.f/2.2f), 0.f, 255.f)))
+                    dst[0] = TO_BYTE(pixels[3*(y*xRes+x)+2]);
+                    dst[1] = TO_BYTE(pixels[3*(y*xRes+x)+1]);
+                    dst[2] = TO_BYTE(pixels[3*(y*xRes+x)+0]);
+#undef TO_BYTE
+                    dst += 3;
+                }
+            }
+            if (stbi_write_png(name.c_str(), xRes, yRes, 3, rgb8,
+                               3 * xRes) == 0)
+                Error("Error writing PNG \"%s\"", name.c_str());
+            delete[] rgb8;
             return;
         }
     }
