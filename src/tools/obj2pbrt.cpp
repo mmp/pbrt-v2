@@ -38,6 +38,7 @@ typedef struct
     float dissolve;           // 1 == opaque; 0 == fully transparent
     // illumination model (see http://www.fileformat.info/format/material/)
     int illum;
+    float bump_scale;
 
     std::string ambient_texname;
     std::string diffuse_texname;
@@ -341,7 +342,112 @@ exportFaceGroupToShape(
 
 }
 
-  
+bool IsBumpMap(const char *&token) {
+    if ((0 == strncmp(token, "map_Ns", 6)) && isSpace(token[6])) {
+      token += 7;
+      return true;
+    }
+    if ((0 == strncmp(token, "bump", 4)) && isSpace(token[4])) {
+      token += 5;
+      return true;
+    }
+    if ((0 == strncmp(token, "map_bump", 8)) && isSpace(token[8])) {
+      token += 9;
+      return true;
+    }
+    return false;
+}
+
+bool IsFloat(const char *token) {
+  if (isdigit(*token))
+    return true;
+  else if (*token == '-')
+    return isdigit(token[1]) || (token[1] == '.' && isdigit(token[2]));
+  else if (*token == '.')
+    return isdigit(token[1]);
+  else
+    return false;
+}
+
+void ParseUnsupportedBumpModifier(const char *&token, std::stringstream &err) {
+  if ((0 == strncmp(token, "-mm", 3)) && isSpace(token[3])) {
+    token += 4;
+    (void)parseFloat(token);  // base_value
+    (void)parseFloat(token);  // gain_value
+    err << "Ignoring bump map modifier \"-mm\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-blendu", 7)) && isSpace(token[7])) {
+    token += 8;
+    (void)parseString(token);
+    err << "Ignoring bump map modifier \"-blendu\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-blendv", 7)) && isSpace(token[7])) {
+    token += 8;
+    (void)parseString(token);
+    err << "Ignoring bump map modifier \"-blendv\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-boost", 6)) && isSpace(token[6])) {
+    token += 7;
+    (void)parseFloat(token);
+    err << "Ignoring bump map modifier \"-boost\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-texres", 7)) && isSpace(token[7])) {
+    token += 8;
+    (void)parseFloat(token);
+    err << "Ignoring bump map modifier \"-texres\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-clamp", 6)) && isSpace(token[6])) {
+    token += 7;
+    (void)parseString(token);
+    err << "Ignoring bump map modifier \"-clamp\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-imfchan", 8)) && isSpace(token[8])) {
+    token += 9;
+    (void)parseString(token);
+    err << "Ignoring bump map modifier \"-imfchan\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-type", 5)) && isSpace(token[5])) {
+    token += 6;
+    (void)parseString(token);
+    err << "Ignoring bump map modifier \"-type\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-o", 2)) && isSpace(token[2])) {
+    token += 3;
+    (void)parseFloat(token);  // x
+    if (IsFloat(token)) {
+      (void)parseFloat(token);  // y
+      if (IsFloat(token)) {
+        (void)parseFloat(token);  // z
+      }
+    }
+    err << "Ignoring bump map modifier \"-o\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-s", 2)) && isSpace(token[2])) {
+    token += 3;
+    (void)parseFloat(token);  // x
+    if (IsFloat(token)) {
+      (void)parseFloat(token);  // y
+      if (IsFloat(token)) {
+        (void)parseFloat(token);  // z
+      }
+    }
+    err << "Ignoring bump map modifier \"-s\"" << std::endl;
+  }
+  else if ((0 == strncmp(token, "-t", 2)) && isSpace(token[2])) {
+    token += 3;
+    (void)parseFloat(token);  // x
+    if (IsFloat(token)) {
+      (void)parseFloat(token);  // y
+      if (IsFloat(token)) {
+        (void)parseFloat(token);  // z
+      }
+    }
+    err << "Ignoring bump map modifier \"-t\"" << std::endl;
+  }
+  else
+    err << "Unexpected modifier \"" << token << "\" for bump map" << std::endl;
+}
+
 void InitMaterial(material_t& material) {
   material.name = "";
   material.ambient_texname = "";
@@ -358,6 +464,8 @@ void InitMaterial(material_t& material) {
   material.illum = 0;
   material.dissolve = 1.f;
   material.shininess = 1.f;
+  material.ior = 1.f;
+  material.bump_scale = 1.f;
   material.unknown_parameter.clear();
 }
 
@@ -540,8 +648,19 @@ std::string LoadMtl (
     }
 
     // normal texture
-    if ((0 == strncmp(token, "map_Ns", 6)) && isSpace(token[6])) {
-      token += 7;
+    if (IsBumpMap(token)) {
+      while (*token == '-') {
+        // parse bump map options...
+        if((0 == strncmp(token, "-bm", 3)) && isSpace(token[3])) {
+          token += 4;
+          material.bump_scale = parseFloat(token);
+        }
+        else {
+          ParseUnsupportedBumpModifier(token, err);
+        }
+        // skip space
+        token += strspn(token, " \t");
+      }
       material.normal_texname = token;
       continue;
     }
@@ -837,31 +956,46 @@ int main(int argc, char *argv[]) {
     }
 
     if (mtl.diffuse_texname != "") {
-      fprintf(f, "Texture \"obj-kd-img\" \"color\" \"imagemap\" "
-              "\"string filename\" [\"%s\"]\n", mtl.diffuse_texname.c_str());
-      fprintf(f, "Texture \"obj-kd\" \"color\" \"scale\" \"texture tex1\" "
-              "\"obj-kd-img\" \"color tex2\" [%f %f %f]\n",
-              mtl.diffuse[0], mtl.diffuse[1], mtl.diffuse[2]);
+      if (mtl.diffuse[0] != 0 || mtl.diffuse[1] != 0 || mtl.diffuse[2] != 0) {
+          fprintf(f, "Texture \"obj-kd-img\" \"color\" \"imagemap\" "
+                  "\"string filename\" [\"%s\"]\n", mtl.diffuse_texname.c_str());
+          fprintf(f, "Texture \"obj-kd\" \"color\" \"scale\" \"texture tex1\" "
+                  "\"obj-kd-img\" \"color tex2\" [%f %f %f]\n",
+                  mtl.diffuse[0], mtl.diffuse[1], mtl.diffuse[2]);
+      }
+      else {
+          fprintf(f, "Texture \"obj-kd\" \"color\" \"imagemap\" "
+                  "\"string filename\" [\"%s\"]\n", mtl.diffuse_texname.c_str());
+      }
     }
     else
       fprintf(f, "Texture \"obj-kd\" \"color\" \"constant\" \"color value\" "
               "[%f %f %f]\n", mtl.diffuse[0], mtl.diffuse[1], mtl.diffuse[2]);
 
     if (mtl.specular_texname != "") {
-      fprintf(f, "Texture \"obj-ks-img\" \"color\" \"imagemap\" "
-              "\"string filename\" [\"%s\"]\n", mtl.specular_texname.c_str());
-      fprintf(f, "Texture \"obj-ks\" \"color\" \"scale\" \"texture tex1\" "
-              "\"obj-ks-img\" \"color tex2\" [%f %f %f]\n",
-              mtl.specular[0], mtl.specular[1], mtl.specular[2]);
+      if (mtl.specular[0] != 0 || mtl.specular[1] != 0 || mtl.specular[2] != 0) {
+        fprintf(f, "Texture \"obj-ks-img\" \"color\" \"imagemap\" "
+                "\"string filename\" [\"%s\"]\n", mtl.specular_texname.c_str());
+        fprintf(f, "Texture \"obj-ks\" \"color\" \"scale\" \"texture tex1\" "
+                "\"obj-ks-img\" \"color tex2\" [%f %f %f]\n",
+                mtl.specular[0], mtl.specular[1], mtl.specular[2]);
+      }
+      else {
+        fprintf(f, "Texture \"obj-ks\" \"color\" \"imagemap\" "
+                "\"string filename\" [\"%s\"]\n", mtl.specular_texname.c_str());
+      }
     }
     else
       fprintf(f, "Texture \"obj-ks\" \"color\" \"constant\" \"color value\" "
               "[%f %f %f]\n", mtl.specular[0], mtl.specular[1],
               mtl.specular[2]);
 
-    if (mtl.normal_texname != "")
-      fprintf(f, "Texture \"obj-bump\" \"float\" \"imagemap\" "
+    if (mtl.normal_texname != "") {
+      fprintf(f, "Texture \"obj-bump-map\" \"float\" \"imagemap\" "
               "\"string filename\" [\"%s\"]\n", mtl.normal_texname.c_str());
+      fprintf(f, "Texture \"obj-bump\" \"float\" \"scale\" \"float tex1\" [%f] "
+              "\"texture tex2\" \"obj-bump-map\"\n", mtl.bump_scale);
+    }
 
     float roughness = (mtl.shininess == 0) ? 0. : (1.f / mtl.shininess);
     fprintf(f, "Material \"uber\" \"texture Kd\" \"obj-kd\" "
