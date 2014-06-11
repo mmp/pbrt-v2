@@ -238,31 +238,29 @@ BVHBuildNode *BVHAccel::recursiveBuild(MemoryArena &buildArena,
         // Partition primitives into two sets and build children
         uint32_t mid = (start + end) / 2;
         if (centroidBounds.pMax[dim] == centroidBounds.pMin[dim]) {
-			//	if nPrimitives is no greater than maxPrimsInNode
-			//	then all the nodes can be stored in a compact bvh node
-			if (nPrimitives <= maxPrimsInNode)
-			{
-		        // Create leaf _BVHBuildNode_
-		        uint32_t firstPrimOffset = orderedPrims.size();
-		        for (uint32_t i = start; i < end; ++i) {
-		            uint32_t primNum = buildData[i].primitiveNumber;
-		            orderedPrims.push_back(primitives[primNum]);
-		        }
-		        node->InitLeaf(firstPrimOffset, nPrimitives, bbox);
-		        return node;
-			}
-			else
-			{
-				//	else if nPrimitives is greater than maxPrimsInNode
-				//	we need to split it further to guarantee
-				//	each node contains no more than maxPrimsInNode primitives
-		        node->InitInterior(dim,
-                   recursiveBuild(buildArena, buildData, start, mid,
-                                  totalNodes, orderedPrims),
-                   recursiveBuild(buildArena, buildData, mid, end,
-                                  totalNodes, orderedPrims));
-				return node;
-			}
+            // If nPrimitives is no greater than maxPrimsInNode,
+            // then all the nodes can be stored in a compact bvh node.
+            if (nPrimitives <= maxPrimsInNode) {
+                // Create leaf _BVHBuildNode_
+                uint32_t firstPrimOffset = orderedPrims.size();
+                for (uint32_t i = start; i < end; ++i) {
+                    uint32_t primNum = buildData[i].primitiveNumber;
+                    orderedPrims.push_back(primitives[primNum]);
+                }
+                node->InitLeaf(firstPrimOffset, nPrimitives, bbox);
+                return node;
+            }
+            else {
+                // else if nPrimitives is greater than maxPrimsInNode, we
+                // need to split it further to guarantee each node contains
+                // no more than maxPrimsInNode primitives.
+                node->InitInterior(dim,
+                                   recursiveBuild(buildArena, buildData, start, mid,
+                                                  totalNodes, orderedPrims),
+                                   recursiveBuild(buildArena, buildData, mid, end,
+                                                  totalNodes, orderedPrims));
+                return node;
+            }
         }
 
         // Partition primitives based on _splitMethod_
