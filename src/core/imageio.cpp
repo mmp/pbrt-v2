@@ -35,6 +35,7 @@
 #include "imageio.h"
 #include "spectrum.h"
 #include "targa.h"
+#include <string.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -71,7 +72,7 @@ RGBSpectrum *ReadImage(const string &name, int *width, int *height) {
     }
     Error("Unable to load image stored in format \"%s\" for filename \"%s\". "
           "Returning a constant grey image instead.",
-          rindex(name.c_str(), '.') ? (rindex(name.c_str(), '.') + 1) : "(unknown)",
+          strrchr(name.c_str(), '.') ? (strrchr(name.c_str(), '.') + 1) : "(unknown)",
           name.c_str());
     RGBSpectrum *ret = new RGBSpectrum[1];
     ret[0] = 0.5f;
