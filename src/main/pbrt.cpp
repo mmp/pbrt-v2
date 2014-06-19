@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
         else if (!strcmp(argv[i], "--quick")) options.quickRender = true;
         else if (!strcmp(argv[i], "--quiet")) options.quiet = true;
         else if (!strcmp(argv[i], "--verbose")) options.verbose = true;
+		else if (!strcmp(argv[i], "--openwindow")) options.openWindow = true;
         else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
             printf("usage: pbrt [--ncores n] [--outfile filename] [--quick] [--quiet] "
                    "[--verbose] [--help] <filename.pbrt> ...\n");

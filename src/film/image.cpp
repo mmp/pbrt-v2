@@ -37,10 +37,14 @@
 #include "parallel.h"
 #include "imageio.h"
 
+#ifdef WIN32
+#	include "ImageWindow.h"
+#endif
 // ImageFilm Method Definitions
 ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
                      const string &fn, bool openWindow)
     : Film(xres, yres) {
+	window = NULL;
     filter = filt;
     memcpy(cropWindow, crop, 4 * sizeof(float));
     filename = fn;
@@ -70,9 +74,19 @@ ImageFilm::ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
     // Possibly open window for image display
     if (openWindow || PbrtOptions.openWindow) {
         Warning("Support for opening image display window not available in this build.");
+#ifdef WIN32
+		window = new ImageWindow(xPixelCount, yPixelCount);
+#endif
     }
 }
-
+ImageFilm::~ImageFilm() {
+	delete pixels;
+	delete filter;
+	delete[] filterTable;
+#ifdef WIN32
+	delete window;
+#endif
+}
 
 void ImageFilm::AddSample(const CameraSample &sample,
                           const Spectrum &L) {
@@ -215,6 +229,41 @@ void ImageFilm::WriteImage(float splatScale) {
 
 void ImageFilm::UpdateDisplay(int x0, int y0, int x1, int y1,
     float splatScale) {
+#ifdef WIN32
+	if (!window) return;
+
+	for (int y = y0; y < y1 && y < yPixelCount; ++y)
+	{
+		for (int x = x0; x < x1 && x < xPixelCount; ++x)
+		{
+			float rgb[3];
+			BYTE cc[4] = { 0 };
+			XYZToRGB((*pixels)(x, y).Lxyz, rgb);
+
+			float weightSum = (*pixels)(x, y).weightSum;
+			if (weightSum != 0.f) {
+				float invWt = 1.f / weightSum;
+				rgb[0] = max(0.f, rgb[0] * invWt);
+				rgb[1] = max(0.f, rgb[1] * invWt);
+				rgb[2] = max(0.f, rgb[2] * invWt);
+			}
+
+			// Add splat value at pixel
+			float splatRGB[3];
+			XYZToRGB((*pixels)(x, y).splatXYZ, splatRGB);
+			rgb[0] += splatScale * splatRGB[0];
+			rgb[1] += splatScale * splatRGB[1];
+			rgb[2] += splatScale * splatRGB[2];
+
+#define TO_BYTE(v) (uint8_t(Clamp(255.f * powf((v), 1.f/2.2f), 0.f, 255.f)))
+			cc[0] = TO_BYTE(rgb[2]);
+			cc[1] = TO_BYTE(rgb[1]);
+			cc[2] = TO_BYTE(rgb[0]);
+			window->SetPixel(x, y, *(DWORD*)cc);
+		}
+	}
+	window->UpdateWindow();
+#endif
 }
 
 

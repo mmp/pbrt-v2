@@ -43,17 +43,15 @@
 #include "filter.h"
 #include "paramset.h"
 
+class ImageWindow;
 // ImageFilm Declarations
 class ImageFilm : public Film {
 public:
     // ImageFilm Public Methods
     ImageFilm(int xres, int yres, Filter *filt, const float crop[4],
               const string &filename, bool openWindow);
-    ~ImageFilm() {
-        delete pixels;
-        delete filter;
-        delete[] filterTable;
-    }
+	~ImageFilm();
+
     void AddSample(const CameraSample &sample, const Spectrum &L);
     void Splat(const CameraSample &sample, const Spectrum &L);
     void GetSampleExtent(int *xstart, int *xend, int *ystart, int *yend) const;
@@ -78,6 +76,8 @@ private:
     };
     BlockedArray<Pixel> *pixels;
     float *filterTable;
+
+	ImageWindow * window;
 };
 
 
