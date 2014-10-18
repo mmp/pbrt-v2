@@ -233,21 +233,21 @@ Spectrum SpecularTransmit(const RayDifferential &ray, BSDF *bsdf,
         
             float eta = bsdf->eta;
             Vector w = -wo;
-            if (Dot(wo, n) < 0) eta = 1.f / eta;
+            if (Dot(w, n) < 0) eta = 1.f / eta;
         
             Normal dndx = bsdf->dgShading.dndu * bsdf->dgShading.dudx + bsdf->dgShading.dndv * bsdf->dgShading.dvdx;
             Normal dndy = bsdf->dgShading.dndu * bsdf->dgShading.dudy + bsdf->dgShading.dndv * bsdf->dgShading.dvdy;
-        
-            Vector dwodx = -ray.rxDirection - wo, dwody = -ray.ryDirection - wo;
-            float dDNdx = Dot(dwodx, n) + Dot(wo, dndx);
-            float dDNdy = Dot(dwody, n) + Dot(wo, dndy);
-        
+
+            Vector dwdx = ray.rxDirection - w, dwdy = ray.ryDirection - w;
+            float dDNdx = Dot(dwdx, n) + Dot(w, dndx);
+            float dDNdy = Dot(dwdy, n) + Dot(w, dndy);
+
             float mu = eta * Dot(w, n) - Dot(wi, n);
             float dmudx = (eta - (eta*eta*Dot(w,n))/Dot(wi, n)) * dDNdx;
             float dmudy = (eta - (eta*eta*Dot(w,n))/Dot(wi, n)) * dDNdy;
         
-            rd.rxDirection = wi + eta * dwodx - Vector(mu * dndx + dmudx * n);
-            rd.ryDirection = wi + eta * dwody - Vector(mu * dndy + dmudy * n);
+            rd.rxDirection = wi + eta * dwdx - Vector(mu * dndx + dmudx * n);
+            rd.ryDirection = wi + eta * dwdy - Vector(mu * dndy + dmudy * n);
         }
         PBRT_STARTED_SPECULAR_REFRACTION_RAY(const_cast<RayDifferential *>(&rd));
         Spectrum Li = renderer->Li(scene, rd, sample, rng, arena);
