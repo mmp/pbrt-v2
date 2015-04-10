@@ -1,5 +1,7 @@
 *.pyc
 *~
+*.swp
+\#*\#
 .sconsign.dblite
 
 # Build folders:
