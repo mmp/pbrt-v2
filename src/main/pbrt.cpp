@@ -37,8 +37,82 @@
 #include "parser.h"
 #include "parallel.h"
 
+#include <iostream>
+#include "shapes/disk.h"
+
+
 // main program
 int main(int argc, char *argv[]) {
+    // Tao Du.
+    // Test Disk derivatives.
+    const float height = 1.f;
+    const float radius = 2.f;
+    const float innerRadius = 1.f;
+    const float phiMax = 180.f;
+    const Transform object2World;
+    Disk *disk = new Disk(&object2World, &object2World, false, height, radius, innerRadius, phiMax);
+
+    // Test dpdu and dpdv.
+    const Vector dir(0.f, 0.f, 1.f);
+    const Point origin(1.5f, 0.f, 0.f);
+    const float eps = 1e-3;
+    Ray r1(origin, dir, 0.f);
+    Ray r2 = r1;
+    float tHit, rayEpsilon;
+    DifferentialGeometry dg1, dg2;
+
+    disk->Intersect(r1, &tHit, &rayEpsilon, &dg1);
+    // Print analytical dpdu and dpdv from DifferentialGeometry.
+    std::cout << "analytical dpdu: (" << dg1.dpdu.x << ", " << dg1.dpdu.y << ", " << dg1.dpdu.z << ")" << std::endl;
+    std::cout << "analytical dpdv: (" << dg1.dpdv.x << ", " << dg1.dpdv.y << ", " << dg1.dpdv.z << ")" << std::endl;
+
+    /////////////////////////////////////////
+    // Test dpdu only.
+    /////////////////////////////////////////
+    r2 = r1;
+    r2.o += Vector(0.f, eps, 0.f);
+    // Intersection.
+    disk->Intersect(r2, &tHit, &rayEpsilon, &dg2);
+    // Print du and dv.
+    float du = dg2.u - dg1.u;
+    float dv = dg2.v - dg1.v;
+    std::cout << "du: " << du << " dv: " << dv << std::endl;
+    // Compute numerical dpdu.
+    Vector ndpdu = (dg2.p - dg1.p) / du;
+    std::cout << "numerical dpdu: (" << ndpdu.x << ", " << ndpdu.y << ", " << ndpdu.z << ")" << std::endl;
+
+    /////////////////////////////////////////
+    // Test dpdv only.
+    /////////////////////////////////////////
+    r2 = r1;
+    r2.o += Vector(eps, 0.f, 0.f);
+    // Intersection.
+    disk->Intersect(r2, &tHit, &rayEpsilon, &dg2);
+    // Print du and dv.
+    du = dg2.u - dg1.u;
+    dv = dg2.v - dg1.v;
+    std::cout << "du: " << du << " dv: " << dv << std::endl;
+    // Compute numerical dpdv.
+    Vector ndpdv = (dg2.p - dg1.p) / dv;
+    std::cout << "numerical dpdv: (" << ndpdv.x << ", " << ndpdv.y << ", " << ndpdv.z << ")" << std::endl;
+
+    /////////////////////////////////////////
+    // Test both dpdu and dpdv.
+    /////////////////////////////////////////
+    r2 = r1;
+    r2.o += Vector(eps, eps, 0.f);
+    // Intersection.
+    disk->Intersect(r2, &tHit, &rayEpsilon, &dg2);
+    // Compare p2 and p1 + dpdu * du + dpdv * dv.
+    std::cout << "p2: (" << dg2.p.x << ", " << dg2.p.y << ", " << dg2.p.z << ")" << std::endl;
+    du = dg2.u - dg1.u;
+    dv = dg2.v - dg1.v;
+    Point p2 = dg1.p + dg1.dpdu * du + dg1.dpdv * dv;
+    std::cout << "p1 + dpdu * du + dpdv * dv: (" << p2.x << ", " << p2.y << ", " << p2.z << ")" << std::endl; 
+    // The higher order term.
+    std::cout << "relative error: " << (dg2.p - p2).Length() / (dg2.p - dg1.p).Length() * 100.f << "%" << std::endl;
+    return 0;
+
     Options options;
     vector<string> filenames;
     // Process command-line arguments

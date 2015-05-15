@@ -77,16 +77,26 @@ bool Disk::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
     if (phi > phiMax)
         return false;
 
+    // u = phi / phiMax.
+    // R = radius + v(innerRadius - radius).
+    // x = R cos(phi).
+    // y = R sin(phi).
+    // z = height.
+    // d(px)/du = -phiMax * y.
+    // d(py)/du = phiMax * x.
+    // d(pz)/du = 0.
+    // d(px)/dv = (innerRadius - radius)cos(phi).
+    // d(py)/dv = (innerRadius - radius)sin(phi).
+    // d(pz)/dv = 0.
     // Find parametric representation of disk hit
     float u = phi / phiMax;
-    float oneMinusV = ((sqrtf(dist2)-innerRadius) /
+    float R = sqrtf(dist2);
+    float oneMinusV = ((R-innerRadius) /
                        (radius-innerRadius));
-    float invOneMinusV = (oneMinusV > 0.f) ? (1.f / oneMinusV) : 0.f;
     float v = 1.f - oneMinusV;
     Vector dpdu(-phiMax * phit.y, phiMax * phit.x, 0.);
-    Vector dpdv(-phit.x * invOneMinusV, -phit.y * invOneMinusV, 0.);
-    dpdu *= phiMax * INV_TWOPI;
-    dpdv *= (radius - innerRadius) / radius;
+    Vector dpdv(phit.x, phit.y, 0.); 
+    dpdv *= (innerRadius - radius) / R;
     Normal dndu(0,0,0), dndv(0,0,0);
 
     // Initialize _DifferentialGeometry_ from parametric information
