@@ -37,8 +37,53 @@
 #include "parser.h"
 #include "parallel.h"
 
+// Tao Du
+#include "shapes/paraboloid.h"
+#include <iostream>
+
+void testParaboloid(float radius, float zmin, float zmax, float phimax) {
+    // Identity transform by default.
+    const Transform o2w;
+    Paraboloid p(&o2w, &o2w, false, radius, zmin, zmax, phimax);
+    // Get the surface area.
+    const float analyticSurfaceArea = p.Area();
+    std::cout << "Analytic surface area: " << analyticSurfaceArea << std::endl;
+
+    // Numerical results.
+    float numericalSurfaceArea = 0.0f;
+    const int stepNum = 5000;
+    std::vector<Point> points(stepNum + 1);
+    for (int i = 0; i < stepNum + 1; ++i) {
+        // t's range is [0, 1].
+        float t = i * 1.f / stepNum; 
+        // z's range is [zmin, zmax].
+        float z = zmax * t + zmin * (1.f - t);
+        Ray r(Point(0.f, radius * 2, z), Vector(0.f, -1.f, 0.f), 0.f);
+        float tHit, rayEpsilon;
+        DifferentialGeometry dg;
+        p.Intersect(r, &tHit, &rayEpsilon, &dg);
+        // Get the intersection point.
+        points[i] = dg.p;
+    }
+    for (int i = 0; i < stepNum; ++i) {
+        Point pCurrent = points[i];
+        Point pNext = points[i + 1];
+        numericalSurfaceArea += Radians(phimax) * pCurrent.y * (pNext - pCurrent).Length();
+    }
+    std::cout << "Numerical surface area: " << numericalSurfaceArea << std::endl;
+}
+
+
 // main program
 int main(int argc, char *argv[]) {
+    // Tao Du.
+    // radius, zmin, zmax, phimax.
+    testParaboloid(3.f, 1.5f, 2.5f, 250.f);
+    testParaboloid(155.f, 0.f, 50.f, 172.f);
+    testParaboloid(1.f, 1.f, 100.f, 360.f);
+    return 0;
+
+
     Options options;
     vector<string> filenames;
     // Process command-line arguments
