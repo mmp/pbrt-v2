@@ -64,7 +64,7 @@ again:
             sampleOffsets[i] = tileRng.RandomFloat();
     }
     // Compute raster sample from table
-#define WRAP(x) ((x) > 1 ? ((x)-1) : (x))
+#define WRAP(x) ((x) >= 1 ? ((x)-1) : (x))
     sample->imageX = (xTile + sampleTable[tableOffset][0]) * tableWidth;
     sample->imageY = (yTile + sampleTable[tableOffset][1]) * tableWidth;
     sample->time  = Lerp(WRAP(sampleOffsets[0] + sampleTable[tableOffset][2]),
