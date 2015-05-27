@@ -205,8 +205,10 @@ bool Paraboloid::IntersectP(const Ray &r) const {
 
 
 float Paraboloid::Area() const {
-    return phiMax/12.0f *
-        (powf(1+4*zmin, 1.5f) - powf(1+4*zmax, 1.5f));
+    float radius2 = radius * radius;
+    float k = 4 * zmax / radius2;
+    return (radius2 * radius2 * phiMax / (12.f * zmax * zmax)) *
+        (powf(k * zmax + 1, 1.5f) - powf(k * zmin + 1, 1.5f));
 }
 
 
