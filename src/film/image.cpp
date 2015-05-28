@@ -157,11 +157,11 @@ void ImageFilm::Splat(const CameraSample &sample, const Spectrum &L) {
 void ImageFilm::GetSampleExtent(int *xstart, int *xend,
                                 int *ystart, int *yend) const {
     *xstart = Floor2Int(xPixelStart + 0.5f - filter->xWidth);
-    *xend   = Ceil2Int(xPixelStart + 0.5f + xPixelCount +
+    *xend   = Ceil2Int(xPixelStart - 0.5f + xPixelCount +
                        filter->xWidth);
 
     *ystart = Floor2Int(yPixelStart + 0.5f - filter->yWidth);
-    *yend   = Ceil2Int(yPixelStart + 0.5f + yPixelCount +
+    *yend   = Ceil2Int(yPixelStart - 0.5f + yPixelCount +
                        filter->yWidth);
 }
 
