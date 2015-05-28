@@ -61,6 +61,7 @@ public:
     Octree(const BBox &b, int md = 16)
         : maxDepth(md), bound(b) { }
     void Add(const NodeData &dataItem, const BBox &dataBound) {
+        Assert(dataBound.Overlaps(bound));
         addPrivate(&root, bound, dataItem, dataBound,
                    DistanceSquared(dataBound.pMin, dataBound.pMax));
     }
