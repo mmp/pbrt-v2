@@ -167,7 +167,7 @@ float ShapeSet::Pdf(const Point &p) const {
     float pdf = 0.f;
     for (uint32_t i = 0; i < shapes.size(); ++i)
         pdf += areas[i] * shapes[i]->Pdf(p);
-    return pdf / sumArea;
+    return pdf / (shapes.size() * sumArea);
 }
 
 
