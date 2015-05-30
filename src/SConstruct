@@ -9,7 +9,7 @@ arch = sys.platform
 has_openexr = True
 exr_includes = [ '/usr/local/include', '/opt/local/include', '/opt/local/include/OpenEXR',
                  '/usr/local/include/OpenEXR', '/usr/include/OpenEXR' ]
-exr_libdir = [ '/opt/local/lib' ]
+exr_libdir = [ '/opt/local/lib', '/usr/local/lib' ]
 
 has_dtrace = (arch == 'darwin')
 Export('has_dtrace')
