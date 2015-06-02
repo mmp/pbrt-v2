@@ -43,7 +43,7 @@
 #include "intersection.h"
 #include "montecarlo.h"
 #include "shapes/sphere.h"
-#if defined(PBRT_IS_WINDOWS) || defined(PBRT_IS_LINUX)
+#if defined(PBRT_IS_WINDOWS) || defined(PBRT_IS_LINUX)|| defined(PBRT_IS_OPENBSD)
 #include <errno.h>
 #else
 #include <sys/errno.h>
