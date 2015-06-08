@@ -1,37 +1,22 @@
 core_dir = ..\core
 
-bison_bin = bison.exe
-bison_cygwin_bin = c:\cygwin\bin\$(bison_bin)
 bison_args = -d -v -t -o $(core_dir)\pbrtparse.cpp $(core_dir)\pbrtparse.yy
-
-flex_bin = flex.exe
-flex_cygwin_bin = c:\cygwin\bin\$(flex_bin)
 flex_args = -o$(core_dir)\pbrtlex.cpp $(core_dir)\pbrtlex.ll
-
-
+	
 .PHONY : $(core_dir)\pbrtparse.cpp $(core_dir)\pbrtlex.cpp
 
-
 $(core_dir)\pbrtparse.cpp $(core_dir)\pbrtparse.hpp : $(core_dir)\pbrtparse.yy
-	if exist $(bison_cygwin_bin) \
+	if exist $(BISON_PROGRAM) \
 	( \
-		$(bison_cygwin_bin) $(bison_args) \
+		$(BISON_PROGRAM) $(bison_args) \
 	) \
-	else \
-	( \
-		$(bison_bin) $(bison_args) \
-	)
 
 $(core_dir)\pbrtparse.hh : $(core_dir)\pbrtparse.hpp
 	if exist $(core_dir)\pbrtparse.hh del $(core_dir)\pbrtparse.hh
 	ren $(core_dir)\pbrtparse.hpp pbrtparse.hh
 
 $(core_dir)\pbrtlex.cpp $(core_dir)\pbrtparse.hh : $(core_dir)\pbrtlex.ll
-	if exist $(flex_cygwin_bin) \
+	if exist $(FLEX_PROGRAM) \
 	( \
-		$(flex_cygwin_bin) $(flex_args) \
+		$(FLEX_PROGRAM) $(flex_args) \
 	) \
-	else \
-	( \
-		$(flex_bin) $(flex_args) \
-	)
