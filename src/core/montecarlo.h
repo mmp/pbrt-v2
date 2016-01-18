@@ -214,6 +214,10 @@ inline double PermutedRadicalInverse(uint32_t n, uint32_t base,
         n *= invBase;
         invBi *= invBase;
     }
+    // For the case where the permutation table permutes the digit 0 to
+    // another digit, account for the infinite sequence of that digit
+    // trailing at the end of the radical inverse value.
+    val += p[0] * base / (base-1.0f) * invBi;
     return val;
 }
 
