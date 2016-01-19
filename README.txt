@@ -5,9 +5,7 @@ edition of the book "Physically Based Rendering: From Theory To
 Implementation", released in July 2010.
 
 The latest version of the pbrt code, including all of the latest bug fixes,
-updates, and conversion utilities is available from the
-http://pbrt.org/downloads.php page on the pbrt website as well as via
-GitHub (using the git source control management system) from the page
+updates, and conversion utilities is available from
 http://github.com/mmp/pbrt-v2.  Please report any bugs encountered or other
 issues with the system to Matt Pharr and Greg Humphreys, via the
 authors@pbrt.org e-mail address.
@@ -47,8 +45,8 @@ system.
 Many existing pbrt scene files will work unmodified with the second version
 of the system.  The most significant user-visible change is that we have
 taken this opportunity to fix the long-standing bug where LookAt
-inadvertently flipped the handed-ness of the coordinate system
-(http://pbrt.org/bugtracker/view.php?id=5).  You may find that scene files
+inadvertently flipped the handed-ness of the coordinate system.
+You may find that scene files
 that use LookAt now render flipped images or otherwise have problems with
 the camera positioning.  Add "Scale -1 1 1" to the top of any scene
 description files with this problem to return to the previous camera
@@ -105,7 +103,7 @@ A rudimentary adaptive sampler is included, see samplers/adaptive.*.
 
 The 'instant global illumination', 'extended photon map', and 'extended
 infinite area light source' implementations from the author-supplied
-plugins at http://pbrt.org/downloads.php are now part of the standard
+plugins for pbrt-v1 are now part of the standard
 distribution; the previous photon map and infinite area light source
 implementations described in the first version of the book have been
 removed.
