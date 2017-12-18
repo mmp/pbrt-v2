@@ -85,7 +85,7 @@ bool Disk::Intersect(const Ray &r, float *tHit, float *rayEpsilon,
     float v = 1.f - oneMinusV;
     Vector dpdu(-phiMax * phit.y, phiMax * phit.x, 0.);
     Vector dpdv(phit.x, phit.y, 0.);
-    dpdv *= (innerRadius - radius) / R;
+    dpdv *= (radius - innerRadius) / R;
     Normal dndu(0,0,0), dndv(0,0,0);
 
     // Initialize _DifferentialGeometry_ from parametric information
