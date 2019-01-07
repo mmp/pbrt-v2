@@ -38,7 +38,7 @@
 // KdTreeAccel Local Declarations
 struct KdAccelNode {
     // KdAccelNode Methods
-    void initLeaf(uint32_t *primNums, int np, MemoryArena &arena);
+	void initLeaf(BoundEdge *edges[3], const uint32_t* edge_count, int np, MemoryArena &arena);
     void initInterior(uint32_t axis, uint32_t ac, float s) {
         split = s;
         flags = axis;
@@ -55,7 +55,6 @@ struct KdAccelNode {
         uint32_t *primitives;   // Leaf
     };
 
-private:
     union {
         uint32_t flags;         // Both
         uint32_t nPrims;        // Leaf
@@ -67,10 +66,21 @@ private:
 struct BoundEdge {
     // BoundEdge Public Methods
     BoundEdge() { }
-    BoundEdge(float tt, int pn, bool starting) {
+    BoundEdge(float tt, int pn, int in_type) {
         t = tt;
         primNum = pn;
-        type = starting ? START : END;
+		switch (in_type)
+		{
+		case 0:
+			type = START;
+			break;
+		case 1:
+			type = END;
+			break;
+		default:
+			type = FLAT;
+			break;
+		}
     }
     bool operator<(const BoundEdge &e) const {
         if (t == e.t)
@@ -79,73 +89,95 @@ struct BoundEdge {
     }
     float t;
     int primNum;
-    enum { START, END } type;
+    enum { START, END, FLAT } type;
 };
 
 
 
 // KdTreeAccel Method Definitions
 KdTreeAccel::KdTreeAccel(const vector<Reference<Primitive> > &p,
-                         int icost, int tcost, float ebonus, int maxp,
-                         int md)
-    : isectCost(icost), traversalCost(tcost), maxPrims(maxp), maxDepth(md),
-      emptyBonus(ebonus) {
-    PBRT_KDTREE_STARTED_CONSTRUCTION(this, p.size());
-    for (uint32_t i = 0; i < p.size(); ++i)
-        p[i]->FullyRefine(primitives);
-    // Build kd-tree for accelerator
-    nextFreeNode = nAllocedNodes = 0;
-    if (maxDepth <= 0)
-        maxDepth = Round2Int(8 + 1.3f * Log2Int(float(primitives.size())));
+	int icost, int tcost, float ebonus, int maxp,
+	int md)
+	: isectCost(icost), traversalCost(tcost), maxPrims(maxp), maxDepth(md),
+	emptyBonus(ebonus) {
+	PBRT_KDTREE_STARTED_CONSTRUCTION(this, p.size());
+	for (uint32_t i = 0; i < p.size(); ++i)
+		p[i]->FullyRefine(primitives);
+	// Build kd-tree for accelerator
+	nextFreeNode = nAllocedNodes = 0;
+	if (maxDepth <= 0)
+		maxDepth = Round2Int(8 + 1.3f * Log2Int(float(primitives.size())));
 
-    // Compute bounds for kd-tree construction
-    vector<BBox> primBounds;
-    primBounds.reserve(primitives.size());
-    for (uint32_t i = 0; i < primitives.size(); ++i) {
-        BBox b = primitives[i]->WorldBound();
-        bounds = Union(bounds, b);
-        primBounds.push_back(b);
-    }
+	// Compute bounds for kd-tree construction
+	for (uint32_t i = 0; i < primitives.size(); ++i) {
+		BBox b = primitives[i]->WorldBound();
+		bounds = Union(bounds, b);
+	}
 
-    // Allocate working memory for kd-tree construction
-    BoundEdge *edges[3];
-    for (int i = 0; i < 3; ++i)
-        edges[i] = new BoundEdge[2*primitives.size()];
-    uint32_t *prims0 = new uint32_t[primitives.size()];
-    uint32_t *prims1 = new uint32_t[(maxDepth+1) * primitives.size()];
+	// Allocate working memory for kd-tree construction
+	BoundEdge *edges[3];
+	for (int i = 0; i < 3; ++i)
+		edges[i] = new BoundEdge[2 * primitives.size()];
+	uint32_t edges_count[3] = { 0, 0, 0 };
+	m_temp = new unsigned char[primitives.size()];
 
-    // Initialize _primNums_ for kd-tree construction
-    uint32_t *primNums = new uint32_t[primitives.size()];
-    for (uint32_t i = 0; i < primitives.size(); ++i)
-        primNums[i] = i;
+	// create all the split candidates
+	for (uint32_t k = 0; k < 3; ++k)
+	{
+		unsigned int& ec = edges_count[k];
+		for (unsigned i = 0; i < primitives.size(); ++i)
+		{
+			const Reference<Primitive> &prim = primitives[i];
+			const BBox& b = prim->WorldBound();
+			if (b.pMax[k] != b.pMin[k])
+			{
+				edges[k][ec] = BoundEdge(b.pMin[k], (int)i, 0);
+				edges[k][ec + 1] = BoundEdge(b.pMax[k], (int)i, 1);
+				ec += 2;
+			}
+			else
+			{
+				edges[k][ec] = BoundEdge(b.pMin[k], (int)i, 2);
+				++ec;
+			}
+		}
+	}
+	for (int k = 0; k < 3; ++k)
+		sort(edges[k], edges[k] + edges_count[k]);
 
     // Start recursive construction of kd-tree
-    buildTree(0, bounds, primBounds, primNums, primitives.size(),
-              maxDepth, edges, prims0, prims1);
+    buildTree(0, bounds, primitives.size(), maxDepth, edges, edges_count);
+
+	// delete temporary memory
+	delete[] m_temp;
 
     // Free working memory for kd-tree construction
-    delete[] primNums;
-    for (int i = 0; i < 3; ++i)
-        delete[] edges[i];
-    delete[] prims0;
-    delete[] prims1;
     PBRT_KDTREE_FINISHED_CONSTRUCTION(this);
 }
 
 
-void KdAccelNode::initLeaf(uint32_t *primNums, int np,
-                           MemoryArena &arena) {
+void KdAccelNode::initLeaf(BoundEdge *edges[3], const uint32_t* edge_count, int np, MemoryArena &arena) {
     flags = 3;
     nPrims |= (np << 2);
     // Store primitive ids for leaf node
     if (np == 0)
         onePrimitive = 0;
-    else if (np == 1)
-        onePrimitive = primNums[0];
-    else {
-        primitives = arena.Alloc<uint32_t>(np);
-        for (int i = 0; i < np; ++i)
-            primitives[i] = primNums[i];
+	else if (np == 1)
+	{
+		for (unsigned i = 0; i < edge_count[0]; i++)
+			if (edges[0][i].type == BoundEdge::START || edges[0][i].type == BoundEdge::FLAT)
+			{
+				onePrimitive = edges[0][i].primNum;
+				break;
+			}
+	}else
+	{
+		primitives = arena.Alloc<uint32_t>(np);
+		for (unsigned i = 0; i < edge_count[0]; i++)
+			if (edges[0][i].type == BoundEdge::START || edges[0][i].type == BoundEdge::FLAT)
+				primitives[i] = edges[0][i].primNum;
+		for (int i = 0; i < 3; ++i)
+			delete[] edges[i];
     }
 }
 
@@ -155,124 +187,199 @@ KdTreeAccel::~KdTreeAccel() {
 }
 
 
-void KdTreeAccel::buildTree(int nodeNum, const BBox &nodeBounds,
-        const vector<BBox> &allPrimBounds, uint32_t *primNums,
-        int nPrimitives, int depth, BoundEdge *edges[3],
-        uint32_t *prims0, uint32_t *prims1, int badRefines) {
-    Assert(nodeNum == nextFreeNode);
-    // Get next free node from _nodes_ array
-    if (nextFreeNode == nAllocedNodes) {
-        int nAlloc = max(2 * nAllocedNodes, 512);
-        KdAccelNode *n = AllocAligned<KdAccelNode>(nAlloc);
-        if (nAllocedNodes > 0) {
-            memcpy(n, nodes, nAllocedNodes * sizeof(KdAccelNode));
-            FreeAligned(nodes);
-        }
-        nodes = n;
-        nAllocedNodes = nAlloc;
-    }
-    ++nextFreeNode;
+void KdTreeAccel::buildTree(int nodeNum, const BBox &nodeBounds,int nPrimitives, int depth, BoundEdge *edges[3], const uint32_t* edge_count) {
+	Assert(nodeNum == nextFreeNode);
+	// Get next free node from _nodes_ array
+	if (nextFreeNode == nAllocedNodes) {
+		int nAlloc = max(2 * nAllocedNodes, 512);
+		KdAccelNode *n = AllocAligned<KdAccelNode>(nAlloc);
+		if (nAllocedNodes > 0) {
+			memcpy(n, nodes, nAllocedNodes * sizeof(KdAccelNode));
+			FreeAligned(nodes);
+		}
+		nodes = n;
+		nAllocedNodes = nAlloc;
+	}
+	++nextFreeNode;
 
-    // Initialize leaf node if termination criteria met
-    if (nPrimitives <= maxPrims || depth == 0) {
-        PBRT_KDTREE_CREATED_LEAF(nPrimitives, maxDepth-depth);
-        nodes[nodeNum].initLeaf(primNums, nPrimitives, arena);
-        return;
-    }
+	// Initialize leaf node if termination criteria met
+	if (nPrimitives <= maxPrims || depth == 0) {
+		PBRT_KDTREE_CREATED_LEAF(nPrimitives, maxDepth - depth);
+		nodes[nodeNum].initLeaf(edges, edge_count, nPrimitives, arena);
+		return;
+	}
 
-    // Initialize interior node and continue recursion
+	// Step 1
+	// pick best sah split
+	float		split_pos;
+	unsigned	split_Axis;
+	bool		left = false;
+	float sah = pickBestSplit(edges, edge_count, nPrimitives, nodeBounds, split_Axis, split_pos, left);
+	nodes[nodeNum].split = split_pos;
+	nodes[nodeNum].flags = split_Axis;
+	if (sah >= nPrimitives)
+	{
+		PBRT_KDTREE_CREATED_LEAF(nPrimitives, maxDepth - depth);
+		nodes[nodeNum].initLeaf(edges, edge_count, nPrimitives, arena);
+		return;
+	}
 
-    // Choose split axis position for interior node
-    int bestAxis = -1, bestOffset = -1;
-    float bestCost = INFINITY;
-    float oldCost = isectCost * float(nPrimitives);
-    float totalSA = nodeBounds.SurfaceArea();
-    float invTotalSA = 1.f / totalSA;
-    Vector d = nodeBounds.pMax - nodeBounds.pMin;
+	// Step 2
+	// mark triangles
+	BoundEdge* _edges = edges[split_Axis];
+	unsigned l_num = 0, r_num = 0, b_num = nPrimitives;
+	for (unsigned i = 0; i < edge_count[split_Axis]; i++)
+		m_temp[_edges[i].primNum] = 2;
+	for (unsigned i = 0; i < edge_count[split_Axis]; i++)
+	{
+		if (_edges[i].type == BoundEdge::END && _edges[i].t <= split_pos)
+		{
+			m_temp[_edges[i].primNum] = 0;
+			b_num--;
+			l_num++;
+		}
+		else if (_edges[i].type == BoundEdge::START && _edges[i].t >= split_pos)
+		{
+			m_temp[_edges[i].primNum] = 1;
+			b_num--;
+			r_num++;
+		}
+		else if (_edges[i].type == BoundEdge::FLAT)
+		{
+			if (_edges[i].t < split_pos || (_edges[i].t == split_pos && left))
+			{
+				m_temp[_edges[i].primNum] = 0;
+				b_num--;
+				l_num++;
+			}
+			else if (_edges[i].t > split_pos || (_edges[i].t == split_pos && !left))
+			{
+				m_temp[_edges[i].primNum] = 1;
+				b_num--;
+				r_num++;
+			}
+		}
+	}
 
-    // Choose which axis to split along
-    uint32_t axis = nodeBounds.MaximumExtent();
-    int retries = 0;
-    retrySplit:
+	// Step 3
+	// Generate new triangle lists
+	BoundEdge *l_splits[3];
+	BoundEdge *r_splits[3];
 
-    // Initialize edges for _axis_
-    for (int i = 0; i < nPrimitives; ++i) {
-        int pn = primNums[i];
-        const BBox &bbox = allPrimBounds[pn];
-        edges[axis][2*i] =   BoundEdge(bbox.pMin[axis], pn, true);
-        edges[axis][2*i+1] = BoundEdge(bbox.pMax[axis], pn, false);
-    }
-    sort(&edges[axis][0], &edges[axis][2*nPrimitives]);
+	uint32_t ledges_count[3] = { 0, 0, 0 };
+	uint32_t redges_count[3] = { 0, 0, 0 };
+	for (int i = 0; i < 3; ++i)
+	{
+		l_splits[i] = new BoundEdge[2 * (l_num + b_num)];
+		r_splits[i] = new BoundEdge[2 * (r_num + b_num)];
+	}
 
-    // Compute cost of all splits for _axis_ to find best
-    int nBelow = 0, nAbove = nPrimitives;
-    for (int i = 0; i < 2*nPrimitives; ++i) {
-        if (edges[axis][i].type == BoundEdge::END) --nAbove;
-        float edget = edges[axis][i].t;
-        if (edget > nodeBounds.pMin[axis] &&
-            edget < nodeBounds.pMax[axis]) {
-            // Compute cost for split at _i_th edge
-            uint32_t otherAxis0 = (axis + 1) % 3, otherAxis1 = (axis + 2) % 3;
-            float belowSA = 2 * (d[otherAxis0] * d[otherAxis1] +
-                                 (edget - nodeBounds.pMin[axis]) *
-                                 (d[otherAxis0] + d[otherAxis1]));
-            float aboveSA = 2 * (d[otherAxis0] * d[otherAxis1] +
-                                 (nodeBounds.pMax[axis] - edget) *
-                                 (d[otherAxis0] + d[otherAxis1]));
-            float pBelow = belowSA * invTotalSA;
-            float pAbove = aboveSA * invTotalSA;
-            float eb = (nAbove == 0 || nBelow == 0) ? emptyBonus : 0.f;
-            float cost = traversalCost +
-                         isectCost * (1.f - eb) * (pBelow * nBelow + pAbove * nAbove);
+	for (int k = 0; k < 3; k++)
+	{
+		unsigned split_count = edge_count[k];
+		for (unsigned i = 0; i < split_count; i++)
+		{
+			const BoundEdge& old = edges[k][i];
+			unsigned id = old.primNum;
+			if (m_temp[id] == 0 || m_temp[id] == 2)
+			{
+				l_splits[k][ledges_count[k]] = old;
+				ledges_count[k]++;
+			}
+			if (m_temp[id] == 1 || m_temp[id] == 2)
+			{
+				r_splits[k][redges_count[k]] = old;
+				redges_count[k]++;
+			}
+		}
+	}
+	for (int i = 0; i < 3; ++i)
+		delete[] edges[i];
 
-            // Update best split if this is lowest cost so far
-            if (cost < bestCost)  {
-                bestCost = cost;
-                bestAxis = axis;
-                bestOffset = i;
-            }
-        }
-        if (edges[axis][i].type == BoundEdge::START) ++nBelow;
-    }
-    Assert(nBelow == nPrimitives && nAbove == 0);
-
-    // Create leaf if no good splits were found
-    if (bestAxis == -1 && retries < 2) {
-        ++retries;
-        axis = (axis+1) % 3;
-        goto retrySplit;
-    }
-    if (bestCost > oldCost) ++badRefines;
-    if ((bestCost > 4.f * oldCost && nPrimitives < 16) ||
-        bestAxis == -1 || badRefines == 3) {
-        PBRT_KDTREE_CREATED_LEAF(nPrimitives, maxDepth-depth);
-        nodes[nodeNum].initLeaf(primNums, nPrimitives, arena);
-        return;
-    }
-
-    // Classify primitives with respect to split
-    int n0 = 0, n1 = 0;
-    for (int i = 0; i < bestOffset; ++i)
-        if (edges[bestAxis][i].type == BoundEdge::START)
-            prims0[n0++] = edges[bestAxis][i].primNum;
-    for (int i = bestOffset+1; i < 2*nPrimitives; ++i)
-        if (edges[bestAxis][i].type == BoundEdge::END)
-            prims1[n1++] = edges[bestAxis][i].primNum;
-
-    // Recursively initialize children nodes
-    float tsplit = edges[bestAxis][bestOffset].t;
-    PBRT_KDTREE_CREATED_INTERIOR_NODE(bestAxis, tsplit);
-    BBox bounds0 = nodeBounds, bounds1 = nodeBounds;
-    bounds0.pMax[bestAxis] = bounds1.pMin[bestAxis] = tsplit;
-    buildTree(nodeNum+1, bounds0,
-              allPrimBounds, prims0, n0, depth-1, edges,
-              prims0, prims1 + nPrimitives, badRefines);
-    uint32_t aboveChild = nextFreeNode;
-    nodes[nodeNum].initInterior(bestAxis, aboveChild, tsplit);
-    buildTree(aboveChild, bounds1, allPrimBounds, prims1, n1,
-              depth-1, edges, prims0, prims1 + nPrimitives, badRefines);
+	// Recursively initialize children nodes
+	PBRT_KDTREE_CREATED_INTERIOR_NODE(split_Axis, split_pos);
+	BBox bounds0 = nodeBounds, bounds1 = nodeBounds;
+	bounds0.pMax[split_Axis] = bounds1.pMin[split_Axis] = split_pos;
+	buildTree(nodeNum + 1, bounds0, l_num + b_num, depth - 1, l_splits, ledges_count);
+	uint32_t aboveChild = nextFreeNode;
+	nodes[nodeNum].initInterior(split_Axis, aboveChild, split_pos);
+	buildTree(aboveChild, bounds1, r_num + b_num, depth - 1, r_splits, redges_count); 
 }
 
+// pick best sah split
+float KdTreeAccel::pickBestSplit(BoundEdge* edges[3], const uint32_t* edge_count, 
+		int tri_num, const BBox& box, unsigned& splitAxis, float& split_pos, bool& left)
+{
+	float min_sah = INFINITY;
+	for (int k = 0; k < 3; k++)
+	{
+		unsigned n_l = 0;
+		unsigned n_r = tri_num;
+		unsigned split_count = edge_count[k];
+		unsigned i = 0;
+		while (i < split_count)
+		{
+			unsigned pe = 0, pf = 0, ps = 0;
+			float split = edges[k][i].t;
+
+			while (i < split_count && edges[k][i].t == split && edges[k][i].type == BoundEdge::END)
+			{
+				i++; pe++;
+			}
+			while (i < split_count && edges[k][i].t == split && edges[k][i].type == BoundEdge::FLAT)
+			{
+				i++; pf++;
+			}
+			while (i < split_count && edges[k][i].t == split && edges[k][i].type == BoundEdge::START)
+			{
+				i++; ps++;
+			}
+
+			n_r -= pe;
+			n_r -= pf;
+
+			// get the sah value
+			bool _left = false;
+			float sah = _sah(n_l, n_r, pf, k, split, box, _left);
+			if (sah < min_sah)
+			{
+				min_sah = sah;
+				splitAxis = k;
+				split_pos = split;
+				left = _left;
+			}
+
+			n_l += ps;
+			n_l += pf;
+		}
+	}
+	
+	return min_sah;
+}
+
+// evaluate sah value of a specific split
+float KdTreeAccel::_sah(unsigned l, unsigned r, unsigned f, unsigned axis, float split, const BBox& box, bool& left)
+{
+	float inv_sarea = 2.0f / box.SurfaceArea();
+
+	Vector delta = box.pMax - box.pMin;
+	delta[axis] = split - box.pMin[axis];
+	float l_sarea = delta.x * delta.y + delta.y * delta.z + delta.z * delta.x;
+	delta[axis] = box.pMax[axis] - split;
+	float r_sarea = delta.x * delta.y + delta.y * delta.z + delta.z * delta.x;
+
+	if (f != 0)
+	{
+		l_sarea *= inv_sarea;
+		r_sarea *= inv_sarea;
+		float sah0 = l_sarea * (l + f) + r_sarea * r;
+		float sah1 = l_sarea * l + r_sarea * (r + f);
+		left = (sah0 <= sah1);
+		return min(sah0, sah1);
+	}
+
+	return (l * l_sarea + r * r_sarea) * inv_sarea;
+}
 
 bool KdTreeAccel::Intersect(const Ray &ray,
                             Intersection *isect) const {

@@ -56,9 +56,15 @@ public:
     bool IntersectP(const Ray &ray) const;
 private:
     // KdTreeAccel Private Methods
-    void buildTree(int nodeNum, const BBox &bounds,
-        const vector<BBox> &primBounds, uint32_t *primNums, int nprims, int depth,
-        BoundEdge *edges[3], uint32_t *prims0, uint32_t *prims1, int badRefines = 0);
+    void buildTree(int nodeNum, const BBox &bounds, int nprims, int depth,
+        BoundEdge *edges[3], const uint32_t* edge_count );
+
+	// pick best sah split
+	float	pickBestSplit(BoundEdge* edges[3], const uint32_t* edge_count, int tri_num, const BBox& box,
+		unsigned& splitAxis, float& split_pos, bool& left);
+
+	// evaluate sah value of a specific split
+	float _sah(unsigned l, unsigned r, unsigned f, unsigned axis, float split, const BBox& box, bool& left);
 
     // KdTreeAccel Private Data
     int isectCost, traversalCost, maxPrims, maxDepth;
@@ -68,6 +74,9 @@ private:
     int nAllocedNodes, nextFreeNode;
     BBox bounds;
     MemoryArena arena;
+
+	// temporary buffer for marking triangles
+	unsigned char*	m_temp;
 };
 
 
