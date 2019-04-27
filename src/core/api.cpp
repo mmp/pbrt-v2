@@ -59,6 +59,7 @@
 #include "integrators/diffuseprt.h"
 #include "integrators/dipolesubsurface.h"
 #include "integrators/directlighting.h"
+#include "integrators/depth.h"
 #include "integrators/emission.h"
 #include "integrators/glossyprt.h"
 #include "integrators/igi.h"
@@ -555,6 +556,8 @@ SurfaceIntegrator *MakeSurfaceIntegrator(const string &name,
         si = CreateDiffusePRTIntegratorSurfaceIntegrator(paramSet);
     else if (name == "glossyprt")
         si = CreateGlossyPRTIntegratorSurfaceIntegrator(paramSet);
+    else if (name == "depth")
+        si = CreateDepthSurfaceIntegrator(paramSet);
     else
         Warning("Surface integrator \"%s\" unknown.", name.c_str());
 
