@@ -18,6 +18,7 @@
 #ifndef _TINY_OBJ_LOADER_H
 #define _TINY_OBJ_LOADER_H
 
+
 #include <string>
 #include <vector>
 #include <map>
@@ -107,6 +108,10 @@ std::string LoadObj(
 #include <map>
 #include <fstream>
 #include <sstream>
+
+// Modified by Tobias Pott (2014/11/07)
+// added include of <algorithm> as it would not compile due to missing std::min/std::max function calls on windows (using Visual Studio 2013)
+#include <algorithm>
 
 namespace tinyobj {
 
@@ -933,6 +938,23 @@ int main(int argc, char *argv[]) {
          bounds[0][0], bounds[0][1], bounds[0][2],
          bounds[1][0], bounds[1][1], bounds[1][2]);
 
+  // Modified by Tobias Pott (2014/11/07)
+  // added a camera
+  fprintf(f, "LookAt 10 10 10   0 -1 0 0 1 0 \n");
+  fprintf(f, "Camera \"perspective\" \"float fov\" [30] \n");
+  // added WorldBegin to have valid/renderable pbrt
+  fprintf(f, "WorldBegin \n");
+  fprintf(f, "\n");
+
+  // added a default light to render anything different from black image
+  fprintf(f, "# Default Light \n");
+  fprintf(f, "AttributeBegin \n");
+  fprintf(f, "CoordSysTransform \"camera\" \n");
+  fprintf(f, "LightSource \"distant\" \"point from\" [0 0 0] \"point to\" [0 0 1] \"rgb L\" [1 1 1] \n");
+  fprintf(f, "AttributeEnd \n");
+  fprintf(f, "\n");
+
+
   int numAreaLights = 0;
   int numTriangles = 0;
   int numMeshes = shapes.size();
@@ -1046,6 +1068,10 @@ int main(int argc, char *argv[]) {
     fprintf(f, "]\n");
     fprintf(f, "AttributeEnd\n\n\n");
   }
+
+  // Modified by Tobias Pott (2014/11/07)
+  fprintf(f, "WorldEnd");
+
   if (f != stdout)
     fclose(f);
 
@@ -1054,4 +1080,3 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
