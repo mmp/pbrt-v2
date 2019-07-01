@@ -449,7 +449,7 @@ Point Triangle::Sample(float u1, float u2, Normal *Ns) const {
     const Point &p2 = mesh->p[v[1]];
     const Point &p3 = mesh->p[v[2]];
     Point p = b1 * p1 + b2 * p2 + (1.f - b1 - b2) * p3;
-    Normal n = Normal(Cross(p2-p1, p3-p1));
+    Normal n = Normal(Cross(p3-p1, p2-p1));
     *Ns = Normalize(n);
     if (ReverseOrientation) *Ns *= -1.f;
     return p;
